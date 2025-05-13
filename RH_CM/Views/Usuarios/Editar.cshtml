@@ -1,0 +1,41 @@
+﻿@model RH_CM.ViewModels.AppUsuario
+
+@{
+    ViewData["Title"] = "Editar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="text-info">Edit User Roles</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <form method="post" asp-controller="Usuarios" asp-action="Editar">
+            <input asp-for="@Model.Id" type="hidden" />
+            <hr />
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="UserName"></label>
+                <input asp-for="UserName" readonly class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Names"></label>
+                <input asp-for="Names" readonly class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName"></label>
+                <input asp-for="LastName" readonly class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="IdRol"></label>
+                <select asp-for="IdRol" asp-items="@Model.ListaRoles" class="form-control">
+                    <option disabled selected>--Seleccionar Rol--</option>
+                </select>
+            </div>
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-primary">Editar Usuario</button>
+                <a asp-action="Index" class="text-dark" style="width:auto">Volver atrás</a>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,85 @@
+﻿@model RH_CM.Models.CtPosition
+
+@{
+    ViewData["Title"] = "Edit Position";
+}
+
+<h1 class="h3 mb-3 text-center">Edit Position</h1>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Edit Position</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="EditPosition">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <!-- Hidden Position ID -->
+                    <input type="hidden" asp-for="PkPosition" />
+
+                    <!-- Row for NamePosition and NamePositionEnglish -->
+                    <div class="row">
+                        <!-- Position Name -->
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NamePosition" class="form-label">Position Name <span class="text-danger">*</span></label>
+                            <input asp-for="NamePosition" class="form-control" />
+                            <span asp-validation-for="NamePosition" class="text-danger"></span>
+                        </div>
+
+                        <!-- Position Name (English) -->
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NamePositionEnglish" class="form-label">Position Name (English) <span class="text-danger">*</span></label>
+                            <input asp-for="NamePositionEnglish" class="form-control" />
+                            <span asp-validation-for="NamePositionEnglish" class="text-danger"></span>
+                        </div>
+                    </div>
+
+
+                    <div class="col-12 text-end">
+                        <a asp-action="IndexPosition" class="btn btn-secondary" onclick="return confirm('Are you sure you want to cancel without saving changes?')">
+                            <i class="align-middle fas fa-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="align-middle fas fa-save"></i> Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Mostrar mensajes de éxito y error si existen
+        if ("@TempData["SuccessMessage"]" !== "") {
+            window.notyf.open({
+                type: 'success',
+                message: "@TempData["SuccessMessage"]",
+                ripple: true,
+                dismissible: true,
+                position: {
+                    x: 'center',
+                    y: 'top'
+                },
+                duration: 5000
+            });
+        }
+
+        if ("@TempData["ErrorMessage"]" !== "") {
+            window.notyf.open({
+                type: 'error',
+                message: "@TempData["ErrorMessage"]",
+                ripple: true,
+                dismissible: true,
+                position: {
+                    x: 'center',
+                    y: 'top'
+                },
+                duration: 5000
+            });
+        }
+    });
+</script>

@@ -1,0 +1,282 @@
+﻿@model RH_CM.ViewModels.CreateHeadCountViewModel
+
+@{
+    ViewData["Title"] = "REGISTER A NEW ONBOARDING";
+}
+
+<h1 class="h3 mb-3 text-center">REGISTER A NEW ONBOARDING</h1>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">REGISTER A NEW ONBOARDING</h5>
+                <h6 class="card-subtitle text-muted">
+                    Fill in the fields; those marked with an asterisk (*) are required.
+                </h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="CreateHeadCount">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row">
+                        <!-- First Row -->
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="Names" class="form-label">Names <span class="text-danger">*</span></label>
+                            <input type="text" asp-for="Names" class="form-control" placeholder="Enter your name" />
+                            <span asp-validation-for="Names" class="text-danger"></span>
+                        </div>
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="SecondName" class="form-label">Second Name</label>
+                            <input type="text" asp-for="SecondName" class="form-control" placeholder="Enter your second name" />
+                            <span asp-validation-for="SecondName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="LastName" class="form-label">Last Name</label>
+                            <input type="text" asp-for="LastName" class="form-control" placeholder="Enter your last name" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="Birthdate" class="form-label">Birthdate <span class="text-danger">*</span></label>
+                            <input type="date" asp-for="Birthdate" class="form-control" placeholder="Select your birthdate" />
+                            <span asp-validation-for="Birthdate" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- Second Row -->
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="Sex" class="form-label">Sex <span class="text-danger">*</span></label>
+                            <select asp-for="Sex" class="form-control">
+                                <option disabled selected>--- SELECT OPTION ---</option>
+                                <option value="M">M</option>
+                                <option value="F">F</option>
+                            </select>
+                            <span asp-validation-for="Sex" class="text-danger"></span>
+                        </div>
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="Street" class="form-label">Street <span class="text-danger">*</span></label>
+                            <input type="text" asp-for="Street" class="form-control" placeholder="Enter street name" />
+                            <span asp-validation-for="Street" class="text-danger"></span>
+                        </div>
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="Neighborhood" class="form-label">Neighborhood <span class="text-danger">*</span></label>
+                            <input type="text" asp-for="Neighborhood" class="form-control" placeholder="Enter neighborhood" />
+                            <span asp-validation-for="Neighborhood" class="text-danger"></span>
+                        </div>
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="ZipCode" class="form-label">ZIP Code<span class="text-danger">*</span></label>
+                            <input type="number" asp-for="ZipCode" class="form-control" placeholder="Enter ZIP Code" />
+                            <span asp-validation-for="ZipCode" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- Third Row -->
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="Phone1" class="form-label">Phone 1</label>
+                            <input type="text" asp-for="Phone1" class="form-control" placeholder="Enter phone number" />
+                            <span asp-validation-for="Phone1" class="text-danger"></span>
+                        </div>
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="Phone2" class="form-label">Phone 2</label>
+                            <input type="text" asp-for="Phone2" class="form-control" placeholder="Enter secondary phone" />
+                            <span asp-validation-for="Phone2" class="text-danger"></span>
+                        </div>
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="Email" class="form-label">Email</label>
+                            <input type="email" asp-for="Email" class="form-control" placeholder="Enter email" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="Curp" class="form-label">CURP <span class="text-danger">*</span></label>
+                            <input type="text" asp-for="Curp" class="form-control" placeholder="Enter CURP" />
+                            <span asp-validation-for="Curp" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- Fourth Row -->
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="Rfc" class="form-label">RFC <span class="text-danger">*</span></label>
+                            <input type="text" asp-for="Rfc" class="form-control" placeholder="Enter RFC" />
+                            <span asp-validation-for="Rfc" class="text-danger"></span>
+                        </div>
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="SocialSecurity" class="form-label">Social Security <span class="text-danger">*</span></label>
+                            <input type="text" asp-for="SocialSecurity" class="form-control" placeholder="Enter social security number" />
+                            <span asp-validation-for="SocialSecurity" class="text-danger"></span>
+                        </div>
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="MaritalStatus" class="form-label">Marital Status</label>
+                            <select asp-for="MaritalStatus" class="form-control">
+                                <option disabled selected>--- SELECT OPTION ---</option>
+                                <option value="Casado">Casado</option>
+                                <option value="Soltero">Soltero</option>
+                                <option value="Divorciado">Divorciado</option>
+                                <option value="Union Libre">Union Libre</option>
+                                <option value="Viudo">Viudo</option>
+                            </select>
+                            <span asp-validation-for="MaritalStatus" class="text-danger"></span>
+                        </div>
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="LevelEmployee" class="form-label">Level of Employee</label>
+                            <select asp-for="LevelEmployee" class="form-control">
+                                <option disabled selected>--- SELECT OPTION ---</option>
+                                <option value="INDI">INDI</option>
+                                <option value="ADMI">ADMI</option>
+                                <option value="DIREC">DIREC</option>
+                                <option value="GER1">GER1</option>
+                                <option value="GERE">GERE</option>
+                            </select>
+                            <span asp-validation-for="LevelEmployee" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- Fifth Row -->
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="EducationLevel" class="form-label">Education Level</label>
+                            <select asp-for="EducationLevel" class="form-control">
+                                <option disabled selected>--- SELECT OPTION ---</option>
+                                <option value="Primaria">Primaria</option>
+                                <option value="Secundaria">Secundaria</option>
+                                <option value="Carrera técnica">Carrera técnica</option>
+                                <option value="Bachilleres / Preparatoria">Bachilleres / Preparatoria</option>
+                                <option value="TSU">TSU</option>
+                                <option value="Licenciatura">Licenciatura</option>
+                                <option value="Maestría">Maestría</option>
+                            </select>
+                            <span asp-validation-for="EducationLevel" class="text-danger"></span>
+                        </div>
+
+
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="Specialization" class="form-label">Specialization</label>
+                            <input type="text" asp-for="Specialization" class="form-control" placeholder="Enter specialization" />
+                            <span asp-validation-for="Specialization" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="AssignSupervisorCode" class="form-label">SupervisorCode</label>
+                            <input type="text" asp-for="AssignSupervisorCode" class="form-control" placeholder="Enter SupervisorCode" />
+                            <span asp-validation-for="AssignSupervisorCode" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="Supervisor" class="form-label">Supervisor</label>
+                            <select asp-for="Supervisor" class="form-control select2">
+                                <option disabled selected>--- SELECT SUPERVISOR ---</option>
+                                @foreach (var supervisor in Model.SyHeadCount)
+                                {
+                                    <option value="@supervisor.SupervisorCode">(@supervisor.ControlNumber) @supervisor.Names @supervisor.LastName</option>
+                                }
+                            </select>
+                            <span asp-validation-for="Supervisor" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- Fifth Row -->
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="ShiftWork" class="form-label">Shift Work <span class="text-danger">*</span></label>
+                            <select asp-for="ShiftWork" class="form-control">
+                                <option disabled selected>--- SELECT OPTION ---</option>
+                                <option value="1o">1o</option>
+                                <option value="2o">2o</option>
+                                <option value="3o">3o</option>
+                            </select>
+                            <span asp-validation-for="ShiftWork" class="text-danger"></span>
+                        </div>
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="FkDepartment" class="form-label">Department<span class="text-danger">*</span></label>
+                            <select asp-for="FkDepartment" class="form-control select2">
+                                <option disabled selected>--- SELECT OPTION ---</option>
+                                @foreach (var department in Model.Departments)
+                                {
+                                    <option value="@department.PkDepartment">@department.NameDeparment</option>
+                                }
+                            </select>
+                            <span asp-validation-for="FkDepartment" class="text-danger"></span>
+                        </div>
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="FkPosition" class="form-label">Position <span class="text-danger">*</span></label>
+                            <select asp-for="FkPosition" class="form-control select2">
+                                <option disabled selected>--- SELECT OPTION ---</option>
+                                @foreach (var position in Model.Position)
+                                {
+                                    <option value="@position.PkPosition">@position.NamePosition</option>
+                                }
+                            </select>
+                            <span asp-validation-for="FkPosition" class="text-danger"></span>
+                        </div>
+                        <div class="mb-2 col-md-3">
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- Fifth Row -->
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="StarDate" class="form-label">Start Date <span class="text-danger">*</span></label>
+                            <input type="date" asp-for="StarDate" class="form-control" placeholder="Select the start date" />
+                            <span asp-validation-for="StarDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="ControlNumber" class="form-label">Control Number <span class="text-danger">*</span></label>
+                            <input type="number" asp-for="ControlNumber" class="form-control" placeholder="Enter control number" />
+                            <span asp-validation-for="ControlNumber" class="text-danger"></span>
+                        </div>
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="ZipCodesat" class="form-label">ZIP Code SAT <span class="text-danger">*</span></label>
+                            <input type="number" asp-for="ZipCodesat" class="form-control" placeholder="Enter ZIP Code SAT" />
+                            <span asp-validation-for="ZipCodesat" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-2 col-md-3">
+
+                        </div>
+                    </div>
+                    <div class="col-12 text-end">
+                        <a asp-action="IndexHeadCount" class="btn btn-secondary" onclick="return confirm('Are you sure you want to cancel without saving changes?')">
+                            <i class="align-middle fas fa-arrow-left"></i> CANCELAR
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="align-middle fas fa-plus-square"></i> CREATE NEW ONBOARDING
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Show success or error messages
+            if ("@TempData["SuccessMessage"]" !== "") {
+                window.notyf.open({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+            if ("@TempData["ErrorMessage"]" !== "") {
+                window.notyf.open({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+
+            // Initialize Select2
+            $(".select2").select2({
+                theme: 'bootstrap4',
+                placeholder: 'Select an option',
+                allowClear: true
+            });
+        });
+    </script>
+}

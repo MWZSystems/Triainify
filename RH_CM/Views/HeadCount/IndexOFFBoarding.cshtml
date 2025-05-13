@@ -1,0 +1,142 @@
+﻿@model RH_CM.ViewModels.IndexHeadCountListViewModel
+
+@{
+    ViewData["Title"] = "Head Count List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">HEAD COUNT LIST</h1>
+    </div>
+    <div class="col-auto">
+        <a class="btn btn-facebook" asp-action="CreateHeadCount">
+            <i class="align-middle fas fa-plus-square"></i> CREATE NEW ONBOARDING
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+
+                @if (Model.SyHeadCounts.Any())
+                {
+                    <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
+                        <thead class="table-primary">
+                            <tr>
+                                @* <th>Pk_HeadCount</th> *@
+                                <th>Control Number</th>
+                                <th>Name</th>
+                                <th>Department</th>
+                                <th>Position</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.SyHeadCounts)
+                            {
+                                <tr>
+                                    @* <td>@item.PkHeadcount</td> *@
+                                    <td>@item.ControlNumber</td>
+                                    <td>@item.Names @item.LastName @item.SecondName</td>
+                                    <td>@Model.Departments.FirstOrDefault(d => d.PkDepartment == item.FkDepartment)?.NameDeparment</td>
+                                    <td>@Model.Positions.FirstOrDefault(p => p.PkPosition == item.FkPosition)?.NamePosition</td>
+                                    <td>
+                                        <div class="text-center">
+                                            <!-- Botón para alternar disponibilidad -->
+                                            <form asp-action="ToggleAvailabilityHeadCount" asp-route-id="@item.PkHeadcount" method="post" style="display:inline;">
+                                                <button type="submit" onclick="return confirm('Are you sure you want to toggle the availability of this head count?')" class="btn @(item.Available == 1 ? "btn-success" : "btn-secondary")">
+                                                    <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
+                                                    @(item.Available == 1 ? "Enable" : "Disable")
+                                                </button>
+                                            </form>
+                                            <a class="btn btn-warning" asp-action="EditHeadCount" asp-route-id="@item.PkHeadcount">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                            <form asp-action="DeleteHeadCount" asp-route-id="@item.PkHeadcount" method="post" style="display:inline;">
+                                                <button type="submit" onclick="return confirm('Are you sure you want to delete this item?')" class="btn btn-danger">
+                                                    <i class="align-middle fas fa-window-close"></i> Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>No records found</p>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            // Inicializar DataTable con traducción al español
+            $('#datatables-responsive').DataTable({
+                responsive: true,
+                order: [[0, 'asc']], // Ordenar por 'Control Number' (índice 0) de forma ascendente
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+                    "infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
+                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Entradas",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+
+            // Mostrar mensajes de éxito y error
+            if ("@TempData["SuccessMessage"]" !== "") {
+                window.notyf.open({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: {
+                        x: 'center',
+                        y: 'top'
+                    },
+                    duration: 5000
+                });
+            }
+
+            if ("@TempData["ErrorMessage"]" !== "") {
+                window.notyf.open({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: {
+                        x: 'center',
+                        y: 'top'
+                    },
+                    duration: 5000
+                });
+            }
+        });
+    </script>
+}

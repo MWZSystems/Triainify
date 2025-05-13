@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - RH</title>
+    <link rel="stylesheet" href="~/Assets/dist/css/light.css" asp-append-version="true" />
+    <link rel="shortcut icon" href="~/assets/favicon.ico">
+    @RenderSection("head", false)
+
+    <link href="~/assets/dist/css/select2.css" rel="stylesheet" />
+    <script src="~/assets/dist/js/select2.js"></script>
+
+</head>
+<body data-theme="default" data-layout="fluid" data-sidebar-position="left" data-sidebar-behavior="sticky">
+    <div class="wrapper">
+        @* <partial name="_Sidebar" /> *@
+        <main class="main">
+            <partial name="_Navbar" />
+
+            <main class="content">
+                <div class="container-fluid p-0">
+                    @RenderBody()
+                </div>
+            </main>
+
+            <partial name="_Footer" />
+        </main>
+    </div>
+    <script src="~/assets/dist/js/app.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

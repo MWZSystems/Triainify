@@ -1,0 +1,83 @@
+﻿@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<nav class="navbar navbar-expand navbar-light navbar-bg">
+    @* <a class="sidebar-toggle">
+        <i class="hamburger align-self-center"></i>
+    </a> *@
+    <ul class="navbar-nav">
+        @if (User.Identity.IsAuthenticated && (User.IsInRole("Administrador") || User.IsInRole("RHGerente") || User.IsInRole("RHAdmin") || User.IsInRole("RH")))
+        //|| User.IsInRole("CustomerServiceAdmin") RHAdmin, RH
+        {
+            <li class="nav-item px-2 dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="~/assets/dist/img/icons/logocm.jpeg" alt="Logo" style="width: 60px; height: 30px; margin-right: 8px;">
+                    CATALOGS
+                </a>
+                <div class="dropdown-menu dropdown-menu-start dropdown-mega" aria-labelledby="servicesDropdown">
+                    <div class="d-md-flex align-items-start justify-content-start">
+                        <div class="dropdown-mega-list">
+                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseassignments"><i class="align-middle fas fa-user-tag"></i> Course assignments</a>
+                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexDepartment"><i class="align-middle fas fa-store-alt"></i> Department</a>
+                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexPosition"><i class="align-middle fas fa-chess-board"></i> Position</a>
+                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourse"><i class="align-middle fas fa-book"></i> Course</a>
+                            <a class="dropdown-item" asp-controller="HeadCount" asp-action="IndexHeadCount"><i class="align-middle fas fa-user-plus"></i> Onboarding</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item px-2 dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                HEADCOUNT
+            </a>
+            <div class="dropdown-menu dropdown-menu-start dropdown-mega" aria-labelledby="servicesDropdown">
+                <div class="d-md-flex align-items-start justify-content-start">
+                    <div class="dropdown-mega-list">
+                            <a class="dropdown-item" asp-controller="HeadCount" asp-action="Index"><i class="align-middle fas fa-user-check"></i> Available</a>
+                            <a class="dropdown-item" asp-controller="HeadCount" asp-action="HeadCountUnavailable"><i class="align-middle fas fa-user-times"></i> Unavailable</a>
+                    </div>
+                </div>
+            </div>
+            </li>
+        }
+
+    </ul>
+
+    <div class="navbar-collapse collapse">
+        <ul class="navbar-nav navbar-align">
+            <li class="nav-item dropdown">
+                <a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-bs-toggle="dropdown">
+                    <i class="align-middle" data-feather="settings"></i>
+                </a>
+
+                <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
+                    <i class="avatar img-fluid rounded-circle me-1" data-feather="user"></i> <span class="text-dark">
+                        @UserManager.GetUserName(User)
+                    </span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        var user = await UserManager.GetUserAsync(User);
+                        var roles = await UserManager.GetRolesAsync(user);
+                        <a class="dropdown-item">Role: @roles.FirstOrDefault()</a>
+                    }
+                    
+                    @if (User.Identity.IsAuthenticated && (User.IsInRole("Administrador"))) //|| User.IsInRole("ToolCribAdmin")
+                    {
+                        <a class="dropdown-item" asp-controller="Usuarios" asp-action="Index">Users</a>
+                        <a class="dropdown-item" asp-controller="Cuentas" asp-action="RegistroAdministrador">Register New User</a>
+                        <a class="dropdown-item" asp-controller="Roles" asp-action="Index">Roles</a>
+                        <a class="dropdown-item" asp-controller="Cuentas" asp-action="ResetPassword">Reset password</a>
+                    }
+
+                    <form id="logoutForm" method="post" class="form-inline" asp-controller="Cuentas" asp-action="SalirAplicacion">
+                        <button type="submit" class="dropdown-item">Salir</button>
+                    </form>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>

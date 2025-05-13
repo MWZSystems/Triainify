@@ -1,0 +1,33 @@
+﻿<nav id="sidebar" class="sidebar collapsed">
+    <div class="sidebar-content js-simplebar">
+        <a class="sidebar-brand" href="index.html">
+            <img src="~/Assets/dist/img/Century Mold logo.svg" alt="" x="0px" y="0px"
+                 width="30px" height="30px" viewBox="0 0 20 20" enable-background="new 0 0 20 20" />
+
+            <span class="align-middle me-3">TOOLCRIB CM</span>
+        </a>
+
+        <ul class="sidebar-nav">
+            <li class="sidebar-header">
+                MAIN MENU
+            </li>
+            <li class="sidebar-item">
+                <a data-bs-target="#dashboards" data-bs-toggle="collapse" class="sidebar-link">
+                    <i class="align-middle" data-feather="home"></i> <span class="align-middle">HOME</span>
+                </a>
+
+            </li>
+
+            <li class="sidebar-item">
+                <a data-bs-target="#auth" data-bs-toggle="collapse" class="sidebar-link collapsed">
+                    <i class="align-middle" data-feather="users"></i> <span class="align-middle">ADMINISTRADOR</span>
+                    <span class="badge badge-sidebar-secondary">Special</span>
+                </a>
+                <ul id="auth" class="sidebar-dropdown list-unstyled collapse " data-bs-parent="#sidebar">
+                    <li class="sidebar-item"><a class="sidebar-link" asp-controller="Users" asp-action="Users_List">Users</a></li>
+                    <li class="sidebar-item"><a class="sidebar-link" asp-controller="Cuentas" asp-action="RegistroAdministrador">Register New User</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>

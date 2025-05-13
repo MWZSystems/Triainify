@@ -1,0 +1,144 @@
+﻿@model IEnumerable<RH_CM.ViewModels.AppUsuario>
+@{
+    ViewData["Title"] = "User administrator";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="text-center">User administrator</h1>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                
+                    @if (Model.Count() > 0)
+                    {
+                        <table id="datatables-reponsive" class="table table-striped table-hover" style="width:100%">
+                            <thead class="table-secondary">
+                                <tr>
+                                    <th>@Html.DisplayNameFor(m => m.UserName)</th>
+                                    <th>@Html.DisplayNameFor(m => m.Email)</th>
+                                    <th>@Html.DisplayNameFor(m => m.Names)</th>
+                                    <th>@Html.DisplayNameFor(m => m.LastName)</th>
+                                    <th>@Html.DisplayNameFor(m => m.Rol)</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@Html.DisplayFor(m => item.UserName)</td>
+                                        <td>@Html.DisplayFor(m => item.Email)</td>
+                                        <td>@Html.DisplayFor(m => item.Names)</td>
+                                        <td>@Html.DisplayFor(m => item.LastName)</td>
+                                        <td>@Html.DisplayFor(m => item.Rol)</td>
+                                        <td>
+                                            <div class="text-center">
+                                                <form asp-action="Borrar" asp-route-idUsuario="@item.Id">
+                                                    <a class="btn btn-primary" asp-controller="Usuarios" asp-action="Editar" asp-route-id="@item.Id">Editar</a>
+
+                                                    <!--Asignar claims-->
+                                                    <a class="btn btn-success" asp-controller="Usuarios" asp-action="AdministrarClaimsUsuario" asp-route-idUsuario="@item.Id" style="cursor:pointer;">Asignar Permisos/Claims</a>
+
+                                                    @if (item.LockoutEnd == null || item.LockoutEnd < DateTime.Now)
+                                                    {
+                                                        //Aquí se muestra la opción para bloquear el usuario
+                                                        <button asp-action="BloquearDesbloquear" asp-route-idUsuario="@item.Id" class="btn btn-outline-light" style="cursor:pointer">
+                                                            <strong>Bloquear</strong>
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
+                                                        //Aquí se muestra la opción para desbloquear el usuario
+                                                        <button asp-action="BloquearDesbloquear" asp-route-idUsuario="@item.Id" class="btn btn-warning" style="cursor:pointer">
+                                                            <strong>Desbloquear</strong>
+                                                        </button>
+                                                    }
+
+                                                    <button type="submit" onclick="return confirm('Esta seguro de querer borrar este registro?')" class="btn btn-danger">
+                                                        Borrar
+                                                    </button>
+
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    }
+                    else
+                    {
+                        <p>No hay registros</p>
+                    }
+                
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            //Llamar a datatable
+            $('#datatables-responsive').DataTable({
+                responsive: true,
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Entradas",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+
+            // Mostrar mensaje de éxito en el modal
+            if ("@TempData["Correcto"]" !== "") {
+                window.notyf.open({
+                    type: 'success',
+                    message: "@TempData["Correcto"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: {
+                        x: 'center',
+                        y: 'top'
+                    },
+                    duration: 5000
+                });
+            }
+
+            // Mostrar mensaje de error en el modal
+            if ("@TempData["Error"]" !== "") {
+                window.notyf.open({
+                    type: 'error',
+                    message: "@TempData["Error"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: {
+                        x: 'center',
+                        y: 'top'
+                    },
+                    duration: 5000
+                });
+            }
+        });
+    </script>
+}

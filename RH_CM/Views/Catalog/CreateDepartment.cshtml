@@ -1,0 +1,71 @@
+﻿@model RH_CM.Models.CtDepartment
+
+@{
+    ViewData["Title"] = "Create Department";
+}
+
+<h1 class="h3 mb-3 text-center">Create Department</h1>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Create Department</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="CreateDepartment">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <!-- Department Name -->
+                    <div class="mb-3">
+                        <label asp-for="NameDeparment" class="form-label">Department Name <span class="text-danger">*</span></label>
+                        <input asp-for="NameDeparment" class="form-control" />
+                        <span asp-validation-for="NameDeparment" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12 text-end">
+                        <a asp-action="IndexDepartment" class="btn btn-secondary" onclick="return confirm('Are you sure you want to cancel without saving changes?')">
+                            <i class="align-middle fas fa-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="align-middle fas fa-plus-square"></i> Create
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Mostrar mensajes de éxito y error si existen
+        if ("@TempData["SuccessMessage"]" !== "") {
+            window.notyf.open({
+                type: 'success',
+                message: "@TempData["SuccessMessage"]",
+                ripple: true,
+                dismissible: true,
+                position: {
+                    x: 'center',
+                    y: 'top'
+                },
+                duration: 5000
+            });
+        }
+
+        if ("@TempData["ErrorMessage"]" !== "") {
+            window.notyf.open({
+                type: 'error',
+                message: "@TempData["ErrorMessage"]",
+                ripple: true,
+                dismissible: true,
+                position: {
+                    x: 'center',
+                    y: 'top'
+                },
+                duration: 5000
+            });
+        }
+    });
+</script>

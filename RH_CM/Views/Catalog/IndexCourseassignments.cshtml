@@ -1,0 +1,152 @@
+﻿@model IEnumerable<dynamic>
+
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    ViewData["Title"] = "Course Assignments";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center"><i class="align-middle fas fa-user-tag"></i> @ViewData["Title"]</h1>
+    </div>
+    <div class="col-auto">
+        <a class="btn btn-facebook" asp-action="CreateCourseAssignment">
+            <i class="align-middle fas fa-plus-square"></i> CREATE NEW COURSE ASSIGNMENT
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+
+                @if (Model.Any())
+                {
+                    <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>#</th>
+                                <th>Position</th>
+                                <th>Course</th>
+                                <th>Level</th>
+                                <th>Required</th>
+                                @* <th>Available</th> *@
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.PkCourseAssignment</td>
+                                    <td>@item.PositionName</td>
+                                    <td>@item.CourseName</td>
+                                    <td>@item.RequiredCourseLevelDescription</td>
+                                    <td>@(item.Requiered == true ? "Yes" : "No")</td>
+                                   @*  <td>@(item.Available == 1 ? "Enabled" : "Disabled")</td> *@
+                                    <td>
+                                        <div class="text-center">
+                                            <!-- Botón para alternar disponibilidad -->
+                                            <form asp-action="ToggleCourseAssignment" asp-route-id="@item.PkCourseAssignment" method="post" style="display:inline;">
+                                                <button type="submit" onclick="return confirm('Are you sure you want to toggle the availability of this course assignment?')" class="btn @(item.Available == 1 ? "btn-success" : "btn-secondary")">
+                                                    <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
+                                                </button>
+                                            </form>
+
+                                            <!-- Botón para editar la asignación -->
+                                            <a class="btn btn-warning" asp-action="EditCourseAssignment" asp-route-id="@item.PkCourseAssignment">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            @if (User.Identity.IsAuthenticated && (User.IsInRole("Administrador")))
+                                            {
+                                                <!-- Botón para eliminar la asignación -->
+                                                <form asp-action="DeleteCourseAssignment" asp-route-id="@item.PkCourseAssignment" method="post" style="display:inline;">
+                                                    <button type="submit" onclick="return confirm('Are you sure you want to delete this course assignment?')" class="btn btn-danger">
+                                                        <i class="align-middle fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            }
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>No records found</p>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        $(document).ready(function () {
+            // Inicializar DataTable con traducción al español y sin orden automático
+            $('#datatables-responsive').DataTable({
+                responsive: true,
+                order: [], // Evitar el orden automático por cualquier columna
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+                    "infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
+                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Entradas",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+
+            // Mostrar mensajes de éxito y error
+            if ("@TempData["SuccessMessage"]" !== "") {
+                window.notyf.open({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: {
+                        x: 'center',
+                        y: 'top'
+                    },
+                    duration: 5000
+                });
+            }
+
+            if ("@TempData["ErrorMessage"]" !== "") {
+                window.notyf.open({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: {
+                        x: 'center',
+                        y: 'top'
+                    },
+                    duration: 5000
+                });
+            }
+        });
+    </script>
+}
