@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\MWZ-LAP\\Documents\\GitHub\\Triainify\\RH_CM\\RH_CM.csproj": {}
+    "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\RH_CM.csproj": {}
   },
   "projects": {
-    "C:\\Users\\MWZ-LAP\\Documents\\GitHub\\Triainify\\RH_CM\\RH_CM.csproj": {
+    "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\RH_CM.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\MWZ-LAP\\Documents\\GitHub\\Triainify\\RH_CM\\RH_CM.csproj",
+        "projectUniqueName": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\RH_CM.csproj",
         "projectName": "RH_CM",
-        "projectPath": "C:\\Users\\MWZ-LAP\\Documents\\GitHub\\Triainify\\RH_CM\\RH_CM.csproj",
-        "packagesPath": "C:\\Users\\MWZ-LAP\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\MWZ-LAP\\Documents\\GitHub\\Triainify\\RH_CM\\obj\\",
+        "projectPath": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\RH_CM.csproj",
+        "packagesPath": "C:\\Users\\fmarquez\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\MWZ-LAP\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\fmarquez\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -42,7 +43,7 @@
         "restoreAuditProperties": {
           "enableAudit": "true",
           "auditLevel": "low",
-          "auditMode": "direct"
+          "auditMode": "all"
         },
         "SdkAnalysisLevel": "9.0.100"
       },
@@ -114,7 +115,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }

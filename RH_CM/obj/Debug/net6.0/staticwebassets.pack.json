@@ -1,1839 +1,1839 @@
 {
   "Files": [
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\obj\\Debug\\net6.0\\scopedcss\\projectbundle\\RH_CM.bundle.scp.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\obj\\Debug\\net6.0\\scopedcss\\projectbundle\\RH_CM.bundle.scp.css",
       "PackagePath": "staticwebassets\\RH_CM.f2w7kzpqxh.bundle.scp.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\WallpaperBackground.jpeg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\WallpaperBackground.jpeg",
       "PackagePath": "staticwebassets\\Assets\\WallpaperBackground.jpeg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\css\\dark.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\css\\dark.css",
       "PackagePath": "staticwebassets\\Assets\\dist\\css\\dark.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\css\\light.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\css\\light.css",
       "PackagePath": "staticwebassets\\Assets\\dist\\css\\light.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\css\\select2.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\css\\select2.css",
       "PackagePath": "staticwebassets\\Assets\\dist\\css\\select2.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\css\\select2.min.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\css\\select2.min.css",
       "PackagePath": "staticwebassets\\Assets\\dist\\css\\select2.min.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-brands-400.eot",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-brands-400.eot",
       "PackagePath": "staticwebassets\\Assets\\dist\\fonts\\fa-brands-400.eot"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-brands-400.svg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-brands-400.svg",
       "PackagePath": "staticwebassets\\Assets\\dist\\fonts\\fa-brands-400.svg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-brands-400.ttf",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-brands-400.ttf",
       "PackagePath": "staticwebassets\\Assets\\dist\\fonts\\fa-brands-400.ttf"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-brands-400.woff",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-brands-400.woff",
       "PackagePath": "staticwebassets\\Assets\\dist\\fonts\\fa-brands-400.woff"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-brands-400.woff2",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-brands-400.woff2",
       "PackagePath": "staticwebassets\\Assets\\dist\\fonts\\fa-brands-400.woff2"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-regular-400.eot",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-regular-400.eot",
       "PackagePath": "staticwebassets\\Assets\\dist\\fonts\\fa-regular-400.eot"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-regular-400.svg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-regular-400.svg",
       "PackagePath": "staticwebassets\\Assets\\dist\\fonts\\fa-regular-400.svg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-regular-400.ttf",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-regular-400.ttf",
       "PackagePath": "staticwebassets\\Assets\\dist\\fonts\\fa-regular-400.ttf"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-regular-400.woff",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-regular-400.woff",
       "PackagePath": "staticwebassets\\Assets\\dist\\fonts\\fa-regular-400.woff"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-regular-400.woff2",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-regular-400.woff2",
       "PackagePath": "staticwebassets\\Assets\\dist\\fonts\\fa-regular-400.woff2"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-solid-900.eot",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-solid-900.eot",
       "PackagePath": "staticwebassets\\Assets\\dist\\fonts\\fa-solid-900.eot"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-solid-900.svg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-solid-900.svg",
       "PackagePath": "staticwebassets\\Assets\\dist\\fonts\\fa-solid-900.svg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-solid-900.ttf",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-solid-900.ttf",
       "PackagePath": "staticwebassets\\Assets\\dist\\fonts\\fa-solid-900.ttf"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-solid-900.woff",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-solid-900.woff",
       "PackagePath": "staticwebassets\\Assets\\dist\\fonts\\fa-solid-900.woff"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-solid-900.woff2",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\fonts\\fa-solid-900.woff2",
       "PackagePath": "staticwebassets\\Assets\\dist\\fonts\\fa-solid-900.woff2"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\Century Mold logo.svg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\Century Mold logo.svg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\Century Mold logo.svg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\Icons\\Home256.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\Icons\\Home256.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\Icons\\Home256.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\Icons\\LogoCM.jpeg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\Icons\\LogoCM.jpeg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\Icons\\LogoCM.jpeg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\Icons\\almacen256.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\Icons\\almacen256.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\Icons\\almacen256.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\Icons\\almacen32.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\Icons\\almacen32.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\Icons\\almacen32.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\Icons\\almacen512.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\Icons\\almacen512.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\Icons\\almacen512.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\Icons\\almacenc32.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\Icons\\almacenc32.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\Icons\\almacenc32.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\Icons\\almacenc512.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\Icons\\almacenc512.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\Icons\\almacenc512.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\Icons\\almacenn512.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\Icons\\almacenn512.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\Icons\\almacenn512.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\Icons\\almacensc32.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\Icons\\almacensc32.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\Icons\\almacensc32.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\Icons\\almacensc512.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\Icons\\almacensc512.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\Icons\\almacensc512.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\avatars\\avatar-2.jpg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\avatars\\avatar-2.jpg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\avatars\\avatar-2.jpg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\avatars\\avatar-3.jpg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\avatars\\avatar-3.jpg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\avatars\\avatar-3.jpg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\avatars\\avatar-4.jpg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\avatars\\avatar-4.jpg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\avatars\\avatar-4.jpg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\avatars\\avatar-5.jpg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\avatars\\avatar-5.jpg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\avatars\\avatar-5.jpg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\avatars\\avatar.jpg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\avatars\\avatar.jpg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\avatars\\avatar.jpg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\avatars\\user.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\avatars\\user.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\avatars\\user.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\brands\\bootstrap.svg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\brands\\bootstrap.svg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\brands\\bootstrap.svg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\favicon.ico",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\favicon.ico",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\favicon.ico"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\favicon2.ico",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\favicon2.ico",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\favicon2.ico"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ad.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ad.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ad.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ae.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ae.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ae.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\af.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\af.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\af.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ag.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ag.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ag.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ai.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ai.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ai.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\al.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\al.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\al.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\am.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\am.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\am.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\an.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\an.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\an.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ao.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ao.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ao.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\aq.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\aq.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\aq.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ar.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ar.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ar.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\as.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\as.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\as.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\at.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\at.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\at.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\au.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\au.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\au.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\aw.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\aw.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\aw.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ax.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ax.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ax.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\az.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\az.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\az.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ba.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ba.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ba.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bb.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bb.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\bb.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bd.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bd.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\bd.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\be.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\be.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\be.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bf.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bf.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\bf.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bg.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bg.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\bg.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bh.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bh.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\bh.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bi.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bi.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\bi.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bj.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bj.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\bj.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bl.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bl.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\bl.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bm.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bm.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\bm.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bn.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bn.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\bn.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bo.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bo.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\bo.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bq.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bq.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\bq.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\br.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\br.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\br.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bs.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bs.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\bs.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bt.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bt.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\bt.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bv.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bv.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\bv.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bw.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bw.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\bw.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\by.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\by.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\by.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bz.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\bz.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\bz.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ca.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ca.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ca.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cc.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cc.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\cc.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cd.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cd.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\cd.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cf.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cf.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\cf.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cg.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cg.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\cg.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ch.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ch.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ch.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ci.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ci.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ci.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ck.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ck.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ck.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cl.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cl.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\cl.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cm.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cm.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\cm.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cn.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cn.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\cn.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\co.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\co.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\co.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cr.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cr.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\cr.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cu.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cu.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\cu.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cv.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cv.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\cv.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cw.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cw.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\cw.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cx.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cx.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\cx.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cy.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cy.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\cy.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cz.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\cz.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\cz.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\de.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\de.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\de.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\dj.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\dj.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\dj.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\dk.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\dk.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\dk.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\dm.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\dm.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\dm.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\do.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\do.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\do.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\dz.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\dz.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\dz.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ec.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ec.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ec.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ee.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ee.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ee.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\eg.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\eg.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\eg.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\eh.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\eh.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\eh.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\er.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\er.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\er.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\es.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\es.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\es.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\et.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\et.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\et.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\eu.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\eu.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\eu.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\fi.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\fi.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\fi.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\fj.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\fj.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\fj.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\fk.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\fk.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\fk.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\fm.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\fm.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\fm.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\fo.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\fo.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\fo.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\fr.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\fr.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\fr.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ga.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ga.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ga.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gb-eng.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gb-eng.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\gb-eng.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gb-nir.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gb-nir.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\gb-nir.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gb-sct.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gb-sct.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\gb-sct.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gb-wls.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gb-wls.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\gb-wls.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gb.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gb.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\gb.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gd.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gd.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\gd.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ge.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ge.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ge.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gf.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gf.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\gf.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gg.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gg.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\gg.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gh.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gh.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\gh.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gi.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gi.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\gi.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gl.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gl.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\gl.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gm.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gm.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\gm.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gn.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gn.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\gn.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gp.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gp.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\gp.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gq.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gq.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\gq.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gr.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gr.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\gr.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gs.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gs.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\gs.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gt.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gt.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\gt.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gu.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gu.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\gu.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gw.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gw.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\gw.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gy.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\gy.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\gy.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\hk.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\hk.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\hk.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\hm.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\hm.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\hm.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\hn.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\hn.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\hn.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\hr.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\hr.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\hr.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ht.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ht.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ht.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\hu.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\hu.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\hu.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\id.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\id.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\id.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ie.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ie.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ie.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\il.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\il.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\il.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\im.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\im.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\im.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\in.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\in.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\in.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\io.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\io.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\io.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\iq.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\iq.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\iq.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ir.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ir.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ir.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\is.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\is.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\is.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\it.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\it.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\it.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\je.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\je.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\je.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\jm.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\jm.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\jm.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\jo.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\jo.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\jo.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\jp.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\jp.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\jp.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ke.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ke.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ke.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\kg.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\kg.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\kg.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\kh.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\kh.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\kh.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ki.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ki.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ki.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\km.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\km.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\km.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\kn.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\kn.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\kn.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\kp.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\kp.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\kp.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\kr.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\kr.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\kr.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\kw.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\kw.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\kw.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ky.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ky.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ky.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\kz.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\kz.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\kz.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\la.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\la.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\la.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\lb.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\lb.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\lb.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\lc.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\lc.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\lc.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\li.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\li.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\li.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\lk.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\lk.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\lk.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\lr.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\lr.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\lr.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ls.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ls.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ls.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\lt.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\lt.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\lt.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\lu.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\lu.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\lu.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\lv.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\lv.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\lv.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ly.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ly.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ly.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ma.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ma.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ma.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mc.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mc.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\mc.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\md.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\md.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\md.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\me.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\me.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\me.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mf.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mf.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\mf.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mg.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mg.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\mg.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mh.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mh.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\mh.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mk.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mk.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\mk.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ml.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ml.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ml.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mm.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mm.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\mm.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mn.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mn.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\mn.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mo.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mo.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\mo.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mp.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mp.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\mp.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mq.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mq.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\mq.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mr.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mr.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\mr.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ms.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ms.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ms.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mt.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mt.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\mt.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mu.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mu.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\mu.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mv.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mv.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\mv.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mw.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mw.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\mw.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mx.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mx.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\mx.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\my.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\my.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\my.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mz.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\mz.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\mz.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\na.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\na.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\na.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\nc.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\nc.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\nc.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ne.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ne.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ne.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\nf.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\nf.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\nf.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ng.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ng.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ng.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ni.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ni.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ni.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\nl.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\nl.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\nl.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\no.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\no.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\no.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\np.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\np.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\np.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\nr.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\nr.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\nr.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\nu.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\nu.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\nu.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\nz.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\nz.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\nz.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\om.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\om.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\om.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pa.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pa.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\pa.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pe.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pe.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\pe.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pf.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pf.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\pf.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pg.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pg.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\pg.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ph.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ph.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ph.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pk.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pk.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\pk.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pl.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pl.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\pl.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pm.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pm.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\pm.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pn.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pn.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\pn.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pr.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pr.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\pr.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ps.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ps.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ps.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pt.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pt.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\pt.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pw.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\pw.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\pw.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\py.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\py.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\py.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\qa.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\qa.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\qa.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\re.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\re.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\re.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ro.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ro.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ro.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\rs.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\rs.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\rs.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ru.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ru.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ru.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\rw.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\rw.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\rw.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sa.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sa.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\sa.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sb.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sb.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\sb.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sc.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sc.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\sc.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sd.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sd.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\sd.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\se.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\se.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\se.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sg.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sg.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\sg.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sh.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sh.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\sh.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\si.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\si.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\si.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sj.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sj.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\sj.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sk.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sk.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\sk.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sl.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sl.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\sl.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sm.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sm.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\sm.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sn.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sn.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\sn.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\so.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\so.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\so.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sr.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sr.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\sr.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ss.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ss.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ss.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\st.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\st.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\st.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sv.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sv.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\sv.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sx.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sx.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\sx.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sy.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sy.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\sy.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sz.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\sz.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\sz.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tc.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tc.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\tc.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\td.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\td.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\td.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tf.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tf.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\tf.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tg.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tg.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\tg.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\th.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\th.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\th.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tj.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tj.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\tj.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tk.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tk.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\tk.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tl.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tl.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\tl.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tm.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tm.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\tm.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tn.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tn.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\tn.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\to.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\to.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\to.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tr.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tr.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\tr.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tt.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tt.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\tt.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tv.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tv.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\tv.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tw.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tw.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\tw.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tz.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\tz.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\tz.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ua.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ua.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ua.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ug.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ug.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ug.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\um.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\um.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\um.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\us.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\us.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\us.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\uy.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\uy.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\uy.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\uz.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\uz.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\uz.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\va.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\va.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\va.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\vc.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\vc.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\vc.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ve.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ve.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ve.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\vg.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\vg.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\vg.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\vi.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\vi.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\vi.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\vn.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\vn.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\vn.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\vu.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\vu.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\vu.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\wf.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\wf.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\wf.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ws.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ws.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ws.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\xk.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\xk.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\xk.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ye.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\ye.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\ye.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\yt.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\yt.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\yt.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\za.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\za.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\za.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\zm.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\zm.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\zm.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\zw.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\flags\\zw.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\flags\\zw.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\acquisition_512.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\acquisition_512.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\illustrations\\acquisition_512.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\caja-del-paquete.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\caja-del-paquete.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\illustrations\\caja-del-paquete.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\clip-940.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\clip-940.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\illustrations\\clip-940.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\clip-940500.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\clip-940500.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\illustrations\\clip-940500.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\clip-label-sale.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\clip-label-sale.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\illustrations\\clip-label-sale.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\clip-label-sale500.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\clip-label-sale500.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\illustrations\\clip-label-sale500.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\clip-laptop-1.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\clip-laptop-1.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\illustrations\\clip-laptop-1.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\clip-laptop-1500.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\clip-laptop-1500.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\illustrations\\clip-laptop-1500.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\customer-support.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\customer-support.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\illustrations\\customer-support.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\editpreparacion.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\editpreparacion.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\illustrations\\editpreparacion.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\purchase-order_500.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\purchase-order_500.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\illustrations\\purchase-order_500.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\searching.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\searching.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\illustrations\\searching.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\social.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\social.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\illustrations\\social.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\stationery_500.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\illustrations\\stationery_500.png",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\illustrations\\stationery_500.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\logo.svg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\logo.svg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\logo.svg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\photos\\unsplash-1.jpg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\photos\\unsplash-1.jpg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\photos\\unsplash-1.jpg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\photos\\unsplash-2.jpg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\photos\\unsplash-2.jpg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\photos\\unsplash-2.jpg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\photos\\unsplash-3.jpg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\photos\\unsplash-3.jpg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\photos\\unsplash-3.jpg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\dashboard-analytics.jpg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\dashboard-analytics.jpg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\screenshots\\dashboard-analytics.jpg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\dashboard-crypto.jpg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\dashboard-crypto.jpg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\screenshots\\dashboard-crypto.jpg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\dashboard-default.jpg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\dashboard-default.jpg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\screenshots\\dashboard-default.jpg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\dashboard-saas.jpg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\dashboard-saas.jpg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\screenshots\\dashboard-saas.jpg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\dashboard-social.jpg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\dashboard-social.jpg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\screenshots\\dashboard-social.jpg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\mixed.jpg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\mixed.jpg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\screenshots\\mixed.jpg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\pages-projects-list.jpg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\pages-projects-list.jpg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\screenshots\\pages-projects-list.jpg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\sidebar-compact.jpg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\sidebar-compact.jpg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\screenshots\\sidebar-compact.jpg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\sidebar-right.jpg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\sidebar-right.jpg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\screenshots\\sidebar-right.jpg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\theme-colored.jpg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\theme-colored.jpg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\screenshots\\theme-colored.jpg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\theme-dark.jpg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\theme-dark.jpg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\screenshots\\theme-dark.jpg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\theme-default.jpg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\theme-default.jpg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\screenshots\\theme-default.jpg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\theme-light.jpg",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\img\\screenshots\\theme-light.jpg",
       "PackagePath": "staticwebassets\\Assets\\dist\\img\\screenshots\\theme-light.jpg"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\app.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\app.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\app.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\app.js.LICENSE.txt",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\app.js.LICENSE.txt",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\app.js.LICENSE.txt"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\af.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\af.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\af.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\ar.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\ar.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\ar.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\az.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\az.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\az.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\bg.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\bg.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\bg.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\bn.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\bn.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\bn.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\bs.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\bs.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\bs.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\ca.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\ca.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\ca.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\cs.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\cs.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\cs.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\da.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\da.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\da.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\de.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\de.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\de.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\dsb.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\dsb.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\dsb.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\el.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\el.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\el.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\en.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\en.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\en.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\eo.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\eo.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\eo.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\es.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\es.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\es.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\et.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\et.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\et.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\eu.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\eu.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\eu.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\fa.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\fa.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\fa.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\fi.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\fi.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\fi.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\fr.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\fr.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\fr.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\gl.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\gl.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\gl.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\he.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\he.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\he.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\hi.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\hi.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\hi.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\hr.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\hr.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\hr.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\hsb.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\hsb.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\hsb.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\hu.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\hu.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\hu.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\hy.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\hy.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\hy.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\id.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\id.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\id.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\is.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\is.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\is.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\it.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\it.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\it.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\ja.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\ja.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\ja.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\ka.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\ka.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\ka.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\km.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\km.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\km.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\ko.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\ko.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\ko.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\lt.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\lt.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\lt.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\lv.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\lv.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\lv.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\mk.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\mk.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\mk.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\ms.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\ms.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\ms.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\nb.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\nb.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\nb.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\ne.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\ne.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\ne.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\nl.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\nl.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\nl.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\pa.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\pa.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\pa.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\pl.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\pl.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\pl.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\ps.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\ps.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\ps.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\pt-BR.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\pt-BR.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\pt-BR.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\pt.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\pt.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\pt.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\ro.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\ro.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\ro.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\ru.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\ru.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\ru.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\sk.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\sk.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\sk.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\sl.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\sl.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\sl.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\sq.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\sq.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\sq.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\sr-Cyrl.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\sr-Cyrl.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\sr-Cyrl.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\sr.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\sr.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\sr.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\sv.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\sv.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\sv.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\te.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\te.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\te.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\th.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\th.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\th.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\tk.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\tk.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\tk.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\tr.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\tr.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\tr.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\uk.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\uk.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\uk.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\vi.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\vi.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\vi.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\zh-CN.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\zh-CN.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\zh-CN.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\zh-TW.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\i18n\\zh-TW.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\i18n\\zh-TW.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\select2.full.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\select2.full.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\select2.full.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\select2.full.min.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\select2.full.min.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\select2.full.min.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\select2.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\select2.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\select2.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\select2.min.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\select2.min.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\select2.min.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\dist\\js\\settings.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\dist\\js\\settings.js",
       "PackagePath": "staticwebassets\\Assets\\dist\\js\\settings.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\favicon.ico",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\favicon.ico",
       "PackagePath": "staticwebassets\\Assets\\favicon.ico"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\Assets\\favicon.png",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\Assets\\favicon.png",
       "PackagePath": "staticwebassets\\Assets\\favicon.png"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\css\\site.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\favicon.ico",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\favicon.ico",
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\js\\site.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\LICENSE",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\LICENSE",
       "PackagePath": "staticwebassets\\lib\\bootstrap"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.css.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.min.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.js.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.min.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map",
       "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt",
       "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\LICENSE.txt"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.js",
       "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.min.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.min.js",
       "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.min.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\jquery-validation\\LICENSE.md",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\jquery-validation\\LICENSE.md",
       "PackagePath": "staticwebassets\\lib\\jquery-validation\\LICENSE.md"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.js",
       "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\additional-methods.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.min.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.min.js",
       "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\additional-methods.min.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.js",
       "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\jquery.validate.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.min.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.min.js",
       "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\jquery.validate.min.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\jquery\\LICENSE.txt",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\jquery\\LICENSE.txt",
       "PackagePath": "staticwebassets\\lib\\jquery\\LICENSE.txt"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\jquery\\dist\\jquery.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\jquery\\dist\\jquery.js",
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\jquery\\dist\\jquery.min.js",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\jquery\\dist\\jquery.min.js",
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.js"
     },
     {
-      "Id": "C:\\Users\\MWZ-LAP\\Documents\\CM\\RH_CM\\RH_CM\\RH_CM\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
+      "Id": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
     },
     {
