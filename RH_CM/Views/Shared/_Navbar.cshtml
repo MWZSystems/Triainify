@@ -23,7 +23,25 @@
                             <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexDepartment"><i class="align-middle fas fa-store-alt"></i> Department</a>
                             <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexPosition"><i class="align-middle fas fa-chess-board"></i> Position</a>
                             <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourse"><i class="align-middle fas fa-book"></i> Course</a>
+                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseMaterial"><i class="align-middle fas fa-file-pdf"></i> CourseMaterial</a>
+                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexSupervisor"><i class="align-middle fas fa-users-cog"></i> Supervisor</a>
                             <a class="dropdown-item" asp-controller="HeadCount" asp-action="IndexHeadCount"><i class="align-middle fas fa-user-plus"></i> Onboarding</a>
+
+
+                            <!-- Separador -->
+                            <hr class="dropdown-divider" />
+
+                            <!-- Submenú Exams -->
+                            <div class="dropdown-mega-sublist">
+                                <h6 class="dropdown-header">Exams</h6>
+                                <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexTest">
+                                    <i class="align-middle fas fa-clipboard-list"></i> Test
+                                </a>
+                                <a class="dropdown-item" asp-controller="Catalog" asp-action="CreateQuestions">
+                                    <i class="align-middle fas fa-clipboard-list"></i> Questions
+                                </a>
+                            </div>
+
                         </div>
                     </div>
                 </div>

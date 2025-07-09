@@ -1,0 +1,174 @@
+﻿@model RH_CM.Models.CtCoursematerial
+
+@{
+    ViewData["Title"] = "Create Course Material";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">CREATE COURSE MATERIAL</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">New Material Details</h5>
+                <h6 class="card-subtitle text-muted">Complete the fields below. Fields marked with an asterisk (*) are required.</h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="CreateCourseMaterial" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="row">
+                        <!-- NameMaterial -->
+                        <div class="mb-3 col-md-12">
+                            <label asp-for="NameMaterial" class="form-label">Material Name <span class="text-danger">*</span></label>
+                            <input asp-for="NameMaterial" class="form-control" />
+                            <span asp-validation-for="NameMaterial" class="text-danger"></span>
+                        </div>
+
+                        <!-- Level -->
+                        <div class="mb-3 col-md-6">
+                            <label asp-for="Level" class="form-label">Level</label>
+                            <input asp-for="Level" class="form-control" type="number" min="0" />
+                            <span asp-validation-for="Level" class="text-danger"></span>
+                        </div>
+
+                        <!-- Upload File -->
+                        <div class="mb-3 col-md-12">
+                            <label class="form-label">Upload File (PDF) <span class="text-danger">*</span></label>
+                            <input type="file" name="uploadedFile" class="form-control" accept=".pdf" required />
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="row mt-4">
+                        <div class="col">
+                            <h5>Select Course</h5>
+                            <p class="text-muted">Select the course this material belongs to. Only one can be selected.</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    @if (((IEnumerable<RH_CM.Models.CtCourse>)ViewBag.Courses).Any())
+                                    {
+                                        <table id="courses-table" class="table table-striped table-hover" style="width:100%">
+                                            <thead class="table-primary">
+                                                <tr>
+                                                    <th></th>
+                                                    <th>ID</th>
+                                                    <th>Management System</th>
+                                                    <th>Course Code</th>
+                                                    <th>Course Name</th>
+                                                    <th>Validity (Days)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var c in (IEnumerable<RH_CM.Models.CtCourse>)ViewBag.Courses)
+                                                {
+                                                    <tr>
+                                                        <td class="text-center">
+                                                            <input type="radio" name="FkCourse" value="@c.PkCourse" />
+                                                        </td>
+                                                        <td>@c.PkCourse</td>
+                                                        <td>@c.ManagementSystem</td>
+                                                        <td>@c.Idcourse</td>
+                                                        <td>@c.CourseName</td>
+                                                        <td>@c.CourseValidityDays</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    }
+                                    else
+                                    {
+                                        <p>No courses available.</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="row mt-3">
+                        <div class="col-12 text-end">
+                            <a asp-action="IndexCourseMaterial" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Create
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        $(document).ready(function () {
+            $('#courses-table').DataTable({
+                responsive: true,
+                order: [],
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+                    "infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
+                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Entradas",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+
+            if ("@TempData["SuccessMessage"]" !== "") {
+                window.notyf.open({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+
+            if ("@TempData["ErrorMessage"]" !== "") {
+                window.notyf.open({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+
+            $(".select2").select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
+}

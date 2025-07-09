@@ -1,0 +1,110 @@
+﻿@model RH_CM.Models.CtSupervisor
+
+@{
+    ViewData["Title"] = "Edit Supervisor";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">EDIT SUPERVISOR</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Edit Supervisor Details</h5>
+                <h6 class="card-subtitle text-muted">Update the fields below. Fields marked with an asterisk (*) are required.</h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="EditSupervisor" method="post">
+                    @Html.HiddenFor(m => m.PkSupervisorId)
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="row">
+                        <!-- Headcount -->
+                        <div class="mb-3 col-md-6">
+                            <label asp-for="FkHeadcount" class="form-label">Headcount <span class="text-danger">*</span></label>
+                            <select asp-for="FkHeadcount" class="form-control select2" data-placeholder="-- Select Headcount --">
+                                <option></option>
+                                @foreach (var h in ViewBag.Headcount)
+                                {
+                                    <option value="@h.PkHeadcount">(@h.ControlNumber) @h.Names @h.LastName</option>
+                                }
+                            </select>
+                            <span asp-validation-for="FkHeadcount" class="text-danger"></span>
+                        </div>
+
+                        <!-- Department -->
+                        <div class="mb-3 col-md-6">
+                            <label asp-for="FkDepartment" class="form-label">Department <span class="text-danger">*</span></label>
+                            <select asp-for="FkDepartment" class="form-control select2" data-placeholder="-- Select Department --" asp-items="@(new SelectList(ViewBag.Departments, "PkDepartment", "NameDeparment", Model.FkDepartment))">
+                                <option></option>
+                            </select>
+                            <span asp-validation-for="FkDepartment" class="text-danger"></span>
+                        </div>
+
+                        <!-- Position -->
+                        <div class="mb-3 col-md-6">
+                            <label asp-for="FkPosition" class="form-label">Position <span class="text-danger">*</span></label>
+                            <select asp-for="FkPosition" class="form-control select2" data-placeholder="-- Select Position --" asp-items="@(new SelectList(ViewBag.Positions, "PkPosition", "NamePosition", Model.FkPosition))">
+                                <option></option>
+                            </select>
+                            <span asp-validation-for="FkPosition" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Submit and Cancel Buttons -->
+                    <div class="row">
+                        <div class="col-12 text-end">
+                            <a asp-action="IndexSupervisor" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Update
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        $(document).ready(function () {
+            if ("@TempData["SuccessMessage"]" !== "") {
+                window.notyf.open({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+
+            if ("@TempData["ErrorMessage"]" !== "") {
+                window.notyf.open({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+
+            $(".select2").select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
+}

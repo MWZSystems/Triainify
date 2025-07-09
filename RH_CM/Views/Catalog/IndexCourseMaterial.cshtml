@@ -1,0 +1,169 @@
+﻿@model IEnumerable<RH_CM.Models.CtCoursematerial>
+
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    ViewData["Title"] = "Course Materials";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">
+            <i class="align-middle fas fa-file-pdf"></i> @ViewData["Title"]
+        </h1>
+    </div>
+    <div class="col-auto">
+        <a class="btn btn-facebook" asp-action="CreateCourseMaterial">
+            <i class="align-middle fas fa-plus-square"></i> CREATE NEW MATERIAL
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+
+                @if (Model.Any())
+                {
+                    <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Course</th>
+                                <th>Level</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.PkCoursematerial</td>
+                                    <td>@item.NameMaterial</td>
+                                    <td>@(item.FkCourse ?? 0)</td>
+                                    <td>@(item.Level ?? 0)</td>
+                                    <td>
+                                        @{
+                                            string availabilityText = item.Available switch
+                                            {
+                                                1 => "Enabled",
+                                                0 => "Disabled",
+                                                _ => "Disabled"
+                                            };
+                                        }
+                                        @availabilityText
+                                    </td>
+                                    <td>
+                                        <div class="text-center">
+                                            <!-- View PDF -->
+                                            <a class="btn btn-info" asp-action="ViewPdfCourseMaterial" asp-route-id="@item.PkCoursematerial" target="_blank">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+
+                                            <!-- Download PDF -->
+                                            <a class="btn btn-primary" asp-action="DownloadCourseMaterial" asp-route-id="@item.PkCoursematerial">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+
+                                            <!-- Toggle Availability -->
+                                            <form asp-action="ToggleCourseMaterial" asp-route-id="@item.PkCoursematerial" method="post" style="display:inline;">
+                                                <button type="submit" onclick="return confirm('Are you sure you want to toggle availability of this material?')" class="btn @(item.Available == 1 ? "btn-success" : "btn-secondary")">
+                                                    <i class="fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
+                                                </button>
+                                            </form>
+
+                                            <!-- Edit -->
+                                            <a class="btn btn-warning" asp-action="EditCourseMaterial" asp-route-id="@item.PkCoursematerial">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+
+                                            @if (User.Identity.IsAuthenticated && User.IsInRole("Administrador"))
+                                            {
+                                                <!-- Delete -->
+                                                <form asp-action="DeleteCourseMaterial" asp-route-id="@item.PkCoursematerial" method="post" style="display:inline;">
+                                                    <button type="submit" onclick="return confirm('Are you sure you want to delete this material?')" class="btn btn-danger">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>No records found</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        $(document).ready(function () {
+            $('#datatables-responsive').DataTable({
+                responsive: true,
+                order: [],
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+                    "infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
+                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Entradas",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+
+            if ("@TempData["SuccessMessage"]" !== "") {
+                window.notyf.open({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: {
+                        x: 'center',
+                        y: 'top'
+                    },
+                    duration: 5000
+                });
+            }
+
+            if ("@TempData["ErrorMessage"]" !== "") {
+                window.notyf.open({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: {
+                        x: 'center',
+                        y: 'top'
+                    },
+                    duration: 5000
+                });
+            }
+        });
+    </script>
+}

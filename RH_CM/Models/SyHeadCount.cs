@@ -14,6 +14,7 @@ namespace RH_CM.Models
         public string LevelEmployee { get; set; } = null!;
         public string ShiftWork { get; set; } = null!;
         public DateTime StarDate { get; set; }
+        public DateTime? Layoffday { get; set; }
         public string Curp { get; set; } = null!;
         public string Rfc { get; set; } = null!;
         public string SocialSecurity { get; set; } = null!;
@@ -32,8 +33,7 @@ namespace RH_CM.Models
         public int FkDepartment { get; set; }
         public int FkPosition { get; set; }
         public int ZipCodesat { get; set; }
-        public string? SupervisorCode { get; set; }
-        public string? Supervisor { get; set; }
+        public int? FkSupervisorId { get; set; }
         public string Createuser { get; set; } = null!;
         public string Lastuser { get; set; } = null!;
         public DateTime Createdate { get; set; }

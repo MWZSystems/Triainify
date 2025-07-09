@@ -1,0 +1,116 @@
+﻿@model IEnumerable<RH_CM.Models.CtTest>
+
+@{
+    ViewData["Title"] = "Tests";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center"><i class="fas fa-clipboard-list"></i> TESTS</h1>
+    </div>
+    <div class="col-auto">
+        <a class="btn btn-facebook" asp-action="CreateTest">
+            <i class="fas fa-plus-square"></i> CREATE NEW TEST
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                @if (Model.Any())
+                {
+                    <table id="datatables-responsive" class="table table-striped table-hover">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>ID</th>
+                                <th>Test Name</th>
+                                <th>Course ID</th>
+                                <th>Level</th>
+                                <th>Available</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.PkTest</td>
+                                    <td>@item.TestName</td>
+                                    <td>@item.FkCourse</td>
+                                    <td>@item.CourseLevel</td>
+                                    <td>@(item.Available == 1 ? "Enabled" : "Disabled")</td>
+                                    <td>@item.Createdate.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        <a class="btn btn-warning" asp-action="EditTest" asp-route-id="@item.PkTest">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>No tests found.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        $(document).ready(function () {
+            $('#datatables-responsive').DataTable({
+                responsive: true,
+                order: [],
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+                    "infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
+                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+                    "lengthMenu": "Mostrar _MENU_ Entradas",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+
+            if ("@TempData["SuccessMessage"]") {
+                window.notyf.open({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+
+            if ("@TempData["ErrorMessage"]") {
+                window.notyf.open({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+        });
+    </script>
+}

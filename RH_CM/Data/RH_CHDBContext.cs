@@ -23,25 +23,36 @@ namespace RH_CM.Data
         public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; } = null!;
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; } = null!;
         public virtual DbSet<AspNetUserToken> AspNetUserTokens { get; set; } = null!;
+        public virtual DbSet<CtCorrectanswer> CtCorrectanswers { get; set; } = null!;
         public virtual DbSet<CtCourse> CtCourses { get; set; } = null!;
         public virtual DbSet<CtCourseassignment> CtCourseassignments { get; set; } = null!;
+        public virtual DbSet<CtCoursematerial> CtCoursematerials { get; set; } = null!;
         public virtual DbSet<CtDepartment> CtDepartments { get; set; } = null!;
+        public virtual DbSet<CtOption> CtOptions { get; set; } = null!;
         public virtual DbSet<CtPosition> CtPositions { get; set; } = null!;
+        public virtual DbSet<CtQuestion> CtQuestions { get; set; } = null!;
+        public virtual DbSet<CtResult> CtResults { get; set; } = null!;
+        public virtual DbSet<CtSupervisor> CtSupervisors { get; set; } = null!;
+        public virtual DbSet<CtTest> CtTests { get; set; } = null!;
+        public virtual DbSet<CtTestConsolidado> CtTestConsolidados { get; set; } = null!;
         public virtual DbSet<SyCoursecompleted> SyCoursecompleteds { get; set; } = null!;
         public virtual DbSet<SyExcludedcourseassignment> SyExcludedcourseassignments { get; set; } = null!;
         public virtual DbSet<SyHeadCount> SyHeadCounts { get; set; } = null!;
+        public virtual DbSet<SyUserAnswer> SyUserAnswers { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=ch-mxmain1\\barcode; Database=RH_CHDB; User Id= sa; Password=Adm1n12;");
+                optionsBuilder.UseSqlServer("Server=MEGAWARZPC; Database=RH_CHDB;Trusted_Connection=True;");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.UseCollation("SQL_Latin1_General_CP1_CI_AS");
+
             modelBuilder.Entity<AspNetRole>(entity =>
             {
                 entity.HasIndex(e => e.NormalizedName, "RoleNameIndex")
@@ -125,6 +136,40 @@ namespace RH_CM.Data
                     .HasForeignKey(d => d.UserId);
             });
 
+            modelBuilder.Entity<CtCorrectanswer>(entity =>
+            {
+                entity.HasKey(e => e.PkAnswers)
+                    .HasName("PK__CT_CORRE__5906CE16FD175DB8");
+
+                entity.ToTable("CT_CORRECTANSWERS");
+
+                entity.Property(e => e.PkAnswers).HasColumnName("PK_ANSWERS");
+
+                entity.Property(e => e.Available).HasColumnName("AVAILABLE");
+
+                entity.Property(e => e.Createdate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CREATEDATE");
+
+                entity.Property(e => e.Createuser)
+                    .HasMaxLength(250)
+                    .HasColumnName("CREATEUSER");
+
+                entity.Property(e => e.FkOptions)
+                    .IsUnicode(false)
+                    .HasColumnName("FK_OPTIONS");
+
+                entity.Property(e => e.FkQuestions).HasColumnName("FK_QUESTIONS");
+
+                entity.Property(e => e.Lastupatedate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("LASTUPATEDATE");
+
+                entity.Property(e => e.Lastupdateuser)
+                    .HasMaxLength(250)
+                    .HasColumnName("LASTUPDATEUSER");
+            });
+
             modelBuilder.Entity<CtCourse>(entity =>
             {
                 entity.HasKey(e => e.PkCourse);
@@ -173,6 +218,45 @@ namespace RH_CM.Data
                 entity.Property(e => e.LastUpdateUser).HasMaxLength(50);
             });
 
+            modelBuilder.Entity<CtCoursematerial>(entity =>
+            {
+                entity.HasKey(e => e.PkCoursematerial)
+                    .HasName("PK__CT_COURS__D3564EC044EEDBD1");
+
+                entity.ToTable("CT_COURSEMATERIAL");
+
+                entity.Property(e => e.PkCoursematerial).HasColumnName("PK_COURSEMATERIAL");
+
+                entity.Property(e => e.Available).HasColumnName("available");
+
+                entity.Property(e => e.Createdate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("createdate");
+
+                entity.Property(e => e.Createuser)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("createuser");
+
+                entity.Property(e => e.File).HasColumnName("FILE");
+
+                entity.Property(e => e.FkCourse).HasColumnName("FK_Course");
+
+                entity.Property(e => e.Lastupdatedate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("lastupdatedate");
+
+                entity.Property(e => e.Lastupdateuser)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("lastupdateuser");
+
+                entity.Property(e => e.NameMaterial)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("NAME_MATERIAL");
+            });
+
             modelBuilder.Entity<CtDepartment>(entity =>
             {
                 entity.HasKey(e => e.PkDepartment);
@@ -202,6 +286,40 @@ namespace RH_CM.Data
                 entity.Property(e => e.NameDeparment)
                     .HasMaxLength(50)
                     .HasColumnName("NAME_DEPARMENT");
+            });
+
+            modelBuilder.Entity<CtOption>(entity =>
+            {
+                entity.HasKey(e => e.PkOptions)
+                    .HasName("PK__CT_OPTIO__B66109E91B9AFFB0");
+
+                entity.ToTable("CT_OPTIONS");
+
+                entity.Property(e => e.PkOptions).HasColumnName("PK_OPTIONS");
+
+                entity.Property(e => e.Answer).HasColumnName("ANSWER");
+
+                entity.Property(e => e.Available).HasColumnName("AVAILABLE");
+
+                entity.Property(e => e.Createdate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CREATEDATE");
+
+                entity.Property(e => e.Createuser)
+                    .HasMaxLength(250)
+                    .HasColumnName("CREATEUSER");
+
+                entity.Property(e => e.FkQuestions).HasColumnName("FK_QUESTIONS");
+
+                entity.Property(e => e.Lastupatedate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("LASTUPATEDATE");
+
+                entity.Property(e => e.Lastupdateuser)
+                    .HasMaxLength(250)
+                    .HasColumnName("LASTUPDATEUSER");
+
+                entity.Property(e => e.Options).HasColumnName("OPTIONS");
             });
 
             modelBuilder.Entity<CtPosition>(entity =>
@@ -237,6 +355,178 @@ namespace RH_CM.Data
                 entity.Property(e => e.NamePositionEnglish)
                     .HasMaxLength(50)
                     .HasColumnName("NAME_POSITION_ENGLISH");
+            });
+
+            modelBuilder.Entity<CtQuestion>(entity =>
+            {
+                entity.HasKey(e => e.PkQuestions)
+                    .HasName("PK__CT_QUEST__F76D2C55358E8D1C");
+
+                entity.ToTable("CT_QUESTIONS");
+
+                entity.Property(e => e.PkQuestions).HasColumnName("PK_QUESTIONS");
+
+                entity.Property(e => e.Available).HasColumnName("AVAILABLE");
+
+                entity.Property(e => e.Createdate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CREATEDATE");
+
+                entity.Property(e => e.Createuser)
+                    .HasMaxLength(250)
+                    .HasColumnName("CREATEUSER");
+
+                entity.Property(e => e.FkTest).HasColumnName("FK_TEST");
+
+                entity.Property(e => e.Lastupatedate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("LASTUPATEDATE");
+
+                entity.Property(e => e.Lastupdateuser)
+                    .HasMaxLength(250)
+                    .HasColumnName("LASTUPDATEUSER");
+
+                entity.Property(e => e.Question).HasColumnName("QUESTION");
+            });
+
+            modelBuilder.Entity<CtResult>(entity =>
+            {
+                entity.HasKey(e => e.PkResults)
+                    .HasName("PK__CT_RESUL__2E829DC12CA8D00E");
+
+                entity.ToTable("CT_RESULTS");
+
+                entity.Property(e => e.PkResults).HasColumnName("PK_RESULTS");
+
+                entity.Property(e => e.Available).HasColumnName("AVAILABLE");
+
+                entity.Property(e => e.Createdate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CREATEDATE");
+
+                entity.Property(e => e.Createuser)
+                    .HasMaxLength(250)
+                    .HasColumnName("CREATEUSER");
+
+                entity.Property(e => e.FkHeadcount).HasColumnName("FK_HEADCOUNT");
+
+                entity.Property(e => e.FkTest).HasColumnName("FK_TEST");
+
+                entity.Property(e => e.Lastupatedate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("LASTUPATEDATE");
+
+                entity.Property(e => e.Lastupdateuser)
+                    .HasMaxLength(250)
+                    .HasColumnName("LASTUPDATEUSER");
+
+                entity.Property(e => e.Results)
+                    .HasColumnType("decimal(2, 2)")
+                    .HasColumnName("RESULTS");
+            });
+
+            modelBuilder.Entity<CtSupervisor>(entity =>
+            {
+                entity.HasKey(e => e.PkSupervisorId);
+
+                entity.ToTable("CT_SUPERVISOR");
+
+                entity.Property(e => e.PkSupervisorId).HasColumnName("PK_SUPERVISOR_ID");
+
+                entity.Property(e => e.Available).HasColumnName("AVAILABLE");
+
+                entity.Property(e => e.Createdate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CREATEDATE");
+
+                entity.Property(e => e.Createuser)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("CREATEUSER");
+
+                entity.Property(e => e.FkDepartment).HasColumnName("FK_DEPARTMENT");
+
+                entity.Property(e => e.FkHeadcount).HasColumnName("FK_HEADCOUNT");
+
+                entity.Property(e => e.FkPosition).HasColumnName("FK_POSITION");
+
+                entity.Property(e => e.Lastupdatedate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("LASTUPDATEDATE");
+
+                entity.Property(e => e.Lastupdateuser)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("LASTUPDATEUSER");
+            });
+
+            modelBuilder.Entity<CtTest>(entity =>
+            {
+                entity.HasKey(e => e.PkTest)
+                    .HasName("PK__CT_TEST__599995560787B87A");
+
+                entity.ToTable("CT_TEST");
+
+                entity.Property(e => e.PkTest).HasColumnName("PK_TEST");
+
+                entity.Property(e => e.Available).HasColumnName("AVAILABLE");
+
+                entity.Property(e => e.CourseLevel).HasColumnName("COURSE_LEVEL");
+
+                entity.Property(e => e.Createdate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CREATEDATE");
+
+                entity.Property(e => e.Createuser)
+                    .HasMaxLength(250)
+                    .HasColumnName("CREATEUSER");
+
+                entity.Property(e => e.FkCourse).HasColumnName("FK_COURSE");
+
+                entity.Property(e => e.Lastupatedate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("LASTUPATEDATE");
+
+                entity.Property(e => e.Lastupdateuser)
+                    .HasMaxLength(250)
+                    .HasColumnName("LASTUPDATEUSER");
+
+                entity.Property(e => e.TestName)
+                    .HasMaxLength(250)
+                    .HasColumnName("TEST_NAME");
+            });
+
+            modelBuilder.Entity<CtTestConsolidado>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("CT_TEST_CONSOLIDADO");
+
+                entity.Property(e => e.Answer).HasColumnName("ANSWER");
+
+                entity.Property(e => e.Available).HasColumnName("AVAILABLE");
+
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.CreateUser).HasMaxLength(50);
+
+                entity.Property(e => e.FkCourse).HasColumnName("FK_Course");
+
+                entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.LastUpdateUser).HasMaxLength(100);
+
+                entity.Property(e => e.Level).HasColumnName("LEVEL");
+
+                entity.Property(e => e.Options).HasColumnName("OPTIONS");
+
+                entity.Property(e => e.Question).HasColumnName("QUESTION");
+
+                entity.Property(e => e.QuestionNumber).HasColumnName("QUESTION_NUMBER");
+
+                entity.Property(e => e.TestName)
+                    .HasMaxLength(100)
+                    .HasColumnName("TEST_NAME");
             });
 
             modelBuilder.Entity<SyCoursecompleted>(entity =>
@@ -333,6 +623,8 @@ namespace RH_CM.Data
 
                 entity.Property(e => e.FkPosition).HasColumnName("FK_POSITION");
 
+                entity.Property(e => e.FkSupervisorId).HasColumnName("FK_SUPERVISOR_ID");
+
                 entity.Property(e => e.LastName)
                     .HasMaxLength(50)
                     .HasColumnName("LAST_NAME");
@@ -344,6 +636,10 @@ namespace RH_CM.Data
                 entity.Property(e => e.Lastuser)
                     .HasMaxLength(50)
                     .HasColumnName("LASTUSER");
+
+                entity.Property(e => e.Layoffday)
+                    .HasColumnType("date")
+                    .HasColumnName("LAYOFFDAY");
 
                 entity.Property(e => e.LevelEmployee)
                     .HasMaxLength(10)
@@ -403,17 +699,43 @@ namespace RH_CM.Data
                     .HasMaxLength(100)
                     .HasColumnName("STREET");
 
-                entity.Property(e => e.Supervisor)
-                    .HasMaxLength(20)
-                    .HasColumnName("SUPERVISOR");
-
-                entity.Property(e => e.SupervisorCode)
-                    .HasMaxLength(20)
-                    .HasColumnName("SUPERVISOR_CODE");
-
                 entity.Property(e => e.ZipCode).HasColumnName("ZIP_CODE");
 
                 entity.Property(e => e.ZipCodesat).HasColumnName("ZIP_CODESAT");
+            });
+
+            modelBuilder.Entity<SyUserAnswer>(entity =>
+            {
+                entity.HasKey(e => e.PkUserAnswers)
+                    .HasName("PK__SY_USER___33056E3502EB52C9");
+
+                entity.ToTable("SY_USER_ANSWERS");
+
+                entity.Property(e => e.PkUserAnswers).HasColumnName("PK_USER_ANSWERS");
+
+                entity.Property(e => e.Available).HasColumnName("AVAILABLE");
+
+                entity.Property(e => e.Createdate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CREATEDATE");
+
+                entity.Property(e => e.Createuser)
+                    .HasMaxLength(250)
+                    .HasColumnName("CREATEUSER");
+
+                entity.Property(e => e.FkQuestions).HasColumnName("FK_QUESTIONS");
+
+                entity.Property(e => e.Lastupatedate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("LASTUPATEDATE");
+
+                entity.Property(e => e.Lastupdateuser)
+                    .HasMaxLength(250)
+                    .HasColumnName("LASTUPDATEUSER");
+
+                entity.Property(e => e.UserAnswers)
+                    .IsUnicode(false)
+                    .HasColumnName("USER_ANSWERS");
             });
 
             OnModelCreatingPartial(modelBuilder);

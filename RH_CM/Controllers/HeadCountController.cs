@@ -232,24 +232,37 @@ namespace RH_CM.Controllers
         }
 
         // Método de inicialización simplificado
-
         private CreateHeadCountViewModel InitializeCreateHeadCount()
         {
             var departments = _context.CtDepartments.ToList();
             var positions = _context.CtPositions.ToList();
-            var syHeadCounts = _context.SyHeadCounts
-                                .Where(s => !string.IsNullOrEmpty(s.SupervisorCode))
-                                .ToList();
+
+            var supervisors = (
+                from s in _context.CtSupervisors
+                join h in _context.SyHeadCounts
+                    on s.FkHeadcount equals h.PkHeadcount
+                where s.Available == 1 && h.Available == 1
+                select new SupervisorDisplayViewModel
+                {
+                    PkSupervisorId = s.PkSupervisorId,
+                    FkHeadcount = s.FkHeadcount,
+                    ControlNumber = h.ControlNumber,
+                    Names = h.Names,
+                    SecondName = h.SecondName,
+                    LastName = h.LastName
+                }
+            ).ToList();
 
             var model = new CreateHeadCountViewModel
             {
                 Departments = departments,
                 Position = positions,
-                SyHeadCount = syHeadCounts
+                Supervisors = supervisors
             };
 
             return model;
         }
+
 
         // GET: HeadCount/Create
         [Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
@@ -268,10 +281,24 @@ namespace RH_CM.Controllers
             {
                 model.Departments = _context.CtDepartments.ToList();
                 model.Position = _context.CtPositions.ToList();
-                model.SyHeadCount = _context.SyHeadCounts.ToList();
+                model.Supervisors = (
+                    from s in _context.CtSupervisors
+                    join h in _context.SyHeadCounts
+                        on s.FkHeadcount equals h.PkHeadcount
+                    where s.Available == 1 && h.Available == 1
+                    select new SupervisorDisplayViewModel
+                    {
+                        PkSupervisorId = s.PkSupervisorId,
+                        FkHeadcount = s.FkHeadcount,
+                        ControlNumber = h.ControlNumber,
+                        Names = h.Names,
+                        SecondName = h.SecondName,
+                        LastName = h.LastName
+                    }
+                ).ToList();
             }
 
-            // Helper method to set error message and reload view
+            // Helper method to return with error
             IActionResult ReturnWithError(string errorMessage)
             {
                 TempData["ErrorMessage"] = errorMessage;
@@ -281,30 +308,21 @@ namespace RH_CM.Controllers
 
             try
             {
-                // Validar el modelo
                 if (!ModelState.IsValid)
                 {
                     ReloadViewData();
-                    //TempData["ErrorMessage"] = errorMessage;
                     return View(model);
                 }
 
-                // Validar si el SupervisorCode ya existe
-                if (!string.IsNullOrWhiteSpace(model.AssignSupervisorCode))
-                {
-                    if (_context.SyHeadCounts.Any(s => s.SupervisorCode == model.AssignSupervisorCode && s.Available == 1))
-                        return ReturnWithError("The 'SupervisorCode' already exists and is marked as Available.");
-                }
-
-                // Validar LastName o SecondName
+                // Validate LastName or SecondName
                 if (string.IsNullOrWhiteSpace(model.LastName) && string.IsNullOrWhiteSpace(model.SecondName))
                     return ReturnWithError("Please provide either a Last Name or a Second Name.");
 
-                // Validar duplicados en ControlNumber
+                // Validate duplicate ControlNumber
                 if (_context.SyHeadCounts.Any(h => h.ControlNumber == model.ControlNumber))
-                    return ReturnWithError("The 'Control Number' already exists.");
+                    return ReturnWithError("The Control Number already exists.");
 
-                // Crear y guardar el nuevo registro
+                // Create entity
                 var headCount = new SyHeadCount
                 {
                     ControlNumber = model.ControlNumber,
@@ -333,8 +351,7 @@ namespace RH_CM.Controllers
                     FkDepartment = model.FkDepartment,
                     FkPosition = model.FkPosition,
                     ZipCodesat = model.ZipCodesat,
-                    SupervisorCode = model.AssignSupervisorCode ?? "",
-                    Supervisor = model.Supervisor ?? "",
+                    FkSupervisorId = model.FkSupervisorId,
                     Createuser = "ADMIN",
                     Lastuser = "ADMIN",
                     Createdate = DateTime.Now,
@@ -350,7 +367,6 @@ namespace RH_CM.Controllers
             }
             catch (Exception ex)
             {
-                // Manejo de errores
                 TempData["ErrorMessage"] = $"An error occurred while creating the head count: {ex.Message}";
                 ReloadViewData();
                 return View(model);
@@ -372,8 +388,8 @@ namespace RH_CM.Controllers
                 PkHeadcount = headCount.PkHeadcount,
                 ControlNumber = headCount.ControlNumber,
                 Names = headCount.Names,
-                LastName = headCount.LastName ?? "", // Default to empty string if null
-                SecondName = headCount.SecondName ?? "", // Default to empty string if null
+                LastName = headCount.LastName ?? "",
+                SecondName = headCount.SecondName ?? "",
                 LevelEmployee = headCount.LevelEmployee,
                 ShiftWork = headCount.ShiftWork,
                 StarDate = headCount.StarDate,
@@ -382,31 +398,41 @@ namespace RH_CM.Controllers
                 SocialSecurity = headCount.SocialSecurity,
                 Birthdate = headCount.Birthdate,
                 Sex = headCount.Sex,
-                MaritalStatus = headCount.MaritalStatus ?? "", // Default to empty string if null
+                MaritalStatus = headCount.MaritalStatus ?? "",
                 Street = headCount.Street,
                 Neighborhood = headCount.Neighborhood,
-                City = headCount.City ?? "", // Default to CHIHUAHUA if null
+                City = headCount.City ?? "CHIHUAHUA",
                 ZipCode = headCount.ZipCode,
                 Phone1 = headCount.Phone1,
-                Phone2 = headCount.Phone2 ?? "0", // Default to "0" if null
-                Email = headCount.Email ?? "", // Default to empty string if null
-                EducationLevel = headCount.EducationLevel ?? "", // Default to empty string if null
-                Specialization = headCount.Specialization ?? "", // Default to empty string if null
+                Phone2 = headCount.Phone2 ?? "0",
+                Email = headCount.Email ?? "",
+                EducationLevel = headCount.EducationLevel ?? "",
+                Specialization = headCount.Specialization ?? "",
                 FkDepartment = headCount.FkDepartment,
                 FkPosition = headCount.FkPosition,
                 ZipCodesat = headCount.ZipCodesat,
-                AssignSupervisorCode = headCount.SupervisorCode ?? "", // Default to empty string if null
-                Supervisor = headCount.Supervisor ?? "", // Default to empty string if null
-
-                // Load related data for dropdowns
+                FkSupervisorId = headCount.FkSupervisorId,
                 Departments = _context.CtDepartments.ToList(),
                 Position = _context.CtPositions.ToList(),
-                SyHeadCount = _context.SyHeadCounts.ToList()
+                Supervisors = (
+                    from supervisor in _context.CtSupervisors
+                    join sHead in _context.SyHeadCounts
+                        on supervisor.FkHeadcount equals sHead.PkHeadcount
+                    where supervisor.Available == 1 && sHead.Available == 1
+                    select new SupervisorDisplayViewModel
+                    {
+                        PkSupervisorId = supervisor.PkSupervisorId,
+                        FkHeadcount = supervisor.FkHeadcount,
+                        ControlNumber = sHead.ControlNumber,
+                        Names = sHead.Names,
+                        SecondName = sHead.SecondName,
+                        LastName = sHead.LastName
+                    }
+                ).ToList()
             };
 
             return View(viewModel);
         }
-
 
         [HttpPost]
         [Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
@@ -418,7 +444,21 @@ namespace RH_CM.Controllers
             {
                 viewModel.Departments = _context.CtDepartments.ToList();
                 viewModel.Position = _context.CtPositions.ToList();
-                viewModel.SyHeadCount = _context.SyHeadCounts.ToList();
+                viewModel.Supervisors = (
+                    from supervisor in _context.CtSupervisors
+                    join sHead in _context.SyHeadCounts
+                        on supervisor.FkHeadcount equals sHead.PkHeadcount
+                    where supervisor.Available == 1 && sHead.Available == 1
+                    select new SupervisorDisplayViewModel
+                    {
+                        PkSupervisorId = supervisor.PkSupervisorId,
+                        FkHeadcount = supervisor.FkHeadcount,
+                        ControlNumber = sHead.ControlNumber,
+                        Names = sHead.Names,
+                        SecondName = sHead.SecondName,
+                        LastName = sHead.LastName
+                    }
+                ).ToList();
             }
 
             // Helper method to set error message and reload view
@@ -445,13 +485,6 @@ namespace RH_CM.Controllers
                     return View(viewModel);
                 }
 
-                // Validar si el SupervisorCode ya existe, excluyendo el registro actual
-                if (!string.IsNullOrWhiteSpace(viewModel.AssignSupervisorCode))
-                {
-                    if (_context.SyHeadCounts.Any(s => s.SupervisorCode == viewModel.AssignSupervisorCode && s.Available == 1 && s.PkHeadcount != viewModel.PkHeadcount))
-                        return ReturnWithError("The 'SupervisorCode' already exists and is marked as Available.");
-                }
-
                 // Validar LastName o SecondName
                 if (string.IsNullOrWhiteSpace(viewModel.LastName) && string.IsNullOrWhiteSpace(viewModel.SecondName))
                     return ReturnWithError("Please provide either a Last Name or a Second Name.");
@@ -463,8 +496,8 @@ namespace RH_CM.Controllers
                 // Actualizar headCount con datos validados
                 headCount.ControlNumber = viewModel.ControlNumber;
                 headCount.Names = viewModel.Names;
-                headCount.LastName = viewModel.LastName ?? ""; // Default to empty string if null
-                headCount.SecondName = viewModel.SecondName ?? ""; // Default to empty string if null
+                headCount.LastName = viewModel.LastName ?? "";
+                headCount.SecondName = viewModel.SecondName ?? "";
                 headCount.LevelEmployee = viewModel.LevelEmployee;
                 headCount.ShiftWork = viewModel.ShiftWork;
                 headCount.StarDate = viewModel.StarDate;
@@ -473,21 +506,20 @@ namespace RH_CM.Controllers
                 headCount.SocialSecurity = viewModel.SocialSecurity;
                 headCount.Birthdate = viewModel.Birthdate;
                 headCount.Sex = viewModel.Sex;
-                headCount.MaritalStatus = viewModel.MaritalStatus ?? ""; // Default to empty string if null
+                headCount.MaritalStatus = viewModel.MaritalStatus ?? "";
                 headCount.Street = viewModel.Street;
                 headCount.Neighborhood = viewModel.Neighborhood;
                 headCount.City = viewModel.City ?? "CHIHUAHUA";
                 headCount.ZipCode = viewModel.ZipCode;
                 headCount.Phone1 = viewModel.Phone1;
-                headCount.Phone2 = viewModel.Phone2 ?? "0"; // Default to "0" if null
-                headCount.Email = viewModel.Email ?? ""; // Default to empty string if null
-                headCount.EducationLevel = viewModel.EducationLevel ?? ""; // Default to empty string if null
-                headCount.Specialization = viewModel.Specialization ?? ""; // Default to empty string if null
+                headCount.Phone2 = viewModel.Phone2 ?? "0";
+                headCount.Email = viewModel.Email ?? "";
+                headCount.EducationLevel = viewModel.EducationLevel ?? "";
+                headCount.Specialization = viewModel.Specialization ?? "";
                 headCount.FkDepartment = viewModel.FkDepartment;
                 headCount.FkPosition = viewModel.FkPosition;
                 headCount.ZipCodesat = viewModel.ZipCodesat;
-                headCount.SupervisorCode = viewModel.AssignSupervisorCode ?? "";
-                headCount.Supervisor = viewModel.Supervisor ?? "";
+                headCount.FkSupervisorId = viewModel.FkSupervisorId;
                 headCount.Lastuser = "ADMIN";
                 headCount.Lastupdate = DateTime.Now;
 
@@ -504,6 +536,7 @@ namespace RH_CM.Controllers
                 return View(viewModel);
             }
         }
+
         // POST: SyHeadCounts/Delete/5
         [HttpPost, ActionName("DeleteHeadCount")]
         [Authorize(Roles = "Administrador, RHGerente")]

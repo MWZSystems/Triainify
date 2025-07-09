@@ -153,22 +153,32 @@
                         </div>
 
                         <div class="mb-2 col-md-3">
-                            <label asp-for="AssignSupervisorCode" class="form-label">SupervisorCode</label>
-                            <input type="text" asp-for="AssignSupervisorCode" class="form-control" placeholder="Enter SupervisorCode" />
-                            <span asp-validation-for="AssignSupervisorCode" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-2 col-md-3">
-                            <label asp-for="Supervisor" class="form-label">Supervisor</label>
-                            <select asp-for="Supervisor" class="form-control select2">
-                                <option disabled selected>--- SELECT SUPERVISOR ---</option>
-                                @foreach (var supervisor in Model.SyHeadCount)
+                            <label asp-for="FkDepartment" class="form-label">Department<span class="text-danger">*</span></label>
+                            <select asp-for="FkDepartment" class="form-control select2">
+                                <option disabled selected>--- SELECT OPTION ---</option>
+                                @foreach (var department in Model.Departments)
                                 {
-                                    <option value="@supervisor.SupervisorCode">(@supervisor.ControlNumber) @supervisor.Names @supervisor.LastName</option>
+                                    <option value="@department.PkDepartment">@department.NameDeparment</option>
                                 }
                             </select>
-                            <span asp-validation-for="Supervisor" class="text-danger"></span>
+                            <span asp-validation-for="FkDepartment" class="text-danger"></span>
                         </div>
+
+
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="FkSupervisorId" class="form-label">Supervisor</label>
+                            <select asp-for="FkSupervisorId" class="form-control select2">
+                                <option disabled selected>--- SELECT SUPERVISOR ---</option>
+                                @foreach (var supervisor in Model.Supervisors)
+                                {
+                                    <option value="@supervisor.PkSupervisorId">
+                                        (@supervisor.ControlNumber) @supervisor.Names @supervisor.SecondName @supervisor.LastName
+                                    </option>
+                                }
+                            </select>
+                            <span asp-validation-for="FkSupervisorId" class="text-danger"></span>
+                        </div>
+
                     </div>
                     <div class="row">
                         <!-- Fifth Row -->
@@ -182,17 +192,7 @@
                             </select>
                             <span asp-validation-for="ShiftWork" class="text-danger"></span>
                         </div>
-                        <div class="mb-2 col-md-3">
-                            <label asp-for="FkDepartment" class="form-label">Department<span class="text-danger">*</span></label>
-                            <select asp-for="FkDepartment" class="form-control select2">
-                                <option disabled selected>--- SELECT OPTION ---</option>
-                                @foreach (var department in Model.Departments)
-                                {
-                                    <option value="@department.PkDepartment">@department.NameDeparment</option>
-                                }
-                            </select>
-                            <span asp-validation-for="FkDepartment" class="text-danger"></span>
-                        </div>
+
                         <div class="mb-2 col-md-3">
                             <label asp-for="FkPosition" class="form-label">Position <span class="text-danger">*</span></label>
                             <select asp-for="FkPosition" class="form-control select2">

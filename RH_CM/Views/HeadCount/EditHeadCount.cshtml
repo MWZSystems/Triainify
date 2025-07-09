@@ -152,21 +152,29 @@
                             <span asp-validation-for="Specialization" class="text-danger"></span>
                         </div>
                         <div class="mb-2 col-md-3">
-                            @* <label asp-for="SupervisorCode" class="form-label">SupervisorCode</label>
-                            <input type="text" asp-for="SupervisorCode" class="form-control" placeholder="Enter SupervisorCode" />
-                            <span asp-validation-for="SupervisorCode" class="text-danger"></span> *@
+                            <label asp-for="FkDepartment" class="form-label">Department</label>
+                            <select asp-for="FkDepartment" class="form-control select2">
+                                <option disabled selected>--- SELECT OPTION ---</option>
+                                @foreach (var department in Model.Departments)
+                                {
+                                    <option value="@department.PkDepartment">@department.NameDeparment</option>
+                                }
+                            </select>
+                            <span asp-validation-for="FkDepartment" class="text-danger"></span>
                         </div>
 
                         <div class="mb-2 col-md-3">
-                            <label asp-for="Supervisor" class="form-label">Supervisor</label>
-                            <select asp-for="Supervisor" class="form-control select2">
+                            <label asp-for="FkSupervisorId" class="form-label">Supervisor</label>
+                            <select asp-for="FkSupervisorId" class="form-control select2">
                                 <option disabled selected>--- SELECT SUPERVISOR ---</option>
-                                @foreach (var supervisor in Model.SyHeadCount)
+                                @foreach (var supervisor in Model.Supervisors)
                                 {
-                                    <option value="@supervisor.SupervisorCode">(@supervisor.ControlNumber) @supervisor.Names @supervisor.LastName</option>
+                                    <option value="@supervisor.PkSupervisorId">
+                                        (@supervisor.ControlNumber) @supervisor.Names @supervisor.SecondName @supervisor.LastName
+                                    </option>
                                 }
                             </select>
-                            <span asp-validation-for="Supervisor" class="text-danger"></span>
+                            <span asp-validation-for="FkSupervisorId" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="row">
@@ -181,17 +189,7 @@
                             </select>
                             <span asp-validation-for="ShiftWork" class="text-danger"></span>
                         </div>
-                        <div class="mb-2 col-md-3">
-                            <label asp-for="FkDepartment" class="form-label">Department</label>
-                            <select asp-for="FkDepartment" class="form-control select2">
-                                <option disabled selected>--- SELECT OPTION ---</option>
-                                @foreach (var department in Model.Departments)
-                                {
-                                    <option value="@department.PkDepartment">@department.NameDeparment</option>
-                                }
-                            </select>
-                            <span asp-validation-for="FkDepartment" class="text-danger"></span>
-                        </div>
+                        
                         <div class="mb-2 col-md-3">
                             <label asp-for="FkPosition" class="form-label">Position <span class="text-danger">*</span></label>
                             <select asp-for="FkPosition" class="form-control select2">
@@ -245,43 +243,34 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // Mostrar mensajes de éxito y error
-        if ("@TempData["SuccessMessage"]" !== "") {
-            window.notyf.open({
-                type: 'success',
-                message: "@TempData["SuccessMessage"]",
-                ripple: true,
-                dismissible: true,
-                position: {
-                    x: 'center',
-                    y: 'top'
-                },
-                duration: 5000
-            });
-        }
-
-        if ("@TempData["ErrorMessage"]" !== "") {
-            window.notyf.open({
-                type: 'error',
-                message: "@TempData["ErrorMessage"]",
-                ripple: true,
-                dismissible: true,
-                position: {
-                    x: 'center',
-                    y: 'top'
-                },
-                duration: 5000
-            });
-        }
-        // Select2
-        $(".select2").each(function () {
-            $(this)
-                .wrap("<div class=\"position-relative\"></div>")
-                .select2({
-                    placeholder: "Select value",
-                    dropdownParent: $(this).parent()
+            // Show success or error messages
+            if ("@TempData["SuccessMessage"]" !== "") {
+                window.notyf.open({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
                 });
-        })
+            }
+            if ("@TempData["ErrorMessage"]" !== "") {
+                window.notyf.open({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+
+            // Initialize Select2
+            $(".select2").select2({
+                theme: 'bootstrap4',
+                placeholder: 'Select an option',
+                allowClear: true
+            });
 
     });
 </script>

@@ -1,0 +1,68 @@
+﻿@model RH_CM.Models.CtTest
+
+@{
+    ViewData["Title"] = "Edit Test";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">EDIT TEST</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Edit Test Details</h5>
+                <h6 class="card-subtitle text-muted">Update the fields below.</h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="EditTest" method="post">
+                    @Html.HiddenFor(m => m.PkTest)
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <!-- Test Name -->
+                    <div class="mb-3">
+                        <label asp-for="TestName" class="form-label">Test Name *</label>
+                        <input asp-for="TestName" class="form-control" />
+                        <span asp-validation-for="TestName" class="text-danger"></span>
+                    </div>
+
+                    <!-- Course -->
+                    <div class="mb-3">
+                        <label asp-for="FkCourse" class="form-label">Course *</label>
+                        <select asp-for="FkCourse" class="form-control select2" asp-items="@(new SelectList(ViewBag.Courses, "PkCourse", "CourseName", Model.FkCourse))">
+                            <option value="">-- Select Course --</option>
+                        </select>
+                        <span asp-validation-for="FkCourse" class="text-danger"></span>
+                    </div>
+
+                    <!-- Course Level -->
+                    <div class="mb-3">
+                        <label asp-for="CourseLevel" class="form-label">Course Level</label>
+                        <input asp-for="CourseLevel" type="number" min="0" class="form-control" />
+                        <span asp-validation-for="CourseLevel" class="text-danger"></span>
+                    </div>
+
+                    <div class="text-end">
+                        <a asp-action="IndexTest" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Update
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        $(".select2").select2({ theme: 'bootstrap4', allowClear: true, width: '100%' });
+    </script>
+}

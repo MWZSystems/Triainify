@@ -1,0 +1,217 @@
+﻿@model RH_CM.ViewModels.TestCreateViewModel
+
+@{
+    ViewData["Title"] = "Create Test with Questions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">CREATE TEST WITH QUESTIONS</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Test Details</h5>
+                <h6 class="card-subtitle text-muted">Fill out the test information and add questions with options below.</h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="CreateQuestions" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="row">
+                        <div class="mb-3 col-md-4">
+                            <label asp-for="TestName" class="form-label">Test Name <span class="text-danger">*</span></label>
+                            <input asp-for="TestName" class="form-control" />
+                            <span asp-validation-for="TestName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3 col-md-4">
+                            <label asp-for="FkCourse" class="form-label">Course <span class="text-danger">*</span></label>
+                            <select asp-for="FkCourse" class="form-control select2" asp-items="@(new SelectList(ViewBag.Courses, "PkCourse", "CourseName"))">
+                                <option value="">-- Select Course --</option>
+                            </select>
+                            <span asp-validation-for="FkCourse" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3 col-md-4">
+                            <label asp-for="CourseLevel" class="form-label">Course Level</label>
+                            <input asp-for="CourseLevel" type="number" min="0" class="form-control" />
+                            <span asp-validation-for="CourseLevel" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div id="questions-container">
+                        @for (int q = 0; q < Model.Questions.Count; q++)
+                        {
+                            <div class="card mb-3 question-block border border-primary">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5>Question @(q + 1)</h5>
+                                        <button type="button" class="btn btn-sm btn-outline-danger remove-question-btn">
+                                            <i class="fas fa-trash"></i> Remove Question
+                                        </button>
+                                    </div>
+                                    <input name="Questions[@q].QuestionText" class="form-control mb-2" placeholder="Question text" />
+
+                                    <div class="options-container">
+                                        @for (int o = 0; o < Model.Questions[q].Options.Count; o++)
+                                        {
+                                            <div class="input-group mb-2">
+                                                <div class="input-group-text">
+                                                    <input type="checkbox" name="Questions[@q].Options[@o].IsCorrect" value="true" />
+                                                </div>
+                                                <input name="Questions[@q].Options[@o].OptionText" class="form-control" placeholder="Option text" />
+                                                <button type="button" class="btn btn-outline-danger remove-option-btn">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        }
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-primary add-option-btn mt-2">+ Add Option</button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <button type="button" class="btn btn-secondary mb-3" id="add-question-btn">
+                        + Add Question
+                    </button>
+
+                    <div class="text-end">
+                        <a asp-action="IndexTest" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        $(".select2").select2({
+            theme: 'bootstrap4',
+            allowClear: true,
+            width: '100%'
+        });
+
+        let questionIndex = @Model.Questions.Count;
+
+        // Add Question
+        $("#add-question-btn").click(function () {
+            const newQuestion = `
+                <div class="card mb-3 question-block border border-primary">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5>Question ${questionIndex + 1}</h5>
+                            <button type="button" class="btn btn-sm btn-outline-danger remove-question-btn">
+                                <i class="fas fa-trash"></i> Remove Question
+                            </button>
+                        </div>
+                        <input name="Questions[${questionIndex}].QuestionText" class="form-control mb-2" placeholder="Question text" />
+                        <div class="options-container">
+                            <div class="input-group mb-2">
+                                <div class="input-group-text">
+                                    <input type="checkbox" name="Questions[${questionIndex}].Options[0].IsCorrect" value="true" />
+                                </div>
+                                <input name="Questions[${questionIndex}].Options[0].OptionText" class="form-control" placeholder="Option text" />
+                                <button type="button" class="btn btn-outline-danger remove-option-btn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-text">
+                                    <input type="checkbox" name="Questions[${questionIndex}].Options[1].IsCorrect" value="true" />
+                                </div>
+                                <input name="Questions[${questionIndex}].Options[1].OptionText" class="form-control" placeholder="Option text" />
+                                <button type="button" class="btn btn-outline-danger remove-option-btn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary add-option-btn mt-2">+ Add Option</button>
+                    </div>
+                </div>`;
+            $("#questions-container").append(newQuestion);
+            questionIndex++;
+        });
+
+        // Add Option
+        $(document).on("click", ".add-option-btn", function () {
+            const container = $(this).siblings(".options-container");
+            const qIndex = container.closest(".question-block").index();
+            const oIndex = container.children().length;
+            const newOption = `
+                <div class="input-group mb-2">
+                    <div class="input-group-text">
+                        <input type="checkbox" name="Questions[${qIndex}].Options[${oIndex}].IsCorrect" value="true" />
+                    </div>
+                    <input name="Questions[${qIndex}].Options[${oIndex}].OptionText" class="form-control" placeholder="Option text" />
+                    <button type="button" class="btn btn-outline-danger remove-option-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>`;
+            container.append(newOption);
+        });
+
+        // Remove Option
+        $(document).on("click", ".remove-option-btn", function () {
+            const container = $(this).closest(".options-container");
+            if (container.children().length <= 1) {
+                alert("Each question must have at least one option.");
+                return;
+            }
+            $(this).closest(".input-group").remove();
+        });
+
+        // Remove Question
+        $(document).on("click", ".remove-question-btn", function () {
+            const allQuestions = $(".question-block");
+            if (allQuestions.length <= 1) {
+                alert("At least one question is required.");
+                return;
+            }
+            $(this).closest(".question-block").remove();
+        });
+    </script>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            window.notyf.open({
+                type: 'success',
+                message: '@TempData["SuccessMessage"]',
+                ripple: true,
+                dismissible: true,
+                position: { x: 'center', y: 'top' },
+                duration: 5000
+            });
+        </script>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <script>
+            window.notyf.open({
+                type: 'error',
+                message: '@TempData["ErrorMessage"]',
+                ripple: true,
+                dismissible: true,
+                position: { x: 'center', y: 'top' },
+                duration: 5000
+            });
+        </script>
+    }
+}
+

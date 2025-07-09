@@ -1,58 +1,62 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\",
+  "WorkspaceRootPath": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\fmarquez\\downloads\\repo_webmindzz\\trainify\\rh_cm\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\controllers\\catalogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\catalogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\fmarquez\\downloads\\repo_webmindzz\\trainify\\rh_cm\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\catalog\\createquestions.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\catalog\\createquestions.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\fmarquez\\downloads\\repo_webmindzz\\trainify\\rh_cm\\views\\headcount\\editheadcount.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\headcount\\editheadcount.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\catalog\\indextest.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\catalog\\indextest.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\fmarquez\\downloads\\repo_webmindzz\\trainify\\rh_cm\\controllers\\headcountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\headcountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\shared\\_navbar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\shared\\_navbar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\fmarquez\\downloads\\repo_webmindzz\\trainify\\rh_cm\\viewmodels\\editheadcountviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\viewmodels\\editheadcountviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\models\\ctquestion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\models\\ctquestion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\fmarquez\\downloads\\repo_webmindzz\\trainify\\rh_cm\\viewmodels\\createheadcountviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\viewmodels\\createheadcountviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\models\\ctcorrectanswer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\models\\ctcorrectanswer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\fmarquez\\downloads\\repo_webmindzz\\trainify\\rh_cm\\views\\headcount\\createheadcount.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\headcount\\createheadcount.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\models\\ctoption.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\models\\ctoption.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\fmarquez\\downloads\\repo_webmindzz\\trainify\\rh_cm\\viewmodels\\indexheadcountviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\viewmodels\\indexheadcountviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\models\\ctcourse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\models\\ctcourse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\fmarquez\\downloads\\repo_webmindzz\\trainify\\rh_cm\\views\\headcount\\headcountunavailable.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\headcount\\headcountunavailable.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\models\\cttest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\models\\cttest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\fmarquez\\downloads\\repo_webmindzz\\trainify\\rh_cm\\models\\syheadcount.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\models\\syheadcount.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\catalog\\createdepartment.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\catalog\\createdepartment.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\fmarquez\\downloads\\repo_webmindzz\\trainify\\rh_cm\\views\\headcount\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\headcount\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\catalog\\createcoursematerial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\catalog\\createcoursematerial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\fmarquez\\downloads\\repo_webmindzz\\trainify\\rh_cm\\viewmodels\\indexheadcountlistviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\viewmodels\\indexheadcountlistviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\catalog\\editcoursematerial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\catalog\\editcoursematerial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\fmarquez\\downloads\\repo_webmindzz\\trainify\\rh_cm\\controllers\\matrizcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\matrizcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\catalog\\indexcoursematerial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\catalog\\indexcoursematerial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\catalog\\indexcourse.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\catalog\\indexcourse.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -62,167 +66,178 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "HeadCountController.cs",
-              "DocumentMoniker": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\Controllers\\HeadCountController.cs",
-              "RelativeDocumentMoniker": "RH_CM\\Controllers\\HeadCountController.cs",
-              "ToolTip": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\Controllers\\HeadCountController.cs",
-              "RelativeToolTip": "RH_CM\\Controllers\\HeadCountController.cs",
-              "ViewState": "AgIAABYAAAAAAAAAAAAQwBAAAAA6AAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "CatalogController.cs",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Controllers\\CatalogController.cs",
+              "RelativeDocumentMoniker": "RH_CM\\Controllers\\CatalogController.cs",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Controllers\\CatalogController.cs",
+              "RelativeToolTip": "RH_CM\\Controllers\\CatalogController.cs",
+              "ViewState": "AgIAAMoFAAAAAAAAAAAAANoFAAA9AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-17T21:28:21.281Z",
-              "IsPinned": true
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "CreateHeadCount.cshtml",
-              "DocumentMoniker": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\Views\\HeadCount\\CreateHeadCount.cshtml",
-              "RelativeDocumentMoniker": "RH_CM\\Views\\HeadCount\\CreateHeadCount.cshtml",
-              "ToolTip": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\Views\\HeadCount\\CreateHeadCount.cshtml",
-              "RelativeToolTip": "RH_CM\\Views\\HeadCount\\CreateHeadCount.cshtml",
-              "ViewState": "AQIAAJgAAAAAAAAAAADwv6YAAABNAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-12-19T17:15:35.546Z",
-              "IsPinned": true
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "CreateHeadCountViewModel.cs",
-              "DocumentMoniker": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\ViewModels\\CreateHeadCountViewModel.cs",
-              "RelativeDocumentMoniker": "RH_CM\\ViewModels\\CreateHeadCountViewModel.cs",
-              "ToolTip": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\ViewModels\\CreateHeadCountViewModel.cs",
-              "RelativeToolTip": "RH_CM\\ViewModels\\CreateHeadCountViewModel.cs",
-              "ViewState": "AQIAAD0AAAAAAAAAAAAQwFIAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-19T17:19:12.519Z",
-              "IsPinned": true
+              "WhenOpened": "2025-07-07T00:03:59.186Z",
+              "IsPinned": true,
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\Program.cs",
-              "RelativeDocumentMoniker": "RH_CM\\Program.cs",
-              "ToolTip": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\Program.cs",
-              "RelativeToolTip": "RH_CM\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAABAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-13T01:33:07.046Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\appsettings.json",
-              "RelativeDocumentMoniker": "RH_CM\\appsettings.json",
-              "ToolTip": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\appsettings.json",
-              "RelativeToolTip": "RH_CM\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-05-13T01:25:26.189Z",
+              "Title": "CreateQuestions.cshtml",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\CreateQuestions.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Catalog\\CreateQuestions.cshtml",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\CreateQuestions.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Catalog\\CreateQuestions.cshtml",
+              "ViewState": "AgIAAK0AAAAAAAAAAAAswL0AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-07T04:10:45.536Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "EditHeadCount.cshtml",
-              "DocumentMoniker": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\Views\\HeadCount\\EditHeadCount.cshtml",
-              "RelativeDocumentMoniker": "RH_CM\\Views\\HeadCount\\EditHeadCount.cshtml",
-              "ToolTip": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\Views\\HeadCount\\EditHeadCount.cshtml",
-              "RelativeToolTip": "RH_CM\\Views\\HeadCount\\EditHeadCount.cshtml",
-              "ViewState": "AgIAAIwAAAAAAAAAAAAkwJwAAABkAAAAAAAAAA==",
+              "Title": "IndexTest.cshtml",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\IndexTest.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Catalog\\IndexTest.cshtml",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\IndexTest.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Catalog\\IndexTest.cshtml",
+              "ViewState": "AgIAAEoAAAAAAAAAAAAowFwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-12-20T16:16:41.362Z"
+              "WhenOpened": "2025-07-07T02:42:20.59Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "IndexHeadCountListViewModel.cs",
-              "DocumentMoniker": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\ViewModels\\IndexHeadCountListViewModel.cs",
-              "RelativeDocumentMoniker": "RH_CM\\ViewModels\\IndexHeadCountListViewModel.cs",
-              "ToolTip": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\ViewModels\\IndexHeadCountListViewModel.cs",
-              "RelativeToolTip": "RH_CM\\ViewModels\\IndexHeadCountListViewModel.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "DocumentIndex": 5,
+              "Title": "CtCorrectanswer.cs",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Models\\CtCorrectanswer.cs",
+              "RelativeDocumentMoniker": "RH_CM\\Models\\CtCorrectanswer.cs",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Models\\CtCorrectanswer.cs",
+              "RelativeToolTip": "RH_CM\\Models\\CtCorrectanswer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-19T17:03:49.579Z"
+              "WhenOpened": "2025-07-07T02:29:00.826Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\Views\\HeadCount\\Index.cshtml",
-              "RelativeDocumentMoniker": "RH_CM\\Views\\HeadCount\\Index.cshtml",
-              "ToolTip": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\Views\\HeadCount\\Index.cshtml",
-              "RelativeToolTip": "RH_CM\\Views\\HeadCount\\Index.cshtml",
-              "ViewState": "AQIAACMAAAAAAAAAAAAMwCgAAAA5AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-12-19T17:02:49.507Z"
+              "DocumentIndex": 6,
+              "Title": "CtOption.cs",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Models\\CtOption.cs",
+              "RelativeDocumentMoniker": "RH_CM\\Models\\CtOption.cs",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Models\\CtOption.cs",
+              "RelativeToolTip": "RH_CM\\Models\\CtOption.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-07T02:28:48.464Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "EditHeadCountViewModel.cs",
-              "DocumentMoniker": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\ViewModels\\EditHeadCountViewModel.cs",
-              "RelativeDocumentMoniker": "RH_CM\\ViewModels\\EditHeadCountViewModel.cs",
-              "ToolTip": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\ViewModels\\EditHeadCountViewModel.cs",
-              "RelativeToolTip": "RH_CM\\ViewModels\\EditHeadCountViewModel.cs",
-              "ViewState": "AQIAAD4AAAAAAAAAAAA3wFMAAAAgAAAA",
+              "Title": "CtQuestion.cs",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Models\\CtQuestion.cs",
+              "RelativeDocumentMoniker": "RH_CM\\Models\\CtQuestion.cs",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Models\\CtQuestion.cs",
+              "RelativeToolTip": "RH_CM\\Models\\CtQuestion.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-19T17:07:18.604Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "IndexHeadCountViewModel.cs",
-              "DocumentMoniker": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\ViewModels\\IndexHeadCountViewModel.cs",
-              "RelativeDocumentMoniker": "RH_CM\\ViewModels\\IndexHeadCountViewModel.cs",
-              "ToolTip": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\ViewModels\\IndexHeadCountViewModel.cs",
-              "RelativeToolTip": "RH_CM\\ViewModels\\IndexHeadCountViewModel.cs",
-              "ViewState": "AQIAABkAAAAAAAAAAAA5wAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-19T17:03:58.875Z"
+              "WhenOpened": "2025-07-07T02:28:40.706Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 8,
-              "Title": "HeadCountUnavailable.cshtml",
-              "DocumentMoniker": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\Views\\HeadCount\\HeadCountUnavailable.cshtml",
-              "RelativeDocumentMoniker": "RH_CM\\Views\\HeadCount\\HeadCountUnavailable.cshtml",
-              "ToolTip": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\Views\\HeadCount\\HeadCountUnavailable.cshtml",
-              "RelativeToolTip": "RH_CM\\Views\\HeadCount\\HeadCountUnavailable.cshtml",
-              "ViewState": "AQIAABkAAAAAAAAAAAAawCkAAAAyAAAA",
+              "Title": "CtTest.cs",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Models\\CtTest.cs",
+              "RelativeDocumentMoniker": "RH_CM\\Models\\CtTest.cs",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Models\\CtTest.cs",
+              "RelativeToolTip": "RH_CM\\Models\\CtTest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-07T02:27:49.925Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "_Navbar.cshtml",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Shared\\_Navbar.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Shared\\_Navbar.cshtml",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Shared\\_Navbar.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Shared\\_Navbar.cshtml",
+              "ViewState": "AgIAABgAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-12-19T17:04:39.62Z"
+              "WhenOpened": "2025-07-07T00:14:52.483Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 9,
-              "Title": "SyHeadCount.cs",
-              "DocumentMoniker": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\Models\\SyHeadCount.cs",
-              "RelativeDocumentMoniker": "RH_CM\\Models\\SyHeadCount.cs",
-              "ToolTip": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\Models\\SyHeadCount.cs",
-              "RelativeToolTip": "RH_CM\\Models\\SyHeadCount.cs",
-              "ViewState": "AQIAABQAAAAAAAAAAAA7wCsAAAAAAAAA",
+              "Title": "CreateDepartment.cshtml",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\CreateDepartment.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Catalog\\CreateDepartment.cshtml",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\CreateDepartment.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Catalog\\CreateDepartment.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-07T01:22:15.215Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "CreateCourseMaterial.cshtml",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\CreateCourseMaterial.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Catalog\\CreateCourseMaterial.cshtml",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\CreateCourseMaterial.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Catalog\\CreateCourseMaterial.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAJQAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-07T01:13:11.691Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "IndexCourse.cshtml",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\IndexCourse.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Catalog\\IndexCourse.cshtml",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\IndexCourse.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Catalog\\IndexCourse.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-07T00:48:33.189Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "CtCourse.cs",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Models\\CtCourse.cs",
+              "RelativeDocumentMoniker": "RH_CM\\Models\\CtCourse.cs",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Models\\CtCourse.cs",
+              "RelativeToolTip": "RH_CM\\Models\\CtCourse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-19T17:18:53.374Z"
+              "WhenOpened": "2025-07-07T00:38:35.908Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "EditCourseMaterial.cshtml",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\EditCourseMaterial.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Catalog\\EditCourseMaterial.cshtml",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\EditCourseMaterial.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Catalog\\EditCourseMaterial.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAKgAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-07T00:21:43.017Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 12,
-              "Title": "MatrizController.cs",
-              "DocumentMoniker": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\Controllers\\MatrizController.cs",
-              "RelativeDocumentMoniker": "RH_CM\\Controllers\\MatrizController.cs",
-              "ToolTip": "C:\\Users\\fmarquez\\Downloads\\Repo_Webmindzz\\Trainify\\RH_CM\\Controllers\\MatrizController.cs",
-              "RelativeToolTip": "RH_CM\\Controllers\\MatrizController.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAfAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-17T21:47:35.73Z"
+              "Title": "IndexCourseMaterial.cshtml",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-07T00:16:16.835Z"
             }
           ]
         }

@@ -79,15 +79,13 @@ namespace RH_CM.ViewModels
         [Required(ErrorMessage = "Zip Code SAT is required.")]
         [Range(1, int.MaxValue, ErrorMessage = "Zip Code SAT must be greater than 0.")]
         public int ZipCodesat { get; set; }
-
-        public string? AssignSupervisorCode { get; set; }
-        public string? Supervisor { get; set; }
+        public int? FkSupervisorId { get; set; }
 
         [ValidateNever]
         public IEnumerable<CtDepartment> Departments { get; set; }
         [ValidateNever]
         public IEnumerable<CtPosition> Position { get; set; }
         [ValidateNever]
-        public IEnumerable<SyHeadCount> SyHeadCount { get; set; }
+        public IEnumerable<SupervisorDisplayViewModel> Supervisors { get; set; }
     }
 }

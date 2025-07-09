@@ -73,13 +73,13 @@
 												<input asp-for="Password" class="form-control form-control-lg" type="password" name="Password" placeholder="Enter your password" />
 												<span asp-validation-for="Password" class="text-danger"></span>
 											</div>
-											<div>
+											@* <div>
 												<div class="form-check align-items-center">
 													<input class="form-check-input" type="checkbox" name="Remember Me" asp-for="RememberMe" />
 													<label class="form-check-label text-small" asp-for="RememberMe">Remember Me</label>
 
 												</div>
-											</div>
+											</div> *@
 											<div class="row">
 												<div class="mb-3 text-center">
 													<p><a asp-controller="Cuentas" asp-action="Registro" class="text-decoration-none text-end">Register new user</a></p>

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RH_CM.Data;
 using RH_CM.Models;
+using RH_CM.ViewModels;
 
 namespace RH_CM.Controllers
 {
@@ -660,7 +661,6 @@ namespace RH_CM.Controllers
             };
         }
 
-
         // GET: CourseAssignments/Create
         [Authorize(Roles = "Administrador")]
         public IActionResult CreateCourseAssignment()
@@ -806,7 +806,6 @@ namespace RH_CM.Controllers
             return RedirectToAction(nameof(IndexCourseassignments));
         }
 
-
         // POST: /CtCourseassignment/ToggleCourseAssignment/5
         [HttpPost]
         [Route("ToggleCourseAssignment")]
@@ -832,6 +831,696 @@ namespace RH_CM.Controllers
                 TempData["ErrorMessage"] = "Course assignment not found.";
             }
             return RedirectToAction(nameof(IndexCourseassignments));
+        }
+
+        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        public async Task<IActionResult> IndexSupervisor()
+        {
+            var supervisors = _context.CtSupervisors
+                //.Where(s => s.Available == 1)
+                .Join(_context.SyHeadCounts.Where(h => h.Available == 1),
+                    s => s.FkHeadcount,
+                    h => h.PkHeadcount,
+                    (s, h) => new { s, h })
+                .Join(_context.CtDepartments.Where(d => d.Available == 1),
+                    temp => temp.s.FkDepartment,
+                    d => d.PkDepartment,
+                    (temp, d) => new { temp.s, temp.h, d })
+                .Join(_context.CtPositions.Where(p => p.Available == 1),
+                    temp => temp.s.FkPosition,
+                    p => p.PkPosition,
+                    (temp, p) => new
+                    {
+                        temp.s.PkSupervisorId,
+                        temp.h.ControlNumber,
+                        FullName = $"{temp.h.Names} {(temp.h.LastName ?? "")} {(temp.h.SecondName ?? "")}".Trim(),
+                        temp.s.Available,
+                        DepartmentName = temp.d.NameDeparment,
+                        PositionName = p.NamePosition
+                    })
+                .ToList();
+
+            return View(supervisors);
+        }
+
+        // GET: CtSupervisor/Create
+        [Authorize(Roles = "Administrador, RHGerente")]
+        public IActionResult CreateSupervisor()
+        {
+            ViewBag.Headcount = _context.SyHeadCounts.Where(d => d.Available == 1).ToList();
+            ViewBag.Departments = _context.CtDepartments.Where(d => d.Available == 1).ToList();
+            ViewBag.Positions = _context.CtPositions.Where(p => p.Available == 1).ToList();
+
+            return View();
+        }
+
+
+        // POST: CtSupervisor/Create
+        [HttpPost]
+        [Authorize(Roles = "Administrador, RHGerente")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateSupervisor(CtSupervisor ctSupervisor)
+        {
+            // Validar combinación única FkHeadcount + FkDepartment
+            bool combinationExists = await _context.CtSupervisors
+                .AnyAsync(s => s.FkHeadcount == ctSupervisor.FkHeadcount && s.FkDepartment == ctSupervisor.FkDepartment && ctSupervisor.Available == 1);
+
+            if (combinationExists)
+            {
+                TempData["ErrorMessage"] = "A supervisor with the same Headcount and Department already exists.";
+                // Redirigir para mostrar el mensaje en la vista
+                return RedirectToAction(nameof(CreateSupervisor));
+            }
+
+            // Asignar datos de auditoría
+            ctSupervisor.Createuser = User.Identity?.Name ?? "Unknown";
+            ctSupervisor.Createdate = DateTime.Now;
+            ctSupervisor.Lastupdateuser = User.Identity?.Name ?? "Unknown";
+            ctSupervisor.Lastupdatedate = DateTime.Now;
+            ctSupervisor.Available = 1;
+
+            try
+            {
+                _context.Add(ctSupervisor);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Supervisor created successfully.";
+                return RedirectToAction(nameof(IndexSupervisor));
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error creating supervisor: {ex.Message}";
+                return RedirectToAction(nameof(CreateSupervisor));
+            }
+        }
+
+        // GET: CtSupervisor/Edit/5
+        [Authorize(Roles = "Administrador, RHGerente")]
+        public async Task<IActionResult> EditSupervisor(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var ctSupervisor = await _context.CtSupervisors.FindAsync(id);
+            if (ctSupervisor == null)
+                return NotFound();
+
+            // Cargar los dropdowns
+            ViewBag.Headcount = _context.SyHeadCounts.Where(h => h.Available == 1).ToList();
+            ViewBag.Departments = _context.CtDepartments.Where(d => d.Available == 1).ToList();
+            ViewBag.Positions = _context.CtPositions.Where(p => p.Available == 1).ToList();
+
+            return View(ctSupervisor);
+        }
+
+        // POST: CtSupervisor/Edit/5
+        [HttpPost]
+        [Authorize(Roles = "Administrador, RHGerente")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditSupervisor(int id, CtSupervisor ctSupervisor)
+        {
+            if (id != ctSupervisor.PkSupervisorId)
+            {
+                TempData["ErrorMessage"] = "Supervisor not found.";
+                return RedirectToAction(nameof(IndexSupervisor));
+            }
+
+            // Validar combinación única FkHeadcount + FkDepartment (excluyendo el mismo registro)
+            bool combinationExists = await _context.CtSupervisors
+                .AnyAsync(s => s.FkHeadcount == ctSupervisor.FkHeadcount
+                            && s.FkDepartment == ctSupervisor.FkDepartment
+                            && s.PkSupervisorId != id
+                            && s.Available == 1);
+
+            if (combinationExists)
+            {
+                TempData["ErrorMessage"] = "Another supervisor with the same Headcount and Department already exists.";
+                return RedirectToAction(nameof(EditSupervisor), new { id });
+            }
+
+            try
+            {
+                var existing = await _context.CtSupervisors.FindAsync(id);
+                if (existing == null)
+                {
+                    TempData["ErrorMessage"] = "Supervisor no longer exists.";
+                    return RedirectToAction(nameof(IndexSupervisor));
+                }
+
+                existing.FkHeadcount = ctSupervisor.FkHeadcount;
+                existing.FkDepartment = ctSupervisor.FkDepartment;
+                existing.FkPosition = ctSupervisor.FkPosition;
+                existing.Lastupdateuser = User.Identity?.Name ?? "Unknown";
+                existing.Lastupdatedate = DateTime.Now;
+
+                _context.Update(existing);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Supervisor updated successfully.";
+                return RedirectToAction(nameof(IndexSupervisor));
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error updating supervisor: {ex.Message}";
+                return RedirectToAction(nameof(EditSupervisor), new { id });
+            }
+        }
+
+
+        // POST: /Catalog/ToggleSupervisor/5
+        [HttpPost]
+        [Authorize(Roles = "Administrador, RHGerente")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleSupervisor(int id)
+        {
+            var supervisor = await _context.CtSupervisors.FindAsync(id);
+            if (supervisor == null)
+            {
+                TempData["ErrorMessage"] = "Supervisor not found.";
+                return RedirectToAction(nameof(IndexSupervisor));
+            }
+
+            // Si se va a habilitar, validar que no exista combinación duplicada
+            if (supervisor.Available == 0)
+            {
+                bool combinationExists = await _context.CtSupervisors
+                    .AnyAsync(s =>
+                        s.FkHeadcount == supervisor.FkHeadcount &&
+                        s.FkDepartment == supervisor.FkDepartment &&
+                        s.PkSupervisorId != id &&
+                        s.Available == 1);
+
+                if (combinationExists)
+                {
+                    TempData["ErrorMessage"] = "Cannot enable this supervisor because another active supervisor with the same Headcount and Department already exists.";
+                    return RedirectToAction(nameof(IndexSupervisor));
+                }
+            }
+
+            // Alternar el estado
+            supervisor.Available = supervisor.Available == 1 ? 0 : 1;
+            supervisor.Lastupdateuser = User.Identity?.Name ?? "Unknown";
+            supervisor.Lastupdatedate = DateTime.Now;
+
+            _context.Update(supervisor);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Supervisor status updated successfully.";
+            return RedirectToAction(nameof(IndexSupervisor));
+        }
+
+
+        // POST: /Catalog/DeleteSupervisor/5
+        [HttpPost]
+        [Authorize(Roles = "Administrador")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteSupervisor(int id)
+        {
+            var supervisor = await _context.CtSupervisors.FindAsync(id);
+            if (supervisor != null)
+            {
+                _context.CtSupervisors.Remove(supervisor);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(IndexSupervisor));
+        }
+
+        private bool CtSupervisorExists(int id)
+        {
+            return _context.CtSupervisors.Any(e => e.PkSupervisorId == id);
+        }
+
+        // GET: CtCoursematerial
+        public async Task<IActionResult> IndexCourseMaterial()
+        {
+            var materials = await _context.CtCoursematerials.ToListAsync();
+            return View(materials);
+        }
+
+        // GET: CtCoursematerial/Create
+        [Authorize(Roles = "Administrador, RHGerente")]
+        public async Task<IActionResult> CreateCourseMaterial()
+        {
+            // Cargar cursos activos
+            ViewBag.Courses = await _context.CtCourses
+                .Where(c => c.Available == 1)
+                .OrderBy(c => c.CourseName)
+                .ToListAsync();
+
+            return View();
+        }
+        // POST: CtCoursematerial/Create
+        [HttpPost]
+        [Authorize(Roles = "Administrador, RHGerente")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateCourseMaterial(CtCoursematerial model, IFormFile uploadedFile)
+        {
+            // Validar archivo obligatorio
+            if (uploadedFile == null || uploadedFile.Length == 0)
+            {
+                TempData["ErrorMessage"] = "You must upload a PDF file.";
+
+                ViewBag.Courses = await _context.CtCourses
+                    .Where(c => c.Available == 1)
+                    .OrderBy(c => c.CourseName)
+                    .ToListAsync();
+
+                return View(model);
+            }
+
+            // Validar Level no negativo
+            if (model.Level.HasValue && model.Level < 0)
+            {
+                TempData["ErrorMessage"] = "Level cannot be negative.";
+
+                ViewBag.Courses = await _context.CtCourses
+                    .Where(c => c.Available == 1)
+                    .OrderBy(c => c.CourseName)
+                    .ToListAsync();
+
+                return View(model);
+            }
+
+            // Obtener el FkCourse desde el radio button
+            var selectedFkCourse = Request.Form["FkCourse"].FirstOrDefault();
+            if (string.IsNullOrEmpty(selectedFkCourse))
+            {
+                TempData["ErrorMessage"] = "You must select a course.";
+
+                ViewBag.Courses = await _context.CtCourses
+                    .Where(c => c.Available == 1)
+                    .OrderBy(c => c.CourseName)
+                    .ToListAsync();
+
+                return View(model);
+            }
+
+            if (!int.TryParse(selectedFkCourse, out var fkCourseValue))
+            {
+                TempData["ErrorMessage"] = "Invalid course selection.";
+
+                ViewBag.Courses = await _context.CtCourses
+                    .Where(c => c.Available == 1)
+                    .OrderBy(c => c.CourseName)
+                    .ToListAsync();
+
+                return View(model);
+            }
+
+            using var ms = new MemoryStream();
+            await uploadedFile.CopyToAsync(ms);
+            model.File = ms.ToArray();
+
+            model.FkCourse = fkCourseValue;
+            model.Createuser = User.Identity?.Name ?? "Unknown";
+            model.Createdate = DateTime.Now;
+            model.Lastupdateuser = User.Identity?.Name ?? "Unknown";
+            model.Lastupdatedate = DateTime.Now;
+            model.Available = 1;
+
+            _context.Add(model);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Material created successfully.";
+            return RedirectToAction(nameof(IndexCourseMaterial));
+        }
+
+
+        // GET: CtCoursematerial/Edit/5
+        [Authorize(Roles = "Administrador, RHGerente")]
+        public async Task<IActionResult> EditCourseMaterial(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var material = await _context.CtCoursematerials.FindAsync(id);
+            if (material == null)
+                return NotFound();
+
+            // Cargar cursos activos para la tabla
+            ViewBag.Courses = await _context.CtCourses
+                .Where(c => c.Available == 1)
+                .OrderBy(c => c.CourseName)
+                .ToListAsync();
+
+            return View(material);
+        }
+
+        // POST: CtCoursematerial/Edit/5
+        [HttpPost]
+        [Authorize(Roles = "Administrador, RHGerente")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditCourseMaterial(int id, CtCoursematerial model, IFormFile? uploadedFile)
+        {
+            if (id != model.PkCoursematerial)
+                return NotFound();
+
+            var existing = await _context.CtCoursematerials.FindAsync(id);
+            if (existing == null)
+                return NotFound();
+
+            // Obtener el FkCourse desde el radio button
+            var selectedFkCourse = Request.Form["FkCourse"].FirstOrDefault();
+
+            if (string.IsNullOrEmpty(selectedFkCourse))
+            {
+                TempData["ErrorMessage"] = "You must select a course.";
+
+                // Recargar cursos y devolver vista
+                ViewBag.Courses = await _context.CtCourses
+                    .Where(c => c.Available == 1)
+                    .OrderBy(c => c.CourseName)
+                    .ToListAsync();
+
+                return View(model);
+            }
+
+            if (!int.TryParse(selectedFkCourse, out var fkCourseValue))
+            {
+                TempData["ErrorMessage"] = "Invalid course selection.";
+
+                ViewBag.Courses = await _context.CtCourses
+                    .Where(c => c.Available == 1)
+                    .OrderBy(c => c.CourseName)
+                    .ToListAsync();
+
+                return View(model);
+            }
+
+            // Actualizar campos
+            existing.NameMaterial = model.NameMaterial;
+            existing.FkCourse = fkCourseValue;
+            existing.Level = model.Level;
+            existing.Lastupdateuser = User.Identity?.Name ?? "Unknown";
+            existing.Lastupdatedate = DateTime.Now;
+
+            // Si subió nuevo archivo
+            if (uploadedFile != null && uploadedFile.Length > 0)
+            {
+                using var ms = new MemoryStream();
+                await uploadedFile.CopyToAsync(ms);
+                existing.File = ms.ToArray();
+            }
+
+            _context.Update(existing);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Material updated successfully.";
+            return RedirectToAction(nameof(IndexCourseMaterial));
+        }
+
+
+        // POST: CtCoursematerial/Toggle/5
+        [HttpPost]
+        [Authorize(Roles = "Administrador, RHGerente")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleCourseMaterial(int id)
+        {
+            var material = await _context.CtCoursematerials.FindAsync(id);
+            if (material == null)
+            {
+                TempData["ErrorMessage"] = "Material not found.";
+                return RedirectToAction(nameof(IndexCourseMaterial));
+            }
+
+            material.Available = material.Available == 1 ? 0 : 1;
+            material.Lastupdateuser = User.Identity?.Name ?? "Unknown";
+            material.Lastupdatedate = DateTime.Now;
+
+            _context.Update(material);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Material status updated successfully.";
+            return RedirectToAction(nameof(IndexCourseMaterial));
+        }
+
+        // POST: CtCoursematerial/Delete/5
+        [HttpPost]
+        [Authorize(Roles = "Administrador")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteCourseMaterial(int id)
+        {
+            var material = await _context.CtCoursematerials.FindAsync(id);
+            if (material != null)
+            {
+                _context.CtCoursematerials.Remove(material);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(IndexCourseMaterial));
+        }
+
+        // GET: CtCoursematerial/Download/5
+        public async Task<IActionResult> DownloadCourseMaterial(int id)
+        {
+            var material = await _context.CtCoursematerials.FindAsync(id);
+            if (material == null)
+                return NotFound();
+
+            return File(material.File, "application/pdf", $"{material.NameMaterial}.pdf");
+        }
+
+        // GET: CtCoursematerial/ViewPdf/5
+        public async Task<IActionResult> ViewPdfCourseMaterial(int id)
+        {
+            var material = await _context.CtCoursematerials.FindAsync(id);
+            if (material == null)
+                return NotFound();
+
+            return File(material.File, "application/pdf");
+        }
+
+        // GET: CtTest/IndexTest
+        [Authorize(Roles = "Administrador, RHGerente")]
+        public async Task<IActionResult> IndexTest()
+        {
+            var tests = await _context.CtTests
+                .OrderByDescending(t => t.Createdate)
+                .ToListAsync();
+
+            return View(tests);
+        }
+
+
+        //// GET: CtTest/Create
+        //[Authorize(Roles = "Administrador, RHGerente")]
+        //public async Task<IActionResult> CreateTest()
+        //{
+        //    ViewBag.Courses = await _context.CtCourses
+        //        .Where(c => c.Available == 1)
+        //        .OrderBy(c => c.CourseName)
+        //        .ToListAsync();
+
+        //    return View();
+        //}
+
+        //// POST: CtTest/Create
+        //[HttpPost]
+        //[Authorize(Roles = "Administrador, RHGerente")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> CreateTest(CtTest ctTest)
+        //{
+        //    if (string.IsNullOrWhiteSpace(ctTest.TestName))
+        //    {
+        //        TempData["ErrorMessage"] = "The Test Name field is required.";
+        //        ViewBag.Courses = await _context.CtCourses
+        //            .Where(c => c.Available == 1)
+        //            .OrderBy(c => c.CourseName)
+        //            .ToListAsync();
+        //        return View(ctTest);
+        //    }
+
+        //    if (ctTest.CourseLevel < 0)
+        //    {
+        //        TempData["ErrorMessage"] = "The Course Level cannot be negative.";
+        //        ViewBag.Courses = await _context.CtCourses
+        //            .Where(c => c.Available == 1)
+        //            .OrderBy(c => c.CourseName)
+        //            .ToListAsync();
+        //        return View(ctTest);
+        //    }
+
+        //    ctTest.Createuser = User.Identity?.Name ?? "Unknown";
+        //    ctTest.Createdate = DateTime.Now;
+        //    ctTest.Lastupdateuser = ctTest.Createuser;
+        //    ctTest.Lastupatedate = DateTime.Now;
+        //    ctTest.Available = 1;
+
+        //    _context.Add(ctTest);
+        //    await _context.SaveChangesAsync();
+
+        //    TempData["SuccessMessage"] = "Test created successfully.";
+
+        //    // Redirigir a crear preguntas
+        //    return RedirectToAction(nameof(CreateQuestion), "Question", new { testId = ctTest.PkTest });
+        //}
+
+        // GET: CtTest/EditTest/5
+        [Authorize(Roles = "Administrador, RHGerente")]
+        public async Task<IActionResult> EditTest(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var ctTest = await _context.CtTests.FindAsync(id);
+            if (ctTest == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.Courses = await _context.CtCourses
+                .Where(c => c.Available == 1)
+                .OrderBy(c => c.CourseName)
+                .ToListAsync();
+
+            return View(ctTest);
+        }
+
+        // GET: Catalog/CreateQuestions
+        [Authorize(Roles = "Administrador, RHGerente")]
+        public async Task<IActionResult> CreateQuestions()
+        {
+            ViewBag.Courses = await _context.CtCourses
+                .Where(c => c.Available == 1)
+                .OrderBy(c => c.CourseName)
+                .ToListAsync();
+
+            var vm = new TestCreateViewModel
+            {
+                Questions = new List<QuestionCreateViewModel>
+        {
+            new QuestionCreateViewModel
+            {
+                Options = new List<OptionCreateViewModel>
+                {
+                    new OptionCreateViewModel(),
+                    new OptionCreateViewModel()
+                }
+            }
+        }
+            };
+
+            return View(vm);
+        }
+
+        // POST: Catalog/CreateQuestions
+        [HttpPost]
+        [Authorize(Roles = "Administrador, RHGerente")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateQuestions(TestCreateViewModel model)
+        {
+            if (string.IsNullOrWhiteSpace(model.TestName))
+            {
+                TempData["ErrorMessage"] = "The Test Name field is required.";
+                ViewBag.Courses = await _context.CtCourses
+                    .Where(c => c.Available == 1)
+                    .OrderBy(c => c.CourseName)
+                    .ToListAsync();
+                return View(model);
+            }
+
+            if (model.CourseLevel < 0)
+            {
+                TempData["ErrorMessage"] = "The Course Level cannot be negative.";
+                ViewBag.Courses = await _context.CtCourses
+                    .Where(c => c.Available == 1)
+                    .OrderBy(c => c.CourseName)
+                    .ToListAsync();
+                return View(model);
+            }
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                // Insert Test
+                var test = new CtTest
+                {
+                    FkCourse = model.FkCourse,
+                    CourseLevel = model.CourseLevel,
+                    TestName = model.TestName,
+                    Createuser = User.Identity?.Name ?? "Unknown",
+                    Createdate = DateTime.Now,
+                    Lastupdateuser = User.Identity?.Name ?? "Unknown",
+                    Lastupatedate = DateTime.Now,
+                    Available = 1
+                };
+
+                _context.CtTests.Add(test);
+                await _context.SaveChangesAsync();
+
+                // Insert Questions and Options
+                foreach (var q in model.Questions)
+                {
+                    var question = new CtQuestion
+                    {
+                        FkTest = test.PkTest,
+                        Question = q.QuestionText,
+                        Createuser = test.Createuser,
+                        Createdate = DateTime.Now,
+                        Lastupdateuser = test.Createuser,
+                        Lastupatedate = DateTime.Now,
+                        Available = 1
+                    };
+
+                    _context.CtQuestions.Add(question);
+                    await _context.SaveChangesAsync();
+
+                    for (int i = 0; i < q.Options.Count; i++)
+                    {
+                        var optionVm = q.Options[i];
+
+                        var option = new CtOption
+                        {
+                            FkQuestions = question.PkQuestions,
+                            Options = optionVm.OptionText,
+                            Answer = (i == q.CorrectOptionIndex) ? 1 : 0,
+                            Createuser = test.Createuser,
+                            Createdate = DateTime.Now,
+                            Lastupdateuser = test.Createuser,
+                            Lastupatedate = DateTime.Now,
+                            Available = 1
+                        };
+
+                        _context.CtOptions.Add(option);
+                        await _context.SaveChangesAsync();
+
+                        if (i == q.CorrectOptionIndex)
+                        {
+                            var correctAnswer = new CtCorrectanswer
+                            {
+                                FkQuestions = question.PkQuestions,
+                                FkOptions = option.PkOptions.ToString(),
+                                Createuser = test.Createuser,
+                                Createdate = DateTime.Now,
+                                Lastupdateuser = test.Createuser,
+                                Lastupatedate = DateTime.Now,
+                                Available = 1
+                            };
+
+                            _context.CtCorrectanswers.Add(correctAnswer);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+                }
+
+                await transaction.CommitAsync();
+
+                TempData["SuccessMessage"] = "Test, questions, and options created successfully.";
+                return RedirectToAction(nameof(IndexTest), "CtTest");
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                TempData["ErrorMessage"] = $"Error saving data: {ex.Message}";
+                ViewBag.Courses = await _context.CtCourses
+                    .Where(c => c.Available == 1)
+                    .OrderBy(c => c.CourseName)
+                    .ToListAsync();
+                return View(model);
+            }
         }
 
     }
