@@ -1,65 +1,57 @@
-# Archivos y carpetas de usuario de Visual Studio
+# Carpeta de configuración de Visual Studio
 .vs/
-*.user
 *.suo
+*.user
+*.userosscache
+*.sln.docstates
 
-# Archivos de build y publicación
-/bin/
-/obj/
+# Salida de compilación
+bin/
+obj/
 
-# Archivos generados por Razor
-**/Generated/
-**/*.g.cs
-**/*.g.i.cs
+# Archivos de depuración y símbolos
+*.pdb
+*.mdb
 
-# Archivos de configuración temporales
-appsettings.Development.json
-appsettings.*.json
-
-# Archivos de cache y dependencias de NuGet
-project.lock.json
-project.fragment.lock.json
-*.nuget.cache
-*.nupkg
-*.snupkg
-
-# Archivos temporales del sistema operativo
+# Archivos temporales
 *.tmp
 *.temp
 *.log
-*.DS_Store
-Thumbs.db
+*.bak
 
-# Archivos generados por VS Code
-.vscode/
-
-# Archivos de configuración específicos del entorno
-launchSettings.json
-
-# Archivos de rastreo de ejecución o debugging
-*.pdb
-
-# Archivos generados en tiempo de ejecución
-*.vsidx
-*.cache
-*.db
-
-# Archivos de configuración de WebAssembly y Static Assets
-**/staticwebassets.*
-
-# Archivos temporales de análisis de código
-*.ide
-
-# Ignorar certificados de desarrollo
-*.pem
-*.crt
-*.key
-
-# Excluir dlls generadas y cualquier archivo ejecutable
+# Archivos generados por compilación
 *.dll
 *.exe
-*.ref
+*.cache
+*.csproj.FileListAbsolute.txt
+*.AssemblyReference.cache
+*.CoreCompileInputs.cache
+*.g.cs
+*.g.i.cs
+*.GeneratedMSBuildEditorConfig.editorconfig
+*.genruntimeconfig.cache
+*.assets.cache
+*.props
+*.nuget.cache
+*.dswa.cache.json
+*.build.endpoints.json
+*.upToDateCheck.txt
+*.vsidx
+*.json.cache
 
-# Opcional: si estás usando Rider o JetBrains
+# Archivos generados por herramientas
+*.nupkg
+*.snupkg
+
+# Configuraciones locales
+appsettings.Development.json
+launchSettings.json
+
+# Archivos de Rider/JetBrains (si usas Rider)
 .idea/
 *.sln.iml
+
+# Archivos generados por Razor
+**/obj/**/*.cshtml.cs
+**/obj/**/*.razor.g.cs
+**/obj/**/*.razor.g.i.cs

@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\RH_CM.props" />
-</Project>
