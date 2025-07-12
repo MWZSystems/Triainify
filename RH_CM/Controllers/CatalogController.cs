@@ -1390,16 +1390,16 @@ namespace RH_CM.Controllers
             var vm = new TestCreateViewModel
             {
                 Questions = new List<QuestionCreateViewModel>
-        {
-            new QuestionCreateViewModel
-            {
-                Options = new List<OptionCreateViewModel>
                 {
-                    new OptionCreateViewModel(),
-                    new OptionCreateViewModel()
+                    new QuestionCreateViewModel
+                    {
+                        Options = new List<OptionCreateViewModel>
+                        {
+                            new OptionCreateViewModel(),
+                            new OptionCreateViewModel()
+                        }
+                    }
                 }
-            }
-        }
             };
 
             return View(vm);
@@ -1509,7 +1509,8 @@ namespace RH_CM.Controllers
                 await transaction.CommitAsync();
 
                 TempData["SuccessMessage"] = "Test, questions, and options created successfully.";
-                return RedirectToAction(nameof(IndexTest), "CtTest");
+
+                return RedirectToAction(nameof(IndexTest), "Catalog");
             }
             catch (Exception ex)
             {
