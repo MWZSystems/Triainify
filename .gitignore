@@ -5,9 +5,9 @@
 *.userosscache
 *.sln.docstates
 
-# Salida de compilación
-bin/
-obj/
+# Archivos binarios
+**/bin/
+**/obj/
 
 # Archivos de depuración y símbolos
 *.pdb
@@ -47,7 +47,7 @@ obj/
 appsettings.Development.json
 launchSettings.json
 
-# Archivos de Rider/JetBrains (si usas Rider)
+# Archivos de Rider/JetBrains
 .idea/
 *.sln.iml
 

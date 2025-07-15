@@ -1,85 +1,85 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\",
+  "WorkspaceRootPath": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\reports\\coursetodobyempleyee.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\reports\\coursetodobyempleyee.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\controllers\\reportscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\reportscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\reports\\headcountbysupervisor.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\reports\\headcountbysupervisor.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\shared\\_navbar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\shared\\_navbar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\reports\\matrizbyemployeescheck.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\reports\\matrizbyemployeescheck.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\reports\\matrizbydeparmentgeneral_rh.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\reports\\matrizbydeparmentgeneral_rh.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\controllers\\headcountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\headcountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\reports\\testquestions.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\reports\\testquestions.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\reports\\testquestions2.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\reports\\coursetodobyempleyee.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\reports\\coursetodobyempleyee.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\controllers\\reportscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\reportscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\reports\\headcountbysupervisor.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\reports\\headcountbysupervisor.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\shared\\_navbar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\shared\\_navbar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\reports\\matrizbyemployeescheck.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\reports\\matrizbyemployeescheck.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\reports\\matrizbydeparmentgeneral_rh.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\reports\\matrizbydeparmentgeneral_rh.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\controllers\\headcountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\headcountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\reports\\testquestions.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\reports\\testquestions.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\reports\\testquestions2.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\reports\\testquestions2.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\catalog\\indexcoursematerial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\catalog\\indexcoursematerial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\catalog\\indexcoursematerial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\controllers\\catalogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\controllers\\catalogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\catalogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\controllers\\cuentascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\controllers\\cuentascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\cuentascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\reports\\supervisoremployeescheck.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\reports\\supervisoremployeescheck.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\reports\\supervisoremployeescheck.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\headcount\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\headcount\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\headcount\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\catalog\\editquestions.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\catalog\\editquestions.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\catalog\\editquestions.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\catalog\\indextest.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\catalog\\indextest.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\catalog\\indextest.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\views\\catalog\\createquestions.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\catalog\\createquestions.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\catalog\\createquestions.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\github\\triainify\\rh_cm\\viewmodels\\testcreateviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\viewmodels\\testcreateviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\viewmodels\\testcreateviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -90,48 +90,30 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "ReportsController.cs",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Controllers\\ReportsController.cs",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\ReportsController.cs",
               "RelativeDocumentMoniker": "RH_CM\\Controllers\\ReportsController.cs",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Controllers\\ReportsController.cs",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\ReportsController.cs",
               "RelativeToolTip": "RH_CM\\Controllers\\ReportsController.cs",
               "ViewState": "AgIAAB0AAAAAAAAAAAAwwDMAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-14T04:48:49.616Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+              "IsPinned": true
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "TestQuestions.cshtml",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Reports\\TestQuestions.cshtml",
-              "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\TestQuestions.cshtml",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Reports\\TestQuestions.cshtml",
-              "RelativeToolTip": "RH_CM\\Views\\Reports\\TestQuestions.cshtml",
-              "ViewState": "AgIAAHUAAAAAAAAAAAAYwLcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-15T02:34:55.023Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "CourseToDobyEmpleyee.cshtml",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Reports\\CourseToDobyEmpleyee.cshtml",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\CourseToDobyEmpleyee.cshtml",
               "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\CourseToDobyEmpleyee.cshtml",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Reports\\CourseToDobyEmpleyee.cshtml",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\CourseToDobyEmpleyee.cshtml",
               "RelativeToolTip": "RH_CM\\Views\\Reports\\CourseToDobyEmpleyee.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-07-15T02:29:30.936Z",
               "EditorCaption": ""
@@ -140,113 +122,81 @@
               "$type": "Document",
               "DocumentIndex": 13,
               "Title": "_Layout.cshtml",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Shared\\_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Shared\\_Layout.cshtml",
               "RelativeDocumentMoniker": "RH_CM\\Views\\Shared\\_Layout.cshtml",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Shared\\_Layout.cshtml",
               "RelativeToolTip": "RH_CM\\Views\\Shared\\_Layout.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAADAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-15T02:08:04.317Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-15T02:08:04.317Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 15,
               "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\HeadCount\\Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\HeadCount\\Index.cshtml",
               "RelativeDocumentMoniker": "RH_CM\\Views\\HeadCount\\Index.cshtml",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\HeadCount\\Index.cshtml",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\HeadCount\\Index.cshtml",
               "RelativeToolTip": "RH_CM\\Views\\HeadCount\\Index.cshtml",
               "ViewState": "AgIAAJcAAAAAAAAAAAAkwL8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-15T02:02:23.16Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "HeadCountbySupervisor.cshtml",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Reports\\HeadCountbySupervisor.cshtml",
-              "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\HeadCountbySupervisor.cshtml",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Reports\\HeadCountbySupervisor.cshtml",
-              "RelativeToolTip": "RH_CM\\Views\\Reports\\HeadCountbySupervisor.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-15T02:02:17.328Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "HeadCountController.cs",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Controllers\\HeadCountController.cs",
-              "RelativeDocumentMoniker": "RH_CM\\Controllers\\HeadCountController.cs",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Controllers\\HeadCountController.cs",
-              "RelativeToolTip": "RH_CM\\Controllers\\HeadCountController.cs",
-              "ViewState": "AgIAAIYAAAAAAAAAAAAIwCEAAAApAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T02:01:30.695Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-15T02:02:23.16Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "_Navbar.cshtml",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Shared\\_Navbar.cshtml",
-              "RelativeDocumentMoniker": "RH_CM\\Views\\Shared\\_Navbar.cshtml",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Shared\\_Navbar.cshtml",
-              "RelativeToolTip": "RH_CM\\Views\\Shared\\_Navbar.cshtml",
-              "ViewState": "AgIAADAAAAAAAAAAAAAAAEcAAAAgAAAAAAAAAA==",
+              "Title": "HeadCountbySupervisor.cshtml",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\HeadCountbySupervisor.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\HeadCountbySupervisor.cshtml",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\HeadCountbySupervisor.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Reports\\HeadCountbySupervisor.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-14T04:56:58.496Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-15T02:02:17.328Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "HeadCountController.cs",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\HeadCountController.cs",
+              "RelativeDocumentMoniker": "RH_CM\\Controllers\\HeadCountController.cs",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\HeadCountController.cs",
+              "RelativeToolTip": "RH_CM\\Controllers\\HeadCountController.cs",
+              "ViewState": "AgIAAIYAAAAAAAAAAAAIwCEAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T02:01:30.695Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "MatrizByEmployeesCheck.cshtml",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Reports\\MatrizByEmployeesCheck.cshtml",
-              "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\MatrizByEmployeesCheck.cshtml",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Reports\\MatrizByEmployeesCheck.cshtml",
-              "RelativeToolTip": "RH_CM\\Views\\Reports\\MatrizByEmployeesCheck.cshtml",
-              "ViewState": "AgIAAEgAAAAAAAAAAAAgwGkAAAAOAAAAAAAAAA==",
+              "Title": "_Navbar.cshtml",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Shared\\_Navbar.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Shared\\_Navbar.cshtml",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Shared\\_Navbar.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Shared\\_Navbar.cshtml",
+              "ViewState": "AgIAADAAAAAAAAAAAAAAAEcAAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-15T03:04:21.081Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-14T04:56:58.496Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 5,
-              "Title": "MatrizByDeparmentGeneral_RH.cshtml",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Reports\\MatrizByDeparmentGeneral_RH.cshtml",
-              "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\MatrizByDeparmentGeneral_RH.cshtml",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Reports\\MatrizByDeparmentGeneral_RH.cshtml",
-              "RelativeToolTip": "RH_CM\\Views\\Reports\\MatrizByDeparmentGeneral_RH.cshtml",
-              "ViewState": "AgIAADEBAAAAAAAAAAAnwEEBAAAKAAAAAAAAAA==",
+              "Title": "MatrizByEmployeesCheck.cshtml",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\MatrizByEmployeesCheck.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\MatrizByEmployeesCheck.cshtml",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\MatrizByEmployeesCheck.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Reports\\MatrizByEmployeesCheck.cshtml",
+              "ViewState": "AgIAAEgAAAAAAAAAAAAgwGkAAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-14T04:52:39.402Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-15T03:04:21.081Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "TestQuestions2.cshtml",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Reports\\TestQuestions2.cshtml",
-              "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\TestQuestions2.cshtml",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Reports\\TestQuestions2.cshtml",
-              "RelativeToolTip": "RH_CM\\Views\\Reports\\TestQuestions2.cshtml",
-              "ViewState": "AgIAAN8AAAAAAAAAAAAkwPAAAAASAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-15T02:38:08.722Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 0,
               "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Program.cs",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Program.cs",
               "RelativeDocumentMoniker": "RH_CM\\Program.cs",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Program.cs",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Program.cs",
               "RelativeToolTip": "RH_CM\\Program.cs",
               "ViewState": "AgIAAAYAAAAAAAAAAAAAABoAAAADAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -255,63 +205,95 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "TestQuestions.cshtml",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\TestQuestions.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\TestQuestions.cshtml",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\TestQuestions.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Reports\\TestQuestions.cshtml",
+              "ViewState": "AgIAAHUAAAAAAAAAAAAYwLcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-15T02:34:55.023Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "MatrizByDeparmentGeneral_RH.cshtml",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\MatrizByDeparmentGeneral_RH.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\MatrizByDeparmentGeneral_RH.cshtml",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\MatrizByDeparmentGeneral_RH.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Reports\\MatrizByDeparmentGeneral_RH.cshtml",
+              "ViewState": "AgIAADEBAAAAAAAAAAAnwEEBAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-14T04:52:39.402Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "TestQuestions2.cshtml",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\TestQuestions2.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\TestQuestions2.cshtml",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\TestQuestions2.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Reports\\TestQuestions2.cshtml",
+              "ViewState": "AgIAAN8AAAAAAAAAAAAkwPAAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-15T02:38:08.722Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 12,
               "Title": "CuentasController.cs",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Controllers\\CuentasController.cs",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\CuentasController.cs",
               "RelativeDocumentMoniker": "RH_CM\\Controllers\\CuentasController.cs",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Controllers\\CuentasController.cs",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\CuentasController.cs",
               "RelativeToolTip": "RH_CM\\Controllers\\CuentasController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T02:01:29.607Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-15T02:01:29.607Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 10,
               "Title": "IndexCourseMaterial.cshtml",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
               "RelativeDocumentMoniker": "RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
               "RelativeToolTip": "RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
               "ViewState": "AgIAAIQAAAAAAAAAAAAowKwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-15T02:30:02.055Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-15T02:30:02.055Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 11,
               "Title": "CatalogController.cs",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Controllers\\CatalogController.cs",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\CatalogController.cs",
               "RelativeDocumentMoniker": "RH_CM\\Controllers\\CatalogController.cs",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Controllers\\CatalogController.cs",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\CatalogController.cs",
               "RelativeToolTip": "RH_CM\\Controllers\\CatalogController.cs",
               "ViewState": "AgIAABcEAAAAAAAAAAAhwB4EAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T00:47:26.655Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-15T00:47:26.655Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 14,
               "Title": "SupervisorEmployeesCheck.cshtml",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Reports\\SupervisorEmployeesCheck.cshtml",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\SupervisorEmployeesCheck.cshtml",
               "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\SupervisorEmployeesCheck.cshtml",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Reports\\SupervisorEmployeesCheck.cshtml",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\SupervisorEmployeesCheck.cshtml",
               "RelativeToolTip": "RH_CM\\Views\\Reports\\SupervisorEmployeesCheck.cshtml",
               "ViewState": "AgIAAJcBAAAAAAAAAAAAAK4BAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-14T05:06:20.477Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-14T05:06:20.477Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 16,
               "Title": "EditQuestions.cshtml",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\EditQuestions.cshtml",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Catalog\\EditQuestions.cshtml",
               "RelativeDocumentMoniker": "RH_CM\\Views\\Catalog\\EditQuestions.cshtml",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\EditQuestions.cshtml",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Catalog\\EditQuestions.cshtml",
               "RelativeToolTip": "RH_CM\\Views\\Catalog\\EditQuestions.cshtml",
               "ViewState": "AgIAAAgAAAAAAAAAAAAUwM0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -321,9 +303,9 @@
               "$type": "Document",
               "DocumentIndex": 17,
               "Title": "IndexTest.cshtml",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\IndexTest.cshtml",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Catalog\\IndexTest.cshtml",
               "RelativeDocumentMoniker": "RH_CM\\Views\\Catalog\\IndexTest.cshtml",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\IndexTest.cshtml",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Catalog\\IndexTest.cshtml",
               "RelativeToolTip": "RH_CM\\Views\\Catalog\\IndexTest.cshtml",
               "ViewState": "AgIAABsAAAAAAAAAAAAAADkAAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -333,9 +315,9 @@
               "$type": "Document",
               "DocumentIndex": 18,
               "Title": "CreateQuestions.cshtml",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\CreateQuestions.cshtml",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Catalog\\CreateQuestions.cshtml",
               "RelativeDocumentMoniker": "RH_CM\\Views\\Catalog\\CreateQuestions.cshtml",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\Views\\Catalog\\CreateQuestions.cshtml",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Catalog\\CreateQuestions.cshtml",
               "RelativeToolTip": "RH_CM\\Views\\Catalog\\CreateQuestions.cshtml",
               "ViewState": "AgIAAJQAAAAAAAAAAAAAALkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -345,9 +327,9 @@
               "$type": "Document",
               "DocumentIndex": 19,
               "Title": "TestCreateViewModel.cs",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\ViewModels\\TestCreateViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\ViewModels\\TestCreateViewModel.cs",
               "RelativeDocumentMoniker": "RH_CM\\ViewModels\\TestCreateViewModel.cs",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\ViewModels\\TestCreateViewModel.cs",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\ViewModels\\TestCreateViewModel.cs",
               "RelativeToolTip": "RH_CM\\ViewModels\\TestCreateViewModel.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
