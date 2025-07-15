@@ -1078,7 +1078,6 @@ namespace RH_CM.Controllers
             return View(materials);
         }
 
-
         // GET: CtCoursematerial/Create
         [Authorize(Roles = "Administrador, RHGerente")]
         public async Task<IActionResult> CreateCourseMaterial()

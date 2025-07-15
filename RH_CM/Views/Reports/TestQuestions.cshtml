@@ -1,106 +1,183 @@
-﻿<h3>Dynamic Question Generator</h3>
-<div class="row g-3 mb-3">
-    <div class="col-md-4">
-        <input type="text" id="questionText" class="form-control" placeholder="Enter the question text">
-    </div>
-    <div class="col-md-3">
-        <select id="questionType" class="form-select">
-            <option value="radio">Single choice (radio)</option>
-            <option value="checkbox">Multiple choice (checkbox)</option>
-        </select>
-    </div>
-    <div class="col-md-2">
-        <button class="btn btn-success" id="addQuestion">Add question</button>
+﻿@{
+    ViewData["Title"] = "Examen Interactivo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="text-center mb-4"><i class="fas fa-brain"></i> CURSO PROCEDIMIENTO 5.1 Y 7.4 NIVEL 1</h3>
+
+                <div id="question-container"></div>
+
+                <div class="text-center mt-4">
+                    <button class="btn btn-primary" id="validate-btn" onclick="validateAnswer()">Validar</button>
+                    <button class="btn btn-success d-none" id="next-btn" onclick="nextQuestion()">Siguiente</button>
+                </div>
+
+                <div class="mt-3 text-center">
+                    <span id="result-msg" class="fw-bold"></span>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<form id="questionnaireForm">
-    <!-- Questions will be inserted here -->
-</form>
+@section Scripts {
+    <script>
+        const preguntas = [
+            {
+                texto: "¿Cual es el propósito del procedimiento 5.1: liderazgo y compromiso de la Dirección con el SGA?",
+                tipo: "radio",
+                opciones: ["Definir como la gerencia demuestra el liderazgo y el compromiso con el sistema de gestión ambiental para el cumplimiento de los requerimientos aplicables",
+                "Establecer y mantener los procesos necesarios para asegurar la competencia del personal, y asegurar la adecuación de los recursos",
+                "Establecer el método de elaboración, modificación, identificación, control y codificación de documentos, regulando aspectos de contenido forma, identificación"]
+            },
+            {
+                texto: "¿Cada cuándo se debe realizar la comunicación interna?",
+                tipo: "radio",
+                opciones: ["Cada año",
+                            "Cada mes",
+                            "Cada 6 meses",
+                            "Nunca"]
+            },
+            {
+                texto: "¿Cuáles son las responsabilidades de la Dirección?",
+                tipo: "radio",
+                opciones: ["Todas las anteriores",
+                            "Definir la política ambiental",
+                            "Garantizar la operación, mantenimiento y manejo del sistema",
+                            "Asegurar que el SGA se establece, implementa y mantiene de acuerdo con los requisitos",
+                            "Ninguna de las anteriores"]
+            },
+            {
+                texto: "¿Quién es el responsable de documentar la comunicación relevante proveniente de las partes externas relacionadas con el SGA?",
+                tipo: "radio",
+                opciones: ["Coordinador del SGA",
+                            "Superintendentes, supervisores y técnicos",
+                            "Recursos humanos",
+                            "Dependencia gubernamental"]
+            },
+            {
+                texto: "Seleccione las responsabilidades de los proveedores y visitas",
+                tipo: "checkbox",
+                opciones: ["Conocer los Procedimientos y Planes de Emergencias",
+                            "Cumplir con los procedimientos ambientales, legales y otros que les apliquen en las áreas donde ingresen.",
+                            "Mantener y actualiza el Manual de Sistema Ambiental y los procedimientos aplicables.",
+                            "Generar registros sobre sus aspectos ambientales."]
+            },
+            {
+                texto: "¿De quién es responsabilidad hacer el analisis periódico del contexto de la organización?",
+                tipo: "radio",
+                opciones: ["Alta Dirección", "Coordinador del SGA", "Recursos humanos"]
+            },
+            {
+                texto: "¿Que se determina en el analisis del contexto?",
+                tipo: "radio",
+                opciones: ["Todas las anteriores",
+                            "Cuestiones internas y externas",
+                            "Necesidades y expectativas ",
+                            "Alcance del sistema de gestión ambiental",
+                            "Ninguna de las anteriores "]
+            },
+            {
+                texto: "¿A quién corresponde el cumplimiento de los requisitos legales?",
+                tipo: "radio",
+                opciones: ["Todos los departamentos involucrados",
+                            "Recursos humanos",
+                            "Alta dirección"]
+            },
+            {
+                texto: "¿A quien corresponden las siguientes responsabilidades “asegurar la continua operación de equipos, Asegurar la continua operación de los equipos, basándose en los procedimientos y programas enfocados al control de la contaminación del medio ambiente, así como al cuidado de la vida, integridad y la salud del personal.” “supervisar el desempeño ambiental de seguridad y salud ocupacional en sus áreas”?",
+                tipo: "radio",
+                opciones: ["Superintendentes, supervisores y técnicos",
+                "Mantenimiento",
+                "Operadores"]
+            },
+            {
+                texto: "¿Cuáles son las responsabilidades de los operadores?",
+                tipo: "radio",
+                opciones: ["Ninguna de las anteriores ",
+                            "Todas las anteriores",
+                            "Cumplir con los procedimientos ambientales, legales y otros que les apliquen en las áreas donde ingresen.",
+                            "Llevar registro de las actividades que sean relevantes para los aspectos ambientales o que puedan representar un impacto al medio ambiente.",
+                            "Coordinar las actividades de seguridad en la planta incluyendo el plan de respuesta a emergencias."]
+            }
+        ];
 
-<script>
-    const addBtn = document.getElementById('addQuestion');
-    const questionTextInput = document.getElementById('questionText');
-    const questionTypeSelect = document.getElementById('questionType');
-    const form = document.getElementById('questionnaireForm');
+        let currentQuestion = 0;
+        let correctCount = 0;
 
-    let questionCount = 0;
+        function renderQuestion() {
+            const q = preguntas[currentQuestion];
+            const container = document.getElementById("question-container");
+            const tipo = q.tipo;
+            const name = "q" + currentQuestion;
+            let html = `<h5>${currentQuestion + 1}. ${q.texto}</h5>`;
+            q.opciones.forEach((opcion, index) => {
+                const inputType = tipo === "radio" ? "radio" : "checkbox";
+                const id = `op_${currentQuestion}_${index}`;
+                html += `
+                    <div class="form-check">
+                        <input class="form-check-input" type="${inputType}" name="${name}" id="${id}" value="${opcion}">
+                        <label class="form-check-label" for="${id}">${opcion}</label>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            document.getElementById("validate-btn").classList.remove("d-none");
+            document.getElementById("next-btn").classList.add("d-none");
+            document.getElementById("result-msg").innerText = "";
+        }
 
-    addBtn.addEventListener('click', () => {
-      const text = questionTextInput.value.trim();
-      const type = questionTypeSelect.value;
+        function validateAnswer() {
+            const q = preguntas[currentQuestion];
+            const name = "q" + currentQuestion;
+            let correct = false;
 
-      if (!text) {
-        alert("Please enter the question text.");
-        return;
-      }
+            if (q.tipo === "radio") {
+                const selected = document.querySelector(`input[name="${name}"]:checked`);
+                if (!selected) return alert("Selecciona una opción");
+                correct = selected.value === q.opciones[0];
+            } else {
+                const checkboxes = document.querySelectorAll(`input[name="${name}"]:checked`);
+                const selectedValues = Array.from(checkboxes).map(cb => cb.value);
+                const correctValues = [q.opciones[0], q.opciones[1]];
+                correct =
+                    selectedValues.length === 2 &&
+                    correctValues.every(val => selectedValues.includes(val));
+            }
 
-      questionCount++;
+            if (correct) correctCount++;
 
-      const div = document.createElement('div');
-      div.className = 'card mb-3';
-      div.innerHTML = `
-        <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <label class="form-label fw-bold">${questionCount}. ${text}</label>
-            <button type="button" class="btn btn-danger btn-sm" onclick="deleteQuestion(this)">Delete question</button>
-          </div>
-          <div id="options-${questionCount}" class="mb-2"></div>
-          <button type="button" class="btn btn-secondary btn-sm" onclick="showOptionInput(${questionCount}, '${type}')">Add option</button>
-          <div id="optionInput-${questionCount}" class="mt-2"></div>
-        </div>
-      `;
-      form.appendChild(div);
+            document.getElementById("result-msg").innerText = correct ? "✔️ Correcto" : "❌ Incorrecto";
+            document.getElementById("validate-btn").classList.add("d-none");
+            document.getElementById("next-btn").classList.remove("d-none");
+        }
 
-      questionTextInput.value = '';
-    });
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < preguntas.length) {
+                renderQuestion();
+            } else {
+                const total = preguntas.length;
+                const score = correctCount;
+                const calificacion = (score / total * 10).toFixed(2);
 
-    function showOptionInput(questionId, type) {
-      const inputContainer = document.getElementById(`optionInput-${questionId}`);
-      inputContainer.innerHTML = `
-        <div class="input-group mb-2">
-          <input type="text" class="form-control" placeholder="Enter option text">
-          <button class="btn btn-primary" type="button" onclick="addOption(${questionId}, '${type}', this)">Confirm</button>
-        </div>
-      `;
-    }
+                document.getElementById("question-container").innerHTML = `
+                    <div class="text-center p-4">
+                        <h2 class="mb-3">🎉 ¡Felicidades!</h2>
+                        <h4>Obtuviste ${score} / ${total}</h4>
+                        <h5>Calificación: ${calificacion}</h5>
+                    </div>
+                `;
+                document.getElementById("validate-btn").classList.add("d-none");
+                document.getElementById("next-btn").classList.add("d-none");
+                document.getElementById("result-msg").innerText = "";
+            }
+        }
 
-    function addOption(questionId, type, button) {
-      const inputContainer = button.closest('.input-group');
-      const input = inputContainer.querySelector('input');
-      const text = input.value.trim();
-
-      if (!text) {
-        alert("Please enter the option text.");
-        return;
-      }
-
-      const container = document.getElementById(`options-${questionId}`);
-      const optionCount = container.children.length + 1;
-      const optionId = `q${questionId}o${optionCount}`;
-
-      const optionDiv = document.createElement('div');
-      optionDiv.className = 'form-check d-flex align-items-center mb-1';
-
-      optionDiv.innerHTML = `
-        <input class="form-check-input me-2" type="${type}" name="question${questionId}" id="${optionId}" value="${text}">
-        <label class="form-check-label me-auto" for="${optionId}">${text}</label>
-        <button type="button" class="btn btn-outline-danger btn-sm ms-2" onclick="deleteOption(this)">✕</button>
-      `;
-
-      container.appendChild(optionDiv);
-
-      // Clear input
-      inputContainer.innerHTML = "";
-    }
-
-    function deleteQuestion(button) {
-      const card = button.closest('.card');
-      card.remove();
-    }
-
-    function deleteOption(button) {
-      const optionDiv = button.closest('.form-check');
-      optionDiv.remove();
-    }
-</script>
+        window.onload = renderQuestion;
+    </script>
+}

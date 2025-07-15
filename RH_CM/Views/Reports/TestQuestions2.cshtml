@@ -1,0 +1,263 @@
+﻿@{
+    ViewData["Title"] = "CURSO Ecología Básica Nivel 2";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var preguntas = new[] {
+        new { Num = 1, Texto = "¿Que es un ASPECTO Ambiental?",
+                                Opciones = new[] {
+                                    "Elemento de una actividad, producto o servicio de la organización que puede interactuar con el ambiente",
+                                    "Cualquier cambio en el ambiente, puede ser adverso o benéfico, completo o parcial como resultado de un aspecto ambiental de la organización.",
+                                    "Son los generados en las casas habitación, que resultan de la eliminación de los materiales que utilizan en sus actividades domésticas, de los productos que consumen y de sus envases."
+                                    },
+                                    Respuestas = new[] {
+                                        true,
+                                        false,
+                                        false},
+                                        EsCheckbox = false },
+
+
+        new { Num = 2, Texto = "¿Que es un IMPACTO ambiental?",
+                                Opciones = new[] {
+                                    "Es la proporción que se debe guardar entre lo que se tiene contra lo que se consume.",
+                                    "Elemento de una actividad, producto o servicio de la organización que puede interactuar con el ambiente",
+                                    "Cualquier cambio en el ambiente, puede ser adverso o benéfico, completo o parcial como resultado de un aspecto ambiental de la organización."
+                                        },
+                                    Respuestas = new[] {
+                                        false,
+                                        false,
+                                        true
+                                         },
+                                        EsCheckbox = false },
+
+
+        new { Num = 3, Texto = "¿Seleccione dos OBJETIVOS ambientales de Century Mold?",
+                                Opciones = new[] {
+                                    "Ser la mejor empresa en inyección de plástico",
+                                    "No generar más de 25 kg de madera y 10 kg de cartón por cada ton procesada de resina.",
+                                    "No sobrepasar el Consumo de energía eléctrica de 2500 KWH por tonelada procesada de resina"
+                                },
+                                    Respuestas = new[] {
+                                        true,
+                                        true,
+                                        false
+                                        },
+                                        EsCheckbox = true },
+
+
+        new { Num = 4, Texto = "¿Cual de las siguientes es una certificacion Ambiental con la que cuenta Century Mold?",
+                                Opciones = new[] {
+                                    "ISO 14001",
+                                "NOM 35",
+                                "DISTINTIVO H"
+                                },
+                                Respuestas = new[] {
+                                    true,
+                                    false,
+                                    false,
+                                     },
+                                    EsCheckbox = false },
+
+
+        new { Num = 5, Texto = "¿Que es un residuo?",
+                                Opciones = new[] {
+                                    "Organismos consumidores y las bacterias y hongos",
+                                    "Un residuo es cualquier material o producto que se desecha después de haberlo usado o después de haber usado parte de el. Comúnmente se le llama basura.",
+                                    "Cualquier cambio en el ambiente, puede ser adverso o benéfico, completo o parcial como resultado de un aspecto ambiental de la organización."
+                                     },
+                                    Respuestas = new[] {
+                                        false,
+                                        true,
+                                        false
+                                            },
+                                        EsCheckbox = false },
+
+
+        new { Num = 6, Texto = "¿Seleccione el concepto que describe lo que es la CONTAMINACION?",
+                                Opciones = new[] {
+                                    "Es la presencia de sustancias que alteran el medio ambiente.",
+                                "Es toda sustancia sólida, líquida o gaseosa que daña el aire, la naturaleza, animales o al hombre y por lo tanto altera el medio ambiente.",
+                                "Es la proporción que se debe guardar entre lo que se tiene contra lo que se consume."
+                                },
+                                Respuestas = new[] {
+                                    true,
+                                    false,
+                                    false,
+                                     },
+                                    EsCheckbox = false },
+
+
+        new { Num = 7, Texto = "¿Que es un contaminante?",
+                                Opciones = new[] {
+                                    "Es toda sustancia sólida, líquida o gaseosa que daña el aire, la naturaleza, animales o al hombre y por lo tanto altera el medio ambiente",
+                                "Es la proporción que se debe guardar entre lo que se tiene contra lo que se consume",
+                                "García Es la presencia de sustancias que alteran el medio ambiente"
+                                },
+                                Respuestas = new[] {
+                                    true,
+                                    false,
+                                    false
+                                     },
+                                    EsCheckbox = false },
+
+
+        new { Num = 8, Texto = "¿Seleccione el concepto que describe ‘’ECOSISTEMA’’?", Opciones = new[] {
+                                "Es el lugar donde habitan diferentes seres vivos, incluyendo al hombre, relacionados todos entre sí en un medio específico.",
+                                "Rama de la biología que estudia las relaciones de los diferentes seres vivos entre sí y con su entorno",
+                                "Estudio de los flujos de materia y energía que acontecen en la naturaleza. Ciclos biogeoquímicos y redes tróficas."
+                                 },
+                                Respuestas = new[] {
+                                    true,
+                                    false,
+                                    false
+                                     },
+                                    EsCheckbox = false },
+
+
+        new { Num = 9, Texto = "¿Seleccione los tipos de contaminacion?",
+                                Opciones = new[] {
+                                    "Aire",
+                                    "Agua",
+                                    "Suelo"
+                                },
+                                    Respuestas = new[] {
+                                        true,
+                                        true,
+                                        true },
+                                        EsCheckbox = true },
+
+
+        new { Num = 10, Texto = "¿Que significa Ecologia?",
+                                Opciones = new[] {
+                                    "Cuidar el medioambiente",
+                                    "Dañar el medio ambiente"
+                                     },
+                                    Respuestas = new[] {
+                                        true,
+                                        false,
+                                        },
+                                        EsCheckbox = false }
+    };
+}
+
+<style>
+    /* Modal backdrop */
+    #resultado-modal {
+        display: none;
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        align-items: center;
+        justify-content: center;
+    }
+
+        /* Modal box */
+        #resultado-modal .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        #resultado-modal button {
+            margin-top: 20px;
+        }
+</style>
+
+<form id="exam-form">
+    @foreach (var p in preguntas)
+    {
+        var nombreInput = p.EsCheckbox ? $"p{p.Num}[]" : $"p{p.Num}";
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">@p.Num. @p.Texto</h5>
+                @for (int i = 0; i < p.Opciones.Length; i++)
+                {
+                    var id = $"p{p.Num}_{i}";
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               type="@(p.EsCheckbox ? "checkbox" : "radio")"
+                               name="@nombreInput"
+                               id="@id"
+                               data-correct="@(p.Respuestas[i] ? "1" : "0")" />
+                        <label class="form-check-label" for="@id">@p.Opciones[i]</label>
+                    </div>
+                }
+                <div class="feedback mt-2" id="feedback-@p.Num"></div>
+            </div>
+        </div>
+    }
+    <div class="text-center">
+        <button type="submit" class="btn btn-primary">Enviar respuestas</button>
+    </div>
+</form>
+
+<!-- Modal -->
+<div id="resultado-modal">
+    <div class="modal-content">
+        <h3>Resultados del examen</h3>
+        <p id="resultado-text"></p>
+        <button id="cerrar-modal" class="btn btn-success">Cerrar</button>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const form = document.getElementById('exam-form');
+        const modal = document.getElementById('resultado-modal');
+        const resultadoText = document.getElementById('resultado-text');
+        const cerrarModalBtn = document.getElementById('cerrar-modal');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            let totalCorrectas = 0;
+
+            for (let i = 1; i <= 10; i++) {
+                // Armar selector según si checkbox o radio
+                let selector = `input[name="p${i}"]`;
+                // Comprobar si checkbox para cambiar selector
+                const esCheckbox = document.querySelectorAll(`input[name="p${i}[]"]`).length > 0;
+                if (esCheckbox) {
+                    selector = `input[name="p${i}[]"]`;
+                }
+
+                const inputs = document.querySelectorAll(selector);
+                const feedback = document.getElementById(`feedback-${i}`);
+
+                const seleccionadas = Array.from(inputs).filter(input => input.checked);
+                if (seleccionadas.length === 0) {
+                    feedback.innerHTML = "❌ Debes seleccionar al menos una opción";
+                    feedback.style.color = "red";
+                    continue;
+                }
+
+                let correcta = true;
+                inputs.forEach(input => {
+                    const marcada = input.checked;
+                    const esCorrecta = input.dataset.correct === "1";
+                    if ((marcada && !esCorrecta) || (!marcada && esCorrecta)) {
+                        correcta = false;
+                    }
+                });
+
+                feedback.innerHTML = correcta ? "✔️ Correcto" : "❌ Incorrecto";
+                feedback.style.color = correcta ? "green" : "red";
+                if (correcta) totalCorrectas++;
+            }
+
+            resultadoText.textContent = `Obtuviste ${totalCorrectas} de 10 preguntas correctas. Calificación: ${(totalCorrectas * 10).toFixed(2)}`;
+
+            modal.style.display = "flex";
+        });
+
+        cerrarModalBtn.addEventListener('click', () => {
+            modal.style.display = "none";
+        });
+    </script>
+}

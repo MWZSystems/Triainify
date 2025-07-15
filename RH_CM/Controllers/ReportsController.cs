@@ -1,10 +1,22 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ClosedXML.Excel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using RH_CM.Data;
+using RH_CM.Models;
+using RH_CM.ViewModels;
 
 namespace RH_CM.Controllers
 {
     public class ReportsController : Controller
     {
+        private readonly RH_CHDBContext _context;
+
+        public ReportsController(RH_CHDBContext context)
+        {
+            _context = context;
+        }
         // GET: ReportsController
         public ActionResult SupervisorEmployeesCheck()
         {
@@ -29,13 +41,49 @@ namespace RH_CM.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        public async Task<IActionResult> HeadCountbySupervisor()
+        {
+            return View();
+        }
+
+        // GET: CtCoursematerial
+        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        public IActionResult CourseToDobyEmpleyee()
+        {
+            var materials = _context.CtCoursematerials
+                .Where(m => m.Available == 1)
+                .Join(
+                    _context.CtCourses.Where(c => c.Available == 1),
+                    m => m.FkCourse,
+                    c => c.PkCourse,
+                    (m, c) => new { m, c }
+                )
+                .Select(temp => new
+                {
+                    temp.m.PkCoursematerial,
+                    MaterialName = temp.m.NameMaterial,  // NOMBRE CONSISTENTE
+                    temp.m.Available,
+                    CourseName = temp.c.CourseName,
+                    temp.c.ManagementSystem,
+                })
+                .ToList();
+
+            return View(materials);
+        }
+
         // GET: ReportsController
         public ActionResult TestQuestions()
         {
             return View();
         }
 
-        
+        public ActionResult TestQuestions2()
+        {
+            return View();
+        }
+
+
         // GET: ReportsController/Details/5
         public ActionResult Details(int id)
         {

@@ -5,204 +5,101 @@
 
 <div class="row">
     <div class="col-xl-12">
-        <div id="wizard-courses" class="wizard wizard-primary mb-4">
-            <ul class="nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="#wizard-step-1">Empleado 8140<br /><small>Ing. Desarrollador de Software</small></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#wizard-step-2">Empleado 1234<br /><small>Ingeniero de Sistemas</small></a>
-                </li>
-            </ul>
-            <div class="tab-content">
-                <!-- Empleado 8140 -->
-                <div id="wizard-step-1" class="tab-pane" role="tabpanel">
-                    <div class="row">
-                        <div class="col-xl-8">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="card-title mb-0">Matriz - Empleado 8140</h5>
-                                </div>
-                                <div class="card-body">
-                                    <table id="datatables-responsive" class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Position</th>
-                                                <th>Course</th>
-                                                <th>LEVEL 0</th>
-                                                <th>LEVEL 1</th>
-                                                <th>LEVEL 2</th>
-                                                <th>LEVEL 3</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @{
-                                                var courses = new[]{
-                                            "Ecología básica",
-                                            "Inducción",
-                                            "ISO 14001 2015",
-                                            "NOM-017-STPS-2008, Equipo de Protección Personal.",
-                                            "NOM-02-STPS-2010, Prevención y protección contra incendios",
-                                            "OEA",
-                                            "PA-8.1c Manejo Recolección Clasificación de Residuos No Peligrosos",
-                                            "PA-8.1d Manejo Recolección Clasificación de Residuos Peligrosos",
-                                            "PA-8.2 Preparación y Respuesta ante Emergencias del SGA",
-                                            "Requisitos legales",
-                                            "Residuos no peligrosos",
-                                            "Seguridad"
-                                            };
-                                                var statuses8140 = new[]{
-                                            new[]{"bg-success","bg-success","bg-success","bg-success"},
-                                            new[]{"bg-success","bg-success","bg-success","bg-primary"},
-                                            new[]{"bg-success","bg-success","bg-success","bg-success"},
-                                            new[]{"bg-success","bg-success","bg-dark","bg-success"},
-                                            new[]{"bg-success","bg-success","bg-success","bg-warning"},
-                                            new[]{"bg-success","bg-success","bg-success","bg-success"},
-                                            new[]{"bg-success","bg-success","bg-success","bg-success"},
-                                            new[]{"bg-success","bg-success","bg-success","bg-danger"},
-                                            new[]{"bg-success","bg-success","bg-success","bg-success"},
-                                            new[]{"bg-success","bg-primary","bg-success","bg-success"},
-                                            new[]{"bg-success","bg-dark","bg-success","bg-success"},
-                                            new[]{"bg-success","bg-success","bg-success","bg-success"}
-                                            };
-                                                for (int i = 0; i < courses.Length; i++)
-                                                {
-                                                    <tr>
-                                                        <td>8140</td>
-                                                        <td>Ing. Desarrollador de Software</td>
-                                                        <td>@courses[i]</td>
-                                                        @for (int j = 0; j < 4; j++)
-                                                        {
-                                                            var cls = statuses8140[i][j];
-                                                            var text = cls == "bg-success" ? "Completo" : cls == "bg-primary" ? "Programado" : cls == "bg-dark" ? "Permanente" : cls == "bg-warning" ? "Por vencer" : "Falta";
-                                                            <td><span class="badge @cls">@text</span></td>
-                                                        }
-                                                    </tr>
-                                                }
+        <div class="row">
+            <div class="col-xl-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Matriz - Empleado 8140</h5>
+                    </div>
+                    <div class="card-body">
+                        <table id="datatables-responsive" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Position</th>
+                                    <th>Course</th>
+                                    <th>LEVEL 0</th>
+                                    <th>LEVEL 1</th>
+                                    <th>LEVEL 2</th>
+                                    <th>LEVEL 3</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var courses = new[]{
+                                                                "Ecología básica",
+                                                                "Inducción",
+                                                                "ISO 14001 2015",
+                                                                "NOM-017-STPS-2008, Equipo de Protección Personal.",
+                                                                "NOM-02-STPS-2010, Prevención y protección contra incendios",
+                                                                "OEA",
+                                                                "PA-8.1c Manejo Recolección Clasificación de Residuos No Peligrosos",
+                                                                "PA-8.1d Manejo Recolección Clasificación de Residuos Peligrosos",
+                                                                "PA-8.2 Preparación y Respuesta ante Emergencias del SGA",
+                                                                "Requisitos legales",
+                                                                "Residuos no peligrosos",
+                                                                "Seguridad"
+                                                                };
+                                    var statuses8140 = new[]{
+                                                                new[]{"bg-success","bg-success","bg-success","bg-success"},
+                                                                new[]{"bg-success","bg-success","bg-success","bg-primary"},
+                                                                new[]{"bg-success","bg-success","bg-success","bg-success"},
+                                                                new[]{"bg-success","bg-success","bg-dark","bg-success"},
+                                                                new[]{"bg-success","bg-success","bg-success","bg-warning"},
+                                                                new[]{"bg-success","bg-success","bg-success","bg-success"},
+                                                                new[]{"bg-success","bg-success","bg-success","bg-success"},
+                                                                new[]{"bg-success","bg-success","bg-success","bg-danger"},
+                                                                new[]{"bg-success","bg-success","bg-success","bg-success"},
+                                                                new[]{"bg-success","bg-primary","bg-success","bg-success"},
+                                                                new[]{"bg-success","bg-dark","bg-success","bg-success"},
+                                                                new[]{"bg-success","bg-success","bg-success","bg-success"}
+                                                                };
+                                    for (int i = 0; i < courses.Length; i++)
+                                    {
+                                        <tr>
+                                            <td>8140</td>
+                                            <td>Ing. Desarrollador de Software</td>
+                                            <td>@courses[i]</td>
+                                            @for (int j = 0; j < 4; j++)
+                                            {
+                                                var cls = statuses8140[i][j];
+                                                var text = cls == "bg-success" ? "Completo" : cls == "bg-primary" ? "Programado" : cls == "bg-dark" ? "Permanente" : cls == "bg-warning" ? "Por vencer" : "Falta";
+                                                <td><span class="badge @cls">@text</span></td>
                                             }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-4">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="card-title mb-0">Resumen de Cursos</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="py-3">
-                                        <div class="chart chart-xs">
-                                            <canvas id="chart-employee-8140"></canvas>
-                                        </div>
-                                    </div>
-                                    <table  class="table mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th>Status</th>
-                                                <th class="text-end">Cantidad</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr><td><i class="fas fa-square-full text-primary"></i> Programado</td><td class="text-end">2</td></tr>
-                                            <tr><td><i class="fas fa-square-full text-dark"></i> Permanente</td><td class="text-end">2</td></tr>
-                                            <tr><td><i class="fas fa-square-full" style="color:#ffc107;"></i> Por vencer</td><td class="text-end">1</td></tr>
-                                            <tr><td><i class="fas fa-square-full text-danger"></i> Falta</td><td class="text-end">1</td></tr>
-                                            <tr><td><i class="fas fa-square-full text-success"></i> Completo</td><td class="text-end">44</td></tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <!-- Empleado 1234 -->
-                <div id="wizard-step-2" class="tab-pane" role="tabpanel">
-                    <div class="row">
-                        <div class="col-xl-8">
-                            <div class="card mt-3">
-                                <div class="card-header">
-                                    <h5 class="card-title mb-0">Matriz - Empleado 1234</h5>
-                                </div>
-                                <div class="card-body">
-                                    <table id="datatables-responsive" class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Position</th>
-                                                <th>Course</th>
-                                                <th>LEVEL 0</th>
-                                                <th>LEVEL 1</th>
-                                                <th>LEVEL 2</th>
-                                                <th>LEVEL 3</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @{
-                                                var statuses1234 = new[]{
-                                            new[]{"bg-success","bg-success","bg-success","bg-success"},
-                                            new[]{"bg-success","bg-success","bg-primary","bg-success"},
-                                            new[]{"bg-success","bg-success","bg-success","bg-success"},
-                                            new[]{"bg-success","bg-success","bg-dark","bg-success"},
-                                            new[]{"bg-success","bg-warning","bg-success","bg-success"},
-                                            new[]{"bg-success","bg-success","bg-success","bg-success"},
-                                            new[]{"bg-success","bg-success","bg-success","bg-danger"},
-                                            new[]{"bg-success","bg-success","bg-success","bg-success"},
-                                            new[]{"bg-success","bg-success","bg-success","bg-success"},
-                                            new[]{"bg-success","bg-primary","bg-success","bg-success"},
-                                            new[]{"bg-success","bg-dark","bg-success","bg-success"},
-                                            new[]{"bg-success","bg-success","bg-success","bg-success"}
-                                            };
-                                                for (int i = 0; i < courses.Length; i++)
-                                                {
-                                                    <tr>
-                                                        <td>1234</td>
-                                                        <td>Ingeniero de Sistemas</td>
-                                                        <td>@courses[i]</td>
-                                                        @for (int j = 0; j < 4; j++)
-                                                        {
-                                                            var cls = statuses1234[i][j];
-                                                            var text = cls == "bg-success" ? "Completo" : cls == "bg-primary" ? "Programado" : cls == "bg-dark" ? "Permanente" : cls == "bg-warning" ? "Por vencer" : "Falta";
-                                                            <td><span class="badge @cls">@text</span></td>
-                                                        }
-                                                    </tr>
-                                                }
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
+            </div>
+            <div class="col-xl-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Resumen de Cursos</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="py-3">
+                            <div class="chart chart-xs">
+                                <canvas id="chart-employee-8140"></canvas>
                             </div>
                         </div>
-                        <div class="col-xl-4">
-                            <div class="card mt-3">
-                                <div class="card-header">
-                                    <h5 class="card-title mb-0">Resumen de Cursos</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="py-3">
-                                        <div class="chart chart-xs">
-                                            <canvas id="chart-employee-1234"></canvas>
-                                        </div>
-                                    </div>
-                                    <table class="table mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th>Status</th>
-                                                <th class="text-end">Cantidad</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr><td><i class="fas fa-square-full text-primary"></i> Programado</td><td class="text-end">2</td></tr>
-                                            <tr><td><i class="fas fa-square-full text-dark"></i> Permanente</td><td class="text-end">2</td></tr>
-                                            <tr><td><i class="fas fa-square-full" style="color:#ffc107;"></i> Por vencer</td><td class="text-end">1</td></tr>
-                                            <tr><td><i class="fas fa-square-full text-danger"></i> Falta</td><td class="text-end">1</td></tr>
-                                            <tr><td><i class="fas fa-square-full text-success"></i> Completo</td><td class="text-end">46</td></tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th class="text-end">Cantidad</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><i class="fas fa-square-full text-primary"></i> Programado</td><td class="text-end">2</td></tr>
+                                <tr><td><i class="fas fa-square-full text-dark"></i> Permanente</td><td class="text-end">2</td></tr>
+                                <tr><td><i class="fas fa-square-full" style="color:#ffc107;"></i> Por vencer</td><td class="text-end">1</td></tr>
+                                <tr><td><i class="fas fa-square-full text-danger"></i> Falta</td><td class="text-end">1</td></tr>
+                                <tr><td><i class="fas fa-square-full text-success"></i> Completo</td><td class="text-end">44</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

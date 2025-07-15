@@ -160,6 +160,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Sergi/Documents/GitHub/Triainify/RH_CM/Views/Reports/CourseToDobyEmpleyee.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0c1xDb3Vyc2VUb0RvYnlFbXBsZXllZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Sergi/Documents/GitHub/Triainify/RH_CM/Views/Reports/HeadCountbySupervisor.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0c1xIZWFkQ291bnRieVN1cGVydmlzb3IuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Sergi/Documents/GitHub/Triainify/RH_CM/Views/Reports/MatrizByDeparmentGeneral_RH.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0c1xNYXRyaXpCeURlcGFybWVudEdlbmVyYWxfUkguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
@@ -178,6 +186,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Sergi/Documents/GitHub/Triainify/RH_CM/Views/Reports/TestQuestions.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0c1xUZXN0UXVlc3Rpb25zLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Sergi/Documents/GitHub/Triainify/RH_CM/Views/Reports/TestQuestions2.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVwb3J0c1xUZXN0UXVlc3Rpb25zMi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Sergi/Documents/GitHub/Triainify/RH_CM/Views/Roles/Crear.cshtml]
