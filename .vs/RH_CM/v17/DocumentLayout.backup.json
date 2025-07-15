@@ -3,12 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\reports\\coursetodobyempleyee.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\reports\\coursetodobyempleyee.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\catalog\\indexcoursematerial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\catalog\\indexcoursematerial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\controllers\\reportscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -41,10 +45,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\reports\\testquestions2.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\reports\\testquestions2.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\catalog\\indexcoursematerial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\catalog\\indexcoursematerial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\controllers\\catalogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -90,11 +90,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "ReportsController.cs",
               "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\ReportsController.cs",
               "RelativeDocumentMoniker": "RH_CM\\Controllers\\ReportsController.cs",
@@ -107,28 +107,91 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "CourseToDobyEmpleyee.cshtml",
               "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\CourseToDobyEmpleyee.cshtml",
               "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\CourseToDobyEmpleyee.cshtml",
               "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\CourseToDobyEmpleyee.cshtml",
               "RelativeToolTip": "RH_CM\\Views\\Reports\\CourseToDobyEmpleyee.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAKAAAAAAAAAA==",
+              "ViewState": "AgIAAEgAAAAAAAAAAAAAAFMAAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-07-15T02:29:30.936Z",
+              "IsPinned": true,
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "_Layout.cshtml",
-              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Shared\\_Layout.cshtml",
-              "RelativeDocumentMoniker": "RH_CM\\Views\\Shared\\_Layout.cshtml",
-              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Shared\\_Layout.cshtml",
-              "RelativeToolTip": "RH_CM\\Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAADAAAAAAAAAA==",
+              "DocumentIndex": 4,
+              "Title": "HeadCountbySupervisor.cshtml",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\HeadCountbySupervisor.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\HeadCountbySupervisor.cshtml",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\HeadCountbySupervisor.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Reports\\HeadCountbySupervisor.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-15T02:08:04.317Z"
+              "WhenOpened": "2025-07-15T02:02:17.328Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "HeadCountController.cs",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\HeadCountController.cs",
+              "RelativeDocumentMoniker": "RH_CM\\Controllers\\HeadCountController.cs",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\HeadCountController.cs",
+              "RelativeToolTip": "RH_CM\\Controllers\\HeadCountController.cs",
+              "ViewState": "AgIAAIYAAAAAAAAAAAAIwCEAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T02:01:30.695Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "_Navbar.cshtml",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Shared\\_Navbar.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Shared\\_Navbar.cshtml",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Shared\\_Navbar.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Shared\\_Navbar.cshtml",
+              "ViewState": "AgIAADAAAAAAAAAAAAAAAEcAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-14T04:56:58.496Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "MatrizByEmployeesCheck.cshtml",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\MatrizByEmployeesCheck.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\MatrizByEmployeesCheck.cshtml",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\MatrizByEmployeesCheck.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Reports\\MatrizByEmployeesCheck.cshtml",
+              "ViewState": "AgIAAEgAAAAAAAAAAAAgwGkAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-15T03:04:21.081Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Program.cs",
+              "RelativeDocumentMoniker": "RH_CM\\Program.cs",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Program.cs",
+              "RelativeToolTip": "RH_CM\\Program.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAADMAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-15T02:39:01.518Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "IndexCourseMaterial.cshtml",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-15T02:30:02.055Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -144,68 +207,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "HeadCountbySupervisor.cshtml",
-              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\HeadCountbySupervisor.cshtml",
-              "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\HeadCountbySupervisor.cshtml",
-              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\HeadCountbySupervisor.cshtml",
-              "RelativeToolTip": "RH_CM\\Views\\Reports\\HeadCountbySupervisor.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 13,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAADAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-15T02:02:17.328Z"
+              "WhenOpened": "2025-07-15T02:08:04.317Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "HeadCountController.cs",
-              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\HeadCountController.cs",
-              "RelativeDocumentMoniker": "RH_CM\\Controllers\\HeadCountController.cs",
-              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\HeadCountController.cs",
-              "RelativeToolTip": "RH_CM\\Controllers\\HeadCountController.cs",
-              "ViewState": "AgIAAIYAAAAAAAAAAAAIwCEAAAApAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T02:01:30.695Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "_Navbar.cshtml",
-              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Shared\\_Navbar.cshtml",
-              "RelativeDocumentMoniker": "RH_CM\\Views\\Shared\\_Navbar.cshtml",
-              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Shared\\_Navbar.cshtml",
-              "RelativeToolTip": "RH_CM\\Views\\Shared\\_Navbar.cshtml",
-              "ViewState": "AgIAADAAAAAAAAAAAAAAAEcAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-14T04:56:58.496Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "MatrizByEmployeesCheck.cshtml",
-              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\MatrizByEmployeesCheck.cshtml",
-              "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\MatrizByEmployeesCheck.cshtml",
-              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\MatrizByEmployeesCheck.cshtml",
-              "RelativeToolTip": "RH_CM\\Views\\Reports\\MatrizByEmployeesCheck.cshtml",
-              "ViewState": "AgIAAEgAAAAAAAAAAAAgwGkAAAAOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-15T03:04:21.081Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Program.cs",
-              "RelativeDocumentMoniker": "RH_CM\\Program.cs",
-              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Program.cs",
-              "RelativeToolTip": "RH_CM\\Program.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAABoAAAADAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-15T02:39:01.518Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "TestQuestions.cshtml",
               "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\TestQuestions.cshtml",
               "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\TestQuestions.cshtml",
@@ -217,7 +231,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "MatrizByDeparmentGeneral_RH.cshtml",
               "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\MatrizByDeparmentGeneral_RH.cshtml",
               "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\MatrizByDeparmentGeneral_RH.cshtml",
@@ -229,7 +243,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "TestQuestions2.cshtml",
               "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Reports\\TestQuestions2.cshtml",
               "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\TestQuestions2.cshtml",
@@ -250,18 +264,6 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-15T02:01:29.607Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "IndexCourseMaterial.cshtml",
-              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
-              "RelativeDocumentMoniker": "RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
-              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
-              "RelativeToolTip": "RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
-              "ViewState": "AgIAAIQAAAAAAAAAAAAowKwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-15T02:30:02.055Z"
             },
             {
               "$type": "Document",
