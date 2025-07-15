@@ -1,13 +1,13 @@
 ﻿@model RH_CM.ViewModels.TestCreateViewModel
 
 @{
-    ViewData["Title"] = "Create Test with Questions";
+    ViewData["Title"] = "Edit Test Questions";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="row">
     <div class="col">
-        <h1 class="h3 mb-3 text-center">CREATE TEST WITH QUESTIONS</h1>
+        <h1 class="h3 mb-3 text-center">EDIT TEST QUESTIONS</h1>
     </div>
 </div>
 
@@ -16,10 +16,10 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">Test Details</h5>
-                <h6 class="card-subtitle text-muted">Fill out the test information and add questions below.</h6>
+                <h6 class="card-subtitle text-muted">Edit the questions and options below.</h6>
             </div>
             <div class="card-body">
-                <form asp-action="CreateQuestions" method="post">
+                <form asp-action="EditQuestions" method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                     <div class="row">
@@ -30,7 +30,7 @@
                         </div>
                         <div class="mb-3 col-md-4">
                             <label asp-for="FkCourse" class="form-label">Course <span class="text-danger">*</span></label>
-                            <select asp-for="FkCourse" class="form-control select2" asp-items="@(new SelectList(ViewBag.Courses, "PkCourse", "CourseName"))">
+                            <select asp-for="FkCourse" class="form-control select2" asp-items="@(new SelectList(ViewBag.Courses, "PkCourse", "CourseName", Model.FkCourse))">
                                 <option value="">-- Select Course --</option>
                             </select>
                             <span asp-validation-for="FkCourse" class="text-danger"></span>
@@ -63,7 +63,44 @@
                     </div>
 
                     <div id="questions-container">
-                        <!-- Dynamically added questions will appear here -->
+                        @for (int q = 0; q < Model.Questions.Count; q++)
+                        {
+                            <div class="card mb-3 question-block border border-primary" data-question-type="checkbox">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5>Question @(q + 1)</h5>
+                                        <button type="button" class="btn btn-sm btn-outline-danger remove-question-btn">
+                                            <i class="fas fa-trash"></i> Remove Question
+                                        </button>
+                                    </div>
+                                    <input type="hidden" name="Questions[@q].QuestionText" value="@Model.Questions[q].QuestionText" />
+                                    <div class="mb-2">
+                                        <input class="form-control" value="@Model.Questions[q].QuestionText" disabled />
+                                    </div>
+                                    <div class="options-container">
+                                        @for (int o = 0; o < Model.Questions[q].Options.Count; o++)
+                                        {
+                                            var opt = Model.Questions[q].Options[o];
+                                            <div class="input-group mb-2 align-items-center">
+                                                <div class="input-group-text">
+                                                    <input type="checkbox" @(opt.IsCorrect ? "checked" : "") class="correct-selector" />
+                                                </div>
+                                                <input type="hidden" name="Questions[@q].Options[@o].OptionText" value="@opt.OptionText" />
+                                                <input type="hidden" name="Questions[@q].Options[@o].IsCorrect" value="@opt.IsCorrect.ToString().ToLower()" />
+                                                <span class="form-control bg-light">@opt.OptionText</span>
+                                                <button type="button" class="btn btn-outline-danger remove-option-btn">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="input-group mt-2">
+                                        <input type="text" class="form-control option-text-input" placeholder="Enter option text" />
+                                        <button type="button" class="btn btn-primary add-option-confirm-btn">Confirm Option</button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                     </div>
 
                     <div class="text-end mt-3">
@@ -71,7 +108,7 @@
                             <i class="fas fa-arrow-left"></i> Cancel
                         </a>
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Save
+                            <i class="fas fa-save"></i> Save Changes
                         </button>
                     </div>
                 </form>
@@ -89,7 +126,7 @@
             width: '100%'
         });
 
-        let questionIndex = 0;
+        let questionIndex = @Model.Questions.Count;
 
         // Add Question
         $("#add-question-btn").click(function () {
@@ -113,7 +150,7 @@
                         <input type="hidden" name="Questions[${questionIndex}].QuestionText" value="${text}" />
                         <div class="options-container"></div>
                         <div class="input-group mt-2">
-                            <input type="text" class="form-control option-text-input" placeholder="Enter option text">
+                            <input type="text" class="form-control option-text-input" placeholder="Enter option text" />
                             <button type="button" class="btn btn-primary add-option-confirm-btn">Confirm Option</button>
                         </div>
                     </div>
@@ -139,26 +176,21 @@
 
             const container = cardBody.find(".options-container");
             const oIndex = container.children().length;
-
-            let inputType = "radio";
-            if (type === "checkbox") inputType = "checkbox";
-
             const optionHtml = `
                 <div class="input-group mb-2 align-items-center">
                     <div class="input-group-text">
-                        <input type="${inputType}" disabled />
+                        <input type="${type}" disabled />
                     </div>
                     <input type="hidden" name="Questions[${qIndex}].Options[${oIndex}].OptionText" value="${text}" />
                     <input type="hidden" name="Questions[${qIndex}].Options[${oIndex}].IsCorrect" value="false" />
                     <span class="form-control bg-light">${text}</span>
-                    <button type="button" class="btn btn-success mark-correct-btn" title="Mark as correct">
+                    <button type="button" class="btn btn-success mark-correct-btn">
                         <i class="fas fa-check"></i>
                     </button>
                     <button type="button" class="btn btn-outline-danger remove-option-btn">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>`;
-
             container.append(optionHtml);
             optionTextInput.val('');
         });

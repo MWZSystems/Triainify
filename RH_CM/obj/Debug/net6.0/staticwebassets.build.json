@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "MWnS6AdbFljXYd9vLN6GFmlOAJP89e/dnLJjAMGFT2Q=",
+  "Hash": "yXeINmhIlCm+gdMXmuDNrCE5v7aNffojDlM8ZbUKVjQ=",
   "Source": "RH_CM",
   "BasePath": "_content/RH_CM",
   "Mode": "Default",
@@ -9691,8 +9691,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "oq8r4nbcb2",
-      "Integrity": "AKvNjO3dCPPS0eSU1Ez8T2wI280i08yGycV9ndytL+c=",
+      "Fingerprint": "3s8k0d5sn8",
+      "Integrity": "cw06ZiK8QBRsz5EywXpLNbRqYoxCKhfMqWZitkyEXsk=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\site.css"
@@ -43575,6 +43575,51 @@
       ]
     },
     {
+      "Route": "css/site.3s8k0d5sn8.css",
+      "AssetFile": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\wwwroot\\css\\site.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "298"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"cw06ZiK8QBRsz5EywXpLNbRqYoxCKhfMqWZitkyEXsk=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 13 Jul 2025 06:00:33 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "3s8k0d5sn8"
+        },
+        {
+          "Name": "label",
+          "Value": "css/site.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-cw06ZiK8QBRsz5EywXpLNbRqYoxCKhfMqWZitkyEXsk="
+        }
+      ]
+    },
+    {
       "Route": "css/site.css",
       "AssetFile": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\wwwroot\\css\\site.css",
       "Selectors": [],
@@ -43585,7 +43630,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "194"
+          "Value": "298"
         },
         {
           "Name": "Content-Type",
@@ -43593,11 +43638,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"AKvNjO3dCPPS0eSU1Ez8T2wI280i08yGycV9ndytL+c=\""
+          "Value": "\"cw06ZiK8QBRsz5EywXpLNbRqYoxCKhfMqWZitkyEXsk=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Wed, 18 Jun 2025 04:00:53 GMT"
+          "Value": "Sun, 13 Jul 2025 06:00:33 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -43607,52 +43652,7 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-AKvNjO3dCPPS0eSU1Ez8T2wI280i08yGycV9ndytL+c="
-        }
-      ]
-    },
-    {
-      "Route": "css/site.oq8r4nbcb2.css",
-      "AssetFile": "C:\\Users\\Sergi\\Documents\\GitHub\\Triainify\\RH_CM\\wwwroot\\css\\site.css",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "194"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"AKvNjO3dCPPS0eSU1Ez8T2wI280i08yGycV9ndytL+c=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Wed, 18 Jun 2025 04:00:53 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "fingerprint",
-          "Value": "oq8r4nbcb2"
-        },
-        {
-          "Name": "label",
-          "Value": "css/site.css"
-        },
-        {
-          "Name": "integrity",
-          "Value": "sha256-AKvNjO3dCPPS0eSU1Ez8T2wI280i08yGycV9ndytL+c="
+          "Value": "sha256-cw06ZiK8QBRsz5EywXpLNbRqYoxCKhfMqWZitkyEXsk="
         }
       ]
     },
@@ -50737,7 +50737,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 24 Jun 2025 03:31:49 GMT"
+          "Value": "Sun, 13 Jul 2025 03:57:51 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -50774,7 +50774,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 24 Jun 2025 03:31:49 GMT"
+          "Value": "Sun, 13 Jul 2025 03:57:51 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -50819,7 +50819,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 24 Jun 2025 03:31:49 GMT"
+          "Value": "Sun, 13 Jul 2025 03:57:51 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -50864,7 +50864,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 24 Jun 2025 03:31:49 GMT"
+          "Value": "Sun, 13 Jul 2025 03:57:51 GMT"
         },
         {
           "Name": "Cache-Control",

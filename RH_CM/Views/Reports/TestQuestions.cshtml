@@ -1,0 +1,106 @@
+﻿<h3>Dynamic Question Generator</h3>
+<div class="row g-3 mb-3">
+    <div class="col-md-4">
+        <input type="text" id="questionText" class="form-control" placeholder="Enter the question text">
+    </div>
+    <div class="col-md-3">
+        <select id="questionType" class="form-select">
+            <option value="radio">Single choice (radio)</option>
+            <option value="checkbox">Multiple choice (checkbox)</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-success" id="addQuestion">Add question</button>
+    </div>
+</div>
+
+<form id="questionnaireForm">
+    <!-- Questions will be inserted here -->
+</form>
+
+<script>
+    const addBtn = document.getElementById('addQuestion');
+    const questionTextInput = document.getElementById('questionText');
+    const questionTypeSelect = document.getElementById('questionType');
+    const form = document.getElementById('questionnaireForm');
+
+    let questionCount = 0;
+
+    addBtn.addEventListener('click', () => {
+      const text = questionTextInput.value.trim();
+      const type = questionTypeSelect.value;
+
+      if (!text) {
+        alert("Please enter the question text.");
+        return;
+      }
+
+      questionCount++;
+
+      const div = document.createElement('div');
+      div.className = 'card mb-3';
+      div.innerHTML = `
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <label class="form-label fw-bold">${questionCount}. ${text}</label>
+            <button type="button" class="btn btn-danger btn-sm" onclick="deleteQuestion(this)">Delete question</button>
+          </div>
+          <div id="options-${questionCount}" class="mb-2"></div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="showOptionInput(${questionCount}, '${type}')">Add option</button>
+          <div id="optionInput-${questionCount}" class="mt-2"></div>
+        </div>
+      `;
+      form.appendChild(div);
+
+      questionTextInput.value = '';
+    });
+
+    function showOptionInput(questionId, type) {
+      const inputContainer = document.getElementById(`optionInput-${questionId}`);
+      inputContainer.innerHTML = `
+        <div class="input-group mb-2">
+          <input type="text" class="form-control" placeholder="Enter option text">
+          <button class="btn btn-primary" type="button" onclick="addOption(${questionId}, '${type}', this)">Confirm</button>
+        </div>
+      `;
+    }
+
+    function addOption(questionId, type, button) {
+      const inputContainer = button.closest('.input-group');
+      const input = inputContainer.querySelector('input');
+      const text = input.value.trim();
+
+      if (!text) {
+        alert("Please enter the option text.");
+        return;
+      }
+
+      const container = document.getElementById(`options-${questionId}`);
+      const optionCount = container.children.length + 1;
+      const optionId = `q${questionId}o${optionCount}`;
+
+      const optionDiv = document.createElement('div');
+      optionDiv.className = 'form-check d-flex align-items-center mb-1';
+
+      optionDiv.innerHTML = `
+        <input class="form-check-input me-2" type="${type}" name="question${questionId}" id="${optionId}" value="${text}">
+        <label class="form-check-label me-auto" for="${optionId}">${text}</label>
+        <button type="button" class="btn btn-outline-danger btn-sm ms-2" onclick="deleteOption(this)">✕</button>
+      `;
+
+      container.appendChild(optionDiv);
+
+      // Clear input
+      inputContainer.innerHTML = "";
+    }
+
+    function deleteQuestion(button) {
+      const card = button.closest('.card');
+      card.remove();
+    }
+
+    function deleteOption(button) {
+      const optionDiv = button.closest('.form-check');
+      optionDiv.remove();
+    }
+</script>

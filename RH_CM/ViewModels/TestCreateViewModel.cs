@@ -12,11 +12,11 @@
     {
         public string QuestionText { get; set; } = null!;
         public List<OptionCreateViewModel> Options { get; set; } = new();
-        public int CorrectOptionIndex { get; set; }
     }
 
     public class OptionCreateViewModel
     {
         public string OptionText { get; set; } = null!;
+        public bool IsCorrect { get; set; }
     }
 }

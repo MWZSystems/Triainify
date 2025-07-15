@@ -1051,11 +1051,33 @@ namespace RH_CM.Controllers
         }
 
         // GET: CtCoursematerial
-        public async Task<IActionResult> IndexCourseMaterial()
+        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        public IActionResult IndexCourseMaterial()
         {
-            var materials = await _context.CtCoursematerials.ToListAsync();
+            var materials = _context.CtCoursematerials
+                .Where(m => m.Available == 1)
+                .Join(
+                    _context.CtCourses.Where(c => c.Available == 1),
+                    m => m.FkCourse,
+                    c => c.PkCourse,
+                    (m, c) => new { m, c }
+                )
+                .Select(temp => new
+                {
+                    temp.m.PkCoursematerial,
+                    MaterialName = temp.m.NameMaterial,  // NOMBRE CONSISTENTE
+                    temp.m.Available,
+                    CourseName = temp.c.CourseName,
+                    temp.c.ManagementSystem,
+                    //temp.c.Idcourse,
+                    //temp.c.Revision,
+                    //temp.c.CourseValidityDays
+                })
+                .ToList();
+
             return View(materials);
         }
+
 
         // GET: CtCoursematerial/Create
         [Authorize(Roles = "Administrador, RHGerente")]
@@ -1301,59 +1323,58 @@ namespace RH_CM.Controllers
             return View(tests);
         }
 
+        [HttpPost]
+        [Authorize(Roles = "Administrador, RHGerente")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteTest(int id)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
-        //// GET: CtTest/Create
-        //[Authorize(Roles = "Administrador, RHGerente")]
-        //public async Task<IActionResult> CreateTest()
-        //{
-        //    ViewBag.Courses = await _context.CtCourses
-        //        .Where(c => c.Available == 1)
-        //        .OrderBy(c => c.CourseName)
-        //        .ToListAsync();
+            try
+            {
+                // 1. Obtener todas las preguntas del test
+                var questions = await _context.CtQuestions
+                    .Where(q => q.FkTest == id)
+                    .ToListAsync();
 
-        //    return View();
-        //}
+                foreach (var question in questions)
+                {
+                    // 2. Eliminar respuestas correctas
+                    var correctAnswers = await _context.CtCorrectanswers
+                        .Where(ca => ca.FkQuestions == question.PkQuestions)
+                        .ToListAsync();
+                    _context.CtCorrectanswers.RemoveRange(correctAnswers);
 
-        //// POST: CtTest/Create
-        //[HttpPost]
-        //[Authorize(Roles = "Administrador, RHGerente")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> CreateTest(CtTest ctTest)
-        //{
-        //    if (string.IsNullOrWhiteSpace(ctTest.TestName))
-        //    {
-        //        TempData["ErrorMessage"] = "The Test Name field is required.";
-        //        ViewBag.Courses = await _context.CtCourses
-        //            .Where(c => c.Available == 1)
-        //            .OrderBy(c => c.CourseName)
-        //            .ToListAsync();
-        //        return View(ctTest);
-        //    }
+                    // 3. Eliminar opciones
+                    var options = await _context.CtOptions
+                        .Where(o => o.FkQuestions == question.PkQuestions)
+                        .ToListAsync();
+                    _context.CtOptions.RemoveRange(options);
+                }
 
-        //    if (ctTest.CourseLevel < 0)
-        //    {
-        //        TempData["ErrorMessage"] = "The Course Level cannot be negative.";
-        //        ViewBag.Courses = await _context.CtCourses
-        //            .Where(c => c.Available == 1)
-        //            .OrderBy(c => c.CourseName)
-        //            .ToListAsync();
-        //        return View(ctTest);
-        //    }
+                // 4. Eliminar preguntas
+                _context.CtQuestions.RemoveRange(questions);
 
-        //    ctTest.Createuser = User.Identity?.Name ?? "Unknown";
-        //    ctTest.Createdate = DateTime.Now;
-        //    ctTest.Lastupdateuser = ctTest.Createuser;
-        //    ctTest.Lastupatedate = DateTime.Now;
-        //    ctTest.Available = 1;
+                // 5. Eliminar el test
+                var test = await _context.CtTests.FindAsync(id);
+                if (test != null)
+                {
+                    _context.CtTests.Remove(test);
+                }
 
-        //    _context.Add(ctTest);
-        //    await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
 
-        //    TempData["SuccessMessage"] = "Test created successfully.";
+                TempData["SuccessMessage"] = "Test and all related data were deleted successfully.";
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                TempData["ErrorMessage"] = $"Error deleting test: {ex.Message}";
+            }
 
-        //    // Redirigir a crear preguntas
-        //    return RedirectToAction(nameof(CreateQuestion), "Question", new { testId = ctTest.PkTest });
-        //}
+            return RedirectToAction(nameof(IndexTest));
+        }
 
         // GET: CtTest/EditTest/5
         [Authorize(Roles = "Administrador, RHGerente")]
@@ -1468,15 +1489,13 @@ namespace RH_CM.Controllers
                     _context.CtQuestions.Add(question);
                     await _context.SaveChangesAsync();
 
-                    for (int i = 0; i < q.Options.Count; i++)
+                    foreach (var optionVm in q.Options)
                     {
-                        var optionVm = q.Options[i];
-
                         var option = new CtOption
                         {
                             FkQuestions = question.PkQuestions,
                             Options = optionVm.OptionText,
-                            Answer = (i == q.CorrectOptionIndex) ? 1 : 0,
+                            Answer = optionVm.IsCorrect ? 1 : 0,
                             Createuser = test.Createuser,
                             Createdate = DateTime.Now,
                             Lastupdateuser = test.Createuser,
@@ -1487,7 +1506,7 @@ namespace RH_CM.Controllers
                         _context.CtOptions.Add(option);
                         await _context.SaveChangesAsync();
 
-                        if (i == q.CorrectOptionIndex)
+                        if (optionVm.IsCorrect)
                         {
                             var correctAnswer = new CtCorrectanswer
                             {
@@ -1509,7 +1528,6 @@ namespace RH_CM.Controllers
                 await transaction.CommitAsync();
 
                 TempData["SuccessMessage"] = "Test, questions, and options created successfully.";
-
                 return RedirectToAction(nameof(IndexTest), "Catalog");
             }
             catch (Exception ex)
@@ -1520,6 +1538,162 @@ namespace RH_CM.Controllers
                     .Where(c => c.Available == 1)
                     .OrderBy(c => c.CourseName)
                     .ToListAsync();
+                return View(model);
+            }
+        }
+
+        [Authorize(Roles = "Administrador, RHGerente")]
+        public async Task<IActionResult> EditQuestions(int id)
+        {
+            // Obtiene el test
+            var test = await _context.CtTests
+                .FirstOrDefaultAsync(t => t.PkTest == id);
+
+            if (test == null)
+            {
+                return NotFound();
+            }
+
+            // Obtiene preguntas y opciones
+            var questions = await _context.CtQuestions
+                .Where(q => q.FkTest == id)
+                .Select(q => new QuestionCreateViewModel
+                {
+                    QuestionText = q.Question,
+                    Options = _context.CtOptions
+                        .Where(o => o.FkQuestions == q.PkQuestions)
+                        .Select(o => new OptionCreateViewModel
+                        {
+                            OptionText = o.Options,
+                            IsCorrect = o.Answer == 1
+                        })
+                        .ToList()
+                })
+                .ToListAsync();
+
+            ViewBag.Courses = await _context.CtCourses
+                .Where(c => c.Available == 1)
+                .OrderBy(c => c.CourseName)
+                .ToListAsync();
+
+            var vm = new TestCreateViewModel
+            {
+                FkCourse = test.FkCourse,
+                CourseLevel = test.CourseLevel,
+                TestName = test.TestName,
+                Questions = questions
+            };
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Administrador, RHGerente")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditQuestions(int id, TestCreateViewModel model)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                // Actualizar datos del test
+                var test = await _context.CtTests.FindAsync(id);
+                if (test == null)
+                {
+                    return NotFound();
+                }
+
+                test.TestName = model.TestName;
+                test.FkCourse = model.FkCourse;
+                test.CourseLevel = model.CourseLevel;
+                test.Lastupdateuser = User.Identity?.Name ?? "Unknown";
+                test.Lastupatedate = DateTime.Now;
+
+                await _context.SaveChangesAsync();
+
+                // Eliminar preguntas, opciones y respuestas previas
+                var oldQuestions = await _context.CtQuestions
+                    .Where(q => q.FkTest == id)
+                    .ToListAsync();
+
+                foreach (var q in oldQuestions)
+                {
+                    var correctAnswers = await _context.CtCorrectanswers
+                        .Where(c => c.FkQuestions == q.PkQuestions)
+                        .ToListAsync();
+                    _context.CtCorrectanswers.RemoveRange(correctAnswers);
+
+                    var options = await _context.CtOptions
+                        .Where(o => o.FkQuestions == q.PkQuestions)
+                        .ToListAsync();
+                    _context.CtOptions.RemoveRange(options);
+                }
+
+                _context.CtQuestions.RemoveRange(oldQuestions);
+                await _context.SaveChangesAsync();
+
+                // Insertar nuevas preguntas y opciones
+                foreach (var q in model.Questions)
+                {
+                    var question = new CtQuestion
+                    {
+                        FkTest = test.PkTest,
+                        Question = q.QuestionText,
+                        Createuser = test.Createuser,
+                        Createdate = DateTime.Now,
+                        Lastupdateuser = test.Lastupdateuser,
+                        Lastupatedate = DateTime.Now,
+                        Available = 1
+                    };
+
+                    _context.CtQuestions.Add(question);
+                    await _context.SaveChangesAsync();
+
+                    foreach (var optionVm in q.Options)
+                    {
+                        var option = new CtOption
+                        {
+                            FkQuestions = question.PkQuestions,
+                            Options = optionVm.OptionText,
+                            Answer = optionVm.IsCorrect ? 1 : 0,
+                            Createuser = test.Createuser,
+                            Createdate = DateTime.Now,
+                            Lastupdateuser = test.Lastupdateuser,
+                            Lastupatedate = DateTime.Now,
+                            Available = 1
+                        };
+
+                        _context.CtOptions.Add(option);
+                        await _context.SaveChangesAsync();
+
+                        if (optionVm.IsCorrect)
+                        {
+                            var correctAnswer = new CtCorrectanswer
+                            {
+                                FkQuestions = question.PkQuestions,
+                                FkOptions = option.PkOptions.ToString(),
+                                Createuser = test.Createuser,
+                                Createdate = DateTime.Now,
+                                Lastupdateuser = test.Lastupdateuser,
+                                Lastupatedate = DateTime.Now,
+                                Available = 1
+                            };
+
+                            _context.CtCorrectanswers.Add(correctAnswer);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+                }
+
+                await transaction.CommitAsync();
+
+                TempData["SuccessMessage"] = "Test questions updated successfully.";
+                return RedirectToAction(nameof(IndexTest));
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                TempData["ErrorMessage"] = $"Error updating questions: {ex.Message}";
                 return View(model);
             }
         }
