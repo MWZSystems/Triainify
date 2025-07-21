@@ -30,15 +30,19 @@
                         </div>
                         <div class="mb-3 col-md-4">
                             <label asp-for="FkCourse" class="form-label">Course <span class="text-danger">*</span></label>
-                            <select asp-for="FkCourse" class="form-control select2" asp-items="@(new SelectList(ViewBag.Courses, "PkCourse", "CourseName"))">
+                            <select asp-for="FkCourse" class="form-control select2"
+                                    asp-items="@(new SelectList(Model.AvailableCourses, "PkCourse", "CourseName"))">
                                 <option value="">-- Select Course --</option>
                             </select>
                             <span asp-validation-for="FkCourse" class="text-danger"></span>
                         </div>
                         <div class="mb-3 col-md-4">
-                            <label asp-for="CourseLevel" class="form-label">Course Level</label>
-                            <input asp-for="CourseLevel" type="number" min="0" class="form-control" />
-                            <span asp-validation-for="CourseLevel" class="text-danger"></span>
+                            <label asp-for="FkRequiredCourseLevels" class="form-label">Required Course Level <span class="text-danger">*</span></label>
+                            <select asp-for="FkRequiredCourseLevels" class="form-control select2"
+                                    asp-items="@(new SelectList(Model.AvailableLevels, "PkLevelcourse", "DescripctionLevel"))">
+                                <option value="">-- Select Level --</option>
+                            </select>
+                            <span asp-validation-for="FkRequiredCourseLevels" class="text-danger"></span>
                         </div>
                     </div>
 
@@ -91,7 +95,6 @@
 
         let questionIndex = 0;
 
-        // Add Question
         $("#add-question-btn").click(function () {
             const text = $("#newQuestionText").val().trim();
             const type = $("#newQuestionType").val();
@@ -124,7 +127,6 @@
             questionIndex++;
         });
 
-        // Confirm Option
         $(document).on("click", ".add-option-confirm-btn", function () {
             const cardBody = $(this).closest(".card-body");
             const qIndex = $(".question-block").index($(this).closest(".question-block"));
@@ -163,7 +165,6 @@
             optionTextInput.val('');
         });
 
-        // Mark as Correct
         $(document).on("click", ".mark-correct-btn", function () {
             const group = $(this).closest(".input-group");
             const hiddenInput = group.find("input[type=hidden][name$='.IsCorrect']");
@@ -172,12 +173,10 @@
             $(this).toggleClass("btn-success btn-secondary");
         });
 
-        // Remove Option
         $(document).on("click", ".remove-option-btn", function () {
             $(this).closest(".input-group").remove();
         });
 
-        // Remove Question
         $(document).on("click", ".remove-question-btn", function () {
             $(this).closest(".question-block").remove();
         });

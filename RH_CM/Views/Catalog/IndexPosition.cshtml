@@ -20,91 +20,99 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-sm-12">
-        <div class="card">
-            <div class="card-body">
+<!-- Loader -->
+<div id="loader" class="text-center my-5">
+    <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
 
-                @if (Model.Any())
-                {
-                    <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
-                        <thead class="table-primary">
-                            <tr>
-                                <th>@Html.DisplayNameFor(model => model.PkPosition)</th>
-                                <th>@Html.DisplayNameFor(model => model.NamePosition)</th>
-                                <th>@Html.DisplayNameFor(model => model.NamePositionEnglish)</th>
-                                <th>@Html.DisplayNameFor(model => model.Createdate)</th>
-                                <th>@Html.DisplayNameFor(model => model.Lastupdatedate)</th> <!-- Nueva columna agregada -->
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
+<!-- Tabla envuelta en contenedor oculto -->
+<div id="tableContainer" style="display:none;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+
+                    @if (Model.Any())
+                    {
+                        <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
+                            <thead class="table-primary">
                                 <tr>
-                                    <td>@item.PkPosition</td>
-                                    <td>@item.NamePosition</td>
-                                    <td>@item.NamePositionEnglish</td>
-                                    <td>@item.Createdate</td>
-                                    <td>@item.Lastupdatedate</td> <!-- Nueva celda agregada -->
-                                    <td>
-                                        @{
-                                            string availabilityText = item.Available switch
-                                            {
-                                                1 => "Habilitado",
-                                                0 => "Deshabilitado",
-                                                _ => "Deshabilitado"
-                                            };
-                                        }
-                                        @availabilityText
-                                    </td>
-                                    <td>
-                                        <div class="text-center">
-                                            <!-- Botón para alternar disponibilidad -->
-                                            <form asp-action="TogglePosition" asp-route-id="@item.PkPosition" method="post" style="display:inline;">
-                                                <button type="submit" onclick="return confirm('Are you sure you want to toggle the availability of this position?')" class="btn @(item.Available == 1 ? "btn-success" : "btn-secondary")">
-                                                    <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
-                                                    @(item.Available == 1 ? "Enable" : "Disable")
-                                                </button>
-                                            </form>
-                                            <a class="btn btn-warning" asp-action="EditPosition" asp-route-id="@item.PkPosition">
-                                                <i class="fas fa-edit"></i> Edit
-                                            </a>
-                                            @if (User.Identity.IsAuthenticated && (User.IsInRole("Administrador")))
-                                            {
-                                                <!-- Botón para eliminar posición -->
-                                                <form asp-action="DeleteConfirmedPosition" asp-route-id="@item.PkPosition" method="post" style="display:inline;">
-                                                    <button type="submit" onclick="return confirm('Are you sure you want to delete this position?')" class="btn btn-danger">
-                                                        <i class="align-middle fas fa-trash-alt"></i>
-                                                        Delete
+                                    <th>@Html.DisplayNameFor(model => model.PkPosition)</th>
+                                    <th>@Html.DisplayNameFor(model => model.NamePosition)</th>
+                                    <th>@Html.DisplayNameFor(model => model.NamePositionEnglish)</th>
+                                    <th>@Html.DisplayNameFor(model => model.Createdate)</th>
+                                    <th>@Html.DisplayNameFor(model => model.Lastupdatedate)</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.PkPosition</td>
+                                        <td>@item.NamePosition</td>
+                                        <td>@item.NamePositionEnglish</td>
+                                        <td>@item.Createdate</td>
+                                        <td>@item.Lastupdatedate</td>
+                                        <td>
+                                            @{
+                                                string availabilityText = item.Available switch
+                                                {
+                                                    1 => "Habilitado",
+                                                    0 => "Deshabilitado",
+                                                    _ => "Deshabilitado"
+                                                };
+                                            }
+                                            @availabilityText
+                                        </td>
+                                        <td>
+                                            <div class="text-center">
+                                                <form asp-action="TogglePosition" asp-route-id="@item.PkPosition" method="post" style="display:inline;">
+                                                    <button type="submit" onclick="return confirm('Are you sure you want to toggle the availability of this position?')" class="btn @(item.Available == 1 ? "btn-success" : "btn-secondary")">
+                                                        <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
+                                                        @(item.Available == 1 ? "Enable" : "Disable")
                                                     </button>
                                                 </form>
-                                            }
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <p>No records found</p>
-                }
+                                                <a class="btn btn-warning" asp-action="EditPosition" asp-route-id="@item.PkPosition">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </a>
+                                                @if (User.Identity.IsAuthenticated && User.IsInRole("Administrador"))
+                                                {
+                                                    <form asp-action="DeleteConfirmedPosition" asp-route-id="@item.PkPosition" method="post" style="display:inline;">
+                                                        <button type="submit" onclick="return confirm('Are you sure you want to delete this position?')" class="btn btn-danger">
+                                                            <i class="align-middle fas fa-trash-alt"></i> Delete
+                                                        </button>
+                                                    </form>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p>No records found</p>
+                    }
 
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 
     <script>
         $(document).ready(function () {
+            $('#tableContainer').hide();
+            $('#loader').show();
+
             $('#datatables-responsive').DataTable({
                 responsive: true,
                 order: [5, 'desc'],
@@ -126,6 +134,11 @@
                         "next": "Siguiente",
                         "previous": "Anterior"
                     }
+                },
+                initComplete: function () {
+                    $('#loader').fadeOut(200, function () {
+                        $('#tableContainer').fadeIn(200);
+                    });
                 }
             });
 
@@ -135,10 +148,7 @@
                     message: "@TempData["SuccessMessage"]",
                     ripple: true,
                     dismissible: true,
-                    position: {
-                        x: 'center',
-                        y: 'top'
-                    },
+                    position: { x: 'center', y: 'top' },
                     duration: 5000
                 });
             }
@@ -149,10 +159,7 @@
                     message: "@TempData["ErrorMessage"]",
                     ripple: true,
                     dismissible: true,
-                    position: {
-                        x: 'center',
-                        y: 'top'
-                    },
+                    position: { x: 'center', y: 'top' },
                     duration: 5000
                 });
             }

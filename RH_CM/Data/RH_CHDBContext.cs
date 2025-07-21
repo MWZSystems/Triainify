@@ -26,8 +26,10 @@ namespace RH_CM.Data
         public virtual DbSet<CtCorrectanswer> CtCorrectanswers { get; set; } = null!;
         public virtual DbSet<CtCourse> CtCourses { get; set; } = null!;
         public virtual DbSet<CtCourseassignment> CtCourseassignments { get; set; } = null!;
+        public virtual DbSet<CtCourseassignmentsBackup> CtCourseassignmentsBackups { get; set; } = null!;
         public virtual DbSet<CtCoursematerial> CtCoursematerials { get; set; } = null!;
         public virtual DbSet<CtDepartment> CtDepartments { get; set; } = null!;
+        public virtual DbSet<CtLevelcourse> CtLevelcourses { get; set; } = null!;
         public virtual DbSet<CtOption> CtOptions { get; set; } = null!;
         public virtual DbSet<CtPosition> CtPositions { get; set; } = null!;
         public virtual DbSet<CtQuestion> CtQuestions { get; set; } = null!;
@@ -45,7 +47,7 @@ namespace RH_CM.Data
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=MEGAWARZPC; Database=RH_CHDB;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=localhost\\MSSQLSERVER01;Database=RH_CHDB;Trusted_Connection=True;");
             }
         }
 
@@ -218,6 +220,31 @@ namespace RH_CM.Data
                 entity.Property(e => e.LastUpdateUser).HasMaxLength(50);
             });
 
+            modelBuilder.Entity<CtCourseassignmentsBackup>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("CT_COURSEASSIGNMENTS_BACKUP");
+
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.CreateUser).HasMaxLength(50);
+
+                entity.Property(e => e.FkCourse).HasColumnName("FK_Course");
+
+                entity.Property(e => e.FkPosition).HasColumnName("FK_Position");
+
+                entity.Property(e => e.FkRequiredCourseLevels).HasColumnName("FK_RequiredCourseLevels");
+
+                entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.LastUpdateUser).HasMaxLength(50);
+
+                entity.Property(e => e.PkCourseAssignment)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("PK_CourseAssignment");
+            });
+
             modelBuilder.Entity<CtCoursematerial>(entity =>
             {
                 entity.HasKey(e => e.PkCoursematerial)
@@ -286,6 +313,37 @@ namespace RH_CM.Data
                 entity.Property(e => e.NameDeparment)
                     .HasMaxLength(50)
                     .HasColumnName("NAME_DEPARMENT");
+            });
+
+            modelBuilder.Entity<CtLevelcourse>(entity =>
+            {
+                entity.HasKey(e => e.PkLevelcourse);
+
+                entity.ToTable("CT_LEVELCOURSE");
+
+                entity.Property(e => e.PkLevelcourse).HasColumnName("PK_LEVELCOURSE");
+
+                entity.Property(e => e.Available).HasColumnName("AVAILABLE");
+
+                entity.Property(e => e.Createdate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CREATEDATE");
+
+                entity.Property(e => e.Createuser)
+                    .HasMaxLength(50)
+                    .HasColumnName("CREATEUSER");
+
+                entity.Property(e => e.DescripctionLevel)
+                    .HasMaxLength(50)
+                    .HasColumnName("DESCRIPCTION_LEVEL");
+
+                entity.Property(e => e.Lastupatedate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("LASTUPATEDATE");
+
+                entity.Property(e => e.Lastupdateuser)
+                    .HasMaxLength(50)
+                    .HasColumnName("LASTUPDATEUSER");
             });
 
             modelBuilder.Entity<CtOption>(entity =>
@@ -471,8 +529,6 @@ namespace RH_CM.Data
 
                 entity.Property(e => e.Available).HasColumnName("AVAILABLE");
 
-                entity.Property(e => e.CourseLevel).HasColumnName("COURSE_LEVEL");
-
                 entity.Property(e => e.Createdate)
                     .HasColumnType("datetime")
                     .HasColumnName("CREATEDATE");
@@ -482,6 +538,8 @@ namespace RH_CM.Data
                     .HasColumnName("CREATEUSER");
 
                 entity.Property(e => e.FkCourse).HasColumnName("FK_COURSE");
+
+                entity.Property(e => e.FkLevelcourse).HasColumnName("FK_LEVELCOURSE");
 
                 entity.Property(e => e.Lastupatedate)
                     .HasColumnType("datetime")

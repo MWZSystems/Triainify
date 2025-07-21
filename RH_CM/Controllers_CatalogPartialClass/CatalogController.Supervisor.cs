@@ -8,6 +8,37 @@ namespace RH_CM.Controllers
 {
     public partial class CatalogController
     {
+
+        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        public async Task<IActionResult> IndexSupervisor()
+        {
+            var supervisors = _context.CtSupervisors
+                //.Where(s => s.Available == 1)
+                .Join(_context.SyHeadCounts.Where(h => h.Available == 1),
+                    s => s.FkHeadcount,
+                    h => h.PkHeadcount,
+                    (s, h) => new { s, h })
+                .Join(_context.CtDepartments.Where(d => d.Available == 1),
+                    temp => temp.s.FkDepartment,
+                    d => d.PkDepartment,
+                    (temp, d) => new { temp.s, temp.h, d })
+                .Join(_context.CtPositions.Where(p => p.Available == 1),
+                    temp => temp.s.FkPosition,
+                    p => p.PkPosition,
+                    (temp, p) => new
+                    {
+                        temp.s.PkSupervisorId,
+                        temp.h.ControlNumber,
+                        FullName = $"{temp.h.Names} {(temp.h.LastName ?? "")} {(temp.h.SecondName ?? "")}".Trim(),
+                        temp.s.Available,
+                        DepartmentName = temp.d.NameDeparment,
+                        PositionName = p.NamePosition
+                    })
+                .ToList();
+
+            return View(supervisors);
+        }
+
         // GET: CtSupervisor/Create
         [Authorize(Roles = "Administrador, RHGerente")]
         public IActionResult CreateSupervisor()

@@ -21,12 +21,18 @@
         <div class="card">
             <div class="card-body">
 
+                <!-- Loader -->
+                <div id="loader" class="text-center my-4">
+                    <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+
                 @if (Model.SyHeadCounts.Any())
                 {
-                    <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
+                    <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%; display:none;">
                         <thead class="table-primary">
                             <tr>
-                                @* <th>Pk_HeadCount</th> *@
                                 <th>Control Number</th>
                                 <th>Name</th>
                                 <th>Department</th>
@@ -38,14 +44,12 @@
                             @foreach (var item in Model.SyHeadCounts)
                             {
                                 <tr>
-                                    @* <td>@item.PkHeadcount</td> *@
                                     <td>@item.ControlNumber</td>
                                     <td>@item.Names @item.LastName @item.SecondName</td>
                                     <td>@Model.Departments.FirstOrDefault(d => d.PkDepartment == item.FkDepartment)?.NameDeparment</td>
                                     <td>@Model.Positions.FirstOrDefault(p => p.PkPosition == item.FkPosition)?.NamePosition</td>
                                     <td>
                                         <div class="text-center">
-                                            <!-- Botón para alternar disponibilidad -->
                                             <form asp-action="ToggleAvailabilityHeadCount" asp-route-id="@item.PkHeadcount" method="post" style="display:inline;">
                                                 <button type="submit" onclick="return confirm('Are you sure you want to toggle the availability of this head count?')" class="btn @(item.Available == 1 ? "btn-success" : "btn-secondary")">
                                                     <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
@@ -78,16 +82,13 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 
     <script>
         $(document).ready(function () {
-            // Inicializar DataTable con traducción al español
-            $('#datatables-responsive').DataTable({
+            var table = $('#datatables-responsive').DataTable({
                 responsive: true,
-                order: [[0, 'asc']], // Ordenar por 'Control Number' (índice 0) de forma ascendente
+                order: [[0, 'asc']],
                 language: {
                     "decimal": "",
                     "emptyTable": "No hay información",
@@ -109,17 +110,18 @@
                 }
             });
 
-            // Mostrar mensajes de éxito y error
+            // Ocultar loader y mostrar tabla al finalizar la carga
+            $('#loader').hide();
+            $('#datatables-responsive').show();
+
+            // Notificaciones
             if ("@TempData["SuccessMessage"]" !== "") {
                 window.notyf.open({
                     type: 'success',
                     message: "@TempData["SuccessMessage"]",
                     ripple: true,
                     dismissible: true,
-                    position: {
-                        x: 'center',
-                        y: 'top'
-                    },
+                    position: { x: 'center', y: 'top' },
                     duration: 5000
                 });
             }
@@ -130,10 +132,7 @@
                     message: "@TempData["ErrorMessage"]",
                     ripple: true,
                     dismissible: true,
-                    position: {
-                        x: 'center',
-                        y: 'top'
-                    },
+                    position: { x: 'center', y: 'top' },
                     duration: 5000
                 });
             }

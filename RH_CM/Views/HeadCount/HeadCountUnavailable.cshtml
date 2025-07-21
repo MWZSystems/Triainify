@@ -56,7 +56,7 @@
                                 <th>City</th>
                                 <th>Zip Code</th>
                                 <th>Zip CodeSAT</th>
-                                <th>Available</th>
+                                @* <th>Available</th> *@
                                 @* <th>Actions</th> *@
                             </tr>
                         </thead>
@@ -73,24 +73,7 @@
                                     <td>@item.StarDate.ToShortDateString()</td>
                                     <td>@Model.Departments.FirstOrDefault(d => d.PkDepartment == item.FkDepartment)?.NameDeparment</td>
                                     <td>@Model.Positions.FirstOrDefault(p => p.PkPosition == item.FkPosition)?.NamePosition</td>
-                                    @* <td>
-                                        @if (item.Supervisor != 0)
-                                        {
-                                            var supervisor = Model.SyHeadCounts.FirstOrDefault(p => p.PkHeadcount == item.Supervisor);
-                                            if (supervisor != null)
-                                            {
-                                                @($"{supervisor.Names} {supervisor.LastName} {supervisor.SecondName}")
-                                            }
-                                            else
-                                            {
-                                                @("Supervisor no encontrado")
-                                            }
-                                        }
-                                        else
-                                        {
-                                            @("Sin Asignar")
-                                        }
-                                    </td> *@
+
                                     <td>@item.Birthdate.ToShortDateString()</td>
                                     <td>@Model.HeadCountAges.GetValueOrDefault(item.PkHeadcount, 0)</td> <!-- Mostrar edad -->
                                     <td>@item.Curp</td>
@@ -109,7 +92,7 @@
                                     <td>@item.City</td>
                                     <td>@item.ZipCode</td>
                                     <td>@item.ZipCodesat</td>
-                                    <td>@item.Available</td>
+                                    @* <td>@item.Available</td> *@
 
                                 </tr>
                             }

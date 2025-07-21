@@ -23,7 +23,6 @@
                     <input type="hidden" asp-for="PkCourseAssignment" />
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                    <!-- First Row -->
                     <div class="row">
                         <div class="mb-3 col-md-3">
                             <label asp-for="FkPosition" class="form-label">Position <span class="text-danger">*</span></label>
@@ -43,12 +42,8 @@
 
                         <div class="mb-3 col-md-3">
                             <label asp-for="FkRequiredCourseLevels" class="form-label">Required Course Level <span class="text-danger">*</span></label>
-                            <select asp-for="FkRequiredCourseLevels" class="form-control">
+                            <select asp-for="FkRequiredCourseLevels" class="form-control" asp-items="@(new SelectList(ViewBag.LevelCourses, "PkLevelcourse", "DescripctionLevel", Model.FkRequiredCourseLevels))">
                                 <option value="">-- Select Level --</option>
-                                <option value="1">Introducción</option>
-                                <option value="2">Básico</option>
-                                <option value="3">Intermedio</option>
-                                <option value="4">Avanzado</option>
                             </select>
                             <span asp-validation-for="FkRequiredCourseLevels" class="text-danger"></span>
                         </div>
@@ -63,7 +58,6 @@
                         </div>
                     </div>
 
-                    <!-- Submit and Cancel Buttons -->
                     <div class="row">
                         <div class="col-12 text-end">
                             <a asp-action="IndexCourseassignments" class="btn btn-secondary">
@@ -85,17 +79,13 @@
 
     <script>
         $(document).ready(function () {
-            // Mostrar mensajes de éxito y error
             if ("@TempData["SuccessMessage"]" !== "") {
                 window.notyf.open({
                     type: 'success',
                     message: "@TempData["SuccessMessage"]",
                     ripple: true,
                     dismissible: true,
-                    position: {
-                        x: 'center',
-                        y: 'top'
-                    },
+                    position: { x: 'center', y: 'top' },
                     duration: 5000
                 });
             }
@@ -106,10 +96,7 @@
                     message: "@TempData["ErrorMessage"]",
                     ripple: true,
                     dismissible: true,
-                    position: {
-                        x: 'center',
-                        y: 'top'
-                    },
+                    position: { x: 'center', y: 'top' },
                     duration: 5000
                 });
             }

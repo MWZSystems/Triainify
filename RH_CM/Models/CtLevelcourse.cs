@@ -3,12 +3,10 @@ using System.Collections.Generic;
 
 namespace RH_CM.Models
 {
-    public partial class CtTest
+    public partial class CtLevelcourse
     {
-        public int PkTest { get; set; }
-        public int FkCourse { get; set; }
-        public int FkLevelcourse { get; set; }
-        public string TestName { get; set; } = null!;
+        public int PkLevelcourse { get; set; }
+        public string DescripctionLevel { get; set; } = null!;
         public string Createuser { get; set; } = null!;
         public DateTime Createdate { get; set; }
         public string Lastupdateuser { get; set; } = null!;

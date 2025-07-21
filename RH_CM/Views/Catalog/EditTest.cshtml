@@ -41,9 +41,12 @@
 
                     <!-- Course Level -->
                     <div class="mb-3">
-                        <label asp-for="CourseLevel" class="form-label">Course Level</label>
-                        <input asp-for="CourseLevel" type="number" min="0" class="form-control" />
-                        <span asp-validation-for="CourseLevel" class="text-danger"></span>
+                        <label asp-for="FkLevelcourse" class="form-label">Course Level <span class="text-danger">*</span></label>
+                        <select asp-for="FkLevelcourse" class="form-control select2"
+                                asp-items="@(new SelectList(ViewBag.AvailableLevels, "PkLevelcourse", "DescripctionLevel", Model.FkLevelcourse))">
+                            <option value="">-- Select Level --</option>
+                        </select>
+                        <span asp-validation-for="FkLevelcourse" class="text-danger"></span>
                     </div>
 
                     <div class="text-end">

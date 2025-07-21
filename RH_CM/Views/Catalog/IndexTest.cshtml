@@ -1,4 +1,4 @@
-﻿@model IEnumerable<RH_CM.Models.CtTest>
+﻿@model IEnumerable<dynamic>
 
 @{
     ViewData["Title"] = "Tests";
@@ -7,7 +7,7 @@
 
 <div class="row">
     <div class="col">
-        <h1 class="h3 mb-3 text-center"><i class="fas fa-clipboard-list"></i> TESTS</h1>
+        <h1 class="h3 mb-3 text-center"><i class="fas fa-clipboard-list"></i> @ViewData["Title"]</h1>
     </div>
     <div class="col-auto">
         <a class="btn btn-facebook" asp-action="CreateQuestions">
@@ -16,58 +16,66 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-sm-12">
-        <div class="card">
-            <div class="card-body">
-                @if (Model.Any())
-                {
-                    <table id="datatables-responsive" class="table table-striped table-hover">
-                        <thead class="table-primary">
-                            <tr>
-                                <th>ID</th>
-                                <th>Test Name</th>
-                                <th>Course ID</th>
-                                <th>Level</th>
-                                <th>Available</th>
-                                <th>Created</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
+<!-- Loader -->
+<div id="loader" class="text-center my-5">
+    <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<!-- Table container -->
+<div id="tableContainer" style="display:none;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
+                            <thead class="table-primary">
                                 <tr>
-                                    <td>@item.PkTest</td>
-                                    <td>@item.TestName</td>
-                                    <td>@item.FkCourse</td>
-                                    <td>@item.CourseLevel</td>
-                                    <td>@(item.Available == 1 ? "Enabled" : "Disabled")</td>
-                                    <td>@item.Createdate.ToString("dd/MM/yyyy")</td>
-                                    <td>
-                                        <a class="btn btn-warning" asp-action="EditTest" asp-route-id="@item.PkTest">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form asp-action="DeleteTest" asp-route-id="@item.PkTest" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this test and all its questions and options?');">
-                                            <button type="submit" class="btn btn-danger">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                        <a class="btn btn-info" asp-action="EditQuestions" asp-route-id="@item.PkTest">
-                                            <i class="fas fa-tasks"></i> Edit Questions
-                                        </a>
-                                    </td>
-
-
+                                    <th>ID</th>
+                                    <th>Test Name</th>
+                                    <th>Course</th>
+                                    <th>Level</th>
+                                    <th>Actions</th>
+                                    @* <th>Created</th> *@
+                                    @* <th>Actions</th> *@
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <p>No tests found.</p>
-                }
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.Test.PkTest</td>
+                                        <td>@item.Test.TestName</td>
+                                        <td>@item.CourseName</td>
+                                        <td>@item.LevelDescription</td>
+                                        @* <td>@(item.Test.Available == 1 ? "Enabled" : "Disabled")</td> *@
+                                        @* <td>@item.Test.Createdate.ToString("dd/MM/yyyy")</td> *@
+                                        <td>
+                                            <a class="btn btn-warning" asp-action="EditTest" asp-route-id="@item.Test.PkTest">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form asp-action="DeleteTest" asp-route-id="@item.Test.PkTest" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this test and all its questions and options?');">
+                                                <button type="submit" class="btn btn-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                            <a class="btn btn-info" asp-action="EditQuestions" asp-route-id="@item.Test.PkTest">
+                                                <i class="fas fa-tasks"></i> 
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p>No tests found.</p>
+                    }
+                </div>
             </div>
         </div>
     </div>
@@ -75,8 +83,12 @@
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
+
     <script>
         $(document).ready(function () {
+            $('#tableContainer').hide();
+            $('#loader').show();
+
             $('#datatables-responsive').DataTable({
                 responsive: true,
                 order: [],
@@ -97,6 +109,11 @@
                         "next": "Siguiente",
                         "previous": "Anterior"
                     }
+                },
+                initComplete: function () {
+                    $('#loader').fadeOut(200, function () {
+                        $('#tableContainer').fadeIn(200);
+                    });
                 }
             });
 

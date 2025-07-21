@@ -17,45 +17,23 @@ namespace RH_CM.Controllers
                 .Join(_context.CtCourses,
                       temp => temp.ca.FkCourse,
                       c => c.PkCourse,
-                      (temp, c) => new
+                      (temp, c) => new { temp.ca, temp.p, c })
+                .Join(_context.CtLevelcourses,
+                      temp => temp.ca.FkRequiredCourseLevels,
+                      lc => lc.PkLevelcourse,
+                      (temp, lc) => new
                       {
                           temp.ca.PkCourseAssignment,
                           PositionName = temp.p.NamePosition,
-                          CourseName = c.CourseName,
-                          temp.ca.FkRequiredCourseLevels,
-                          temp.ca.Requiered, // bool
-                          temp.ca.Available
+                          CourseName = temp.c.CourseName,
+                          FkRequiredCourseLevels = temp.ca.FkRequiredCourseLevels,
+                          Requiered = temp.ca.Requiered,
+                          Available = temp.ca.Available,
+                          RequiredCourseLevelDescription = lc.DescripctionLevel
                       })
-                .ToList()
-                .Select(item => new
-                {
-                    item.PkCourseAssignment,
-                    item.PositionName,
-                    item.CourseName,
-                    RequiredCourseLevelDescription = GetCourseLevelDescription(item.FkRequiredCourseLevels),
-                    item.Requiered, // bool
-                    item.Available
-                });
+                .ToList();
 
             return View(courseAssignments);
-        }
-
-        /// <summary>
-        /// Esta linea deberia de ser un catalogo en la base de datos
-        /// Como tarea debe de cambiarse y generarse en el catalogo
-        /// </summary>
-        /// <param name="level"></param>
-        /// <returns></returns>
-        private static string GetCourseLevelDescription(int level)
-        {
-            return level switch
-            {
-                1 => "Introducción",
-                2 => "Básico",
-                3 => "Intermedio",
-                4 => "Avanzado",
-                _ => "Nivel desconocido",
-            };
         }
 
         // GET: CourseAssignments/Create
@@ -64,6 +42,7 @@ namespace RH_CM.Controllers
         {
             ViewBag.Positions = _context.CtPositions.Where(p => p.Available == 1).ToList();
             ViewBag.Courses = _context.CtCourses.Where(c => c.Available == 1).ToList();
+            ViewBag.LevelCourses = _context.CtLevelcourses.Where(c => c.Available == 1).ToList();
             return View();
         }
 
@@ -126,6 +105,7 @@ namespace RH_CM.Controllers
 
             ViewBag.Positions = _context.CtPositions.Where(p => p.Available == 1).ToList();
             ViewBag.Courses = _context.CtCourses.Where(c => c.Available == 1).ToList();
+            ViewBag.LevelCourses = _context.CtLevelcourses.Where(c => c.Available == 1).ToList();
             return View(courseAssignment);
         }
 
@@ -230,34 +210,5 @@ namespace RH_CM.Controllers
             return RedirectToAction(nameof(IndexCourseassignments));
         }
 
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
-        public async Task<IActionResult> IndexSupervisor()
-        {
-            var supervisors = _context.CtSupervisors
-                //.Where(s => s.Available == 1)
-                .Join(_context.SyHeadCounts.Where(h => h.Available == 1),
-                    s => s.FkHeadcount,
-                    h => h.PkHeadcount,
-                    (s, h) => new { s, h })
-                .Join(_context.CtDepartments.Where(d => d.Available == 1),
-                    temp => temp.s.FkDepartment,
-                    d => d.PkDepartment,
-                    (temp, d) => new { temp.s, temp.h, d })
-                .Join(_context.CtPositions.Where(p => p.Available == 1),
-                    temp => temp.s.FkPosition,
-                    p => p.PkPosition,
-                    (temp, p) => new
-                    {
-                        temp.s.PkSupervisorId,
-                        temp.h.ControlNumber,
-                        FullName = $"{temp.h.Names} {(temp.h.LastName ?? "")} {(temp.h.SecondName ?? "")}".Trim(),
-                        temp.s.Available,
-                        DepartmentName = temp.d.NameDeparment,
-                        PositionName = p.NamePosition
-                    })
-                .ToList();
-
-            return View(supervisors);
-        }
     }
 }

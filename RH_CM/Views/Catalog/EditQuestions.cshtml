@@ -15,67 +15,40 @@
     <div class="col-md-10 offset-md-1">
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title">Test Details</h5>
-                <h6 class="card-subtitle text-muted">Edit the questions and options below.</h6>
+                <h5 class="card-title">Test Information</h5>
+                <h6 class="card-subtitle text-muted">View-only details. Only text and correct answers can be edited.</h6>
             </div>
             <div class="card-body">
                 <form asp-action="EditQuestions" method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+                    <!-- Read-only Test Info -->
                     <div class="row">
                         <div class="mb-3 col-md-4">
-                            <label asp-for="TestName" class="form-label">Test Name <span class="text-danger">*</span></label>
-                            <input asp-for="TestName" class="form-control" />
-                            <span asp-validation-for="TestName" class="text-danger"></span>
+                            <label class="form-label">Test Name</label>
+                            <input class="form-control" value="@Model.TestName" readonly />
                         </div>
                         <div class="mb-3 col-md-4">
-                            <label asp-for="FkCourse" class="form-label">Course <span class="text-danger">*</span></label>
-                            <select asp-for="FkCourse" class="form-control select2" asp-items="@(new SelectList(ViewBag.Courses, "PkCourse", "CourseName", Model.FkCourse))">
-                                <option value="">-- Select Course --</option>
-                            </select>
-                            <span asp-validation-for="FkCourse" class="text-danger"></span>
+                            <label class="form-label">Course</label>
+                            <input class="form-control" value="@(Model.AvailableCourses?.FirstOrDefault(c => c.PkCourse == Model.FkCourse)?.CourseName ?? "N/A")" readonly />
                         </div>
                         <div class="mb-3 col-md-4">
-                            <label asp-for="CourseLevel" class="form-label">Course Level</label>
-                            <input asp-for="CourseLevel" type="number" min="0" class="form-control" />
-                            <span asp-validation-for="CourseLevel" class="text-danger"></span>
+                            <label class="form-label">Course Level</label>
+                            <input class="form-control" value="@(Model.FkRequiredCourseLevels)" readonly />
                         </div>
                     </div>
 
                     <hr />
 
-                    <!-- Input to create new question -->
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <input type="text" id="newQuestionText" class="form-control" placeholder="Enter question text" />
-                        </div>
-                        <div class="col-md-3">
-                            <select id="newQuestionType" class="form-select">
-                                <option value="radio">Single choice (radio)</option>
-                                <option value="checkbox">Multiple choice (checkbox)</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <button type="button" class="btn btn-success" id="add-question-btn">
-                                Add Question
-                            </button>
-                        </div>
-                    </div>
-
+                    <!-- Editable Questions -->
                     <div id="questions-container">
                         @for (int q = 0; q < Model.Questions.Count; q++)
                         {
-                            <div class="card mb-3 question-block border border-primary" data-question-type="checkbox">
+                            <div class="card mb-3 question-block border border-primary">
                                 <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h5>Question @(q + 1)</h5>
-                                        <button type="button" class="btn btn-sm btn-outline-danger remove-question-btn">
-                                            <i class="fas fa-trash"></i> Remove Question
-                                        </button>
-                                    </div>
-                                    <input type="hidden" name="Questions[@q].QuestionText" value="@Model.Questions[q].QuestionText" />
+                                    <h5>Question @(q + 1)</h5>
                                     <div class="mb-2">
-                                        <input class="form-control" value="@Model.Questions[q].QuestionText" disabled />
+                                        <input name="Questions[@q].QuestionText" class="form-control" value="@Model.Questions[q].QuestionText" />
                                     </div>
                                     <div class="options-container">
                                         @for (int o = 0; o < Model.Questions[q].Options.Count; o++)
@@ -83,20 +56,11 @@
                                             var opt = Model.Questions[q].Options[o];
                                             <div class="input-group mb-2 align-items-center">
                                                 <div class="input-group-text">
-                                                    <input type="checkbox" @(opt.IsCorrect ? "checked" : "") class="correct-selector" />
+                                                    <input type="checkbox" name="Questions[@q].Options[@o].IsCorrect" value="true" @(opt.IsCorrect ? "checked" : "") />
                                                 </div>
-                                                <input type="hidden" name="Questions[@q].Options[@o].OptionText" value="@opt.OptionText" />
-                                                <input type="hidden" name="Questions[@q].Options[@o].IsCorrect" value="@opt.IsCorrect.ToString().ToLower()" />
-                                                <span class="form-control bg-light">@opt.OptionText</span>
-                                                <button type="button" class="btn btn-outline-danger remove-option-btn">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
+                                                <input name="Questions[@q].Options[@o].OptionText" class="form-control" value="@opt.OptionText" />
                                             </div>
                                         }
-                                    </div>
-                                    <div class="input-group mt-2">
-                                        <input type="text" class="form-control option-text-input" placeholder="Enter option text" />
-                                        <button type="button" class="btn btn-primary add-option-confirm-btn">Confirm Option</button>
                                     </div>
                                 </div>
                             </div>
@@ -119,99 +83,4 @@
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
-    <script>
-        $(".select2").select2({
-            theme: 'bootstrap4',
-            allowClear: true,
-            width: '100%'
-        });
-
-        let questionIndex = @Model.Questions.Count;
-
-        // Add Question
-        $("#add-question-btn").click(function () {
-            const text = $("#newQuestionText").val().trim();
-            const type = $("#newQuestionType").val();
-
-            if (!text) {
-                alert("Please enter the question text.");
-                return;
-            }
-
-            const questionHtml = `
-                <div class="card mb-3 question-block border border-primary" data-question-type="${type}">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h5>Question ${questionIndex + 1}: ${text}</h5>
-                            <button type="button" class="btn btn-sm btn-outline-danger remove-question-btn">
-                                <i class="fas fa-trash"></i> Remove Question
-                            </button>
-                        </div>
-                        <input type="hidden" name="Questions[${questionIndex}].QuestionText" value="${text}" />
-                        <div class="options-container"></div>
-                        <div class="input-group mt-2">
-                            <input type="text" class="form-control option-text-input" placeholder="Enter option text" />
-                            <button type="button" class="btn btn-primary add-option-confirm-btn">Confirm Option</button>
-                        </div>
-                    </div>
-                </div>`;
-            $("#questions-container").append(questionHtml);
-
-            $("#newQuestionText").val('');
-            questionIndex++;
-        });
-
-        // Confirm Option
-        $(document).on("click", ".add-option-confirm-btn", function () {
-            const cardBody = $(this).closest(".card-body");
-            const qIndex = $(".question-block").index($(this).closest(".question-block"));
-            const type = $(this).closest(".question-block").attr("data-question-type");
-            const optionTextInput = cardBody.find(".option-text-input");
-            const text = optionTextInput.val().trim();
-
-            if (!text) {
-                alert("Please enter the option text.");
-                return;
-            }
-
-            const container = cardBody.find(".options-container");
-            const oIndex = container.children().length;
-            const optionHtml = `
-                <div class="input-group mb-2 align-items-center">
-                    <div class="input-group-text">
-                        <input type="${type}" disabled />
-                    </div>
-                    <input type="hidden" name="Questions[${qIndex}].Options[${oIndex}].OptionText" value="${text}" />
-                    <input type="hidden" name="Questions[${qIndex}].Options[${oIndex}].IsCorrect" value="false" />
-                    <span class="form-control bg-light">${text}</span>
-                    <button type="button" class="btn btn-success mark-correct-btn">
-                        <i class="fas fa-check"></i>
-                    </button>
-                    <button type="button" class="btn btn-outline-danger remove-option-btn">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>`;
-            container.append(optionHtml);
-            optionTextInput.val('');
-        });
-
-        // Mark as Correct
-        $(document).on("click", ".mark-correct-btn", function () {
-            const group = $(this).closest(".input-group");
-            const hiddenInput = group.find("input[type=hidden][name$='.IsCorrect']");
-            const isCorrect = hiddenInput.val() === "true";
-            hiddenInput.val(!isCorrect);
-            $(this).toggleClass("btn-success btn-secondary");
-        });
-
-        // Remove Option
-        $(document).on("click", ".remove-option-btn", function () {
-            $(this).closest(".input-group").remove();
-        });
-
-        // Remove Question
-        $(document).on("click", ".remove-question-btn", function () {
-            $(this).closest(".question-block").remove();
-        });
-    </script>
 }
