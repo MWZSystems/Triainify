@@ -34,7 +34,7 @@
                         </div>
                         <div class="mb-3 col-md-4">
                             <label class="form-label">Course Level</label>
-                            <input class="form-control" value="@(Model.FkRequiredCourseLevels)" readonly />
+                            <input class="form-control" value="@(Model.AvailableLevels?.FirstOrDefault(l => l.PkLevelcourse == Model.FkRequiredCourseLevels)?.DescripctionLevel ?? "N/A")" readonly />
                         </div>
                     </div>
 
@@ -44,21 +44,52 @@
                     <div id="questions-container">
                         @for (int q = 0; q < Model.Questions.Count; q++)
                         {
+                            var question = Model.Questions[q];
+                            var inputType = question.FkTypeOption == 1 ? "radio" : "checkbox";
+                            var typeLabel = inputType == "radio" ? "Single choice" : "Multiple choice";
+
                             <div class="card mb-3 question-block border border-primary">
                                 <div class="card-body">
                                     <h5>Question @(q + 1)</h5>
+
+                                    <!-- Question Text -->
                                     <div class="mb-2">
-                                        <input name="Questions[@q].QuestionText" class="form-control" value="@Model.Questions[q].QuestionText" />
+                                        <input name="Questions[@q].QuestionText" class="form-control" value="@question.QuestionText" />
+                                        <input type="hidden" name="Questions[@q].FkTypeOption" value="@question.FkTypeOption" />
                                     </div>
+
+                                    <!-- Info type -->
+                                    <div class="mb-2 text-muted small fst-italic">
+                                        Option type: @typeLabel
+                                    </div>
+
+                                    <!-- Options -->
                                     <div class="options-container">
-                                        @for (int o = 0; o < Model.Questions[q].Options.Count; o++)
+                                        @for (int o = 0; o < question.Options.Count; o++)
                                         {
-                                            var opt = Model.Questions[q].Options[o];
+                                            var opt = question.Options[o];
+                                            var isChecked = opt.IsCorrect ? "checked" : "";
+
                                             <div class="input-group mb-2 align-items-center">
                                                 <div class="input-group-text">
-                                                    <input type="checkbox" name="Questions[@q].Options[@o].IsCorrect" value="true" @(opt.IsCorrect ? "checked" : "") />
+                                                    @if (inputType == "radio")
+                                                    {
+                                                        <input type="radio"
+                                                               name="Questions[@q].IsCorrectIndex"
+                                                               value="@o"
+                                                               @(opt.IsCorrect ? "checked" : "") />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox"
+                                                               name="Questions[@q].Options[@o].IsCorrect"
+                                                               value="true"
+                                                               @(opt.IsCorrect ? "checked" : "") />
+                                                    }
                                                 </div>
-                                                <input name="Questions[@q].Options[@o].OptionText" class="form-control" value="@opt.OptionText" />
+                                                <input name="Questions[@q].Options[@o].OptionText"
+                                                       class="form-control"
+                                                       value="@opt.OptionText" />
                                             </div>
                                         }
                                     </div>

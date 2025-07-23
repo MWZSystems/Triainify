@@ -188,25 +188,33 @@ namespace RH_CM.Controllers
         }
 
 
+        private async Task InitializeCreateTestViewModelAsync(TestCreateViewModel model)
+        {
+            model.AvailableCourses = await _context.CtCourses
+                .Where(c => c.Available == 1)
+                .OrderBy(c => c.CourseName)
+                .ToListAsync();
+
+            model.AvailableLevels = await _context.CtLevelcourses
+                .Where(l => l.Available == 1)
+                .OrderBy(l => l.DescripctionLevel)
+                .ToListAsync();
+
+            model.AvailableOptionTypes = await _context.CtOptiontypes
+                .Where(o => o.Available == 1)
+                .OrderBy(o => o.PkOptiontype)
+                .ToListAsync();
+        }
 
 
         // GET: Catalog/CreateQuestions
         [Authorize(Roles = "Administrador, RHGerente")]
         public async Task<IActionResult> CreateQuestions()
         {
-            var vm = new TestCreateViewModel
-            {
-                AvailableCourses = await _context.CtCourses
-            .Where(c => c.Available == 1)
-            .OrderBy(c => c.PkCourse)
-            .ToListAsync(),
+            var vm = new TestCreateViewModel();
+            await InitializeCreateTestViewModelAsync(vm);
 
-                AvailableLevels = await _context.CtLevelcourses
-            .Where(l => l.Available == 1)
-            .OrderBy(l => l.PkLevelcourse)
-            .ToListAsync(),
-
-                Questions = new List<QuestionCreateViewModel>
+            vm.Questions = new List<QuestionCreateViewModel>
             {
                 new QuestionCreateViewModel
                 {
@@ -216,12 +224,10 @@ namespace RH_CM.Controllers
                         new OptionCreateViewModel()
                     }
                 }
-            }
-                    };
+            };
 
             return View(vm);
         }
-
 
         // POST: Catalog/CreateQuestions
         [HttpPost]
@@ -248,16 +254,7 @@ namespace RH_CM.Controllers
 
             if (TempData.ContainsKey("ErrorMessage"))
             {
-                model.AvailableCourses = await _context.CtCourses
-                    .Where(c => c.Available == 1)
-                    .OrderBy(c => c.CourseName)
-                    .ToListAsync();
-
-                model.AvailableLevels = await _context.CtLevelcourses
-                    .Where(l => l.Available == 1)
-                    .OrderBy(l => l.DescripctionLevel)
-                    .ToListAsync();
-
+                await InitializeCreateTestViewModelAsync(model);
                 return View(model);
             }
 
@@ -288,6 +285,7 @@ namespace RH_CM.Controllers
                     {
                         FkTest = test.PkTest,
                         Question = q.QuestionText,
+                        FkTypeOption = q.FkTypeOption,
                         Createuser = test.Createuser,
                         Createdate = DateTime.Now,
                         Lastupdateuser = test.Createuser,
@@ -344,16 +342,7 @@ namespace RH_CM.Controllers
                 await transaction.RollbackAsync();
                 TempData["ErrorMessage"] = $"Error saving data: {ex.Message}";
 
-                model.AvailableCourses = await _context.CtCourses
-                    .Where(c => c.Available == 1)
-                    .OrderBy(c => c.CourseName)
-                    .ToListAsync();
-
-                model.AvailableLevels = await _context.CtLevelcourses
-                    .Where(l => l.Available == 1)
-                    .OrderBy(l => l.DescripctionLevel)
-                    .ToListAsync();
-
+                await InitializeCreateTestViewModelAsync(model);
                 return View(model);
             }
         }
@@ -370,35 +359,31 @@ namespace RH_CM.Controllers
             }
 
             var questions = await _context.CtQuestions
-                .Where(q => q.FkTest == id)
-                .Select(q => new QuestionCreateViewModel
-                {
-                    QuestionText = q.Question,
-                    Options = _context.CtOptions
-                        .Where(o => o.FkQuestions == q.PkQuestions)
-                        .OrderBy(o => o.PkOptions)
-                        .Select(o => new OptionCreateViewModel
-                        {
-                            OptionText = o.Options,
-                            IsCorrect = o.Answer == 1
-                        }).ToList()
-                }).ToListAsync();
+            .Where(q => q.FkTest == id)
+            .Select(q => new QuestionCreateViewModel
+            {
+                QuestionText = q.Question,
+                FkTypeOption = q.FkTypeOption, // ✅ NUEVO
+                Options = _context.CtOptions
+                    .Where(o => o.FkQuestions == q.PkQuestions)
+                    .OrderBy(o => o.PkOptions)
+                    .Select(o => new OptionCreateViewModel
+                    {
+                        OptionText = o.Options,
+                        IsCorrect = o.Answer == 1
+                    }).ToList()
+            }).ToListAsync();
+
 
             var vm = new TestCreateViewModel
             {
                 TestName = test.TestName,
                 FkCourse = test.FkCourse,
                 FkRequiredCourseLevels = test.FkLevelcourse,
-                Questions = questions,
-                AvailableCourses = await _context.CtCourses
-                    .Where(c => c.Available == 1)
-                    .OrderBy(c => c.CourseName)
-                    .ToListAsync(),
-                AvailableLevels = await _context.CtLevelcourses
-                    .Where(l => l.Available == 1)
-                    .OrderBy(l => l.PkLevelcourse)
-                    .ToListAsync()
+                Questions = questions
             };
+
+            await InitializeCreateTestViewModelAsync(vm);
 
             return View(vm);
         }
@@ -433,8 +418,10 @@ namespace RH_CM.Controllers
                     if (dbQuestion == null) continue;
 
                     dbQuestion.Question = vmQuestion.QuestionText;
+                    dbQuestion.FkTypeOption = vmQuestion.FkTypeOption; // ✅ NUEVO
                     dbQuestion.Lastupdateuser = test.Lastupdateuser;
                     dbQuestion.Lastupatedate = DateTime.Now;
+
 
                     var dbOptions = await _context.CtOptions
                         .Where(o => o.FkQuestions == dbQuestion.PkQuestions)

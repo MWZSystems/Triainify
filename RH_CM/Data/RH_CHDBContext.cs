@@ -31,6 +31,7 @@ namespace RH_CM.Data
         public virtual DbSet<CtDepartment> CtDepartments { get; set; } = null!;
         public virtual DbSet<CtLevelcourse> CtLevelcourses { get; set; } = null!;
         public virtual DbSet<CtOption> CtOptions { get; set; } = null!;
+        public virtual DbSet<CtOptiontype> CtOptiontypes { get; set; } = null!;
         public virtual DbSet<CtPosition> CtPositions { get; set; } = null!;
         public virtual DbSet<CtQuestion> CtQuestions { get; set; } = null!;
         public virtual DbSet<CtResult> CtResults { get; set; } = null!;
@@ -380,6 +381,37 @@ namespace RH_CM.Data
                 entity.Property(e => e.Options).HasColumnName("OPTIONS");
             });
 
+            modelBuilder.Entity<CtOptiontype>(entity =>
+            {
+                entity.HasKey(e => e.PkOptiontype);
+
+                entity.ToTable("CT_OPTIONTYPE");
+
+                entity.Property(e => e.PkOptiontype).HasColumnName("PK_OPTIONTYPE");
+
+                entity.Property(e => e.Available).HasColumnName("AVAILABLE");
+
+                entity.Property(e => e.Createdate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CREATEDATE");
+
+                entity.Property(e => e.Createuser)
+                    .HasMaxLength(50)
+                    .HasColumnName("CREATEUSER");
+
+                entity.Property(e => e.DescriptionOptiontype)
+                    .HasMaxLength(50)
+                    .HasColumnName("DESCRIPTION_OPTIONTYPE");
+
+                entity.Property(e => e.Lastupatedate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("LASTUPATEDATE");
+
+                entity.Property(e => e.Lastupdateuser)
+                    .HasMaxLength(50)
+                    .HasColumnName("LASTUPDATEUSER");
+            });
+
             modelBuilder.Entity<CtPosition>(entity =>
             {
                 entity.HasKey(e => e.PkPosition);
@@ -435,6 +467,8 @@ namespace RH_CM.Data
                     .HasColumnName("CREATEUSER");
 
                 entity.Property(e => e.FkTest).HasColumnName("FK_TEST");
+
+                entity.Property(e => e.FkTypeOption).HasColumnName("FK_TYPE_OPTION");
 
                 entity.Property(e => e.Lastupatedate)
                     .HasColumnType("datetime")

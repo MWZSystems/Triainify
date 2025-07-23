@@ -11,12 +11,14 @@ namespace RH_CM.ViewModels
 
         public List<CtCourse> AvailableCourses { get; set; } = new();
         public List<CtLevelcourse> AvailableLevels { get; set; } = new();
+        public List<CtOptiontype> AvailableOptionTypes { get; set; } = new(); // nuevo
 
     }
 
     public class QuestionCreateViewModel
     {
         public string QuestionText { get; set; } = null!;
+        public int FkTypeOption { get; set; }  // Nuevo campo
         public List<OptionCreateViewModel> Options { get; set; } = new();
     }
 

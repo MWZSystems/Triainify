@@ -55,10 +55,13 @@
                         </div>
                         <div class="col-md-3">
                             <select id="newQuestionType" class="form-select">
-                                <option value="radio">Single choice (radio)</option>
-                                <option value="checkbox">Multiple choice (checkbox)</option>
+                                @foreach (var type in Model.AvailableOptionTypes)
+                                {
+                                    <option value="@type.PkOptiontype">@type.DescriptionOptiontype</option>
+                                }
                             </select>
                         </div>
+
                         <div class="col-md-2">
                             <button type="button" class="btn btn-success" id="add-question-btn">
                                 Add Question
@@ -97,7 +100,8 @@
 
         $("#add-question-btn").click(function () {
             const text = $("#newQuestionText").val().trim();
-            const type = $("#newQuestionType").val();
+            const typeId = $("#newQuestionType").val(); // PkOptiontype
+            const typeText = $("#newQuestionType option:selected").text(); // Optional for display
 
             if (!text) {
                 alert("Please enter the question text.");
@@ -105,7 +109,7 @@
             }
 
             const questionHtml = `
-                <div class="card mb-3 question-block border border-primary" data-question-type="${type}">
+                <div class="card mb-3 question-block border border-primary" data-question-type="${typeText}">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <h5>Question ${questionIndex + 1}: ${text}</h5>
@@ -114,6 +118,7 @@
                             </button>
                         </div>
                         <input type="hidden" name="Questions[${questionIndex}].QuestionText" value="${text}" />
+                        <input type="hidden" name="Questions[${questionIndex}].FkTypeOption" value="${typeId}" />
                         <div class="options-container"></div>
                         <div class="input-group mt-2">
                             <input type="text" class="form-control option-text-input" placeholder="Enter option text">
@@ -121,8 +126,8 @@
                         </div>
                     </div>
                 </div>`;
-            $("#questions-container").append(questionHtml);
 
+            $("#questions-container").append(questionHtml);
             $("#newQuestionText").val('');
             questionIndex++;
         });
@@ -130,7 +135,7 @@
         $(document).on("click", ".add-option-confirm-btn", function () {
             const cardBody = $(this).closest(".card-body");
             const qIndex = $(".question-block").index($(this).closest(".question-block"));
-            const type = $(this).closest(".question-block").attr("data-question-type");
+            const typeText = $(this).closest(".question-block").attr("data-question-type");
             const optionTextInput = cardBody.find(".option-text-input");
             const text = optionTextInput.val().trim();
 
@@ -143,7 +148,7 @@
             const oIndex = container.children().length;
 
             let inputType = "radio";
-            if (type === "checkbox") inputType = "checkbox";
+            if (typeText.toLowerCase().includes("checkbox")) inputType = "checkbox";
 
             const optionHtml = `
                 <div class="input-group mb-2 align-items-center">
@@ -182,3 +187,4 @@
         });
     </script>
 }
+
