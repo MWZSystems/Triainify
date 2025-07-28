@@ -10,6 +10,7 @@ namespace RH_CM.Models
         public int FkCourse { get; set; }
         public int FkRequiredCourseLevels { get; set; }
         public bool Requiered { get; set; }
+        public int? FkDeliveryMode { get; set; }
         public string CreateUser { get; set; } = null!;
         public DateTime CreateDate { get; set; }
         public string LastUpdateUser { get; set; } = null!;

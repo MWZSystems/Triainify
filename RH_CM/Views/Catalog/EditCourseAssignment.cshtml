@@ -23,8 +23,9 @@
                     <input type="hidden" asp-for="PkCourseAssignment" />
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+                    <!-- First Row -->
                     <div class="row">
-                        <div class="mb-3 col-md-3">
+                        <div class="mb-3 col-md-2">
                             <label asp-for="FkPosition" class="form-label">Position <span class="text-danger">*</span></label>
                             <select asp-for="FkPosition" class="form-control" asp-items="@(new SelectList(ViewBag.Positions, "PkPosition", "NamePosition", Model.FkPosition))">
                                 <option value="">-- Select Position --</option>
@@ -40,12 +41,20 @@
                             <span asp-validation-for="FkCourse" class="text-danger"></span>
                         </div>
 
-                        <div class="mb-3 col-md-3">
-                            <label asp-for="FkRequiredCourseLevels" class="form-label">Required Course Level <span class="text-danger">*</span></label>
+                        <div class="mb-3 col-md-2">
+                            <label asp-for="FkRequiredCourseLevels" class="form-label">Course Level <span class="text-danger">*</span></label>
                             <select asp-for="FkRequiredCourseLevels" class="form-control" asp-items="@(new SelectList(ViewBag.LevelCourses, "PkLevelcourse", "DescripctionLevel", Model.FkRequiredCourseLevels))">
                                 <option value="">-- Select Level --</option>
                             </select>
                             <span asp-validation-for="FkRequiredCourseLevels" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3 col-md-2">
+                            <label asp-for="FkDeliveryMode" class="form-label">Delivery Mode <span class="text-danger">*</span></label>
+                            <select asp-for="FkDeliveryMode" class="form-control" asp-items="@(new SelectList(ViewBag.DeliveryModes, "PkDeliverymode", "DescriptionDeliverymode", Model.FkDeliveryMode))">
+                                <option value="">-- Select Delivery Mode --</option>
+                            </select>
+                            <span asp-validation-for="FkDeliveryMode" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3 col-md-3">
@@ -58,6 +67,7 @@
                         </div>
                     </div>
 
+                    <!-- Submit and Cancel Buttons -->
                     <div class="row">
                         <div class="col-12 text-end">
                             <a asp-action="IndexCourseassignments" class="btn btn-secondary">

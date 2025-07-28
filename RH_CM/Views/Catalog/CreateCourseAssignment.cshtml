@@ -24,7 +24,7 @@
 
                     <!-- First Row -->
                     <div class="row">
-                        <div class="mb-3 col-md-3">
+                        <div class="mb-3 col-md-2">
                             <label asp-for="FkPosition" class="form-label">Position <span class="text-danger">*</span></label>
                             <select asp-for="FkPosition" class="form-control" asp-items="@(new SelectList(ViewBag.Positions, "PkPosition", "NamePosition"))">
                                 <option value="">-- Select Position --</option>
@@ -40,12 +40,20 @@
                             <span asp-validation-for="FkCourse" class="text-danger"></span>
                         </div>
 
-                        <div class="mb-3 col-md-3">
-                            <label asp-for="FkRequiredCourseLevels" class="form-label">Required Course Level <span class="text-danger">*</span></label>
+                        <div class="mb-3 col-md-2">
+                            <label asp-for="FkRequiredCourseLevels" class="form-label">Course Level <span class="text-danger">*</span></label>
                             <select asp-for="FkRequiredCourseLevels" class="form-control" asp-items="@(new SelectList(ViewBag.LevelCourses, "PkLevelcourse", "DescripctionLevel"))">
                                 <option value="">-- Select Level --</option>
                             </select>
                             <span asp-validation-for="FkRequiredCourseLevels" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3 col-md-2">
+                            <label asp-for="FkDeliveryMode" class="form-label">Delivery Mode <span class="text-danger">*</span></label>
+                            <select asp-for="FkDeliveryMode" class="form-control" asp-items="@(new SelectList(ViewBag.DeliveryModes, "PkDeliverymode", "DescriptionDeliverymode"))">
+                                <option value="">-- Select Delivery Mode --</option>
+                            </select>
+                            <span asp-validation-for="FkDeliveryMode" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3 col-md-3">
@@ -57,6 +65,7 @@
                             <span asp-validation-for="Requiered" class="text-danger"></span>
                         </div>
                     </div>
+
 
                     <!-- Submit and Cancel Buttons -->
                     <div class="row">

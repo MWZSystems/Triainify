@@ -28,6 +28,7 @@ namespace RH_CM.Data
         public virtual DbSet<CtCourseassignment> CtCourseassignments { get; set; } = null!;
         public virtual DbSet<CtCourseassignmentsBackup> CtCourseassignmentsBackups { get; set; } = null!;
         public virtual DbSet<CtCoursematerial> CtCoursematerials { get; set; } = null!;
+        public virtual DbSet<CtDeliverymode> CtDeliverymodes { get; set; } = null!;
         public virtual DbSet<CtDepartment> CtDepartments { get; set; } = null!;
         public virtual DbSet<CtLevelcourse> CtLevelcourses { get; set; } = null!;
         public virtual DbSet<CtOption> CtOptions { get; set; } = null!;
@@ -212,6 +213,8 @@ namespace RH_CM.Data
 
                 entity.Property(e => e.FkCourse).HasColumnName("FK_Course");
 
+                entity.Property(e => e.FkDeliveryMode).HasColumnName("FK_DeliveryMode");
+
                 entity.Property(e => e.FkPosition).HasColumnName("FK_Position");
 
                 entity.Property(e => e.FkRequiredCourseLevels).HasColumnName("FK_RequiredCourseLevels");
@@ -283,6 +286,37 @@ namespace RH_CM.Data
                     .HasMaxLength(100)
                     .IsUnicode(false)
                     .HasColumnName("NAME_MATERIAL");
+            });
+
+            modelBuilder.Entity<CtDeliverymode>(entity =>
+            {
+                entity.HasKey(e => e.PkDeliverymode);
+
+                entity.ToTable("CT_DELIVERYMODE");
+
+                entity.Property(e => e.PkDeliverymode).HasColumnName("PK_DELIVERYMODE");
+
+                entity.Property(e => e.Available).HasColumnName("AVAILABLE");
+
+                entity.Property(e => e.Createdate)
+                    .HasMaxLength(50)
+                    .HasColumnName("CREATEDATE");
+
+                entity.Property(e => e.Createuser)
+                    .HasMaxLength(50)
+                    .HasColumnName("CREATEUSER");
+
+                entity.Property(e => e.DescriptionDeliverymode)
+                    .HasMaxLength(50)
+                    .HasColumnName("DESCRIPTION_DELIVERYMODE");
+
+                entity.Property(e => e.Lastupatedate)
+                    .HasMaxLength(50)
+                    .HasColumnName("LASTUPATEDATE");
+
+                entity.Property(e => e.Lastupdateuser)
+                    .HasMaxLength(50)
+                    .HasColumnName("LASTUPDATEUSER");
             });
 
             modelBuilder.Entity<CtDepartment>(entity =>
@@ -815,19 +849,15 @@ namespace RH_CM.Data
                     .HasMaxLength(250)
                     .HasColumnName("CREATEUSER");
 
+                entity.Property(e => e.FkOptions).HasColumnName("FK_OPTIONS");
+
                 entity.Property(e => e.FkQuestions).HasColumnName("FK_QUESTIONS");
 
-                entity.Property(e => e.Lastupatedate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("LASTUPATEDATE");
+                entity.Property(e => e.FkTest).HasColumnName("FK_TEST");
 
-                entity.Property(e => e.Lastupdateuser)
-                    .HasMaxLength(250)
-                    .HasColumnName("LASTUPDATEUSER");
+                entity.Property(e => e.IsCorrected).HasColumnName("IS_CORRECTED");
 
-                entity.Property(e => e.UserAnswers)
-                    .IsUnicode(false)
-                    .HasColumnName("USER_ANSWERS");
+                entity.Property(e => e.IsSelected).HasColumnName("IS_SELECTED");
             });
 
             OnModelCreatingPartial(modelBuilder);

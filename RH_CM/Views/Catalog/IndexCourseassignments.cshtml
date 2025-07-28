@@ -39,13 +39,14 @@
                         <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
                             <thead class="table-primary">
                                 <tr>
-                                    <th>#</th>
+                                    <th>#</th> <!-- Corregido -->
                                     <th>Position</th>
                                     <th>Course</th>
                                     <th>Level</th>
                                     <th>Required</th>
-                                    @* <th>Available</th> *@
+                                    <th>Delivery Mode</th> <!-- nueva columna -->
                                     <th>Actions</th>
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -56,8 +57,9 @@
                                         <td>@item.PositionName</td>
                                         <td>@item.CourseName</td>
                                         <td>@item.RequiredCourseLevelDescription</td>
-                                        <td>@(item.Requiered == true ? "Yes" : "No")</td>
-                                        @* <td>@(item.Available == 1 ? "Enabled" : "Disabled")</td> *@
+                                        <td>@(item.Requiered ? "Yes" : "No")</td>
+                                        <td>@item.DeliveryModeDescription</td> <!-- nueva columna -->
+
                                         <td>
                                             <div class="text-center">
                                                 <form asp-action="ToggleCourseAssignment" asp-route-id="@item.PkCourseAssignment" method="post" style="display:inline;">

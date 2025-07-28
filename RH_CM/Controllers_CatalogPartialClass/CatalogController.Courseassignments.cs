@@ -21,28 +21,48 @@ namespace RH_CM.Controllers
                 .Join(_context.CtLevelcourses,
                       temp => temp.ca.FkRequiredCourseLevels,
                       lc => lc.PkLevelcourse,
-                      (temp, lc) => new
+                      (temp, lc) => new { temp.ca, temp.p, temp.c, lc })
+                .Join(_context.CtDeliverymodes,
+                      temp => temp.ca.FkDeliveryMode,
+                      dm => dm.PkDeliverymode,
+                      (temp, dm) => new
                       {
                           temp.ca.PkCourseAssignment,
                           PositionName = temp.p.NamePosition,
                           CourseName = temp.c.CourseName,
-                          FkRequiredCourseLevels = temp.ca.FkRequiredCourseLevels,
+                          RequiredCourseLevelDescription = temp.lc.DescripctionLevel,
                           Requiered = temp.ca.Requiered,
                           Available = temp.ca.Available,
-                          RequiredCourseLevelDescription = lc.DescripctionLevel
+                          DeliveryModeDescription = dm.DescriptionDeliverymode
                       })
                 .ToList();
 
             return View(courseAssignments);
+        }
+        private void LoadCourseAssignmentViewBags()
+        {
+            ViewBag.Positions = _context.CtPositions
+                .Where(p => p.Available == 1)
+                .ToList();
+
+            ViewBag.Courses = _context.CtCourses
+                .Where(c => c.Available == 1)
+                .ToList();
+
+            ViewBag.LevelCourses = _context.CtLevelcourses
+                .Where(lc => lc.Available == 1)
+                .ToList();
+
+            ViewBag.DeliveryModes = _context.CtDeliverymodes
+                .Where(dm => dm.Available == 1)
+                .ToList();
         }
 
         // GET: CourseAssignments/Create
         [Authorize(Roles = "Administrador")]
         public IActionResult CreateCourseAssignment()
         {
-            ViewBag.Positions = _context.CtPositions.Where(p => p.Available == 1).ToList();
-            ViewBag.Courses = _context.CtCourses.Where(c => c.Available == 1).ToList();
-            ViewBag.LevelCourses = _context.CtLevelcourses.Where(c => c.Available == 1).ToList();
+            LoadCourseAssignmentViewBags();
             return View();
         }
 
@@ -55,18 +75,21 @@ namespace RH_CM.Controllers
             if (courseAssignment.FkPosition <= 0)
             {
                 TempData["ErrorMessage"] = "Position is required. Please select a valid position.";
+                LoadCourseAssignmentViewBags();
                 return RedirectToAction(nameof(CreateCourseAssignment));
             }
 
             if (courseAssignment.FkCourse <= 0)
             {
                 TempData["ErrorMessage"] = "Course is required. Please select a valid course.";
+                LoadCourseAssignmentViewBags();
                 return RedirectToAction(nameof(CreateCourseAssignment));
             }
 
             if (courseAssignment.FkRequiredCourseLevels <= 0)
             {
                 TempData["ErrorMessage"] = "Required Course Level is required. Please select a valid level.";
+                LoadCourseAssignmentViewBags();
                 return RedirectToAction(nameof(CreateCourseAssignment));
             }
 
@@ -79,6 +102,7 @@ namespace RH_CM.Controllers
             if (exists)
             {
                 TempData["ErrorMessage"] = "The combination of Position, Course, and Required Course Level already exists.";
+                LoadCourseAssignmentViewBags();
                 return RedirectToAction(nameof(CreateCourseAssignment));
             }
 
@@ -92,6 +116,7 @@ namespace RH_CM.Controllers
             _context.SaveChanges();
 
             TempData["SuccessMessage"] = "Course assignment created successfully.";
+            LoadCourseAssignmentViewBags();
             return RedirectToAction(nameof(CreateCourseAssignment));
         }
 
@@ -103,9 +128,7 @@ namespace RH_CM.Controllers
             var courseAssignment = _context.CtCourseassignments.Find(id);
             if (courseAssignment == null) return NotFound();
 
-            ViewBag.Positions = _context.CtPositions.Where(p => p.Available == 1).ToList();
-            ViewBag.Courses = _context.CtCourses.Where(c => c.Available == 1).ToList();
-            ViewBag.LevelCourses = _context.CtLevelcourses.Where(c => c.Available == 1).ToList();
+            LoadCourseAssignmentViewBags();
             return View(courseAssignment);
         }
 
@@ -121,18 +144,21 @@ namespace RH_CM.Controllers
             if (courseAssignment.FkPosition <= 0)
             {
                 TempData["ErrorMessage"] = "Position is required. Please select a valid position.";
+                LoadCourseAssignmentViewBags();
                 return RedirectToAction(nameof(EditCourseAssignment), new { id });
             }
 
             if (courseAssignment.FkCourse <= 0)
             {
                 TempData["ErrorMessage"] = "Course is required. Please select a valid course.";
+                LoadCourseAssignmentViewBags();
                 return RedirectToAction(nameof(EditCourseAssignment), new { id });
             }
 
             if (courseAssignment.FkRequiredCourseLevels <= 0)
             {
                 TempData["ErrorMessage"] = "Required Course Level is required. Please select a valid level.";
+                LoadCourseAssignmentViewBags();
                 return RedirectToAction(nameof(EditCourseAssignment), new { id });
             }
 
@@ -146,6 +172,7 @@ namespace RH_CM.Controllers
             if (exists)
             {
                 TempData["ErrorMessage"] = "The combination of Position, Course, and Required Course Level already exists.";
+                LoadCourseAssignmentViewBags();
                 return RedirectToAction(nameof(EditCourseAssignment), new { id });
             }
 
@@ -159,6 +186,7 @@ namespace RH_CM.Controllers
             _context.SaveChanges();
 
             TempData["SuccessMessage"] = "Course assignment updated successfully.";
+            LoadCourseAssignmentViewBags();
             return RedirectToAction(nameof(EditCourseAssignment));
         }
 
