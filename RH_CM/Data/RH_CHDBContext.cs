@@ -59,7 +59,7 @@ namespace RH_CM.Data
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=100.69.178.104,1433;Database=RH_CHDB;User Id=admin;Password=admin12345;");
+                optionsBuilder.UseSqlServer("Server=SQL1004.site4now.net,1433;Database=db_abcd61_rhchdb;User Id= db_abcd61_rhchdb_admin; Password=WebMindzz1*");
             }
         }
 
