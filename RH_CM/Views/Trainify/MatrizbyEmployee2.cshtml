@@ -1,0 +1,119 @@
+﻿@model IEnumerable<RH_CM.ViewModels.MatrizByEmployeeViewModel>
+
+@{
+    ViewData["Title"] = "Matriz por empleado";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var first = Model?.FirstOrDefault();
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">MATRIZ POR EMPLEADO</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                @if (first != null)
+                {
+                    <div class="mb-3 text-center d-flex flex-wrap justify-content-center gap-3">
+                        <div class="p-3 fw-bold rounded fs-3 border">
+                            Control #: @first.CONTROL_NUMBER
+                        </div>
+                        <div class="p-3 fw-bold rounded fs-3 border">
+                            Nombre completo: @first.NAMES @first.LAST_NAME @first.SECOND_NAME
+                        </div>
+                        <div class="p-3 fw-bold rounded fs-3 border">
+                            Posición: @first.NAME_POSITION_ENGLISH (@first.FK_Position)
+                        </div>
+                    </div>
+
+
+
+                }
+                <div class="alert alert-warning alert-dismissible" role="alert">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <div class="alert-message">
+                        <p class="mb-0">
+                            <strong>quieres dejar alguna nota aqui?</strong> aqui van las notas de RH.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                @if (Model != null && Model.Any())
+                {
+                    <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Curso</th>
+                                <th>Nivel Req.</th>
+                                <th>Requerido</th>
+                                <th>Modo entrega</th>
+                                <th>Validez (días)</th>
+                                <th>Últ. Actualización</th>
+                                <th>Estatus</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.UserName</td>
+                                    <td>@item.CourseName (@item.FK_Course)</td>
+                                    <td>@item.FK_RequiredCourseLevels</td>
+                                    <td>@(item.Requiered ? "Sí" : "No")</td>
+                                    <td>@item.DESCRIPTION_DELIVERYMODE (@item.FK_DeliveryMode)</td>
+                                    <td>@(item.CourseValidityDays?.ToString() ?? "—")</td>
+                                    <td>@(item.LastUpdateDate?.ToString("dd/MM/yyyy") ?? "—")</td>
+                                    <td>@item.CourseStatus</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>No records found</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(function () {
+            $('#datatables-responsive').DataTable({
+                responsive: true,
+                ordering: false,
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+                    "infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
+                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Entradas",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+        });
+    </script>
+}

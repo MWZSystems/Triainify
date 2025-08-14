@@ -1,45 +1,85 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\",
+  "WorkspaceRootPath": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\controllers\\trainifycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\controllers\\trainifycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\trainifycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\data\\rh_chdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\data\\rh_chdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\views\\trainify\\matrizbyemployee.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\trainify\\matrizbyemployee.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\controllers\\cuentascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\cuentascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\views\\trainify\\matrizbyemployee2.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\trainify\\matrizbyemployee2.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\trainify\\trainifyhome.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\trainify\\trainifyhome.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\views\\reports\\matrizbyemployeescheck.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\reports\\matrizbyemployeescheck.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\controllers\\catalogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\catalogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\views\\reports\\matrizbydeparmentgeneral_rh.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\reports\\matrizbydeparmentgeneral_rh.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\controllers\\examcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\examcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\shared\\_navbar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\viewmodels\\matrizbyemployeeviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\viewmodels\\matrizbyemployeeviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\views\\shared\\_navbar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\shared\\_navbar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\views\\reports\\supervisoremployeescheck.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\reports\\supervisoremployeescheck.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\controllers\\usuarioscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\usuarioscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\views\\trainify\\trainifyhome.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\trainify\\trainifyhome.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\data\\rh_chdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\data\\rh_chdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\controllers\\headcountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\rh_cm.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\rh_cm.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\controllers\\cuentascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\cuentascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\controllers\\catalogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\catalogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\controllers\\examcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\examcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\controllers\\headcountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\headcountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\headcount\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\views\\headcount\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\headcount\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
@@ -56,11 +96,11 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "TrainifyController.cs",
-              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\TrainifyController.cs",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers\\TrainifyController.cs",
               "RelativeDocumentMoniker": "RH_CM\\Controllers\\TrainifyController.cs",
-              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\TrainifyController.cs",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers\\TrainifyController.cs",
               "RelativeToolTip": "RH_CM\\Controllers\\TrainifyController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAA5AAAAAAAAAA==",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAqwFUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-03T23:43:51.675Z",
               "IsPinned": true,
@@ -69,34 +109,166 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "MatrizbyEmployee.cshtml",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Trainify\\MatrizbyEmployee.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Trainify\\MatrizbyEmployee.cshtml",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Trainify\\MatrizbyEmployee.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Trainify\\MatrizbyEmployee.cshtml",
+              "ViewState": "AgIAAH4AAAAAAAAAAAAAAKIAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-08-12T04:57:33.03Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "MatrizByEmployeesCheck.cshtml",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Reports\\MatrizByEmployeesCheck.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\MatrizByEmployeesCheck.cshtml",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Reports\\MatrizByEmployeesCheck.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Reports\\MatrizByEmployeesCheck.cshtml",
+              "ViewState": "AgIAAKAAAAAAAAAAAAAYwMsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-08-12T04:52:12.963Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "MatrizByDeparmentGeneral_RH.cshtml",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Reports\\MatrizByDeparmentGeneral_RH.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\MatrizByDeparmentGeneral_RH.cshtml",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Reports\\MatrizByDeparmentGeneral_RH.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Reports\\MatrizByDeparmentGeneral_RH.cshtml",
+              "ViewState": "AgIAABsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-08-12T04:50:58.754Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "MatrizByEmployeeViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\ViewModels\\MatrizByEmployeeViewModel.cs",
+              "RelativeDocumentMoniker": "RH_CM\\ViewModels\\MatrizByEmployeeViewModel.cs",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\ViewModels\\MatrizByEmployeeViewModel.cs",
+              "RelativeToolTip": "RH_CM\\ViewModels\\MatrizByEmployeeViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-12T04:24:10.37Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "RH_CM\\Controllers\\HomeController.cs",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "RH_CM\\Controllers\\HomeController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-12T04:17:19.389Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "UsuariosController.cs",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers\\UsuariosController.cs",
+              "RelativeDocumentMoniker": "RH_CM\\Controllers\\UsuariosController.cs",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers\\UsuariosController.cs",
+              "RelativeToolTip": "RH_CM\\Controllers\\UsuariosController.cs",
+              "ViewState": "AgIAAOAAAAAAAAAAAAAcwAsBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-12T04:17:08.156Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MatrizbyEmployee2.cshtml",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Trainify\\MatrizbyEmployee2.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Trainify\\MatrizbyEmployee2.cshtml",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Trainify\\MatrizbyEmployee2.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Trainify\\MatrizbyEmployee2.cshtml",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAACMAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-08-12T04:16:08.258Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Data\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "RH_CM\\Data\\ApplicationDbContext.cs",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Data\\ApplicationDbContext.cs",
+              "RelativeToolTip": "RH_CM\\Data\\ApplicationDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-12T04:12:50.341Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "RH_CM",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\RH_CM.csproj",
+              "RelativeDocumentMoniker": "RH_CM\\RH_CM.csproj",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\RH_CM.csproj",
+              "RelativeToolTip": "RH_CM\\RH_CM.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-08-11T04:37:13.142Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "_Navbar.cshtml",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Shared\\_Navbar.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Shared\\_Navbar.cshtml",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Shared\\_Navbar.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Shared\\_Navbar.cshtml",
+              "ViewState": "AgIAAEgAAAAAAAAAAAAAAFoAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-08-03T23:38:05.364Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "SupervisorEmployeesCheck.cshtml",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Reports\\SupervisorEmployeesCheck.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\SupervisorEmployeesCheck.cshtml",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Reports\\SupervisorEmployeesCheck.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Reports\\SupervisorEmployeesCheck.cshtml",
+              "ViewState": "AgIAAIMBAAAAAAAAAAAYwK4BAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-08-12T04:26:47.14Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
               "Title": "RH_CHDBContext.cs",
-              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Data\\RH_CHDBContext.cs",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Data\\RH_CHDBContext.cs",
               "RelativeDocumentMoniker": "RH_CM\\Data\\RH_CHDBContext.cs",
-              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Data\\RH_CHDBContext.cs",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Data\\RH_CHDBContext.cs",
               "RelativeToolTip": "RH_CM\\Data\\RH_CHDBContext.cs",
-              "ViewState": "AgIAAC8AAAAAAAAAAAAAAEMAAABGAAAAAAAAAA==",
+              "ViewState": "AgIAAC8AAAAAAAAAAAAqwEMAAABGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-11T03:25:09.776Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 13,
               "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\appsettings.json",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\appsettings.json",
               "RelativeDocumentMoniker": "RH_CM\\appsettings.json",
-              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\appsettings.json",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\appsettings.json",
               "RelativeToolTip": "RH_CM\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAACFAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2025-08-11T03:23:26.657Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 19,
               "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\HeadCount\\Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\HeadCount\\Index.cshtml",
               "RelativeDocumentMoniker": "RH_CM\\Views\\HeadCount\\Index.cshtml",
-              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\HeadCount\\Index.cshtml",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\HeadCount\\Index.cshtml",
               "RelativeToolTip": "RH_CM\\Views\\HeadCount\\Index.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -104,11 +276,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 18,
               "Title": "HeadCountController.cs",
-              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\HeadCountController.cs",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers\\HeadCountController.cs",
               "RelativeDocumentMoniker": "RH_CM\\Controllers\\HeadCountController.cs",
-              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\HeadCountController.cs",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers\\HeadCountController.cs",
               "RelativeToolTip": "RH_CM\\Controllers\\HeadCountController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -116,11 +288,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 10,
               "Title": "TrainifyHome.cshtml",
-              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Trainify\\TrainifyHome.cshtml",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Trainify\\TrainifyHome.cshtml",
               "RelativeDocumentMoniker": "RH_CM\\Views\\Trainify\\TrainifyHome.cshtml",
-              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Trainify\\TrainifyHome.cshtml",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Trainify\\TrainifyHome.cshtml",
               "RelativeToolTip": "RH_CM\\Views\\Trainify\\TrainifyHome.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -128,11 +300,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 15,
               "Title": "CuentasController.cs",
-              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\CuentasController.cs",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers\\CuentasController.cs",
               "RelativeDocumentMoniker": "RH_CM\\Controllers\\CuentasController.cs",
-              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\CuentasController.cs",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers\\CuentasController.cs",
               "RelativeToolTip": "RH_CM\\Controllers\\CuentasController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAA4AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -140,11 +312,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 16,
               "Title": "CatalogController.cs",
-              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\CatalogController.cs",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers\\CatalogController.cs",
               "RelativeDocumentMoniker": "RH_CM\\Controllers\\CatalogController.cs",
-              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\CatalogController.cs",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers\\CatalogController.cs",
               "RelativeToolTip": "RH_CM\\Controllers\\CatalogController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -152,27 +324,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 17,
               "Title": "ExamController.cs",
-              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\ExamController.cs",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers\\ExamController.cs",
               "RelativeDocumentMoniker": "RH_CM\\Controllers\\ExamController.cs",
-              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers\\ExamController.cs",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers\\ExamController.cs",
               "RelativeToolTip": "RH_CM\\Controllers\\ExamController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-03T23:42:29.27Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "_Navbar.cshtml",
-              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Shared\\_Navbar.cshtml",
-              "RelativeDocumentMoniker": "RH_CM\\Views\\Shared\\_Navbar.cshtml",
-              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Shared\\_Navbar.cshtml",
-              "RelativeToolTip": "RH_CM\\Views\\Shared\\_Navbar.cshtml",
-              "ViewState": "AgIAAEUAAAAAAAAAAAAAAF8AAAByAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-08-03T23:38:05.364Z"
             }
           ]
         }

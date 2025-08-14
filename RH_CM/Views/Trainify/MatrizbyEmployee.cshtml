@@ -1,0 +1,199 @@
+﻿@model IEnumerable<RH_CM.ViewModels.MatrizByEmployeeViewModel>
+
+@{
+    ViewData["Title"] = "Employee Matrix";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var first = Model?.FirstOrDefault();
+
+    // Dynamic levels from SP data
+    var levels = Model
+        .Select(m => m.FK_RequiredCourseLevels)
+        .Distinct()
+        .OrderBy(x => x)
+        .ToList();
+
+    // Colors only (you provide the status texts)
+    // SCHEDULED -> primary, PERMANENTLY -> dark, EXPIRING SOON -> warning,
+    // PENDING -> danger, COMPLETED -> success, default/NO REQUIRED -> secondary
+    Func<string, string> badgeClass = (statusRaw) =>
+    {
+        var s = (statusRaw ?? "").Trim().ToUpperInvariant();
+        return s switch
+        {
+            "SCHEDULED" => "bg-primary",
+            "PERMANENTLY" => "bg-dark",
+            "EXPIRING SOON" => "bg-warning",
+            "PENDING" => "bg-danger",
+            "COMPLETED" => "bg-success",
+            _ => "bg-secondary" // NO REQUIRED or anything else
+        };
+    };
+
+    // Group courses -> levels -> status; if a level row doesn't exist => NO REQUIRED (gray)
+    var courseGroups = Model
+        .GroupBy(x => new { x.FK_Course, x.CourseName })
+        .OrderBy(g => g.Key.CourseName)
+        .Select(g => new
+        {
+            CourseId = g.Key.FK_Course,
+            CourseName = g.Key.CourseName,
+            Cells = levels.Select(l =>
+            {
+                var cell = g.FirstOrDefault(r => r.FK_RequiredCourseLevels == l);
+                if (cell == null)
+                {
+                    return new { Level = l, Status = "NO REQUIRED", Class = "bg-secondary" };
+                }
+
+                var status = (cell.CourseStatus ?? "").Trim();  // expected: COMPLETED | PERMANENTLY | SCHEDULED | EXPIRING SOON | PENDING
+                var cls = badgeClass(status);
+                return new { Level = l, Status = status, Class = cls };
+            }).ToList()
+        })
+        .ToList();
+
+    // Summary for the chart (count every level-cell, including NO REQUIRED)
+    var allCells = courseGroups.SelectMany(c => c.Cells).ToList();
+    int cntScheduled = allCells.Count(s => s.Status.Equals("SCHEDULED", StringComparison.OrdinalIgnoreCase));
+    int cntPermanently = allCells.Count(s => s.Status.Equals("PERMANENTLY", StringComparison.OrdinalIgnoreCase));
+    int cntExpiringSoon = allCells.Count(s => s.Status.Equals("EXPIRING SOON", StringComparison.OrdinalIgnoreCase));
+    int cntPending = allCells.Count(s => s.Status.Equals("PENDING", StringComparison.OrdinalIgnoreCase));
+    int cntCompleted = allCells.Count(s => s.Status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase));
+    int cntNoRequired = allCells.Count(s => s.Status.Equals("NO REQUIRED", StringComparison.OrdinalIgnoreCase));
+}
+
+<div class="row">
+    <div class="col-xl-12">
+        <div class="row">
+            <!-- MATRIX -->
+            <div class="col-xl-8">
+                <div class="card">
+                    <div class="card-header">
+                        @if (first != null)
+                        {
+                            <div class="mb-3 text-center d-flex flex-wrap justify-content-center gap-3">
+                                <div class="p-3 fw-bold rounded fs-3">
+                                    Control #: @first.CONTROL_NUMBER
+                                </div>
+                                <div class="p-3 fw-bold rounded fs-3">
+                                    Full name: @first.NAMES @first.LAST_NAME @first.SECOND_NAME
+                                </div>
+                                <div class="p-3 fw-bold rounded fs-3">
+                                    Position: @first.NAME_POSITION_ENGLISH (@first.FK_Position)
+                                </div>
+                            </div>
+                        }
+                       @*  <h5 class="card-title mb-0">Matrix - @first?.UserName</h5> *@
+                    </div>
+                    <div class="card-body">
+                        @if (Model != null && Model.Any())
+                        {
+                            <table id="datatables-responsive" class="table table-striped">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th>Course</th>
+                                        @foreach (var l in levels)
+                                        {
+                                            <th>LEVEL @l</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var c in courseGroups)
+                                    {
+                                        <tr>
+                                            <td>@c.CourseName</td>
+                                            @foreach (var cell in c.Cells)
+                                            {
+                                                <td><span class="badge @cell.Class">@cell.Status</span></td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <p>No data.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUMMARY + CHART -->
+            <div class="col-xl-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Course Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="py-3">
+                            <div class="chart chart-xs">
+                                <canvas id="chart-employee-summary"></canvas>
+                            </div>
+                        </div>
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th class="text-end">Count</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><i class="fas fa-square-full text-primary"></i> SCHEDULED</td><td class="text-end">@cntScheduled</td></tr>
+                                <tr><td><i class="fas fa-square-full text-dark"></i> PERMANENTLY</td><td class="text-end">@cntPermanently</td></tr>
+                                <tr><td><i class="fas fa-square-full" style="color:#ffc107;"></i> EXPIRING SOON</td><td class="text-end">@cntExpiringSoon</td></tr>
+                                <tr><td><i class="fas fa-square-full text-danger"></i> PENDING</td><td class="text-end">@cntPending</td></tr>
+                                <tr><td><i class="fas fa-square-full text-success"></i> COMPLETED</td><td class="text-end">@cntCompleted</td></tr>
+                                <tr><td><i class="fas fa-square-full text-secondary"></i> NO REQUIRED</td><td class="text-end">@cntNoRequired</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- /SUMMARY -->
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+          $(function () {
+          $('#datatables-responsive').DataTable({
+            responsive: true,
+            order: [],
+            pageLength: 50,                     // default rows per page
+            lengthMenu: [[10, 25, 50, 100, -1],
+                         [10, 25, 50, 100, "All"]]
+          });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const ctx = document.getElementById("chart-employee-summary");
+            new Chart(ctx, {
+                type: "pie",
+                data: {
+                    // NO 'NO REQUIRED' here
+                    labels: ["SCHEDULED", "PERMANENTLY", "EXPIRING SOON", "PENDING", "COMPLETED"],
+                    datasets: [{
+                        // Exclude NO REQUIRED from the dataset
+                        data: [@cntScheduled, @cntPermanently, @cntExpiringSoon, @cntPending, @cntCompleted],
+                        backgroundColor:["#0d6efd","#000000","#ffc107","#dc3545","#198754"],
+                        borderWidth:5,
+                        borderColor:"#ffffff"
+                    }]
+                },
+                options:{
+                    responsive:true,
+                    maintainAspectRatio:false,
+                    cutout:"70%",
+                    plugins:{ legend:{ display:false } }
+                }
+            });
+        });
+    </script>
+}
+
