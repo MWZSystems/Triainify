@@ -9,11 +9,16 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="row">
+<div class="row align-items-center mb-3">
     <div class="col">
-        <h1 class="h3 mb-3 text-center"><i class="align-middle fas fa-user-tag"></i> @ViewData["Title"]</h1>
+        <h1 class="h3 mb-0 text-center text-md-start">
+            <i class="align-middle fas fa-user-tag"></i> @ViewData["Title"]
+        </h1>
     </div>
-    <div class="col-auto">
+    <div class="col-auto d-flex gap-2">
+        <a class="btn btn-primary" asp-action="CreateCourseAssignmentBulk">
+            <i class="align-middle fas fa-layer-group"></i> CREATE BULK ASSIGNMENTS
+        </a>
         <a class="btn btn-facebook" asp-action="CreateCourseAssignment">
             <i class="align-middle fas fa-plus-square"></i> CREATE NEW COURSE ASSIGNMENT
         </a>
@@ -29,71 +34,80 @@
 
 <!-- Tabla envuelta en contenedor oculto -->
 <div id="tableContainer" style="display:none;">
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="card">
-                <div class="card-body">
+    <div class="card">
+        <div class="card-body">
 
-                    @if (Model.Any())
-                    {
-                        <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
-                            <thead class="table-primary">
-                                <tr>
-                                    <th>#</th> <!-- Corregido -->
-                                    <th>Position</th>
-                                    <th>Course</th>
-                                    <th>Level</th>
-                                    <th>Required</th>
-                                    <th>Delivery Mode</th> <!-- nueva columna -->
-                                    <th>Actions</th>
+            @if (Model != null && Model.Any())
+            {
+                <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>#</th>
+                            <th>Position</th>
+                            <th>Course</th>
+                            <th>Level</th>
+                            <th>Required</th>
+                            <th>Delivery Mode</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
 
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-                                        <td>@item.PkCourseAssignment</td>
-                                        <td>@item.PositionName</td>
-                                        <td>@item.CourseName</td>
-                                        <td>@item.RequiredCourseLevelDescription</td>
-                                        <td>@(item.Requiered ? "Yes" : "No")</td>
-                                        <td>@item.DeliveryModeDescription</td> <!-- nueva columna -->
+                    <!-- Filtros por columna -->
+                    <tfoot>
+                        <tr>
+                            <th>#</th>
+                            <th>Position</th>
+                            <th>Course</th>
+                            <th>Level</th>
+                            <th>Required</th>
+                            <th>Delivery Mode</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
 
-                                        <td>
-                                            <div class="text-center">
-                                                <form asp-action="ToggleCourseAssignment" asp-route-id="@item.PkCourseAssignment" method="post" style="display:inline;">
-                                                    <button type="submit" onclick="return confirm('Are you sure you want to toggle the availability of this course assignment?')" class="btn @(item.Available == 1 ? "btn-success" : "btn-secondary")">
-                                                        <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
-                                                    </button>
-                                                </form>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.PkCourseAssignment</td>
+                                <td>@item.PositionName</td>
+                                <td>@item.CourseName</td>
+                                <td>@item.RequiredCourseLevelDescription</td>
+                                <td>@(item.Requiered ? "Yes" : "No")</td>
+                                <td>@item.DeliveryModeDescription</td>
 
-                                                <a class="btn btn-warning" asp-action="EditCourseAssignment" asp-route-id="@item.PkCourseAssignment">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-1">
+                                        <form asp-action="ToggleCourseAssignment" asp-route-id="@item.PkCourseAssignment" method="post" onsubmit="return confirm('Are you sure you want to toggle the availability of this course assignment?')">
+                                            <button type="submit" class="btn btn-sm @(item.Available == 1 ? "btn-success" : "btn-secondary")" title="Toggle availability">
+                                                <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
+                                            </button>
+                                        </form>
 
-                                                @if (User.Identity.IsAuthenticated && (User.IsInRole("Administrador")))
-                                                {
-                                                    <form asp-action="DeleteCourseAssignment" asp-route-id="@item.PkCourseAssignment" method="post" style="display:inline;">
-                                                        <button type="submit" onclick="return confirm('Are you sure you want to delete this course assignment?')" class="btn btn-danger">
-                                                            <i class="align-middle fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </form>
-                                                }
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    }
-                    else
-                    {
-                        <p>No records found</p>
-                    }
+                                        <a class="btn btn-sm btn-warning" asp-action="EditCourseAssignment" asp-route-id="@item.PkCourseAssignment" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
 
-                </div>
-            </div>
+                                        @if (User.Identity.IsAuthenticated && User.IsInRole("Administrador"))
+                                        {
+                                            <form asp-action="DeleteCourseAssignment" asp-route-id="@item.PkCourseAssignment" method="post" onsubmit="return confirm('Are you sure you want to delete this course assignment?')">
+                                                <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                                                    <i class="align-middle fas fa-trash-alt"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="mb-0">No records found</p>
+            }
+
         </div>
     </div>
 </div>
@@ -107,10 +121,39 @@
             $('#tableContainer').hide();
             $('#loader').show();
 
+            // Colocar inputs/selects en el footer ANTES de inicializar DataTable
+            // Índices de columnas: 0:#, 1:Position, 2:Course, 3:Level, 4:Required, 5:Delivery Mode, 6:Actions
+            $('#datatables-responsive tfoot th').each(function (i) {
+                switch (i) {
+                    case 1: // Position
+                    case 2: // Course
+                    case 3: // Level
+                        $(this).html('<input type="text" class="form-control form-control-sm" placeholder="Filter ' + $('thead th').eq(i).text() + '" />');
+                        break;
+                    case 4: // Required (Yes/No exacto)
+                        $(this).html(
+                            '<select class="form-select form-select-sm">' +
+                            '<option value="">(All)</option>' +
+                            '<option value="^Yes$">Yes</option>' +
+                            '<option value="^No$">No</option>' +
+                            '</select>'
+                        );
+                        break;
+                    case 5: // Delivery Mode (select dinámico; se llenará en initComplete)
+                        $(this).html('<select id="deliveryModeFilter" class="form-select form-select-sm"><option value="">(All)</option></select>');
+                        break;
+                    default: // # y Actions sin filtro
+                        $(this).html('');
+                        break;
+                }
+            });
+
             // Inicializar DataTable
             var table = $('#datatables-responsive').DataTable({
                 responsive: true,
                 order: [],
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]],
                 language: {
                     "decimal": "",
                     "emptyTable": "No hay información",
@@ -131,16 +174,47 @@
                     }
                 },
                 initComplete: function () {
+                    var api = this.api();
+
+                    // 1) Inputs de texto (Position, Course, Level)
+                    [1, 2, 3].forEach(function (colIdx) {
+                        $('tfoot th').eq(colIdx).find('input').on('keyup change clear', function () {
+                            if (api.column(colIdx).search() !== this.value) {
+                                api.column(colIdx).search(this.value).draw();
+                            }
+                        });
+                    });
+
+                    // 2) Select Yes/No exacto para Required
+                    $('tfoot th').eq(4).find('select').on('change', function () {
+                        api.column(4).search(this.value, true, false).draw(); // regex=true, smart=false
+                    });
+
+                    // 3) Select dinámico para Delivery Mode con valores únicos (exact match)
+                    var deliveryColumn = api.column(5);
+                    var $deliverySelect = $('#deliveryModeFilter');
+                    var uniqueValues = [];
+                    deliveryColumn.data().each(function (d) {
+                        if (d && uniqueValues.indexOf(d) === -1) uniqueValues.push(d);
+                    });
+                    uniqueValues.sort().forEach(function (val) {
+                        var esc = $.fn.dataTable.util.escapeRegex(val);
+                        $deliverySelect.append('<option value="^' + esc + '$">' + val + '</option>');
+                    });
+                    $deliverySelect.on('change', function () {
+                        deliveryColumn.search(this.value, true, false).draw();
+                    });
+
                     // Ocultar loader y mostrar tabla cuando DataTable está listo
-                    $('#loader').fadeOut(200, function () {
-                        $('#tableContainer').fadeIn(200);
+                    $('#loader').fadeOut(150, function () {
+                        $('#tableContainer').fadeIn(150);
                     });
                 }
             });
 
-            // Mostrar mensajes de éxito y error
+            // Notificaciones
             if ("@TempData["SuccessMessage"]" !== "") {
-                window.notyf.open({
+                window.notyf?.open?.({
                     type: 'success',
                     message: "@TempData["SuccessMessage"]",
                     ripple: true,
@@ -149,9 +223,8 @@
                     duration: 5000
                 });
             }
-
             if ("@TempData["ErrorMessage"]" !== "") {
-                window.notyf.open({
+                window.notyf?.open?.({
                     type: 'error',
                     message: "@TempData["ErrorMessage"]",
                     ripple: true,

@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using RH_CM.Models;
+using System.Data;
 
 namespace RH_CM.Controllers
 {
@@ -119,6 +122,103 @@ namespace RH_CM.Controllers
             LoadCourseAssignmentViewBags();
             return RedirectToAction(nameof(CreateCourseAssignment));
         }
+
+        // GET: CourseAssignments/CreateBulk
+        [Authorize(Roles = "Administrador")]
+        public IActionResult CreateCourseAssignmentBulk()
+        {
+            LoadCourseAssignmentViewBags();
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Administrador")]
+        [ValidateAntiForgeryToken]
+        public IActionResult CreateCourseAssignmentBulk(
+            [FromForm] int[] SelectedPositions,
+            [FromForm] int[] SelectedCourses,
+            [FromForm] int FkRequiredCourseLevels,
+            [FromForm] int FkDeliveryMode,
+            [FromForm] bool Requiered)
+        {
+            // Validaciones básicas
+            if (SelectedPositions == null || SelectedPositions.Length == 0)
+            {
+                TempData["ErrorMessage"] = "Selecciona al menos una Position.";
+                return RedirectToAction(nameof(CreateCourseAssignmentBulk));
+            }
+            if (SelectedCourses == null || SelectedCourses.Length == 0)
+            {
+                TempData["ErrorMessage"] = "Selecciona al menos un Course.";
+                return RedirectToAction(nameof(CreateCourseAssignmentBulk));
+            }
+            if (FkRequiredCourseLevels <= 0)
+            {
+                TempData["ErrorMessage"] = "Required Course Level es obligatorio.";
+                return RedirectToAction(nameof(CreateCourseAssignmentBulk));
+            }
+            if (FkDeliveryMode <= 0)
+            {
+                TempData["ErrorMessage"] = "Delivery Mode es obligatorio.";
+                return RedirectToAction(nameof(CreateCourseAssignmentBulk));
+            }
+
+            // Helper para TVP
+            static DataTable ToTvp(int[] ids)
+            {
+                var dt = new DataTable();
+                dt.Columns.Add("Id", typeof(int));
+                foreach (var id in ids.Distinct()) dt.Rows.Add(id);
+                return dt;
+            }
+
+            var tvpPositions = ToTvp(SelectedPositions);
+            var tvpCourses = ToTvp(SelectedCourses);
+            var user = User?.Identity?.Name ?? "Unknown";
+
+            try
+            {
+                string cs = _context.Database.GetDbConnection().ConnectionString;
+                using var conn = new SqlConnection(cs);
+                using var cmd = new SqlCommand("dbo.sp_BulkCreateCourseAssignments", conn)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                var pPos = cmd.Parameters.AddWithValue("@Positions", tvpPositions);
+                pPos.SqlDbType = SqlDbType.Structured;
+                pPos.TypeName = "dbo.IntIdList";
+
+                var pCou = cmd.Parameters.AddWithValue("@Courses", tvpCourses);
+                pCou.SqlDbType = SqlDbType.Structured;
+                pCou.TypeName = "dbo.IntIdList";
+
+                cmd.Parameters.Add(new SqlParameter("@FkRequiredCourseLevels", SqlDbType.Int) { Value = FkRequiredCourseLevels });
+                cmd.Parameters.Add(new SqlParameter("@FkDeliveryMode", SqlDbType.Int) { Value = FkDeliveryMode });
+                cmd.Parameters.Add(new SqlParameter("@Requiered", SqlDbType.Bit) { Value = Requiered });
+                cmd.Parameters.Add(new SqlParameter("@UserName", SqlDbType.NVarChar, 256) { Value = user });
+
+                conn.Open();
+                int affected = cmd.ExecuteNonQuery(); // filas insertadas (nuevas combinaciones)
+
+                if (affected == 0)
+                {
+                    TempData["ErrorMessage"] = "No se generaron asignaciones nuevas (posibles duplicados).";
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = $"Se crearon {affected} asignaciones nuevas.";
+                }
+            }
+            catch (SqlException ex)
+            {
+                // Mensaje de error amigable; puedes loguear ex.Message
+                TempData["ErrorMessage"] = "Ocurrió un error al crear las asignaciones masivas.";
+            }
+
+            return RedirectToAction(nameof(CreateCourseAssignmentBulk));
+        }
+
 
 
         // GET: CourseAssignments/Edit/5

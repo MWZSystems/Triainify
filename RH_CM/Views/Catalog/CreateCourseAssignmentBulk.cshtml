@@ -1,0 +1,163 @@
+﻿@{
+    ViewData["Title"] = "Create Course Assignments (Bulk)";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var positions = (IEnumerable<dynamic>)ViewBag.Positions;     // CtPositions: PkPosition, NamePosition
+    var courses = (IEnumerable<dynamic>)ViewBag.Courses;       // CtCourses:   PkCourse, CourseName
+    var levels = (IEnumerable<dynamic>)ViewBag.LevelCourses;  // CtLevelcourses: PkLevelcourse, DescripctionLevel
+    var modes = (IEnumerable<dynamic>)ViewBag.DeliveryModes; // CtDeliverymodes: PkDeliverymode, DescriptionDeliverymode
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">CREATE COURSE ASSIGNMENTS (BULK)</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Course Assignment Details (Bulk)</h5>
+                <h6 class="card-subtitle text-muted">
+                    Selecciona múltiples <strong>Positions</strong> y múltiples <strong>Courses</strong>.
+                    El <em>Course Level</em>, <em>Delivery Mode</em> y <em>Required</em> se aplican a todas las combinaciones.
+                </h6>
+            </div>
+
+            <div class="card-body">
+                <form asp-action="CreateCourseAssignmentBulk" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <!-- Selector múltiple: Positions y Courses -->
+                    <div class="row">
+                        <!-- POSITIONS -->
+                        <div class="mb-3 col-md-6">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label fw-bold">Positions <span class="text-danger">*</span></label>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="toggleAll('SelectedPositions', true)">Select All</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleAll('SelectedPositions', false)">Clear</button>
+                                </div>
+                            </div>
+                            <div class="border rounded p-2" style="max-height: 320px; overflow:auto">
+                                @foreach (var p in positions)
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="SelectedPositions" value="@p.PkPosition" id="pos_@p.PkPosition" />
+                                        <label class="form-check-label" for="pos_@p.PkPosition">@p.NamePosition</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- COURSES -->
+                        <div class="mb-3 col-md-6">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label fw-bold">Courses <span class="text-danger">*</span></label>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="toggleAll('SelectedCourses', true)">Select All</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleAll('SelectedCourses', false)">Clear</button>
+                                </div>
+                            </div>
+                            <div class="border rounded p-2" style="max-height: 320px; overflow:auto">
+                                @foreach (var c in courses)
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="SelectedCourses" value="@c.PkCourse" id="course_@c.PkCourse" />
+                                        <label class="form-check-label" for="course_@c.PkCourse">@c.CourseName</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <!-- Metadatos aplicados a todas las combinaciones -->
+                    <div class="row">
+                        <div class="mb-3 col-md-4">
+                            <label class="form-label">Course Level <span class="text-danger">*</span></label>
+                            <select class="form-control" name="FkRequiredCourseLevels">
+                                <option value="">-- Select Level --</option>
+                                @foreach (var l in levels)
+                                {
+                                    <option value="@l.PkLevelcourse">@l.DescripctionLevel</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3 col-md-4">
+                            <label class="form-label">Delivery Mode <span class="text-danger">*</span></label>
+                            <select class="form-control" name="FkDeliveryMode">
+                                <option value="">-- Select Delivery Mode --</option>
+                                @foreach (var d in modes)
+                                {
+                                    <option value="@d.PkDeliverymode">@d.DescriptionDeliverymode</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3 col-md-4">
+                            <label class="form-label">Required</label>
+                            <div class="form-check">
+                                <!-- hidden para garantizar false si se desmarca -->
+                                <input type="hidden" name="Requiered" value="false" />
+                                <input class="form-check-input" type="checkbox" name="Requiered" value="true" id="Requiered" checked />
+                                <label class="form-check-label" for="Requiered">Is Required?</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="row">
+                        <div class="col-12 text-end">
+                            <a asp-action="IndexCourseassignments" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="align-middle fas fa-plus-square"></i> CREATE BULK
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        function toggleAll(name, check) {
+            document.querySelectorAll(`input[name='${name}']`).forEach(el => { el.checked = check; });
+        }
+
+        $(document).ready(function () {
+            if ("@TempData["SuccessMessage"]" !== "") {
+                window.notyf.open({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+
+            if ("@TempData["ErrorMessage"]" !== "") {
+                window.notyf.open({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+        });
+    </script>
+}
