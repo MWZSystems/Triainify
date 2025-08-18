@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace RH_CM.Models
 {
-    public partial class SyHeadCount
+    public partial class SyHeadcount
     {
         public int PkHeadcount { get; set; }
         public int ControlNumber { get; set; }

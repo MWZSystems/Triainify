@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace RH_CM.Models
 {
-    public partial class SyCouseMovement
+    public partial class SyCousemovement
     {
         public int PkMovementCourse { get; set; }
         public int FkCourseCompleted { get; set; }

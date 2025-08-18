@@ -5,7 +5,7 @@ using RH_CM.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 // Configurar la conexión a SQL Server para MATERIALES_CHDBContext
-builder.Services.AddDbContext<RH_CHDBContext>(Options =>
+builder.Services.AddDbContext<db_abcd61_rhchdbContext>(Options =>
     Options.UseSqlServer(builder.Configuration.GetConnectionString("ConexionSQL")));
 
 // Configurar la conexión a SQL Server para ApplicationDbContext

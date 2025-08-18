@@ -5,9 +5,9 @@ namespace RH_CM.Controllers
 {
     public class MatrizController : Controller
     {
-        private readonly RH_CHDBContext _context;
+        private readonly db_abcd61_rhchdbContext _context;
 
-        public MatrizController(RH_CHDBContext context)
+        public MatrizController(db_abcd61_rhchdbContext context)
         {
             _context = context;
         }

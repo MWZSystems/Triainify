@@ -12,9 +12,9 @@ namespace RH_CM.Controllers
     
     public class HeadCountController : Controller
     {
-        private readonly RH_CHDBContext _context;
+        private readonly db_abcd61_rhchdbContext _context;
 
-        public HeadCountController(RH_CHDBContext context)
+        public HeadCountController(db_abcd61_rhchdbContext context)
         {
             _context = context;
         }
@@ -24,7 +24,7 @@ namespace RH_CM.Controllers
         {
             var departments = await _context.CtDepartments.ToListAsync();
             var positions = await _context.CtPositions.ToListAsync();
-            var syHeadCounts = await _context.SyHeadCounts
+            var syHeadCounts = await _context.SyHeadcounts
                 .Where(hc => hc.Available == 1) // Filtrar por Available = 1
                 .ToListAsync();
 
@@ -38,7 +38,7 @@ namespace RH_CM.Controllers
             {
                 Departments = departments,
                 Positions = positions,
-                SyHeadCounts = syHeadCounts,
+                SyHeadCount = syHeadCounts,
                 HeadCountAges = headCountAges // Agregar edades al modelo
             };
 
@@ -58,7 +58,7 @@ namespace RH_CM.Controllers
             // Obtener los datos necesarios para el archivo Excel
             var departments = await _context.CtDepartments.ToListAsync();
             var positions = await _context.CtPositions.ToListAsync();
-            var syHeadCounts = await _context.SyHeadCounts.ToListAsync();
+            var syHeadCounts = await _context.SyHeadcounts.ToListAsync();
 
             // Calcular edades
             var headCountAges = syHeadCounts.ToDictionary(
@@ -168,7 +168,7 @@ namespace RH_CM.Controllers
         {
             var departments = await _context.CtDepartments.ToListAsync();
             var positions = await _context.CtPositions.ToListAsync();
-            var syHeadCounts = await _context.SyHeadCounts
+            var syHeadCounts = await _context.SyHeadcounts
                 .Where(hc => hc.Available == 0) // Filtrar por Available = 1
                 .ToListAsync();
 
@@ -182,7 +182,7 @@ namespace RH_CM.Controllers
             {
                 Departments = departments,
                 Positions = positions,
-                SyHeadCounts = syHeadCounts,
+                SyHeadCount = syHeadCounts,
                 HeadCountAges = headCountAges // Agregar edades al modelo
             };
 
@@ -195,7 +195,7 @@ namespace RH_CM.Controllers
         {
             var departments = await _context.CtDepartments.ToListAsync();
             var positions = await _context.CtPositions.ToListAsync();
-            var syHeadCounts = await _context.SyHeadCounts
+            var syHeadCounts = await _context.SyHeadcounts
             .Where(h => h.Available == 1)
             .ToListAsync();
 
@@ -204,7 +204,7 @@ namespace RH_CM.Controllers
             {
                 Departments = departments,
                 Positions = positions,
-                SyHeadCounts = syHeadCounts
+                SyHeadCount = syHeadCounts
             };
 
             return View(model);
@@ -216,7 +216,7 @@ namespace RH_CM.Controllers
         {
             var departments = await _context.CtDepartments.ToListAsync();
             var positions = await _context.CtPositions.ToListAsync();
-            var syHeadCounts = await _context.SyHeadCounts
+            var syHeadCounts = await _context.SyHeadcounts
             .Where(h => h.Available == 0)
             .ToListAsync();
 
@@ -225,7 +225,7 @@ namespace RH_CM.Controllers
             {
                 Departments = departments,
                 Positions = positions,
-                SyHeadCounts = syHeadCounts
+                SyHeadCount = syHeadCounts
             };
 
             return View(model);
@@ -239,7 +239,7 @@ namespace RH_CM.Controllers
 
             var supervisors = (
                 from s in _context.CtSupervisors
-                join h in _context.SyHeadCounts
+                join h in _context.SyHeadcounts
                     on s.FkHeadcount equals h.PkHeadcount
                 where s.Available == 1 && h.Available == 1
                 select new SupervisorDisplayViewModel
@@ -283,7 +283,7 @@ namespace RH_CM.Controllers
                 model.Position = _context.CtPositions.ToList();
                 model.Supervisors = (
                     from s in _context.CtSupervisors
-                    join h in _context.SyHeadCounts
+                    join h in _context.SyHeadcounts
                         on s.FkHeadcount equals h.PkHeadcount
                     where s.Available == 1 && h.Available == 1
                     select new SupervisorDisplayViewModel
@@ -319,11 +319,11 @@ namespace RH_CM.Controllers
                     return ReturnWithError("Please provide either a Last Name or a Second Name.");
 
                 // Validate duplicate ControlNumber
-                if (_context.SyHeadCounts.Any(h => h.ControlNumber == model.ControlNumber))
+                if (_context.SyHeadcounts.Any(h => h.ControlNumber == model.ControlNumber))
                     return ReturnWithError("The Control Number already exists.");
 
                 // Create entity
-                var headCount = new SyHeadCount
+                var headCount = new SyHeadcount
                 {
                     ControlNumber = model.ControlNumber,
                     Photo = model.Photo ?? new byte[0],
@@ -359,7 +359,7 @@ namespace RH_CM.Controllers
                     Available = 1
                 };
 
-                _context.SyHeadCounts.Add(headCount);
+                _context.SyHeadcounts.Add(headCount);
                 _context.SaveChanges();
 
                 TempData["SuccessMessage"] = "Head count created successfully.";
@@ -377,7 +377,7 @@ namespace RH_CM.Controllers
         [Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
         public IActionResult EditHeadCount(int id)
         {
-            var headCount = _context.SyHeadCounts.Find(id);
+            var headCount = _context.SyHeadcounts.Find(id);
             if (headCount == null)
             {
                 return NotFound();
@@ -416,7 +416,7 @@ namespace RH_CM.Controllers
                 Position = _context.CtPositions.ToList(),
                 Supervisors = (
                     from supervisor in _context.CtSupervisors
-                    join sHead in _context.SyHeadCounts
+                    join sHead in _context.SyHeadcounts
                         on supervisor.FkHeadcount equals sHead.PkHeadcount
                     where supervisor.Available == 1 && sHead.Available == 1
                     select new SupervisorDisplayViewModel
@@ -446,7 +446,7 @@ namespace RH_CM.Controllers
                 viewModel.Position = _context.CtPositions.ToList();
                 viewModel.Supervisors = (
                     from supervisor in _context.CtSupervisors
-                    join sHead in _context.SyHeadCounts
+                    join sHead in _context.SyHeadcounts
                         on supervisor.FkHeadcount equals sHead.PkHeadcount
                     where supervisor.Available == 1 && sHead.Available == 1
                     select new SupervisorDisplayViewModel
@@ -471,7 +471,7 @@ namespace RH_CM.Controllers
 
             try
             {
-                var headCount = await _context.SyHeadCounts.FindAsync(viewModel.PkHeadcount);
+                var headCount = await _context.SyHeadcounts.FindAsync(viewModel.PkHeadcount);
                 if (headCount == null)
                 {
                     TempData["ErrorMessage"] = "The record was not found.";
@@ -490,7 +490,7 @@ namespace RH_CM.Controllers
                     return ReturnWithError("Please provide either a Last Name or a Second Name.");
 
                 // Validar duplicados en ControlNumber, excluyendo el registro actual
-                if (_context.SyHeadCounts.Any(h => h.ControlNumber == viewModel.ControlNumber && h.PkHeadcount != viewModel.PkHeadcount))
+                if (_context.SyHeadcounts.Any(h => h.ControlNumber == viewModel.ControlNumber && h.PkHeadcount != viewModel.PkHeadcount))
                     return ReturnWithError("The 'Control Number' already exists.");
 
                 // Actualizar headCount con datos validados
@@ -543,11 +543,11 @@ namespace RH_CM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteHeadCountConfirmed(int id)
         {
-            var headCount = await _context.SyHeadCounts.FindAsync(id);
+            var headCount = await _context.SyHeadcounts.FindAsync(id);
             if (headCount != null)
             {
                 // Elimina el registro de la base de datos
-                _context.SyHeadCounts.Remove(headCount);
+                _context.SyHeadcounts.Remove(headCount);
                 await _context.SaveChangesAsync();
 
                 TempData["SuccessMessage"] = "Head count deleted successfully.";
@@ -565,28 +565,43 @@ namespace RH_CM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleAvailabilityConfirmedHeadCount(int id)
         {
-            var headCount = await _context.SyHeadCounts.FindAsync(id);
-            if (headCount != null)
-            {
-                // Alterna el valor de Available entre 0 y 1
-                headCount.Available = headCount.Available == 1 ? 0 : 1;
-
-                // Guarda los cambios en la base de datos
-                _context.Update(headCount);
-                await _context.SaveChangesAsync();
-
-                TempData["SuccessMessage"] = headCount.Available == 1 ? "Head count enabled successfully." : "Head count disabled successfully.";
-            }
-            else
+            var headCount = await _context.SyHeadcounts.FindAsync(id);
+            if (headCount == null)
             {
                 TempData["ErrorMessage"] = "Head count not found.";
+                return RedirectToAction(nameof(IndexHeadCount));
             }
+
+            // Alterna el valor de Available entre 0 y 1
+            headCount.Available = headCount.Available == 1 ? 0 : 1;
+
+            // (Opcional) Si tu entidad tiene campos de auditoría, actualízalos aquí:
+            // headCount.LastUpdateUser = User.Identity?.Name ?? "Unknown";
+            // headCount.LastUpdateDate = DateTime.Now;
+            try
+            {
+                _context.Update(headCount);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = headCount.Available == 1
+                    ? "Head count enabled successfully."
+                    : "Head count disabled successfully.";
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                TempData["ErrorMessage"] = "Concurrency error while updating the head count.";
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Unexpected error while updating the head count.";
+            }
+
             return RedirectToAction(nameof(IndexHeadCount));
         }
 
+
         private bool HeadCountExists(int id)
         {
-            return _context.SyHeadCounts.Any(e => e.PkHeadcount == id);
+            return _context.SyHeadcounts.Any(e => e.PkHeadcount == id);
         }
 
 

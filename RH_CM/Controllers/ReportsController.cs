@@ -11,9 +11,9 @@ namespace RH_CM.Controllers
 {
     public class ReportsController : Controller
     {
-        private readonly RH_CHDBContext _context;
+        private readonly db_abcd61_rhchdbContext _context;
 
-        public ReportsController(RH_CHDBContext context)
+        public ReportsController(db_abcd61_rhchdbContext context)
         {
             _context = context;
         }
@@ -52,25 +52,22 @@ namespace RH_CM.Controllers
         public IActionResult CourseToDobyEmpleyee()
         {
             var materials = _context.CtCoursematerials
+                .AsNoTracking()
                 .Where(m => m.Available == 1)
-                .Join(
-                    _context.CtCourses.Where(c => c.Available == 1),
-                    m => m.FkCourse,
-                    c => c.PkCourse,
-                    (m, c) => new { m, c }
-                )
-                .Select(temp => new
+                .OrderBy(m => m.NameMaterial)
+                .Select(m => new
                 {
-                    temp.m.PkCoursematerial,
-                    MaterialName = temp.m.NameMaterial,  // NOMBRE CONSISTENTE
-                    temp.m.Available,
-                    CourseName = temp.c.CourseName,
-                    temp.c.ManagementSystem,
+                    m.PkCoursematerial,
+                    MaterialName = m.NameMaterial,
+                    m.Available,
+                    m.Createuser,
+                    m.Createdate
                 })
                 .ToList();
 
             return View(materials);
         }
+
 
         // GET: ReportsController
         public ActionResult TestQuestions()

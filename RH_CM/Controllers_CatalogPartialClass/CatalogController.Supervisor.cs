@@ -14,7 +14,7 @@ namespace RH_CM.Controllers
         {
             var supervisors = _context.CtSupervisors
                 //.Where(s => s.Available == 1)
-                .Join(_context.SyHeadCounts.Where(h => h.Available == 1),
+                .Join(_context.SyHeadcounts.Where(h => h.Available == 1),
                     s => s.FkHeadcount,
                     h => h.PkHeadcount,
                     (s, h) => new { s, h })
@@ -43,7 +43,7 @@ namespace RH_CM.Controllers
         [Authorize(Roles = "Administrador, RHGerente")]
         public IActionResult CreateSupervisor()
         {
-            ViewBag.Headcount = _context.SyHeadCounts.Where(d => d.Available == 1).ToList();
+            ViewBag.Headcount = _context.SyHeadcounts.Where(d => d.Available == 1).ToList();
             ViewBag.Departments = _context.CtDepartments.Where(d => d.Available == 1).ToList();
             ViewBag.Positions = _context.CtPositions.Where(p => p.Available == 1).ToList();
 
@@ -102,7 +102,7 @@ namespace RH_CM.Controllers
                 return NotFound();
 
             // Cargar los dropdowns
-            ViewBag.Headcount = _context.SyHeadCounts.Where(h => h.Available == 1).ToList();
+            ViewBag.Headcount = _context.SyHeadcounts.Where(h => h.Available == 1).ToList();
             ViewBag.Departments = _context.CtDepartments.Where(d => d.Available == 1).ToList();
             ViewBag.Positions = _context.CtPositions.Where(p => p.Available == 1).ToList();
 

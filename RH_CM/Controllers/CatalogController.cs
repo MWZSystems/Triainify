@@ -9,9 +9,9 @@ namespace RH_CM.Controllers
 {
     public partial class CatalogController : Controller
     {
-        private readonly RH_CHDBContext _context;
+        private readonly db_abcd61_rhchdbContext _context;
 
-        public CatalogController(RH_CHDBContext context)
+        public CatalogController(db_abcd61_rhchdbContext context)
         {
             _context = context;
         }

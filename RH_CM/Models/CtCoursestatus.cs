@@ -10,7 +10,7 @@ namespace RH_CM.Models
         public string Createuser { get; set; } = null!;
         public DateTime Createdate { get; set; }
         public string Lastupdateuser { get; set; } = null!;
-        public string Lastupatedate { get; set; } = null!;
+        public DateTime Lastupatedate { get; set; }
         public int Available { get; set; }
     }
 }

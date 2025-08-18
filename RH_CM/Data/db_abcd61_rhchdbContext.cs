@@ -6,13 +6,13 @@ using RH_CM.Models;
 
 namespace RH_CM.Data
 {
-    public partial class RH_CHDBContext : DbContext
+    public partial class db_abcd61_rhchdbContext : DbContext
     {
-        public RH_CHDBContext()
+        public db_abcd61_rhchdbContext()
         {
         }
 
-        public RH_CHDBContext(DbContextOptions<RH_CHDBContext> options)
+        public db_abcd61_rhchdbContext(DbContextOptions<db_abcd61_rhchdbContext> options)
             : base(options)
         {
         }
@@ -47,11 +47,10 @@ namespace RH_CM.Data
         public virtual DbSet<CtTestConsolidado> CtTestConsolidados { get; set; } = null!;
         public virtual DbSet<CtTestConsolidado2> CtTestConsolidado2s { get; set; } = null!;
         public virtual DbSet<CtVideomaterial> CtVideomaterials { get; set; } = null!;
-        public virtual DbSet<FerType> FerTypes { get; set; } = null!;
         public virtual DbSet<SyCoursecompleted> SyCoursecompleteds { get; set; } = null!;
-        public virtual DbSet<SyCouseMovement> SyCouseMovements { get; set; } = null!;
+        public virtual DbSet<SyCousemovement> SyCousemovements { get; set; } = null!;
         public virtual DbSet<SyExcludedcourseassignment> SyExcludedcourseassignments { get; set; } = null!;
-        public virtual DbSet<SyHeadCount> SyHeadCounts { get; set; } = null!;
+        public virtual DbSet<SyHeadcount> SyHeadcounts { get; set; } = null!;
         public virtual DbSet<SyUserAnswer> SyUserAnswers { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -59,14 +58,12 @@ namespace RH_CM.Data
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=SQL1004.site4now.net,1433;Database=db_abcd61_rhchdb;User Id= db_abcd61_rhchdb_admin; Password=WebMindzz1*");
+                optionsBuilder.UseSqlServer("Server=SQL1004.site4now.net,1433;Database=db_abcd61_rhchdb;User Id=db_abcd61_rhchdb_admin;Password=WebMindzz1*;");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.UseCollation("SQL_Latin1_General_CP1_CI_AS");
-
             modelBuilder.Entity<AspNetRole>(entity =>
             {
                 entity.HasIndex(e => e.NormalizedName, "RoleNameIndex")
@@ -250,6 +247,9 @@ namespace RH_CM.Data
 
                 entity.ToTable("CT_COURSEASSIGNMENTS");
 
+                entity.HasIndex(e => new { e.FkPosition, e.FkCourse, e.FkRequiredCourseLevels }, "UX_CtCourseassignments_PosCourseLevel")
+                    .IsUnique();
+
                 entity.Property(e => e.PkCourseAssignment).HasColumnName("PK_CourseAssignment");
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
@@ -316,8 +316,6 @@ namespace RH_CM.Data
 
                 entity.Property(e => e.File).HasColumnName("FILE");
 
-                entity.Property(e => e.FkCourse).HasColumnName("FK_Course");
-
                 entity.Property(e => e.Lastupdatedate)
                     .HasColumnType("datetime")
                     .HasColumnName("lastupdatedate");
@@ -375,7 +373,8 @@ namespace RH_CM.Data
 
             modelBuilder.Entity<CtCoursestatus>(entity =>
             {
-                entity.HasKey(e => e.PkCoursestatus);
+                entity.HasKey(e => e.PkCoursestatus)
+                    .HasName("PK_CT_COURSESTATUS_1");
 
                 entity.ToTable("CT_COURSESTATUS");
 
@@ -396,7 +395,7 @@ namespace RH_CM.Data
                     .HasColumnName("DESCRIPTION_COURSESTATUS");
 
                 entity.Property(e => e.Lastupatedate)
-                    .HasMaxLength(50)
+                    .HasColumnType("datetime")
                     .HasColumnName("LASTUPATEDATE");
 
                 entity.Property(e => e.Lastupdateuser)
@@ -951,19 +950,6 @@ namespace RH_CM.Data
                     .HasColumnName("URL_PATH");
             });
 
-            modelBuilder.Entity<FerType>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.ToTable("FER_TYPE");
-
-                entity.Property(e => e.FkCourse).HasColumnName("FK_COURSE");
-
-                entity.Property(e => e.FkRequiredCourseLevels).HasColumnName("FK_RequiredCourseLevels");
-
-                entity.Property(e => e.TypeCourse).IsUnicode(false);
-            });
-
             modelBuilder.Entity<SyCoursecompleted>(entity =>
             {
                 entity.HasKey(e => e.PkCourseCompleted);
@@ -989,11 +975,11 @@ namespace RH_CM.Data
                 entity.Property(e => e.LastUpdateUser).HasMaxLength(50);
             });
 
-            modelBuilder.Entity<SyCouseMovement>(entity =>
+            modelBuilder.Entity<SyCousemovement>(entity =>
             {
                 entity.HasNoKey();
 
-                entity.ToTable("SY_CouseMovements");
+                entity.ToTable("SY_COUSEMOVEMENTS");
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
@@ -1035,11 +1021,12 @@ namespace RH_CM.Data
                 entity.Property(e => e.LastUpdateUser).HasMaxLength(50);
             });
 
-            modelBuilder.Entity<SyHeadCount>(entity =>
+            modelBuilder.Entity<SyHeadcount>(entity =>
             {
-                entity.HasKey(e => e.PkHeadcount);
+                entity.HasKey(e => e.PkHeadcount)
+                    .HasName("PK_SY_HeadCount");
 
-                entity.ToTable("SY_HeadCount");
+                entity.ToTable("SY_HEADCOUNT");
 
                 entity.Property(e => e.PkHeadcount).HasColumnName("PK_HEADCOUNT");
 

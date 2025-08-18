@@ -12,23 +12,18 @@ namespace RH_CM.Controllers
         public IActionResult IndexCourseMaterial()
         {
             var materials = _context.CtCoursematerials
+                .AsNoTracking()
                 .Where(m => m.Available == 1)
-                .Join(
-                    _context.CtCourses.Where(c => c.Available == 1),
-                    m => m.FkCourse,
-                    c => c.PkCourse,
-                    (m, c) => new { m, c }
-                )
-                .Select(temp => new
+                .OrderBy(m => m.NameMaterial)
+                .Select(m => new
                 {
-                    temp.m.PkCoursematerial,
-                    MaterialName = temp.m.NameMaterial,  // NOMBRE CONSISTENTE
-                    temp.m.Available,
-                    CourseName = temp.c.CourseName,
-                    temp.c.ManagementSystem,
-                    //temp.c.Idcourse,
-                    //temp.c.Revision,
-                    //temp.c.CourseValidityDays
+                    m.PkCoursematerial,
+                    MaterialName = m.NameMaterial,
+                    m.Available,
+                    m.Createuser,
+                    m.Createdate,
+                    m.Lastupdateuser,
+                    m.Lastupdatedate
                 })
                 .ToList();
 
@@ -36,80 +31,60 @@ namespace RH_CM.Controllers
         }
 
         // GET: CtCoursematerial/Create
+        [HttpGet]
         [Authorize(Roles = "Administrador, RHGerente")]
-        public async Task<IActionResult> CreateCourseMaterial()
+        public IActionResult CreateCourseMaterial()
         {
-            // Cargar cursos activos
-            ViewBag.Courses = await _context.CtCourses
-                .Where(c => c.Available == 1)
-                .OrderBy(c => c.CourseName)
-                .ToListAsync();
-
-            return View();
+            // Ya no cargamos listas ni ViewBags
+            return View(new CtCoursematerial());
         }
+
         // POST: CtCoursematerial/Create
         [HttpPost]
         [Authorize(Roles = "Administrador, RHGerente")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateCourseMaterial(CtCoursematerial model, IFormFile uploadedFile)
         {
-            // Validar archivo obligatorio
+            // Validar nombre
+            if (string.IsNullOrWhiteSpace(model.NameMaterial))
+            {
+                TempData["ErrorMessage"] = "Material Name is required.";
+                return View(model);
+            }
+
+            // (Opcional) Evitar duplicado por nombre (ajusta si quieres case-insensitive)
+            var existsName = await _context.CtCoursematerials
+                .AsNoTracking()
+                .AnyAsync(m => m.NameMaterial == model.NameMaterial && m.Available == 1);
+            if (existsName)
+            {
+                TempData["ErrorMessage"] = "A material with the same name already exists.";
+                return View(model);
+            }
+
+            // Validar archivo
             if (uploadedFile == null || uploadedFile.Length == 0)
             {
                 TempData["ErrorMessage"] = "You must upload a PDF file.";
-
-                ViewBag.Courses = await _context.CtCourses
-                    .Where(c => c.Available == 1)
-                    .OrderBy(c => c.CourseName)
-                    .ToListAsync();
-
                 return View(model);
             }
-
-            // Validar Level no negativo
-            if (model.Level.HasValue && model.Level < 0)
+            var fileName = uploadedFile.FileName?.ToLowerInvariant() ?? "";
+            if (!fileName.EndsWith(".pdf"))
             {
-                TempData["ErrorMessage"] = "Level cannot be negative.";
-
-                ViewBag.Courses = await _context.CtCourses
-                    .Where(c => c.Available == 1)
-                    .OrderBy(c => c.CourseName)
-                    .ToListAsync();
-
+                TempData["ErrorMessage"] = "Only PDF files are allowed (.pdf).";
                 return View(model);
             }
+            // (Opcional) validar content-type reportado por el navegador
+            // if (uploadedFile.ContentType != "application/pdf") { ... }
 
-            // Obtener el FkCourse desde el radio button
-            var selectedFkCourse = Request.Form["FkCourse"].FirstOrDefault();
-            if (string.IsNullOrEmpty(selectedFkCourse))
+            // Guardar archivo en varbinary(max)
+            using (var ms = new MemoryStream())
             {
-                TempData["ErrorMessage"] = "You must select a course.";
-
-                ViewBag.Courses = await _context.CtCourses
-                    .Where(c => c.Available == 1)
-                    .OrderBy(c => c.CourseName)
-                    .ToListAsync();
-
-                return View(model);
+                await uploadedFile.CopyToAsync(ms);
+                model.File = ms.ToArray();
             }
 
-            if (!int.TryParse(selectedFkCourse, out var fkCourseValue))
-            {
-                TempData["ErrorMessage"] = "Invalid course selection.";
-
-                ViewBag.Courses = await _context.CtCourses
-                    .Where(c => c.Available == 1)
-                    .OrderBy(c => c.CourseName)
-                    .ToListAsync();
-
-                return View(model);
-            }
-
-            using var ms = new MemoryStream();
-            await uploadedFile.CopyToAsync(ms);
-            model.File = ms.ToArray();
-
-            model.FkCourse = fkCourseValue;
+            // Metadatos
             model.Createuser = User.Identity?.Name ?? "Unknown";
             model.Createdate = DateTime.Now;
             model.Lastupdateuser = User.Identity?.Name ?? "Unknown";
@@ -122,26 +97,17 @@ namespace RH_CM.Controllers
             TempData["SuccessMessage"] = "Material created successfully.";
             return RedirectToAction(nameof(IndexCourseMaterial));
         }
-
-
         // GET: CtCoursematerial/Edit/5
         [Authorize(Roles = "Administrador, RHGerente")]
+        [HttpGet]
         public async Task<IActionResult> EditCourseMaterial(int? id)
         {
-            if (id == null)
-                return NotFound();
+            if (id == null) return NotFound();
 
             var material = await _context.CtCoursematerials.FindAsync(id);
-            if (material == null)
-                return NotFound();
+            if (material == null) return NotFound();
 
-            // Cargar cursos activos para la tabla
-            ViewBag.Courses = await _context.CtCourses
-                .Where(c => c.Available == 1)
-                .OrderBy(c => c.CourseName)
-                .ToListAsync();
-
-            return View(material);
+            return View(material); // ya no cargamos ViewBags
         }
 
         // POST: CtCoursematerial/Edit/5
@@ -150,51 +116,33 @@ namespace RH_CM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditCourseMaterial(int id, CtCoursematerial model, IFormFile? uploadedFile)
         {
-            if (id != model.PkCoursematerial)
-                return NotFound();
+            if (id != model.PkCoursematerial) return NotFound();
 
             var existing = await _context.CtCoursematerials.FindAsync(id);
-            if (existing == null)
-                return NotFound();
+            if (existing == null) return NotFound();
 
-            // Obtener el FkCourse desde el radio button
-            var selectedFkCourse = Request.Form["FkCourse"].FirstOrDefault();
-
-            if (string.IsNullOrEmpty(selectedFkCourse))
+            // Validaciones mínimas
+            if (string.IsNullOrWhiteSpace(model.NameMaterial))
             {
-                TempData["ErrorMessage"] = "You must select a course.";
-
-                // Recargar cursos y devolver vista
-                ViewBag.Courses = await _context.CtCourses
-                    .Where(c => c.Available == 1)
-                    .OrderBy(c => c.CourseName)
-                    .ToListAsync();
-
+                TempData["ErrorMessage"] = "Material Name is required.";
                 return View(model);
             }
 
-            if (!int.TryParse(selectedFkCourse, out var fkCourseValue))
-            {
-                TempData["ErrorMessage"] = "Invalid course selection.";
-
-                ViewBag.Courses = await _context.CtCourses
-                    .Where(c => c.Available == 1)
-                    .OrderBy(c => c.CourseName)
-                    .ToListAsync();
-
-                return View(model);
-            }
-
-            // Actualizar campos
+            // Actualizar campos editables
             existing.NameMaterial = model.NameMaterial;
-            existing.FkCourse = fkCourseValue;
-            existing.Level = model.Level;
             existing.Lastupdateuser = User.Identity?.Name ?? "Unknown";
             existing.Lastupdatedate = DateTime.Now;
 
-            // Si subió nuevo archivo
+            // Si subió nuevo archivo (PDF)
             if (uploadedFile != null && uploadedFile.Length > 0)
             {
+                var fileName = uploadedFile.FileName?.ToLowerInvariant() ?? "";
+                if (!fileName.EndsWith(".pdf"))
+                {
+                    TempData["ErrorMessage"] = "Only PDF files are allowed (.pdf).";
+                    return View(model);
+                }
+
                 using var ms = new MemoryStream();
                 await uploadedFile.CopyToAsync(ms);
                 existing.File = ms.ToArray();
@@ -206,6 +154,7 @@ namespace RH_CM.Controllers
             TempData["SuccessMessage"] = "Material updated successfully.";
             return RedirectToAction(nameof(IndexCourseMaterial));
         }
+
 
 
         // POST: CtCoursematerial/Toggle/5

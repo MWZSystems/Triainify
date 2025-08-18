@@ -12,10 +12,10 @@ namespace RH_CM.Controllers
 {
     public class TrainifyController : Controller
     {
-        private readonly RH_CHDBContext _context;
+        private readonly db_abcd61_rhchdbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public TrainifyController(RH_CHDBContext context, UserManager<IdentityUser> userManager)
+        public TrainifyController(db_abcd61_rhchdbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -23,7 +23,6 @@ namespace RH_CM.Controllers
         // GET: TrainifyController
         public ActionResult TrainifyHome()
         {
-
             return View();
         }
 
@@ -82,6 +81,7 @@ namespace RH_CM.Controllers
 
             return View(result);
         }
+
 
 
     }

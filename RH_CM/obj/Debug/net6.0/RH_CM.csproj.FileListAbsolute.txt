@@ -563,6 +563,7 @@ C:\Users\ferma\OneDrive\Documents\Triainify\RH_CM\obj\Debug\net6.0\refint\RH_CM.
 C:\Users\ferma\OneDrive\Documents\Triainify\RH_CM\obj\Debug\net6.0\RH_CM.pdb
 C:\Users\ferma\OneDrive\Documents\Triainify\RH_CM\obj\Debug\net6.0\RH_CM.genruntimeconfig.cache
 C:\Users\ferma\OneDrive\Documents\Triainify\RH_CM\obj\Debug\net6.0\ref\RH_CM.dll
+C:\Users\ferma\OneDrive\Documents\Triainify\RH_CM\obj\Debug\net6.0\staticwebassets.upToDateCheck.txt
 C:\Users\Sergi\Documents\CM\Trainify\RH_CM\bin\Debug\net6.0\appsettings.json
 C:\Users\Sergi\Documents\CM\Trainify\RH_CM\bin\Debug\net6.0\RH_CM.staticwebassets.runtime.json
 C:\Users\Sergi\Documents\CM\Trainify\RH_CM\bin\Debug\net6.0\RH_CM.staticwebassets.endpoints.json
@@ -848,4 +849,3 @@ C:\Users\Sergi\Documents\CM\Trainify\RH_CM\obj\Debug\net6.0\refint\RH_CM.dll
 C:\Users\Sergi\Documents\CM\Trainify\RH_CM\obj\Debug\net6.0\RH_CM.pdb
 C:\Users\Sergi\Documents\CM\Trainify\RH_CM\obj\Debug\net6.0\RH_CM.genruntimeconfig.cache
 C:\Users\Sergi\Documents\CM\Trainify\RH_CM\obj\Debug\net6.0\ref\RH_CM.dll
-C:\Users\ferma\OneDrive\Documents\Triainify\RH_CM\obj\Debug\net6.0\staticwebassets.upToDateCheck.txt
