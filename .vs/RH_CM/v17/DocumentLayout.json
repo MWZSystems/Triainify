@@ -3,16 +3,40 @@
   "WorkspaceRootPath": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\views\\trainify\\learningtrainify.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\trainify\\learningtrainify.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\controllers\\trainifycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\trainifycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\controllers_catalogpartialclass\\catalogcontroller.course.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers_catalogpartialclass\\catalogcontroller.course.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\viewmodels\\learningcoursetodoviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\viewmodels\\learningcoursetodoviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\views\\shared\\_navbar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\shared\\_navbar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\views\\trainify\\matrizbyemployee.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\trainify\\matrizbyemployee.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\controllers\\examcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\examcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\views\\reports\\coursetodobyempleyee.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\reports\\coursetodobyempleyee.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\controllers\\reportscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\reportscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\controllers\\catalogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers\\catalogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\sergi\\documents\\cm\\trainify\\rh_cm\\views\\catalog\\editcourse.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -30,34 +54,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 6,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "CatalogController.Course.cs",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers_CatalogPartialClass\\CatalogController.Course.cs",
-              "RelativeDocumentMoniker": "RH_CM\\Controllers_CatalogPartialClass\\CatalogController.Course.cs",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers_CatalogPartialClass\\CatalogController.Course.cs",
-              "RelativeToolTip": "RH_CM\\Controllers_CatalogPartialClass\\CatalogController.Course.cs",
-              "ViewState": "AgIAALsAAAAAAAAAAAAcwMwAAAA8AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-18T03:48:17.133Z",
-              "IsPinned": true
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\appsettings.json",
-              "RelativeDocumentMoniker": "RH_CM\\appsettings.json",
-              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\appsettings.json",
-              "RelativeToolTip": "RH_CM\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-08-18T04:36:07.034Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
@@ -66,25 +64,132 @@
               "RelativeDocumentMoniker": "RH_CM\\Controllers\\TrainifyController.cs",
               "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers\\TrainifyController.cs",
               "RelativeToolTip": "RH_CM\\Controllers\\TrainifyController.cs",
-              "ViewState": "AgIAACkAAAAAAAAAAAAwwDwAAABPAAAAAAAAAA==",
+              "ViewState": "AgIAABAAAAAAAAAAAADwv1UAAAA0AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-18T04:16:25.896Z"
+              "WhenOpened": "2025-08-18T04:16:25.896Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "MatrizbyEmployee.cshtml",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Trainify\\MatrizbyEmployee.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Trainify\\MatrizbyEmployee.cshtml",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Trainify\\MatrizbyEmployee.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Trainify\\MatrizbyEmployee.cshtml",
+              "ViewState": "AgIAADwAAAAAAAAAAAAAAEcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-08-19T06:06:22.837Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "_Navbar.cshtml",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Shared\\_Navbar.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Shared\\_Navbar.cshtml",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Shared\\_Navbar.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Shared\\_Navbar.cshtml",
+              "ViewState": "AgIAAEAAAAAAAAAAAAAhwFoAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-08-19T05:51:04.035Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ReportsController.cs",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers\\ReportsController.cs",
+              "RelativeDocumentMoniker": "RH_CM\\Controllers\\ReportsController.cs",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers\\ReportsController.cs",
+              "RelativeToolTip": "RH_CM\\Controllers\\ReportsController.cs",
+              "ViewState": "AgIAACMAAAAAAAAAAAAIwDMAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-19T05:47:00.369Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "CatalogController.cs",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers\\CatalogController.cs",
+              "RelativeDocumentMoniker": "RH_CM\\Controllers\\CatalogController.cs",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers\\CatalogController.cs",
+              "RelativeToolTip": "RH_CM\\Controllers\\CatalogController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-19T05:46:55.459Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ExamController.cs",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers\\ExamController.cs",
+              "RelativeDocumentMoniker": "RH_CM\\Controllers\\ExamController.cs",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Controllers\\ExamController.cs",
+              "RelativeToolTip": "RH_CM\\Controllers\\ExamController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-19T05:46:52.527Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "LearningTrainify.cshtml",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Trainify\\LearningTrainify.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Trainify\\LearningTrainify.cshtml",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Trainify\\LearningTrainify.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Trainify\\LearningTrainify.cshtml",
+              "ViewState": "AgIAADkAAAAAAAAAAAAAABEAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-08-19T03:02:02.009Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "LearningCourseToDoViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\ViewModels\\LearningCourseToDoViewModel.cs",
+              "RelativeDocumentMoniker": "RH_CM\\ViewModels\\LearningCourseToDoViewModel.cs",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\ViewModels\\LearningCourseToDoViewModel.cs",
+              "RelativeToolTip": "RH_CM\\ViewModels\\LearningCourseToDoViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-19T05:49:24.355Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "CourseToDobyEmpleyee.cshtml",
+              "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Reports\\CourseToDobyEmpleyee.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Reports\\CourseToDobyEmpleyee.cshtml",
+              "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Reports\\CourseToDobyEmpleyee.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Reports\\CourseToDobyEmpleyee.cshtml",
+              "ViewState": "AgIAAGsAAAAAAAAAAAAuwJcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-08-19T05:47:20.157Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
               "Title": "EditCourse.cshtml",
               "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Catalog\\EditCourse.cshtml",
               "RelativeDocumentMoniker": "RH_CM\\Views\\Catalog\\EditCourse.cshtml",
               "ToolTip": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Catalog\\EditCourse.cshtml",
               "RelativeToolTip": "RH_CM\\Views\\Catalog\\EditCourse.cshtml",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAAACIAAAAzAAAAAAAAAA==",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAACYAAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-08-18T04:15:35.363Z"
+              "WhenOpened": "2025-08-18T04:15:35.363Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 10,
               "Title": "CreateCourse.cshtml",
               "DocumentMoniker": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\Views\\Catalog\\CreateCourse.cshtml",
               "RelativeDocumentMoniker": "RH_CM\\Views\\Catalog\\CreateCourse.cshtml",
@@ -92,7 +197,8 @@
               "RelativeToolTip": "RH_CM\\Views\\Catalog\\CreateCourse.cshtml",
               "ViewState": "AgIAAAwAAAAAAAAAAAAAABoAAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-08-18T04:14:53.217Z"
+              "WhenOpened": "2025-08-18T04:14:53.217Z",
+              "EditorCaption": ""
             }
           ]
         }
