@@ -232,6 +232,26 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Sergi/Documents/CM/Trainify/RH_CM/Views/Trainify/CreateCourseCompleted.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVHJhaW5pZnlcQ3JlYXRlQ291cnNlQ29tcGxldGVkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Sergi/Documents/CM/Trainify/RH_CM/Views/Trainify/DeleteCourseCompleted.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVHJhaW5pZnlcRGVsZXRlQ291cnNlQ29tcGxldGVkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Sergi/Documents/CM/Trainify/RH_CM/Views/Trainify/EditCourseCompleted.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVHJhaW5pZnlcRWRpdENvdXJzZUNvbXBsZXRlZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Sergi/Documents/CM/Trainify/RH_CM/Views/Trainify/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVHJhaW5pZnlcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Sergi/Documents/CM/Trainify/RH_CM/Views/Trainify/IndexCourseCompleted.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVHJhaW5pZnlcSW5kZXhDb3Vyc2VDb21wbGV0ZWQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Sergi/Documents/CM/Trainify/RH_CM/Views/Trainify/LearningTrainify.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVHJhaW5pZnlcTGVhcm5pbmdUcmFpbmlmeS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

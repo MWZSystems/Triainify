@@ -1,0 +1,30 @@
+﻿@model RH_CM.ViewModels.SyCourseCompletedVM
+@{
+    ViewData["Title"] = "Delete Course Completion";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="h4 mb-3 text-danger"><i class="fas fa-trash"></i> @ViewData["Title"]</h1>
+
+<form asp-action="DeleteCourseCompleted">
+    <input type="hidden" asp-for="PkCourseCompleted" />
+    <div class="card">
+        <div class="card-body">
+            <p>Are you sure you want to delete the record <strong>#@Model.PkCourseCompleted</strong>?</p>
+            <dl class="row">
+                <dt class="col-sm-3">Assignment</dt>
+                <dd class="col-sm-9">@Model.FkCourseAssignment</dd>
+                <dt class="col-sm-3">Status</dt>
+                <dd class="col-sm-9">@Model.FkCourseStatus</dd>
+                <dt class="col-sm-3">Delivery</dt>
+                <dd class="col-sm-9">@Model.FkDeliveryMode</dd>
+                <dt class="col-sm-3">Headcount</dt>
+                <dd class="col-sm-9">@Model.FkHeadcount</dd>
+            </dl>
+        </div>
+        <div class="card-footer d-flex gap-2">
+            <button type="submit" class="btn btn-danger">Yes, delete</button>
+            <a asp-action="IndexCourseCompleted" class="btn btn-secondary">Cancel</a>
+        </div>
+    </div>
+</form>

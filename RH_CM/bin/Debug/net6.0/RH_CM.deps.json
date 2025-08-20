@@ -9,6 +9,7 @@
       "RH_CM/1.0.0": {
         "dependencies": {
           "ClosedXML": "0.102.3",
+          "DocumentFormat.OpenXml": "2.16.0",
           "EPPlus": "7.2.2",
           "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "6.0.32",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "6.0.32",

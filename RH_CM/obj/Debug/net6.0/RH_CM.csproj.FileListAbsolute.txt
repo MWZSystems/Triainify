@@ -849,3 +849,4 @@ C:\Users\Sergi\Documents\CM\Trainify\RH_CM\obj\Debug\net6.0\refint\RH_CM.dll
 C:\Users\Sergi\Documents\CM\Trainify\RH_CM\obj\Debug\net6.0\RH_CM.pdb
 C:\Users\Sergi\Documents\CM\Trainify\RH_CM\obj\Debug\net6.0\RH_CM.genruntimeconfig.cache
 C:\Users\Sergi\Documents\CM\Trainify\RH_CM\obj\Debug\net6.0\ref\RH_CM.dll
+C:\Users\Sergi\Documents\CM\Trainify\RH_CM\bin\Debug\net6.0\libman.json

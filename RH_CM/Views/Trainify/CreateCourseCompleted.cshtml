@@ -1,0 +1,76 @@
+﻿@model RH_CM.ViewModels.SyCourseCompletedVM
+@{
+    ViewData["Title"] = "New Course Completion";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">NEW COURSE COMPLETION</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Create Completion Record</h5>
+                <h6 class="card-subtitle text-muted">
+                    Fill the required fields (*). System will set audit fields automatically.
+                </h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="CreateCourseCompleted" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="FkCourseAssignment" class="form-label">
+                                Course Assignment <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="FkCourseAssignment" class="form-select" asp-items="Model.CourseAssignments"></select>
+                            <span asp-validation-for="FkCourseAssignment" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="FkCourseStatus" class="form-label">
+                                Course Status <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="FkCourseStatus" class="form-select" asp-items="Model.CourseStatuses"></select>
+                            <span asp-validation-for="FkCourseStatus" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="FkDeliveryMode" class="form-label">Delivery Mode</label>
+                            <select asp-for="FkDeliveryMode" class="form-select" asp-items="Model.DeliveryModes"></select>
+                            <small class="form-text text-muted">Use "Not Assigned" if unknown.</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="FkHeadcount" class="form-label">
+                                Employee (Headcount) <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="FkHeadcount" class="form-select" asp-items="Model.Headcounts"></select>
+                            <span asp-validation-for="FkHeadcount" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-12 text-end">
+                            <a asp-action="IndexCourseCompleted" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
