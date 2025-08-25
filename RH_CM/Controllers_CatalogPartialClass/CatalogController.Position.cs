@@ -178,14 +178,43 @@ namespace RH_CM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmedPosition(int id)
         {
-            var ctPosition = await _context.CtPositions.FindAsync(id);
-            if (ctPosition != null)
+            // 1) ¿Hay personal ligado a esta Position?
+            bool hasHeadcount = await _context.SyHeadcounts
+                .AsNoTracking()
+                .AnyAsync(h => h.FkPosition == id);
+
+            if (hasHeadcount)
             {
-                _context.CtPositions.Remove(ctPosition); // Eliminar la posición de la base de datos
-                await _context.SaveChangesAsync();
+                TempData["ErrorMessage"] = "No se puede eliminar la Position porque está ligada a personal (Headcount). " +
+                                           "Primero tiene que desligarla de los empleados.";
+                return RedirectToAction(nameof(IndexPosition));
             }
+
+            // 2) Buscar la posición
+            var ctPosition = await _context.CtPositions.FindAsync(id);
+            if (ctPosition == null)
+            {
+                TempData["ErrorMessage"] = "La Position no existe o ya fue eliminada.";
+                return RedirectToAction(nameof(IndexPosition));
+            }
+
+            try
+            {
+                _context.CtPositions.Remove(ctPosition);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Position eliminada correctamente.";
+            }
+            catch (DbUpdateException)
+            {
+                // Si entre la validación y el SaveChanges se ligó un Headcount, la FK lo bloqueará aquí
+                TempData["ErrorMessage"] = "No se puede eliminar la Position porque está ligada a personal (Headcount). " +
+                                           "Primero tiene que desligarla de los empleados.";
+            }
+
             return RedirectToAction(nameof(IndexPosition));
         }
+
+
         private bool CtPositionExists(int id)
         {
             return _context.CtPositions.Any(e => e.PkPosition == id);

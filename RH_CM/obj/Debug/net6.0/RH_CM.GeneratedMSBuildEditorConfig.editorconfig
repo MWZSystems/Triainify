@@ -32,6 +32,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0YWxvZ1xDcmVhdGVDb3Vyc2VBc3NpZ25tZW50QnVsay5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Sergi/Documents/CM/Trainify/RH_CM/Views/Catalog/CreateCourseLevelMaterial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0YWxvZ1xDcmVhdGVDb3Vyc2VMZXZlbE1hdGVyaWFsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Sergi/Documents/CM/Trainify/RH_CM/Views/Catalog/CreateCourseMaterial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0YWxvZ1xDcmVhdGVDb3Vyc2VNYXRlcmlhbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -58,6 +62,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Sergi/Documents/CM/Trainify/RH_CM/Views/Catalog/EditCourseAssignment.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0YWxvZ1xFZGl0Q291cnNlQXNzaWdubWVudC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Sergi/Documents/CM/Trainify/RH_CM/Views/Catalog/EditCourseLevelMaterial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0YWxvZ1xFZGl0Q291cnNlTGV2ZWxNYXRlcmlhbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Sergi/Documents/CM/Trainify/RH_CM/Views/Catalog/EditCourseMaterial.cshtml]
@@ -90,6 +98,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Sergi/Documents/CM/Trainify/RH_CM/Views/Catalog/IndexCourseassignments.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0YWxvZ1xJbmRleENvdXJzZWFzc2lnbm1lbnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Sergi/Documents/CM/Trainify/RH_CM/Views/Catalog/IndexCourseLevelMaterial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2F0YWxvZ1xJbmRleENvdXJzZUxldmVsTWF0ZXJpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Sergi/Documents/CM/Trainify/RH_CM/Views/Catalog/IndexCourseMaterial.cshtml]

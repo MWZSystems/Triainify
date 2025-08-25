@@ -205,21 +205,48 @@ namespace RH_CM.Controllers
             return RedirectToAction(nameof(IndexSupervisor));
         }
 
-
         // POST: /Catalog/DeleteSupervisor/5
         [HttpPost]
         [Authorize(Roles = "Administrador")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteSupervisor(int id)
         {
+            // 1) ¿Algún empleado (Headcount) tiene ligado este supervisor?
+            bool hasHeadcount = await _context.SyHeadcounts
+                .AsNoTracking()
+                .AnyAsync(h => h.FkSupervisorId == id);
+
+            if (hasHeadcount)
+            {
+                TempData["ErrorMessage"] = "No se puede eliminar el Supervisor porque está ligado a personal (Headcount). " +
+                                           "Primero tiene que desligarlo de los empleados.";
+                return RedirectToAction(nameof(IndexSupervisor));
+            }
+
+            // 2) Buscar supervisor
             var supervisor = await _context.CtSupervisors.FindAsync(id);
-            if (supervisor != null)
+            if (supervisor == null)
+            {
+                TempData["ErrorMessage"] = "El Supervisor no existe o ya fue eliminado.";
+                return RedirectToAction(nameof(IndexSupervisor));
+            }
+
+            try
             {
                 _context.CtSupervisors.Remove(supervisor);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Supervisor eliminado correctamente.";
             }
+            catch (DbUpdateException)
+            {
+                // Si la BD bloquea por FK (carrera entre validación y borrado), caemos aquí
+                TempData["ErrorMessage"] = "No se puede eliminar el Supervisor porque está ligado a personal (Headcount). " +
+                                           "Primero tiene que desligarlo de los empleados.";
+            }
+
             return RedirectToAction(nameof(IndexSupervisor));
         }
+
 
         private bool CtSupervisorExists(int id)
         {

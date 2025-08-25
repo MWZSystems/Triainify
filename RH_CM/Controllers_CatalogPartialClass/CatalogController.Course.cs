@@ -241,14 +241,43 @@ namespace RH_CM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCourse(int id)
         {
+            // 1) Validar si el curso está ligado a asignaciones
+            bool hasAssignments = await _context.CtCourseassignments
+                .AsNoTracking()
+                .AnyAsync(a => a.FkCourse == id);
+
+            if (hasAssignments)
+            {
+                TempData["ErrorMessage"] = "No se puede eliminar el curso porque está ligado a asignaciones. " +
+                                           "Primero tiene que desligar el Course de las asignaciones.";
+                return RedirectToAction(nameof(IndexCourse));
+            }
+
+            // 2) Buscar el curso
             var ctCourse = await _context.CtCourses.FindAsync(id);
-            if (ctCourse != null)
+            if (ctCourse == null)
+            {
+                TempData["ErrorMessage"] = "El curso no existe o ya fue eliminado.";
+                return RedirectToAction(nameof(IndexCourse));
+            }
+
+            try
             {
                 _context.CtCourses.Remove(ctCourse);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Curso eliminado correctamente.";
             }
+            catch (DbUpdateException)
+            {
+                // En caso de que la BD tenga una FK restrictiva y alguien agregue asignaciones
+                // después de la validación previa, caeríamos aquí.
+                TempData["ErrorMessage"] = "No se puede eliminar el curso porque está ligado a asignaciones. " +
+                                           "Primero tiene que desligar el Course de las asignaciones.";
+            }
+
             return RedirectToAction(nameof(IndexCourse));
         }
+
 
         private bool CtCourseExists(int id)
         {

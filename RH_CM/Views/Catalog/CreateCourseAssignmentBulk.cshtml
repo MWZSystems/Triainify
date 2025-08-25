@@ -20,8 +20,8 @@
             <div class="card-header">
                 <h5 class="card-title">Course Assignment Details (Bulk)</h5>
                 <h6 class="card-subtitle text-muted">
-                    Selecciona múltiples <strong>Positions</strong> y múltiples <strong>Courses</strong>.
-                    El <em>Course Level</em>, <em>Delivery Mode</em> y <em>Required</em> se aplican a todas las combinaciones.
+                    Selecciona múltiples <strong>Positions</strong>, múltiples <strong>Courses</strong> y múltiples <strong>Course Levels</strong>.<br />
+                    El <em>Delivery Mode</em> y <em>Required</em> se aplican a todas las combinaciones generadas.
                 </h6>
             </div>
 
@@ -34,7 +34,7 @@
                     <!-- Selector múltiple: Positions y Courses -->
                     <div class="row">
                         <!-- POSITIONS -->
-                        <div class="mb-3 col-md-6">
+                        <div class="mb-3 col-md-4">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <label class="form-label fw-bold">Positions <span class="text-danger">*</span></label>
                                 <div class="d-flex gap-2">
@@ -46,7 +46,7 @@
                                 @foreach (var p in positions)
                                 {
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="SelectedPositions" value="@p.PkPosition" id="pos_@p.PkPosition" />
+                                        <input class="form-check-input sel-pos" type="checkbox" name="SelectedPositions" value="@p.PkPosition" id="pos_@p.PkPosition" />
                                         <label class="form-check-label" for="pos_@p.PkPosition">@p.NamePosition</label>
                                     </div>
                                 }
@@ -54,7 +54,7 @@
                         </div>
 
                         <!-- COURSES -->
-                        <div class="mb-3 col-md-6">
+                        <div class="mb-3 col-md-4">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <label class="form-label fw-bold">Courses <span class="text-danger">*</span></label>
                                 <div class="d-flex gap-2">
@@ -66,11 +66,41 @@
                                 @foreach (var c in courses)
                                 {
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="SelectedCourses" value="@c.PkCourse" id="course_@c.PkCourse" />
+                                        <input class="form-check-input sel-course" type="checkbox" name="SelectedCourses" value="@c.PkCourse" id="course_@c.PkCourse" />
                                         <label class="form-check-label" for="course_@c.PkCourse">@c.CourseName</label>
                                     </div>
                                 }
                             </div>
+                        </div>
+
+                        <!-- LEVELS (MULTI) -->
+                        <div class="mb-3 col-md-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label fw-bold">Course Levels <span class="text-danger">*</span></label>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="toggleAll('SelectedLevels', true)">Select All</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleAll('SelectedLevels', false)">Clear</button>
+                                </div>
+                            </div>
+                            <div class="border rounded p-2" style="max-height: 320px; overflow:auto">
+                                @foreach (var l in levels)
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input sel-level" type="checkbox" name="SelectedLevels" value="@l.PkLevelcourse" id="level_@l.PkLevelcourse" />
+                                        <label class="form-check-label" for="level_@l.PkLevelcourse">@l.DescripctionLevel</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Indicadores -->
+                    <div class="row mb-2">
+                        <div class="col-md-12">
+                            <span class="badge bg-info text-dark me-2" id="badge-count-pos">Positions: 0</span>
+                            <span class="badge bg-info text-dark me-2" id="badge-count-cou">Courses: 0</span>
+                            <span class="badge bg-info text-dark me-2" id="badge-count-lev">Levels: 0</span>
+                            <span class="badge bg-primary" id="badge-count-total">Combinaciones (P×C×L): 0</span>
                         </div>
                     </div>
 
@@ -78,18 +108,8 @@
 
                     <!-- Metadatos aplicados a todas las combinaciones -->
                     <div class="row">
-                        <div class="mb-3 col-md-4">
-                            <label class="form-label">Course Level <span class="text-danger">*</span></label>
-                            <select class="form-control" name="FkRequiredCourseLevels">
-                                <option value="">-- Select Level --</option>
-                                @foreach (var l in levels)
-                                {
-                                    <option value="@l.PkLevelcourse">@l.DescripctionLevel</option>
-                                }
-                            </select>
-                        </div>
-
-                        <div class="mb-3 col-md-4">
+                        <!-- DELIVERY MODE (único) -->
+                        <div class="mb-3 col-md-6">
                             <label class="form-label">Delivery Mode <span class="text-danger">*</span></label>
                             <select class="form-control" name="FkDeliveryMode">
                                 <option value="">-- Select Delivery Mode --</option>
@@ -100,7 +120,8 @@
                             </select>
                         </div>
 
-                        <div class="mb-3 col-md-4">
+                        <!-- REQUIRED -->
+                        <div class="mb-3 col-md-6">
                             <label class="form-label">Required</label>
                             <div class="form-check">
                                 <!-- hidden para garantizar false si se desmarca -->
@@ -134,9 +155,31 @@
     <script>
         function toggleAll(name, check) {
             document.querySelectorAll(`input[name='${name}']`).forEach(el => { el.checked = check; });
+            updateCounts();
         }
 
+        function updateCounts() {
+            const countPos = document.querySelectorAll("input[name='SelectedPositions']:checked").length;
+            const countCou = document.querySelectorAll("input[name='SelectedCourses']:checked").length;
+            const countLev = document.querySelectorAll("input[name='SelectedLevels']:checked").length;
+            const total = countPos * countCou * countLev;
+
+            document.getElementById("badge-count-pos").textContent = `Positions: ${countPos}`;
+            document.getElementById("badge-count-cou").textContent = `Courses: ${countCou}`;
+            document.getElementById("badge-count-lev").textContent = `Levels: ${countLev}`;
+            document.getElementById("badge-count-total").textContent = `Combinaciones (P×C×L): ${total}`;
+        }
+
+        // Hook a cambios para refrescar el contador
+        document.addEventListener("change", (e) => {
+            if (e.target && (e.target.name === "SelectedPositions" || e.target.name === "SelectedCourses" || e.target.name === "SelectedLevels")) {
+                updateCounts();
+            }
+        });
+
         $(document).ready(function () {
+            updateCounts();
+
             if ("@TempData["SuccessMessage"]" !== "") {
                 window.notyf.open({
                     type: 'success',

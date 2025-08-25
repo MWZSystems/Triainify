@@ -26,6 +26,7 @@ namespace RH_CM.Data
         public virtual DbSet<CtCorrectanswer> CtCorrectanswers { get; set; } = null!;
         public virtual DbSet<CtCorrectanswersBackup> CtCorrectanswersBackups { get; set; } = null!;
         public virtual DbSet<CtCourse> CtCourses { get; set; } = null!;
+        public virtual DbSet<CtCourseLevelMaterial> CtCourseLevelMaterials { get; set; } = null!;
         public virtual DbSet<CtCourseassignment> CtCourseassignments { get; set; } = null!;
         public virtual DbSet<CtCourseassignmentsBackup> CtCourseassignmentsBackups { get; set; } = null!;
         public virtual DbSet<CtCoursematerial> CtCoursematerials { get; set; } = null!;
@@ -239,6 +240,55 @@ namespace RH_CM.Data
                 entity.Property(e => e.LastUpdateUser).HasMaxLength(50);
 
                 entity.Property(e => e.ManagementSystem).HasMaxLength(30);
+            });
+
+            modelBuilder.Entity<CtCourseLevelMaterial>(entity =>
+            {
+                entity.HasKey(e => e.PkCourseLevelMaterial)
+                    .HasName("PK__CT_COURS__D467EFDF0F505BF0");
+
+                entity.ToTable("CT_COURSE_LEVEL_MATERIAL");
+
+                entity.HasIndex(e => new { e.FkCourse, e.FkLevelCourse }, "IX_CLM_Course_Level");
+
+                entity.HasIndex(e => e.FkCourseMaterial, "IX_CLM_Material");
+
+                entity.HasIndex(e => new { e.FkCourse, e.FkLevelCourse, e.FkCourseMaterial }, "UX_CLM_Course_Level_Material")
+                    .IsUnique();
+
+                entity.Property(e => e.PkCourseLevelMaterial).HasColumnName("PK_CourseLevelMaterial");
+
+                entity.Property(e => e.Available).HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.CreateDate).HasDefaultValueSql("(sysutcdatetime())");
+
+                entity.Property(e => e.CreateUser).HasMaxLength(256);
+
+                entity.Property(e => e.FkCourse).HasColumnName("FK_Course");
+
+                entity.Property(e => e.FkCourseMaterial).HasColumnName("FK_CourseMaterial");
+
+                entity.Property(e => e.FkLevelCourse).HasColumnName("FK_LevelCourse");
+
+                entity.Property(e => e.LastUpdateUser).HasMaxLength(256);
+
+                entity.HasOne(d => d.FkCourseNavigation)
+                    .WithMany(p => p.CtCourseLevelMaterials)
+                    .HasForeignKey(d => d.FkCourse)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CLM_COURSE");
+
+                entity.HasOne(d => d.FkCourseMaterialNavigation)
+                    .WithMany(p => p.CtCourseLevelMaterials)
+                    .HasForeignKey(d => d.FkCourseMaterial)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CLM_MATERIAL");
+
+                entity.HasOne(d => d.FkLevelCourseNavigation)
+                    .WithMany(p => p.CtCourseLevelMaterials)
+                    .HasForeignKey(d => d.FkLevelCourse)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CLM_LEVEL");
             });
 
             modelBuilder.Entity<CtCourseassignment>(entity =>

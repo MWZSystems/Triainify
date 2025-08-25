@@ -1,0 +1,119 @@
+﻿@model RH_CM.Models.CtCourseLevelMaterial
+
+@{
+    ViewData["Title"] = "Create Course–Level–Material Link";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Null-safe: si algún ViewBag viene null, usamos una lista vacía
+    var courses = (IEnumerable<RH_CM.Models.CtCourse>)(ViewBag.Courses ?? Enumerable.Empty<RH_CM.Models.CtCourse>());
+    var levels = (IEnumerable<RH_CM.Models.CtLevelcourse>)(ViewBag.LevelCourses ?? Enumerable.Empty<RH_CM.Models.CtLevelcourse>());
+    var materials = (IEnumerable<RH_CM.Models.CtCoursematerial>)(ViewBag.Materials ?? Enumerable.Empty<RH_CM.Models.CtCoursematerial>());
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">CREATE COURSE–LEVEL–MATERIAL LINK</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Instruction</h5>
+                <h6 class="card-subtitle text-muted">
+                    Fill in the fields below. Fields marked with an asterisk (*) are required.
+                </h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="CreateCourseLevelMaterial" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="row">
+                        <!-- Course -->
+                        <div class="mb-3 col-md-4">
+                            <label asp-for="FkCourse" class="form-label">Course <span class="text-danger">*</span></label>
+                            <select asp-for="FkCourse"
+                                    class="form-control select2"
+                                    asp-items="@(new SelectList(courses, nameof(RH_CM.Models.CtCourse.PkCourse), nameof(RH_CM.Models.CtCourse.CourseName), Model?.FkCourse))">
+                                <option value="">-- Select Course --</option>
+                            </select>
+                            <span asp-validation-for="FkCourse" class="text-danger"></span>
+                        </div>
+
+                        <!-- Level -->
+                        <div class="mb-3 col-md-4">
+                            <label asp-for="FkLevelCourse" class="form-label">Level <span class="text-danger">*</span></label>
+                            <select asp-for="FkLevelCourse"
+                                    class="form-control select2"
+                                    asp-items="@(new SelectList(levels, nameof(RH_CM.Models.CtLevelcourse.PkLevelcourse), nameof(RH_CM.Models.CtLevelcourse.DescripctionLevel), Model?.FkLevelCourse))">
+                                <option value="">-- Select Level --</option>
+                            </select>
+                            <span asp-validation-for="FkLevelCourse" class="text-danger"></span>
+                        </div>
+
+                        <!-- Material -->
+                        <div class="mb-3 col-md-4">
+                            <label asp-for="FkCourseMaterial" class="form-label">Material <span class="text-danger">*</span></label>
+                            <select asp-for="FkCourseMaterial"
+                                    class="form-control select2"
+                                    asp-items="@(new SelectList(materials, nameof(RH_CM.Models.CtCoursematerial.PkCoursematerial), nameof(RH_CM.Models.CtCoursematerial.NameMaterial), Model?.FkCourseMaterial))">
+                                <option value="">-- Select Material --</option>
+                            </select>
+                            <span asp-validation-for="FkCourseMaterial" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 text-end">
+                            <a asp-action="IndexCourseLevelMaterial" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="align-middle fas fa-plus-square"></i> CREATE
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        $(function () {
+            // Notificaciones
+            if ("@TempData["SuccessMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+
+            if ("@TempData["ErrorMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+
+            // Initialize Select2 for all dropdowns
+            $(".select2").select2({
+                theme: 'bootstrap4',
+                placeholder: 'Select an option',
+                allowClear: true
+            });
+        });
+    </script>
+}

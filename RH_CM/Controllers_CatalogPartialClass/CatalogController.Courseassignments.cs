@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using RH_CM.Models;
 using System.Data;
+using ClosedXML.Excel;
 
 namespace RH_CM.Controllers
 {
@@ -42,6 +43,126 @@ namespace RH_CM.Controllers
 
             return View(courseAssignments);
         }
+
+        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        [HttpGet]
+        public async Task<IActionResult> ExportCourseAssignmentsToExcel()
+        {
+            // 1) Obtener datos respetando los tipos del modelo
+            var data = await _context.CtCourseassignments
+                .AsNoTracking()
+                .Join(_context.CtPositions,
+                      ca => ca.FkPosition,
+                      p => p.PkPosition,
+                      (ca, p) => new { ca, p })
+                .Join(_context.CtCourses,
+                      tp => tp.ca.FkCourse,
+                      c => c.PkCourse,
+                      (tp, c) => new { tp.ca, tp.p, c })
+                .Join(_context.CtLevelcourses,
+                      tpc => tpc.ca.FkRequiredCourseLevels,
+                      lc => lc.PkLevelcourse,
+                      (tpc, lc) => new { tpc.ca, tpc.p, tpc.c, lc })
+                // LEFT JOIN con DeliveryMode (FkDeliveryMode es nullable)
+                .GroupJoin(_context.CtDeliverymodes,
+                      t => t.ca.FkDeliveryMode,
+                      dm => dm.PkDeliverymode,
+                      (t, dms) => new { t.ca, t.p, t.c, t.lc, dms })
+                .SelectMany(x => x.dms.DefaultIfEmpty(), (x, dm) => new
+                {
+                    x.ca.PkCourseAssignment,
+                    PositionName = x.p.NamePosition,
+                    CourseName = x.c.CourseName,
+                    RequiredCourseLevelDescription = x.lc.DescripctionLevel,
+                    // Tipos tal cual el modelo
+                    x.ca.Requiered,              // bool
+                    x.ca.Available,              // int (0/1)
+                    DeliveryModeDescription = dm != null ? dm.DescriptionDeliverymode : null, // puede ser null
+                                                                                              // Auditoría
+                    x.ca.CreateUser,
+                    x.ca.CreateDate,
+                    x.ca.LastUpdateUser,
+                    x.ca.LastUpdateDate
+                })
+                .OrderBy(x => x.PositionName)
+                .ThenBy(x => x.CourseName)
+                .ToListAsync();
+
+            // 2) Crear Excel
+            using var wb = new XLWorkbook();
+            var ws = wb.Worksheets.Add("CourseAssignments");
+
+            // Encabezados (incluye auditoría)
+            ws.Cell(1, 1).Value = "PkCourseAssignment";
+            ws.Cell(1, 2).Value = "Puesto";
+            ws.Cell(1, 3).Value = "Curso";
+            ws.Cell(1, 4).Value = "Nivel requerido";
+            ws.Cell(1, 5).Value = "Requerido";
+            ws.Cell(1, 6).Value = "Disponible";
+            ws.Cell(1, 7).Value = "Modo de entrega";
+            ws.Cell(1, 8).Value = "CreateUser";
+            ws.Cell(1, 9).Value = "CreateDate";
+            ws.Cell(1, 10).Value = "LastUpdateUser";
+            ws.Cell(1, 11).Value = "LastUpdateDate";
+
+            var header = ws.Range("A1:K1");
+            header.Style.Font.Bold = true;
+            header.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            header.Style.Fill.BackgroundColor = XLColor.LightGreen;
+
+            // 3) Datos (mapeo directo según tipos)
+            int row = 2;
+            foreach (var it in data)
+            {
+                ws.Cell(row, 1).Value = it.PkCourseAssignment;
+                ws.Cell(row, 2).Value = it.PositionName;
+                ws.Cell(row, 3).Value = it.CourseName;
+                ws.Cell(row, 4).Value = it.RequiredCourseLevelDescription;
+
+                // Requiered es bool -> "Sí/No"
+                ws.Cell(row, 5).Value = it.Requiered ? "Sí" : "No";
+
+                // Available es int (0/1) -> "Sí/No"
+                ws.Cell(row, 6).Value = it.Available == 1 ? "Sí" : "No";
+
+                ws.Cell(row, 7).Value = it.DeliveryModeDescription ?? ""; // vacío si null
+
+                ws.Cell(row, 8).Value = it.CreateUser;
+                ws.Cell(row, 9).Value = it.CreateDate;
+                ws.Cell(row, 10).Value = it.LastUpdateUser;
+                ws.Cell(row, 11).Value = it.LastUpdateDate;
+
+                row++;
+            }
+
+            // 4) Estilos y formato
+            int lastRow = row - 1;
+            var dataRange = ws.Range(1, 1, lastRow, 11);
+            dataRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+            dataRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+            dataRange.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+            dataRange.SetAutoFilter();
+
+            // Formatos de fecha/hora
+            ws.Column(9).Style.DateFormat.Format = "yyyy-MM-dd HH:mm:ss";
+            ws.Column(11).Style.DateFormat.Format = "yyyy-MM-dd HH:mm:ss";
+
+            // Ajuste de columnas y congelar encabezado
+            ws.Columns().AdjustToContents();
+            ws.SheetView.FreezeRows(1);
+
+            // 5) Descargar
+            string fechaActual = DateTime.Now.ToString("yyyyMMdd");
+            using var stream = new MemoryStream();
+            wb.SaveAs(stream);
+            var content = stream.ToArray();
+            return File(
+                content,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                $"CourseAssignments_{fechaActual}.xlsx"
+            );
+        }
+
         private void LoadCourseAssignmentViewBags()
         {
             ViewBag.Positions = _context.CtPositions
@@ -137,7 +258,7 @@ namespace RH_CM.Controllers
         public IActionResult CreateCourseAssignmentBulk(
             [FromForm] int[] SelectedPositions,
             [FromForm] int[] SelectedCourses,
-            [FromForm] int FkRequiredCourseLevels,
+            [FromForm] int[] SelectedLevels,      // <-- NUEVO
             [FromForm] int FkDeliveryMode,
             [FromForm] bool Requiered)
         {
@@ -152,9 +273,9 @@ namespace RH_CM.Controllers
                 TempData["ErrorMessage"] = "Selecciona al menos un Course.";
                 return RedirectToAction(nameof(CreateCourseAssignmentBulk));
             }
-            if (FkRequiredCourseLevels <= 0)
+            if (SelectedLevels == null || SelectedLevels.Length == 0)     // <-- NUEVO
             {
-                TempData["ErrorMessage"] = "Required Course Level es obligatorio.";
+                TempData["ErrorMessage"] = "Selecciona al menos un Course Level.";
                 return RedirectToAction(nameof(CreateCourseAssignmentBulk));
             }
             if (FkDeliveryMode <= 0)
@@ -174,6 +295,7 @@ namespace RH_CM.Controllers
 
             var tvpPositions = ToTvp(SelectedPositions);
             var tvpCourses = ToTvp(SelectedCourses);
+            var tvpLevels = ToTvp(SelectedLevels);   // <-- NUEVO
             var user = User?.Identity?.Name ?? "Unknown";
 
             try
@@ -193,32 +315,29 @@ namespace RH_CM.Controllers
                 pCou.SqlDbType = SqlDbType.Structured;
                 pCou.TypeName = "dbo.IntIdList";
 
-                cmd.Parameters.Add(new SqlParameter("@FkRequiredCourseLevels", SqlDbType.Int) { Value = FkRequiredCourseLevels });
+                var pLev = cmd.Parameters.AddWithValue("@Levels", tvpLevels);  // <-- NUEVO
+                pLev.SqlDbType = SqlDbType.Structured;
+                pLev.TypeName = "dbo.IntIdList";
+
                 cmd.Parameters.Add(new SqlParameter("@FkDeliveryMode", SqlDbType.Int) { Value = FkDeliveryMode });
                 cmd.Parameters.Add(new SqlParameter("@Requiered", SqlDbType.Bit) { Value = Requiered });
                 cmd.Parameters.Add(new SqlParameter("@UserName", SqlDbType.NVarChar, 256) { Value = user });
 
                 conn.Open();
-                int affected = cmd.ExecuteNonQuery(); // filas insertadas (nuevas combinaciones)
+                int affected = cmd.ExecuteNonQuery();
 
                 if (affected == 0)
-                {
                     TempData["ErrorMessage"] = "No se generaron asignaciones nuevas (posibles duplicados).";
-                }
                 else
-                {
                     TempData["SuccessMessage"] = $"Se crearon {affected} asignaciones nuevas.";
-                }
             }
-            catch (SqlException ex)
+            catch (SqlException)
             {
-                // Mensaje de error amigable; puedes loguear ex.Message
                 TempData["ErrorMessage"] = "Ocurrió un error al crear las asignaciones masivas.";
             }
 
             return RedirectToAction(nameof(CreateCourseAssignmentBulk));
         }
-
 
 
         // GET: CourseAssignments/Edit/5

@@ -110,20 +110,49 @@ namespace RH_CM.Controllers
             return RedirectToAction(nameof(IndexDepartment));
         }
 
+        // POST: /CtDepartment/DeleteDepartment/5
         [HttpPost]
         [Route("DeleteDepartment")]
         [Authorize(Roles = "Administrador")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteDepartment(int id)
         {
+            // 1) ¿Hay headcount ligado a este Department?
+            bool hasHeadcount = await _context.SyHeadcounts
+                .AsNoTracking()
+                .AnyAsync(h => h.FkDepartment == id);
+
+            if (hasHeadcount)
+            {
+                TempData["ErrorMessage"] = "No se puede eliminar el Department porque está ligado a personal (Headcount). " +
+                                           "Primero tiene que desligar el Department de las asignaciones/empleados.";
+                return RedirectToAction(nameof(IndexDepartment));
+            }
+
+            // 2) Buscar el department
             var department = await _context.CtDepartments.FindAsync(id);
-            if (department != null)
+            if (department == null)
+            {
+                TempData["ErrorMessage"] = "El Department no existe o ya fue eliminado.";
+                return RedirectToAction(nameof(IndexDepartment));
+            }
+
+            try
             {
                 _context.CtDepartments.Remove(department);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Department eliminado correctamente.";
             }
+            catch (DbUpdateException)
+            {
+                // Si se creó una relación después de la validación, la BD lo bloqueará aquí
+                TempData["ErrorMessage"] = "No se puede eliminar el Department porque está ligado a personal (Headcount). " +
+                                           "Primero tiene que desligarlo de las asignaciones/empleados.";
+            }
+
             return RedirectToAction(nameof(IndexDepartment));
         }
+
 
         private bool CtDepartmentExists(int id)
         {
