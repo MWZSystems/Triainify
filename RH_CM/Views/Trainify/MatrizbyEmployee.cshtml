@@ -6,16 +6,23 @@
 
     var first = Model?.FirstOrDefault();
 
-    // Dynamic levels from SP data
-    var levels = Model
-        .Select(m => m.FK_RequiredCourseLevels)
-        .Distinct()
-        .OrderBy(x => x)
+    // Construir el mapa nivel -> descripción (tomado del SP)
+    // Si algún nivel no trae DESCRIPCTION_LEVEL, caemos a "Level {n}"
+    var levelMap = Model
+        .GroupBy(m => m.FK_RequiredCourseLevels)
+        .Select(g => new
+        {
+            Level = g.Key,
+            Name = g.Select(x => x.DESCRIPCTION_LEVEL)
+                    .FirstOrDefault(n => !string.IsNullOrWhiteSpace(n)) ?? $"Level {g.Key}"
+        })
+        .OrderBy(x => x.Level)
         .ToList();
 
-    // Colors only (you provide the status texts)
-    // SCHEDULED -> primary, PERMANENTLY -> dark, EXPIRING SOON -> warning,
-    // PENDING -> danger, COMPLETED -> success, default/NO REQUIRED -> secondary
+    // Lista ordenada de niveles (para iterar columnas)
+    var levels = levelMap.Select(x => x.Level).ToList();
+
+    // Mapeo de badge por estado
     Func<string, string> badgeClass = (statusRaw) =>
     {
         var s = (statusRaw ?? "").Trim().ToUpperInvariant();
@@ -26,11 +33,11 @@
             "EXPIRING SOON" => "bg-warning",
             "PENDING" => "bg-danger",
             "COMPLETED" => "bg-success",
-            _ => "bg-secondary" // NO REQUIRED or anything else
+            _ => "bg-secondary" // NO REQUIRED u otro
         };
     };
 
-    // Group courses -> levels -> status; if a level row doesn't exist => NO REQUIRED (gray)
+    // Agrupar cursos => celdas por nivel; si falta una fila para un nivel => NO REQUIRED
     var courseGroups = Model
         .GroupBy(x => new { x.FK_Course, x.CourseName })
         .OrderBy(g => g.Key.CourseName)
@@ -46,14 +53,14 @@
                     return new { Level = l, Status = "NO REQUIRED", Class = "bg-secondary" };
                 }
 
-                var status = (cell.CourseStatus ?? "").Trim();  // expected: COMPLETED | PERMANENTLY | SCHEDULED | EXPIRING SOON | PENDING
+                var status = (cell.CourseStatus ?? "").Trim();  // COMPLETED | PERMANENTLY | SCHEDULED | EXPIRING SOON | PENDING
                 var cls = badgeClass(status);
                 return new { Level = l, Status = status, Class = cls };
             }).ToList()
         })
         .ToList();
 
-    // Summary for the chart (count every level-cell, including NO REQUIRED)
+    // Resumen para chart (contar todas las celdas, incluyendo NO REQUIRED)
     var allCells = courseGroups.SelectMany(c => c.Cells).ToList();
     int cntScheduled = allCells.Count(s => s.Status.Equals("SCHEDULED", StringComparison.OrdinalIgnoreCase));
     int cntPermanently = allCells.Count(s => s.Status.Equals("PERMANENTLY", StringComparison.OrdinalIgnoreCase));
@@ -87,7 +94,7 @@
                                 </div>
                             </div>
                         }
-                       @*  <h5 class="card-title mb-0">Matrix - @first?.UserName</h5> *@
+                        @* <h5 class="card-title mb-0">Matrix - @first?.UserName</h5> *@
                     </div>
                     <div class="card-body">
                         @if (Model != null && Model.Any())
@@ -96,9 +103,10 @@
                                 <thead class="table-primary">
                                     <tr>
                                         <th>Course</th>
-                                        @foreach (var l in levels)
+                                        @* Encabezados con la DESCRIPCTION_LEVEL *@
+                                        @foreach (var lm in levelMap)
                                         {
-                                            <th>LEVEL @l</th>
+                                            <th>@lm.Name</th>
                                         }
                                     </tr>
                                 </thead>
@@ -164,14 +172,14 @@
     @await Html.PartialAsync("_ValidationScriptsPartial")
 
     <script>
-          $(function () {
-          $('#datatables-responsive').DataTable({
-            responsive: true,
-            order: [],
-            pageLength: 50,                     // default rows per page
-            lengthMenu: [[10, 25, 50, 100, -1],
-                         [10, 25, 50, 100, "All"]]
-          });
+        $(function () {
+            $('#datatables-responsive').DataTable({
+                responsive: true,
+                order: [],
+                pageLength: 50,
+                lengthMenu: [[10, 25, 50, 100, -1],
+                             [10, 25, 50, 100, "All"]]
+            });
         });
 
         document.addEventListener("DOMContentLoaded", function () {
@@ -179,10 +187,9 @@
             new Chart(ctx, {
                 type: "pie",
                 data: {
-                    // NO 'NO REQUIRED' here
+                    // NO 'NO REQUIRED' en el gráfico
                     labels: ["SCHEDULED", "PERMANENTLY", "EXPIRING SOON", "PENDING", "COMPLETED"],
                     datasets: [{
-                        // Exclude NO REQUIRED from the dataset
                         data: [@cntScheduled, @cntPermanently, @cntExpiringSoon, @cntPending, @cntCompleted],
                         backgroundColor:["#0d6efd","#000000","#ffc107","#dc3545","#198754"],
                         borderWidth:5,
@@ -199,4 +206,3 @@
         });
     </script>
 }
-
