@@ -28,7 +28,6 @@ namespace RH_CM.Data
         public virtual DbSet<CtCourse> CtCourses { get; set; } = null!;
         public virtual DbSet<CtCourseLevelMaterial> CtCourseLevelMaterials { get; set; } = null!;
         public virtual DbSet<CtCourseassignment> CtCourseassignments { get; set; } = null!;
-        public virtual DbSet<CtCourseassignmentsBackup> CtCourseassignmentsBackups { get; set; } = null!;
         public virtual DbSet<CtCoursematerial> CtCoursematerials { get; set; } = null!;
         public virtual DbSet<CtCoursematerialBckup> CtCoursematerialBckups { get; set; } = null!;
         public virtual DbSet<CtCoursestatus> CtCoursestatuses { get; set; } = null!;
@@ -317,31 +316,6 @@ namespace RH_CM.Data
                 entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.LastUpdateUser).HasMaxLength(50);
-            });
-
-            modelBuilder.Entity<CtCourseassignmentsBackup>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.ToTable("CT_COURSEASSIGNMENTS_BACKUP");
-
-                entity.Property(e => e.CreateDate).HasColumnType("datetime");
-
-                entity.Property(e => e.CreateUser).HasMaxLength(50);
-
-                entity.Property(e => e.FkCourse).HasColumnName("FK_Course");
-
-                entity.Property(e => e.FkPosition).HasColumnName("FK_Position");
-
-                entity.Property(e => e.FkRequiredCourseLevels).HasColumnName("FK_RequiredCourseLevels");
-
-                entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
-
-                entity.Property(e => e.LastUpdateUser).HasMaxLength(50);
-
-                entity.Property(e => e.PkCourseAssignment)
-                    .ValueGeneratedOnAdd()
-                    .HasColumnName("PK_CourseAssignment");
             });
 
             modelBuilder.Entity<CtCoursematerial>(entity =>
