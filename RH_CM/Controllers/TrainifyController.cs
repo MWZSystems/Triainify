@@ -92,7 +92,6 @@ namespace RH_CM.Controllers
             return View(result);
         }
 
-
         [Authorize]
         public async Task<IActionResult> LearningTrainify()
         {
