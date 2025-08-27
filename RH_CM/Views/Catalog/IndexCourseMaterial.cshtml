@@ -43,6 +43,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Material Name</th>
+                                    <th>Material Type</th>
                                     <th>Created By</th>
                                     <th>Created At</th>
                                     <th>Status</th>
@@ -55,8 +56,9 @@
                                     <tr>
                                         <td>@item.PkCoursematerial</td>
                                         <td>@item.MaterialName</td>
-                                        <td>@item.Createuser</td>
-                                        <td>@(item.Createdate is DateTime dt ? dt.ToString("yyyy-MM-dd HH:mm") : "")</td>
+                                        <td>@item.MaterialType</td>
+                                        <td>@item.CreateUser</td>
+                                        <td>@(item.CreateDate is DateTime dt ? dt.ToString("yyyy-MM-dd HH:mm") : "")</td>
                                         <td>
                                             @{
                                                 string availabilityText = item.Available switch
@@ -70,12 +72,36 @@
                                         </td>
                                         <td>
                                             <div class="text-center d-flex gap-1">
-                                                <a class="btn btn-info" asp-action="ViewPdfCourseMaterial" asp-route-id="@item.PkCoursematerial" target="_blank" title="View PDF">
+                                                
+                                                
+                                                @* <a class="btn btn-info" asp-action="ViewPdfCourseMaterial" asp-route-id="@item.PkCoursematerial" target="_blank" title="View PDF">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                                 <a class="btn btn-primary" asp-action="DownloadCourseMaterial" asp-route-id="@item.PkCoursematerial" title="Download">
                                                     <i class="fas fa-download"></i>
-                                                </a>
+                                                </a> *@
+
+                                                @* Si es Type "VIDEO" no da la opcion de ver o descargar. *@
+                                                @if (item.MaterialType == "VIDEO")
+                                                {
+                                                    <a class="btn btn-info disabled" title="View PDF" tabindex="-1" aria-disabled="true">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a class="btn btn-primary disabled" title="Download" tabindex="-1" aria-disabled="true">
+                                                        <i class="fas fa-download"></i>
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a class="btn btn-info" asp-action="ViewPdfCourseMaterial" asp-route-id="@item.PkCoursematerial" target="_blank" title="View PDF">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a class="btn btn-primary" asp-action="DownloadCourseMaterial" asp-route-id="@item.PkCoursematerial" title="Download">
+                                                        <i class="fas fa-download"></i>
+                                                    </a>
+                                                }
+
+
                                                 <form asp-action="ToggleCourseMaterial" asp-route-id="@item.PkCoursematerial" method="post" style="display:inline;">
                                                     <button type="submit"
                                                             onclick="return confirm('Are you sure you want to toggle availability of this material?')"
@@ -84,9 +110,13 @@
                                                         <i class="fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
                                                     </button>
                                                 </form>
-                                                <a class="btn btn-warning" asp-action="EditCourseMaterial" asp-route-id="@item.PkCoursematerial" title="Edit">
+                                                <a class="btn btn-warning" asp-action="EditCourseMaterial" asp-route-id="@item.PkCoursematerial" asp-route-materialType="@item.MaterialType" title="Edit">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
+
+
+
+
                                                 @if (User.Identity.IsAuthenticated && User.IsInRole("Administrador"))
                                                 {
                                                     <form asp-action="DeleteCourseMaterial" asp-route-id="@item.PkCoursematerial" method="post" style="display:inline;">

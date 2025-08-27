@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\RH_CM.csproj": {}
+    "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\RH_CM.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\RH_CM.csproj": {
+    "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\RH_CM.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\RH_CM.csproj",
+        "projectUniqueName": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\RH_CM.csproj",
         "projectName": "RH_CM",
-        "projectPath": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\RH_CM.csproj",
-        "packagesPath": "C:\\Users\\Sergi\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Sergi\\Documents\\CM\\Trainify\\RH_CM\\obj\\",
+        "projectPath": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\RH_CM.csproj",
+        "packagesPath": "C:\\Users\\ferma\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Sergi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ferma\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -118,7 +119,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300\\RuntimeIdentifierGraph.json"
         }
       }
     }

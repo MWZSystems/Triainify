@@ -14,9 +14,5 @@ namespace RH_CM.Models
         public string? LastUpdateUser { get; set; }
         public DateTime? LastUpdateDate { get; set; }
         public int Available { get; set; }
-
-        public virtual CtCoursematerial FkCourseMaterialNavigation { get; set; } = null!;
-        public virtual CtCourse FkCourseNavigation { get; set; } = null!;
-        public virtual CtLevelcourse FkLevelCourseNavigation { get; set; } = null!;
     }
 }

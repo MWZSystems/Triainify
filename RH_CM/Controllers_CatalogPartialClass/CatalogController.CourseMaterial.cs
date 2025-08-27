@@ -13,17 +13,18 @@ namespace RH_CM.Controllers
         {
             var materials = _context.CtCoursematerials
                 .AsNoTracking()
-                .Where(m => m.Available == 1)
+                //.Where(m => m.Available == 1)
                 .OrderBy(m => m.NameMaterial)
                 .Select(m => new
                 {
                     m.PkCoursematerial,
                     MaterialName = m.NameMaterial,
+                    m.MaterialType,
                     m.Available,
-                    m.Createuser,
-                    m.Createdate,
-                    m.Lastupdateuser,
-                    m.Lastupdatedate
+                    m.CreateUser,
+                    m.CreateDate,
+                    m.LastUpdateUser,
+                    m.LastUpdateDate
                 })
                 .ToList();
 
@@ -39,56 +40,124 @@ namespace RH_CM.Controllers
             return View(new CtCoursematerial());
         }
 
-        // POST: CtCoursematerial/Create
+
+        //Crear Material PDF
         [HttpPost]
         [Authorize(Roles = "Administrador, RHGerente")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateCourseMaterial(CtCoursematerial model, IFormFile uploadedFile)
+        public async Task<IActionResult> CreatePDFMaterial(List<IFormFile> uploadedFiles)
         {
-            // Validar nombre
-            if (string.IsNullOrWhiteSpace(model.NameMaterial))
+            if (uploadedFiles == null || !uploadedFiles.Any())
             {
-                TempData["ErrorMessage"] = "Material Name is required.";
-                return View(model);
+                TempData["ErrorMessage"] = "You must upload at least one PDF file.";
+                return RedirectToAction(nameof(CreateCourseMaterial));
             }
 
-            // (Opcional) Evitar duplicado por nombre (ajusta si quieres case-insensitive)
+            foreach (var uploadedFile in uploadedFiles)
+            {
+                if (uploadedFile.Length == 0) continue;
+
+                var fileName = uploadedFile.FileName?.ToLowerInvariant() ?? "";
+
+                if (!fileName.EndsWith(".pdf"))
+                {
+                    TempData["ErrorMessage"] = "Only PDF files are allowed (.pdf).";
+                    return RedirectToAction(nameof(CreateCourseMaterial));
+                }
+
+                // Verificar si ya existe un material con ese nombre (opcional)
+                var existsName = await _context.CtCoursematerials
+                    .AsNoTracking()
+                    .AnyAsync(m => m.NameMaterial == fileName && m.Available == 1);
+
+                if (existsName)
+                {
+                    TempData["ErrorMessage"] = $"A material with the name {fileName} already exists.";
+                    return RedirectToAction(nameof(CreateCourseMaterial));
+                }
+
+                // Guardar archivo
+                using var ms = new MemoryStream();
+                await uploadedFile.CopyToAsync(ms);
+
+                var material = new CtCoursematerial
+                {
+                    NameMaterial = fileName,   // nombre del archivo con extensión
+                    MaterialType = "PDF",
+                    File = ms.ToArray(),
+                    CreateUser = User.Identity?.Name ?? "Unknown",
+                    CreateDate = DateTime.Now,
+                    LastUpdateUser = User.Identity?.Name ?? "Unknown",
+                    LastUpdateDate = DateTime.Now,
+                    Available = 1
+                };
+
+                _context.Add(material);
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Materials uploaded successfully.";
+            return RedirectToAction(nameof(IndexCourseMaterial));
+        }
+
+
+        //Crear Material PDF
+        [HttpPost]
+        [Authorize(Roles = "Administrador, RHGerente")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateVideoMaterial(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath))
+            {
+                TempData["ErrorMessage"] = "Please Choose a Video File";
+                return RedirectToAction(nameof(CreateCourseMaterial));
+            }
+
+            // Lista de extensiones permitidas
+            var allowedExtensions = new[] { ".exe", ".mp4", ".avi", ".mov", ".mkv", ".wmv" };
+
+            // Obtener la extensión del archivo
+            var fileExtension = Path.GetExtension(filePath)?.ToLower();
+
+            if (!allowedExtensions.Contains(fileExtension))
+            {
+                TempData["ErrorMessage"] = "Not Valid Extension, must end with .exe, .mp4, .avi, .mov, .mkv, .wmv";
+                return RedirectToAction(nameof(CreateCourseMaterial));
+            }
+
+
+            // Validar que contenga al menos un "/" o "\"
+            if (!filePath.Contains("/") && !filePath.Contains("\\"))
+            {
+                TempData["ErrorMessage"] = "Please enter full path! use: '/' or '\\' to be valid.";
+                return RedirectToAction(nameof(CreateCourseMaterial));
+            }
+
+
+            var fileNameOnly = Path.GetFileNameWithoutExtension(filePath);
+
+
             var existsName = await _context.CtCoursematerials
                 .AsNoTracking()
-                .AnyAsync(m => m.NameMaterial == model.NameMaterial && m.Available == 1);
+                .AnyAsync(m => m.NameMaterial == fileNameOnly && m.Available == 1);
             if (existsName)
             {
-                TempData["ErrorMessage"] = "A material with the same name already exists.";
-                return View(model);
+                TempData["ErrorMessage"] = "A Video material with the same name already exists.";
+                return RedirectToAction(nameof(CreateCourseMaterial));
             }
 
-            // Validar archivo
-            if (uploadedFile == null || uploadedFile.Length == 0)
-            {
-                TempData["ErrorMessage"] = "You must upload a PDF file.";
-                return View(model);
-            }
-            var fileName = uploadedFile.FileName?.ToLowerInvariant() ?? "";
-            if (!fileName.EndsWith(".pdf"))
-            {
-                TempData["ErrorMessage"] = "Only PDF files are allowed (.pdf).";
-                return View(model);
-            }
-            // (Opcional) validar content-type reportado por el navegador
-            // if (uploadedFile.ContentType != "application/pdf") { ... }
 
-            // Guardar archivo en varbinary(max)
-            using (var ms = new MemoryStream())
-            {
-                await uploadedFile.CopyToAsync(ms);
-                model.File = ms.ToArray();
-            }
+            CtCoursematerial model = new CtCoursematerial();
 
             // Metadatos
-            model.Createuser = User.Identity?.Name ?? "Unknown";
-            model.Createdate = DateTime.Now;
-            model.Lastupdateuser = User.Identity?.Name ?? "Unknown";
-            model.Lastupdatedate = DateTime.Now;
+            model.NameMaterial = fileNameOnly;
+            model.MaterialType = "VIDEO";
+            model.UrlPath = filePath;
+            model.CreateUser = User.Identity?.Name ?? "Unknown";
+            model.CreateDate = DateTime.Now;
+            model.LastUpdateUser = User.Identity?.Name ?? "Unknown";
+            model.LastUpdateDate = DateTime.Now;
             model.Available = 1;
 
             _context.Add(model);
@@ -97,6 +166,68 @@ namespace RH_CM.Controllers
             TempData["SuccessMessage"] = "Material created successfully.";
             return RedirectToAction(nameof(IndexCourseMaterial));
         }
+
+        //    // POST: CtCoursematerial/Create
+        //    [HttpPost]
+        //[Authorize(Roles = "Administrador, RHGerente")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> CreateCourseMaterial(CtCoursematerial model, IFormFile uploadedFile)
+        //{
+        //    // Validar nombre
+        //    if (string.IsNullOrWhiteSpace(model.NameMaterial))
+        //    {
+        //        TempData["ErrorMessage"] = "Material Name is required.";
+        //        return View(model);
+        //    }
+
+        //    // (Opcional) Evitar duplicado por nombre (ajusta si quieres case-insensitive)
+        //    var existsName = await _context.CtCoursematerials
+        //        .AsNoTracking()
+        //        .AnyAsync(m => m.NameMaterial == model.NameMaterial && m.Available == 1);
+        //    if (existsName)
+        //    {
+        //        TempData["ErrorMessage"] = "A material with the same name already exists.";
+        //        return View(model);
+        //    }
+
+        //    // Validar archivo
+        //    if (uploadedFile == null || uploadedFile.Length == 0)
+        //    {
+        //        TempData["ErrorMessage"] = "You must upload a PDF file.";
+        //        return View(model);
+        //    }
+        //    var fileName = uploadedFile.FileName?.ToLowerInvariant() ?? "";
+        //    if (!fileName.EndsWith(".pdf"))
+        //    {
+        //        TempData["ErrorMessage"] = "Only PDF files are allowed (.pdf).";
+        //        return View(model);
+        //    }
+        //    // (Opcional) validar content-type reportado por el navegador
+        //    // if (uploadedFile.ContentType != "application/pdf") { ... }
+
+        //    // Guardar archivo en varbinary(max)
+        //    using (var ms = new MemoryStream())
+        //    {
+        //        await uploadedFile.CopyToAsync(ms);
+        //        model.File = ms.ToArray();
+        //    }
+
+        //    // Metadatos
+        //    model.CreateUser = User.Identity?.Name ?? "Unknown";
+        //    model.CreateDate = DateTime.Now;
+        //    model.LastUpdateUser = User.Identity?.Name ?? "Unknown";
+        //    model.LastUpdateDate = DateTime.Now;
+        //    model.Available = 1;
+
+        //    _context.Add(model);
+        //    await _context.SaveChangesAsync();
+
+        //    TempData["SuccessMessage"] = "Material created successfully.";
+        //    return RedirectToAction(nameof(IndexCourseMaterial));
+        //}
+
+
+
         // GET: CtCoursematerial/Edit/5
         [Authorize(Roles = "Administrador, RHGerente")]
         [HttpGet]
@@ -109,6 +240,23 @@ namespace RH_CM.Controllers
 
             return View(material); // ya no cargamos ViewBags
         }
+
+
+        // GET: CtCoursematerial/Edit/5
+        [Authorize(Roles = "Administrador, RHGerente")]
+        [HttpGet]
+        public async Task<IActionResult> EditPDFMaterial(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var material = await _context.CtCoursematerials.FindAsync(id);
+            if (material == null) return NotFound();
+
+            return View(material); // ya no cargamos ViewBags
+        }
+
+
+
 
         // POST: CtCoursematerial/Edit/5
         [HttpPost]
@@ -130,8 +278,8 @@ namespace RH_CM.Controllers
 
             // Actualizar campos editables
             existing.NameMaterial = model.NameMaterial;
-            existing.Lastupdateuser = User.Identity?.Name ?? "Unknown";
-            existing.Lastupdatedate = DateTime.Now;
+            existing.LastUpdateUser = User.Identity?.Name ?? "Unknown";
+            existing.LastUpdateDate = DateTime.Now;
 
             // Si subió nuevo archivo (PDF)
             if (uploadedFile != null && uploadedFile.Length > 0)
@@ -157,6 +305,7 @@ namespace RH_CM.Controllers
 
 
 
+
         // POST: CtCoursematerial/Toggle/5
         [HttpPost]
         [Authorize(Roles = "Administrador, RHGerente")]
@@ -171,8 +320,8 @@ namespace RH_CM.Controllers
             }
 
             material.Available = material.Available == 1 ? 0 : 1;
-            material.Lastupdateuser = User.Identity?.Name ?? "Unknown";
-            material.Lastupdatedate = DateTime.Now;
+            material.LastUpdateUser = User.Identity?.Name ?? "Unknown";
+            material.LastUpdateDate = DateTime.Now;
 
             _context.Update(material);
             await _context.SaveChangesAsync();

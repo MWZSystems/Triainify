@@ -54,29 +54,28 @@ namespace RH_CM.Controllers
         [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
         public IActionResult IndexCourseLevelMaterial()
         {
-            var items = _context.CtCourseLevelMaterials
-                .AsNoTracking()
-                .Include(x => x.FkCourseNavigation)
-                .Include(x => x.FkLevelCourseNavigation)
-                .Include(x => x.FkCourseMaterialNavigation)
-                .OrderBy(x => x.FkCourseNavigation.CourseName)
-                .ThenBy(x => x.FkLevelCourseNavigation.DescripctionLevel)
-                .Select(x => new
-                {
-                    x.PkCourseLevelMaterial,
-                    CourseId = x.FkCourse,
-                    CourseName = x.FkCourseNavigation.CourseName,
-                    LevelId = x.FkLevelCourse,
-                    LevelDescription = x.FkLevelCourseNavigation.DescripctionLevel,
-                    MaterialId = x.FkCourseMaterial,
-                    MaterialName = x.FkCourseMaterialNavigation.NameMaterial,
-                    x.Available,
-                    x.CreateUser,
-                    x.CreateDate,
-                    x.LastUpdateUser,
-                    x.LastUpdateDate
-                })
-                .ToList();
+            var items = (from clm in _context.CtCourseLevelMaterials.AsNoTracking()
+                         join c in _context.CtCourses on clm.FkCourse equals c.PkCourse
+                         join l in _context.CtCourseassignments on clm.FkLevelCourse equals l.FkRequiredCourseLevels
+                         join m in _context.CtCoursematerials on clm.FkCourseMaterial equals m.PkCoursematerial
+                         orderby c.CourseName, l.FkCourse
+                         select new
+                         {
+                             clm.PkCourseLevelMaterial,
+                             CourseId = clm.FkCourse,
+                             CourseName = c.CourseName,
+                             LevelId = clm.FkLevelCourse,
+                             LevelDescription = l.FkRequiredCourseLevels,
+                             MaterialId = clm.FkCourseMaterial,
+                             MaterialName = m.NameMaterial,
+                             clm.Available,
+                             clm.CreateUser,
+                             clm.CreateDate,
+                             clm.LastUpdateUser,
+                             clm.LastUpdateDate
+                         })
+             .ToList();
+
 
             return View(items);
         }
@@ -88,26 +87,25 @@ namespace RH_CM.Controllers
         [HttpGet]
         public async Task<IActionResult> ExportCourseLevelMaterialToExcel()
         {
-            var data = await _context.CtCourseLevelMaterials
-                .AsNoTracking()
-                .Include(x => x.FkCourseNavigation)
-                .Include(x => x.FkLevelCourseNavigation)
-                .Include(x => x.FkCourseMaterialNavigation)
-                .OrderBy(x => x.FkCourseNavigation.CourseName)
-                .ThenBy(x => x.FkLevelCourseNavigation.DescripctionLevel)
-                .Select(x => new
-                {
-                    x.PkCourseLevelMaterial,
-                    Course = x.FkCourseNavigation.CourseName,
-                    Level = x.FkLevelCourseNavigation.DescripctionLevel,
-                    Material = x.FkCourseMaterialNavigation.NameMaterial,
-                    x.Available,
-                    x.CreateUser,
-                    x.CreateDate,
-                    x.LastUpdateUser,
-                    x.LastUpdateDate
-                })
-                .ToListAsync();
+            var data = await (
+                    from clm in _context.CtCourseLevelMaterials.AsNoTracking()
+                    join c in _context.CtCourses on clm.FkCourse equals c.PkCourse
+                    join l in _context.CtCourseassignments on clm.FkLevelCourse equals l.FkRequiredCourseLevels
+                    join m in _context.CtCoursematerials on clm.FkCourseMaterial equals m.PkCoursematerial
+                    orderby c.CourseName, l.FkCourse
+                    select new
+                    {
+                        clm.PkCourseLevelMaterial,
+                        Course = c.CourseName,
+                        Level = l.FkRequiredCourseLevels,
+                        Material = m.NameMaterial,
+                        clm.Available,
+                        clm.CreateUser,
+                        clm.CreateDate,
+                        clm.LastUpdateUser,
+                        clm.LastUpdateDate
+                    }
+              ).ToListAsync();
 
             using var wb = new XLWorkbook();
             var ws = wb.Worksheets.Add("CourseLevelMaterial");
@@ -129,16 +127,16 @@ namespace RH_CM.Controllers
             int row = 2;
             foreach (var it in data)
             {
-                ws.Cell(row, 1).Value = it.PkCourseLevelMaterial;
-                ws.Cell(row, 2).Value = it.Course;
-                ws.Cell(row, 3).Value = it.Level;
-                ws.Cell(row, 4).Value = it.Material;
-                ws.Cell(row, 5).Value = it.Available == 1 ? "Sí" : "No";
-                ws.Cell(row, 6).Value = it.CreateUser;
-                ws.Cell(row, 7).Value = it.CreateDate;
-                ws.Cell(row, 8).Value = it.LastUpdateUser;
-                ws.Cell(row, 9).Value = it.LastUpdateDate;
-                row++;
+                //ws.Cell(row, 1).Value = it.PkCourseLevelMaterial;
+                //ws.Cell(row, 2).Value = it.Course;
+                //ws.Cell(row, 3).Value = it.Level;
+                //ws.Cell(row, 4).Value = it.Material;
+                //ws.Cell(row, 5).Value = it.Available == 1 ? "Sí" : "No";
+                //ws.Cell(row, 6).Value = it.CreateUser;
+                //ws.Cell(row, 7).Value = it.CreateDate;
+                //ws.Cell(row, 8).Value = it.LastUpdateUser;
+                //ws.Cell(row, 9).Value = it.LastUpdateDate;
+                //row++;
             }
 
             ws.Columns().AdjustToContents();
