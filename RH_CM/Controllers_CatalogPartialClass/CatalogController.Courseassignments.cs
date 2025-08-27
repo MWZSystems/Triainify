@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using ClosedXML.Excel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using RH_CM.Models;
+using RH_CM.ViewModels;
 using System.Data;
-using ClosedXML.Excel;
 
 namespace RH_CM.Controllers
 {
@@ -456,6 +457,104 @@ namespace RH_CM.Controllers
             }
             return RedirectToAction(nameof(IndexCourseassignments));
         }
+
+        // GET: /CourseAssignments
+        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        public IActionResult IndexDeleteCourseassignments()
+        {
+            var model = _context.CtCourseassignments
+                .Join(_context.CtPositions,
+                      ca => ca.FkPosition,
+                      p => p.PkPosition,
+                      (ca, p) => new { ca, p })
+                .Join(_context.CtCourses,
+                      temp => temp.ca.FkCourse,
+                      c => c.PkCourse,
+                      (temp, c) => new { temp.ca, temp.p, c })
+                .Join(_context.CtLevelcourses,
+                      temp => temp.ca.FkRequiredCourseLevels,
+                      lc => lc.PkLevelcourse,
+                      (temp, lc) => new { temp.ca, temp.p, temp.c, lc })
+                .Join(_context.CtDeliverymodes,
+                      temp => temp.ca.FkDeliveryMode,
+                      dm => dm.PkDeliverymode,
+                      (temp, dm) => new RH_CM.ViewModels.CourseAssignmentListItemViewModel
+                      {
+                          PkCourseAssignment = temp.ca.PkCourseAssignment,
+                          PositionName = temp.p.NamePosition,
+                          CourseName = temp.c.CourseName,
+                          RequiredCourseLevelDescription = temp.lc.DescripctionLevel,
+
+                          // 👇 NUEVO
+                          FkRequiredCourseLevels = temp.ca.FkRequiredCourseLevels,
+
+                          Requiered = temp.ca.Requiered,
+                          Available = temp.ca.Available,
+                          DeliveryModeDescription = dm.DescriptionDeliverymode
+                      })
+                .ToList();
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        [Authorize(Roles = "Administrador")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteCourseAssignmentsBulk([FromForm] int[] selectedIds)
+        {
+            if (selectedIds == null || selectedIds.Length == 0)
+            {
+                TempData["ErrorMessage"] = "Selecciona al menos un registro.";
+                return RedirectToAction(nameof(IndexCourseassignments));
+            }
+
+            // Helper para TVP (mismo que usas en CreateBulk)
+            static DataTable ToTvp(int[] ids)
+            {
+                var dt = new DataTable();
+                dt.Columns.Add("Id", typeof(int));
+                foreach (var id in ids.Distinct())
+                    dt.Rows.Add(id);
+                return dt;
+            }
+
+            try
+            {
+                var tvp = ToTvp(selectedIds);
+
+                string cs = _context.Database.GetDbConnection().ConnectionString;
+                using var conn = new SqlConnection(cs);
+                using var cmd = new SqlCommand("dbo.sp_BulkDeleteCourseAssignments", conn)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                var p = cmd.Parameters.AddWithValue("@Ids", tvp);
+                p.SqlDbType = SqlDbType.Structured;
+                p.TypeName = "dbo.IntIdList";
+
+                conn.Open();
+
+                // El SP hace: SELECT @@ROWCOUNT AS DeletedCount;
+                object? scalar = cmd.ExecuteScalar();
+                int deleted = 0;
+                if (scalar != null && int.TryParse(Convert.ToString(scalar), out var d))
+                    deleted = d;
+
+                if (deleted == 0)
+                    TempData["ErrorMessage"] = "No se eliminaron registros (¿IDs inexistentes?).";
+                else
+                    TempData["SuccessMessage"] = $"Se eliminaron {deleted} asignaciones.";
+            }
+            catch (SqlException)
+            {
+                TempData["ErrorMessage"] = "Ocurrió un error al eliminar las asignaciones.";
+            }
+
+            return RedirectToAction(nameof(IndexCourseassignments));
+        }
+
 
     }
 }
