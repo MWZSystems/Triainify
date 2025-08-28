@@ -256,6 +256,119 @@ namespace RH_CM.Controllers
         }
 
 
+        // POST: CtCoursematerial/Edit/5
+        [HttpPost]
+        [Authorize(Roles = "Administrador, RHGerente")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditPDFMaterial(/*int id,*/ CtCoursematerial model, IFormFile? uploadedFile)
+        {
+            //if (id != model.PkCoursematerial) return NotFound();
+
+            int id = model.PkCoursematerial;
+
+
+            if (uploadedFile == null || uploadedFile.Length == 0)
+            {
+                TempData["ErrorMessage"] = "Choose a File.";
+                return RedirectToAction(nameof(EditCourseMaterial), new { id });
+            }
+
+
+            var existing = await _context.CtCoursematerials.FindAsync(id);
+            if (existing == null) return NotFound();
+
+
+            //// Validaciones mínimas
+            //if (string.IsNullOrWhiteSpace(model.NameMaterial))
+            //{
+            //    TempData["ErrorMessage"] = "Material Name is required.";
+            //    return View(model);
+            //}
+
+            var fileName = uploadedFile.FileName?.ToLowerInvariant() ?? "";
+
+            // Actualizar campos editables
+            existing.NameMaterial = fileName;
+            existing.LastUpdateUser = User.Identity?.Name ?? "Unknown";
+            existing.LastUpdateDate = DateTime.Now;
+
+
+            // Si subió nuevo archivo (PDF)
+            if (uploadedFile != null && uploadedFile.Length > 0)
+            {
+                //var fileName = uploadedFile.FileName?.ToLowerInvariant() ?? "";
+                if (!fileName.EndsWith(".pdf"))
+                {
+                    TempData["ErrorMessage"] = "Only PDF files are allowed (.pdf).";
+                    return RedirectToAction(nameof(EditCourseMaterial), new { id });
+                }
+
+                using var ms = new MemoryStream();
+                await uploadedFile.CopyToAsync(ms);
+                existing.File = ms.ToArray();
+            }
+
+            _context.Update(existing);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Material updated successfully.";
+            return RedirectToAction(nameof(IndexCourseMaterial));
+        }
+
+
+        // POST: CtCoursematerial/Edit/5
+        [HttpPost]
+        [Authorize(Roles = "Administrador, RHGerente")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditVIDEOMaterial(/*int id,**/ CtCoursematerial model, string filePath)
+        {
+            int id = model.PkCoursematerial;
+
+            var existing = await _context.CtCoursematerials.FindAsync(id);
+            if (existing == null) return NotFound();
+
+
+            if (string.IsNullOrEmpty(filePath))
+            {
+                TempData["ErrorMessage"] = "Please Choose a Video File";
+                return RedirectToAction(nameof(EditCourseMaterial), new { id });
+            }
+
+            // Lista de extensiones permitidas
+            var allowedExtensions = new[] { ".exe", ".mp4", ".avi", ".mov", ".mkv", ".wmv" };
+
+            // Obtener la extensión del archivo
+            var fileExtension = Path.GetExtension(filePath)?.ToLower();
+
+            if (!allowedExtensions.Contains(fileExtension))
+            {
+                TempData["ErrorMessage"] = "Not Valid Extension, must end with .exe, .mp4, .avi, .mov, .mkv, .wmv";
+                return RedirectToAction(nameof(EditCourseMaterial), new { id });
+            }
+
+
+            // Validar que contenga al menos un "/" o "\"
+            if (!filePath.Contains("/") && !filePath.Contains("\\"))
+            {
+                TempData["ErrorMessage"] = "Please enter full path! use: '/' or '\\' to be valid.";
+                return RedirectToAction(nameof(EditCourseMaterial), new { id });
+            }
+
+            var fileNameOnly = Path.GetFileNameWithoutExtension(filePath);
+
+            // Actualizar campos editables
+            existing.NameMaterial = fileNameOnly;
+            existing.UrlPath = filePath;
+            existing.LastUpdateUser = User.Identity?.Name ?? "Unknown";
+            existing.LastUpdateDate = DateTime.Now;
+
+
+            _context.Update(existing);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Video Material updated successfully.";
+            return RedirectToAction(nameof(IndexCourseMaterial));
+        }
 
 
         // POST: CtCoursematerial/Edit/5
@@ -336,13 +449,25 @@ namespace RH_CM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCourseMaterial(int id)
         {
+
+            var validation = await _context.CtCourseLevelMaterials
+            .FirstOrDefaultAsync(x => x.FkCourseMaterial == id);
+
+            if (validation != null)
+            {
+                TempData["ErrorMessage"] = "This material is linked to a Course-Level";
+                return RedirectToAction(nameof(IndexCourseMaterial));
+            }
+
+
             var material = await _context.CtCoursematerials.FindAsync(id);
             if (material != null)
             {
+
                 _context.CtCoursematerials.Remove(material);
                 await _context.SaveChangesAsync();
             }
-
+            TempData["SuccessMessage"] = "Material has been deleted Successfully";
             return RedirectToAction(nameof(IndexCourseMaterial));
         }
 

@@ -3,20 +3,24 @@
   "WorkspaceRootPath": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\catalog\\indexcoursematerial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\catalog\\indexcoursematerial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\models\\ctcoursematerial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\models\\ctcoursematerial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\controllers_catalogpartialclass\\catalogcontroller.coursematerial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\controllers_catalogpartialclass\\catalogcontroller.coursematerial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\catalog\\indexcoursematerial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\catalog\\indexcoursematerial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\catalog\\editcoursematerial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\catalog\\editcoursematerial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\views\\catalog\\createcoursematerial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\views\\catalog\\createcoursematerial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|c:\\users\\ferma\\onedrive\\documents\\triainify\\rh_cm\\models\\ctcoursematerial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D0A1D3B-0DDB-4394-84C3-8B3CFE09205E}|RH_CM\\RH_CM.csproj|solutionrelative:rh_cm\\models\\ctcoursematerial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,17 +30,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "CatalogController.CourseMaterial.cs",
               "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers_CatalogPartialClass\\CatalogController.CourseMaterial.cs",
               "RelativeDocumentMoniker": "RH_CM\\Controllers_CatalogPartialClass\\CatalogController.CourseMaterial.cs",
               "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Controllers_CatalogPartialClass\\CatalogController.CourseMaterial.cs",
               "RelativeToolTip": "RH_CM\\Controllers_CatalogPartialClass\\CatalogController.CourseMaterial.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAAB4AAAAUAAAAAAAAAA==",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAAANABAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-27T02:39:20.604Z",
               "IsPinned": true,
@@ -44,13 +48,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "EditCourseMaterial.cshtml",
               "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Catalog\\EditCourseMaterial.cshtml",
               "RelativeDocumentMoniker": "RH_CM\\Views\\Catalog\\EditCourseMaterial.cshtml",
               "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Catalog\\EditCourseMaterial.cshtml",
               "RelativeToolTip": "RH_CM\\Views\\Catalog\\EditCourseMaterial.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADwAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAC8AAAAoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-08-27T18:12:25.65Z",
               "IsPinned": true,
@@ -58,13 +62,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "IndexCourseMaterial.cshtml",
               "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
               "RelativeDocumentMoniker": "RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
               "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
               "RelativeToolTip": "RH_CM\\Views\\Catalog\\IndexCourseMaterial.cshtml",
-              "ViewState": "AgIAAFoAAAAAAAAAAAAAAHQAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAGMAAAAAAAAAAAAAAHYAAABcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-08-27T18:14:54.846Z",
               "IsPinned": true,
@@ -72,7 +76,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "CtCoursematerial.cs",
               "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Models\\CtCoursematerial.cs",
               "RelativeDocumentMoniker": "RH_CM\\Models\\CtCoursematerial.cs",
@@ -81,6 +85,20 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAvAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-27T03:45:23.314Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "CreateCourseMaterial.cshtml",
+              "DocumentMoniker": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Catalog\\CreateCourseMaterial.cshtml",
+              "RelativeDocumentMoniker": "RH_CM\\Views\\Catalog\\CreateCourseMaterial.cshtml",
+              "ToolTip": "C:\\Users\\ferma\\OneDrive\\Documents\\Triainify\\RH_CM\\Views\\Catalog\\CreateCourseMaterial.cshtml",
+              "RelativeToolTip": "RH_CM\\Views\\Catalog\\CreateCourseMaterial.cshtml",
+              "ViewState": "AgIAAGkAAAAAAAAAAAAAAIEAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-08-28T00:06:43.018Z",
               "IsPinned": true,
               "EditorCaption": ""
             }
