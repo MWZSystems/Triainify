@@ -54,29 +54,36 @@ namespace RH_CM.Controllers
         [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
         public IActionResult IndexCourseLevelMaterial()
         {
+            //Aqui lo tuve que modificar porque usaba los constrains del sql server, al borrar las ligas entre las tablas tuve que armar el query
             var items = _context.CtCourseLevelMaterials
-                .AsNoTracking()
-                .Include(x => x.FkCourseNavigation)
-                .Include(x => x.FkLevelCourseNavigation)
-                .Include(x => x.FkCourseMaterialNavigation)
-                .OrderBy(x => x.FkCourseNavigation.CourseName)
-                .ThenBy(x => x.FkLevelCourseNavigation.DescripctionLevel)
-                .Select(x => new
-                {
-                    x.PkCourseLevelMaterial,
-                    CourseId = x.FkCourse,
-                    CourseName = x.FkCourseNavigation.CourseName,
-                    LevelId = x.FkLevelCourse,
-                    LevelDescription = x.FkLevelCourseNavigation.DescripctionLevel,
-                    MaterialId = x.FkCourseMaterial,
-                    MaterialName = x.FkCourseMaterialNavigation.NameMaterial,
-                    x.Available,
-                    x.CreateUser,
-                    x.CreateDate,
-                    x.LastUpdateUser,
-                    x.LastUpdateDate
-                })
-                .ToList();
+                           .Join(_context.CtCourses, 
+                               clm => clm.FkCourse,
+                               cs => cs.PkCourse,
+                               (clm, cs) => new {clm,cs})
+                           .Join(_context.CtLevelcourses,
+                               temp => temp.clm.FkLevelCourse,
+                               lc => lc.PkLevelcourse,
+                               (temp, lc) => new { temp.clm, temp.cs, lc })
+                           .Join(_context.CtCoursematerials,
+                                temp => temp.clm.FkCourseMaterial,
+                                cm => cm.PkCoursematerial,
+                                (temp, cm) => new //{temp.clm, temp.cs, temp.lc, cm})
+                         {
+                                    temp.clm.PkCourseLevelMaterial,
+                                    CourseId = temp.clm.FkCourse,
+                                    CourseName = temp.cs.CourseName,
+                                    LevelId = temp.clm.FkLevelCourse,
+                                    LevelDescription = temp.lc.DescripctionLevel,
+                                    MaterialId = temp.clm.FkCourseMaterial,
+                                    MaterialName = cm.NameMaterial,
+                                    temp.clm.Available,
+                                    temp.clm.CreateUser,
+                                    temp.clm.CreateDate,
+                                    temp.clm.LastUpdateUser,
+                                    temp.clm.LastUpdateDate
+
+                         })
+                         .ToList();
 
             return View(items);
         }
@@ -88,26 +95,32 @@ namespace RH_CM.Controllers
         [HttpGet]
         public async Task<IActionResult> ExportCourseLevelMaterialToExcel()
         {
-            var data = await _context.CtCourseLevelMaterials
-                .AsNoTracking()
-                .Include(x => x.FkCourseNavigation)
-                .Include(x => x.FkLevelCourseNavigation)
-                .Include(x => x.FkCourseMaterialNavigation)
-                .OrderBy(x => x.FkCourseNavigation.CourseName)
-                .ThenBy(x => x.FkLevelCourseNavigation.DescripctionLevel)
-                .Select(x => new
-                {
-                    x.PkCourseLevelMaterial,
-                    Course = x.FkCourseNavigation.CourseName,
-                    Level = x.FkLevelCourseNavigation.DescripctionLevel,
-                    Material = x.FkCourseMaterialNavigation.NameMaterial,
-                    x.Available,
-                    x.CreateUser,
-                    x.CreateDate,
-                    x.LastUpdateUser,
-                    x.LastUpdateDate
-                })
-                .ToListAsync();
+            //Aqui lo tuve que modificar porque usaba los constrains del sql server, al borrar las ligas entre las tablas tuve que armar el query
+            var data = await (_context.CtCourseLevelMaterials
+                           .Join(_context.CtCourses,
+                               clm => clm.FkCourse,
+                               cs => cs.PkCourse,
+                               (clm, cs) => new { clm, cs })
+                           .Join(_context.CtLevelcourses,
+                               temp => temp.clm.FkLevelCourse,
+                               lc => lc.PkLevelcourse,
+                               (temp, lc) => new { temp.clm, temp.cs, lc })
+                           .Join(_context.CtCoursematerials,
+                                temp => temp.clm.FkCourseMaterial,
+                                cm => cm.PkCoursematerial,
+                                (temp, cm) => new 
+                                {
+                                    temp.clm.PkCourseLevelMaterial,
+                                    Course = temp.cs.CourseName,
+                                    Level = temp.clm.FkLevelCourse,
+                                    Material = cm.NameMaterial,
+                                    temp.clm.Available,
+                                    temp.clm.CreateUser,
+                                    temp.clm.CreateDate,
+                                    temp.clm.LastUpdateUser,
+                                    temp.clm.LastUpdateDate
+
+                                })).ToListAsync();
 
             using var wb = new XLWorkbook();
             var ws = wb.Worksheets.Add("CourseLevelMaterial");

@@ -61,8 +61,8 @@ namespace RH_CM.Controllers
                     m.PkCoursematerial,
                     MaterialName = m.NameMaterial,
                     m.Available,
-                    m.Createuser,
-                    m.Createdate
+                    m.CreateUser,
+                    m.CreateDate
                 })
                 .ToList();
 

@@ -5,11 +5,134 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="row">
+@* Si el material a editar es PDF muestra una vista, si es VIDEO muestra otra *@
+@if (@Model.MaterialType == "PDF")
+{
+    <div class="row">
+        <div class="col">
+            <h1 class="h3 mb-3 text-center">EDIT PDF MATERIAL - ID: @Model.PkCoursematerial </h1>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Edit Material Details</h5>
+                    <h6 class="card-subtitle text-muted">Update the fields below. Fields marked with an asterisk (*) are required.</h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="EditPDFMaterial" method="post" enctype="multipart/form-data">
+                        @Html.HiddenFor(m => m.PkCoursematerial)
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="row">
+                            <!-- NameMaterial -->
+                            @*  <div class="mb-3 col-md-12">
+                            <label asp-for="NameMaterial" class="form-label">
+                                Material Name <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="NameMaterial" class="form-control" />
+                            <span asp-validation-for="NameMaterial" class="text-danger"></span>
+                        </div> *@
+
+                            <!-- Upload New File (optional) -->
+                            <div class="mb-3 col-md-12">
+                                <label class="form-label">Upload New File (PDF)</label>
+                                <input type="file" name="uploadedFile" class="form-control" accept=".pdf" />
+                                <small class="form-text text-muted">Leave empty to keep the current file.</small>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="row mt-3">
+                            <div class="col-12 text-end">
+                                <a asp-action="IndexCourseMaterial" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Update
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col">
+            <h1 class="h3 mb-3 text-center">EDIT VIDEO MATERIAL - ID: @Model.PkCoursematerial </h1>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Edit Video Material Details</h5>
+                    <h6 class="card-subtitle text-muted">Update the fields below. Fields marked with an asterisk (*) are required.</h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="EditVIDEOMaterial" method="post" enctype="multipart/form-data">
+                        @Html.HiddenFor(m => m.PkCoursematerial)
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="row">
+                            <!-- NameMaterial -->
+                            @*  <div class="mb-3 col-md-12">
+                            <label asp-for="NameMaterial" class="form-label">
+                                Material Name <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="NameMaterial" class="form-control" />
+                            <span asp-validation-for="NameMaterial" class="text-danger"></span>
+                        </div> *@
+
+                            <!-- Upload New File (optional) -->
+                            @* <div class="mb-3 col-md-12">
+                                <label class="form-label">Upload New File (PDF)</label>
+                                <input type="file" name="uploadedFile" class="form-control" accept=".pdf" />
+                                <small class="form-text text-muted">Leave empty to keep the current file.</small>
+                            </div> *@
+
+                            <div class="mb-3 col-md-12">
+                                <label class="form-label">
+                                    Enter the full file path
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" name="filePath" class="form-control" placeholder="C:\Videos\curso1.mp4" required />
+                            </div>
+
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="row mt-3">
+                            <div class="col-12 text-end">
+                                <a asp-action="IndexCourseMaterial" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Update
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@* <div class="row">
     <div class="col">
-        <h1 class="h3 mb-3 text-center">EDIT COURSE MATERIAL</h1>
+        <h1 class="h3 mb-3 text-center">EDIT COURSE MATERIAL - ID: @Model.PkCoursematerial </h1>
     </div>
 </div>
+
 
 <div class="row">
     <div class="col-md-8 offset-md-2">
@@ -19,19 +142,19 @@
                 <h6 class="card-subtitle text-muted">Update the fields below. Fields marked with an asterisk (*) are required.</h6>
             </div>
             <div class="card-body">
-                <form asp-action="EditCourseMaterial" method="post" enctype="multipart/form-data">
+                <form asp-action="EditPDFMaterial" method="post" enctype="multipart/form-data">
                     @Html.HiddenFor(m => m.PkCoursematerial)
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                     <div class="row">
                         <!-- NameMaterial -->
-                        <div class="mb-3 col-md-12">
+                       @*  <div class="mb-3 col-md-12">
                             <label asp-for="NameMaterial" class="form-label">
                                 Material Name <span class="text-danger">*</span>
                             </label>
                             <input asp-for="NameMaterial" class="form-control" />
                             <span asp-validation-for="NameMaterial" class="text-danger"></span>
-                        </div>
+                        </div> 
 
                         <!-- Upload New File (optional) -->
                         <div class="mb-3 col-md-12">
@@ -56,7 +179,8 @@
             </div>
         </div>
     </div>
-</div>
+</div> *@
+
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")

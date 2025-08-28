@@ -3,14 +3,15 @@ using System.Collections.Generic;
 
 namespace RH_CM.Models
 {
-    public partial class CtLevelcourse
+    public partial class CtCoursematerialBackUp
     {
-        public int PkLevelcourse { get; set; }
-        public string DescripctionLevel { get; set; } = null!;
+        public int PkCoursematerial { get; set; }
+        public string NameMaterial { get; set; } = null!;
+        public byte[] File { get; set; } = null!;
         public string Createuser { get; set; } = null!;
         public DateTime Createdate { get; set; }
         public string Lastupdateuser { get; set; } = null!;
-        public DateTime Lastupatedate { get; set; }
+        public DateTime Lastupdatedate { get; set; }
         public int Available { get; set; }
     }
 }

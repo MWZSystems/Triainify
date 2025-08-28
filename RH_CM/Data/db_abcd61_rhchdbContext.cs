@@ -29,7 +29,7 @@ namespace RH_CM.Data
         public virtual DbSet<CtCourseLevelMaterial> CtCourseLevelMaterials { get; set; } = null!;
         public virtual DbSet<CtCourseassignment> CtCourseassignments { get; set; } = null!;
         public virtual DbSet<CtCoursematerial> CtCoursematerials { get; set; } = null!;
-        public virtual DbSet<CtCoursematerialBckup> CtCoursematerialBckups { get; set; } = null!;
+        public virtual DbSet<CtCoursematerialBackUp> CtCoursematerialBackUps { get; set; } = null!;
         public virtual DbSet<CtCoursestatus> CtCoursestatuses { get; set; } = null!;
         public virtual DbSet<CtDeliverymode> CtDeliverymodes { get; set; } = null!;
         public virtual DbSet<CtDepartment> CtDepartments { get; set; } = null!;
@@ -270,24 +270,6 @@ namespace RH_CM.Data
                 entity.Property(e => e.FkLevelCourse).HasColumnName("FK_LevelCourse");
 
                 entity.Property(e => e.LastUpdateUser).HasMaxLength(256);
-
-                entity.HasOne(d => d.FkCourseNavigation)
-                    .WithMany(p => p.CtCourseLevelMaterials)
-                    .HasForeignKey(d => d.FkCourse)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_CLM_COURSE");
-
-                entity.HasOne(d => d.FkCourseMaterialNavigation)
-                    .WithMany(p => p.CtCourseLevelMaterials)
-                    .HasForeignKey(d => d.FkCourseMaterial)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_CLM_MATERIAL");
-
-                entity.HasOne(d => d.FkLevelCourseNavigation)
-                    .WithMany(p => p.CtCourseLevelMaterials)
-                    .HasForeignKey(d => d.FkLevelCourse)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_CLM_LEVEL");
             });
 
             modelBuilder.Entity<CtCourseassignment>(entity =>
@@ -321,45 +303,41 @@ namespace RH_CM.Data
             modelBuilder.Entity<CtCoursematerial>(entity =>
             {
                 entity.HasKey(e => e.PkCoursematerial)
-                    .HasName("PK__CT_COURS__D3564EC044EEDBD1");
+                    .HasName("PK__CT_COURS__D3564EC035FD0AE6");
 
                 entity.ToTable("CT_COURSEMATERIAL");
 
                 entity.Property(e => e.PkCoursematerial).HasColumnName("PK_COURSEMATERIAL");
 
-                entity.Property(e => e.Available).HasColumnName("available");
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Createdate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("createdate");
-
-                entity.Property(e => e.Createuser)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("createuser");
+                entity.Property(e => e.CreateUser).HasMaxLength(50);
 
                 entity.Property(e => e.File).HasColumnName("FILE");
 
-                entity.Property(e => e.Lastupdatedate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("lastupdatedate");
+                entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Lastupdateuser)
-                    .HasMaxLength(50)
+                entity.Property(e => e.LastUpdateUser).HasMaxLength(50);
+
+                entity.Property(e => e.MaterialType)
+                    .HasMaxLength(20)
                     .IsUnicode(false)
-                    .HasColumnName("lastupdateuser");
+                    .HasColumnName("MATERIAL_TYPE");
 
                 entity.Property(e => e.NameMaterial)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
+                    .HasMaxLength(255)
                     .HasColumnName("NAME_MATERIAL");
+
+                entity.Property(e => e.UrlPath)
+                    .HasMaxLength(500)
+                    .HasColumnName("URL_PATH");
             });
 
-            modelBuilder.Entity<CtCoursematerialBckup>(entity =>
+            modelBuilder.Entity<CtCoursematerialBackUp>(entity =>
             {
                 entity.HasNoKey();
 
-                entity.ToTable("CT_COURSEMATERIAL_BCKUP");
+                entity.ToTable("CT_COURSEMATERIAL_BackUP");
 
                 entity.Property(e => e.Available).HasColumnName("available");
 
@@ -373,8 +351,6 @@ namespace RH_CM.Data
                     .HasColumnName("createuser");
 
                 entity.Property(e => e.File).HasColumnName("FILE");
-
-                entity.Property(e => e.FkCourse).HasColumnName("FK_Course");
 
                 entity.Property(e => e.Lastupdatedate)
                     .HasColumnType("datetime")
