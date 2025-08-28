@@ -44,44 +44,49 @@ namespace RH_CM.Controllers
 
             string connectionString = _context.Database.GetDbConnection().ConnectionString;
 
-            using (var connection = new SqlConnection(connectionString))
+            await using var connection = new SqlConnection(connectionString);
+            await connection.OpenAsync();
+
+            await using var command = new SqlCommand("sp_GetMatrizbyEmployeeCourseAssignments", connection)
             {
-                await connection.OpenAsync();
+                CommandType = CommandType.StoredProcedure
+            };
+            command.Parameters.Add(new SqlParameter("@UserName", SqlDbType.NVarChar, 256) { Value = userName });
 
-                using (var command = new SqlCommand("sp_GetMatrizbyEmployeeCourseAssignments", connection))
+            await using var reader = await command.ExecuteReaderAsync();
+
+            // Helpers locales
+            int Ord(string n) => reader.GetOrdinal(n);
+            bool IsNull(string n) => reader.IsDBNull(Ord(n));
+
+            while (await reader.ReadAsync())
+            {
+                result.Add(new MatrizByEmployeeViewModel
                 {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.Add(new SqlParameter("@UserName", SqlDbType.NVarChar, 256) { Value = userName });
+                    FK_Position = IsNull("FK_Position") ? 0 : reader.GetInt32(Ord("FK_Position")),
+                    NAME_POSITION_ENGLISH = IsNull("NAME_POSITION_ENGLISH") ? "—" : reader.GetString(Ord("NAME_POSITION_ENGLISH")),
 
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        int Ord(string n) => reader.GetOrdinal(n);
-                        bool IsNull(string n) => reader.IsDBNull(Ord(n));
+                    FK_Course = IsNull("FK_Course") ? 0 : reader.GetInt32(Ord("FK_Course")),
+                    CourseName = IsNull("CourseName") ? "—" : reader.GetString(Ord("CourseName")),
 
-                        while (await reader.ReadAsync())
-                        {
-                            result.Add(new MatrizByEmployeeViewModel
-                            {
-                                FK_Position = IsNull("FK_Position") ? 0 : reader.GetInt32(Ord("FK_Position")),
-                                NAME_POSITION_ENGLISH = IsNull("NAME_POSITION_ENGLISH") ? "—" : reader.GetString(Ord("NAME_POSITION_ENGLISH")),
-                                FK_Course = IsNull("FK_Course") ? 0 : reader.GetInt32(Ord("FK_Course")),
-                                CourseName = IsNull("CourseName") ? "—" : reader.GetString(Ord("CourseName")),
-                                FK_RequiredCourseLevels = IsNull("FK_RequiredCourseLevels") ? 0 : reader.GetInt32(Ord("FK_RequiredCourseLevels")),
-                                Requiered = !IsNull("Requiered") && Convert.ToBoolean(reader["Requiered"]),
-                                FK_DeliveryMode = IsNull("FK_DeliveryMode") ? 0 : Convert.ToInt32(reader["FK_DeliveryMode"]),
-                                // DESCRIPTION_DELIVERYMODE   <-- NO existe en tu SP actual
-                                CourseValidityDays = IsNull("CourseValidityDays") ? (int?)null : Convert.ToInt32(reader["CourseValidityDays"]),
-                                UserName = IsNull("UserName") ? userName : reader["UserName"].ToString(),
-                                CONTROL_NUMBER = IsNull("CONTROL_NUMBER") ? "—" : reader["CONTROL_NUMBER"].ToString(),
-                                NAMES = IsNull("NAMES") ? "—" : reader["NAMES"].ToString(),
-                                LAST_NAME = IsNull("LAST_NAME") ? "—" : reader["LAST_NAME"].ToString(),
-                                SECOND_NAME = IsNull("SECOND_NAME") ? "—" : reader["SECOND_NAME"].ToString(),
-                                LastUpdateDate = IsNull("LastUpdateDate") ? (DateTime?)null : Convert.ToDateTime(reader["LastUpdateDate"]),
-                                CourseStatus = IsNull("CourseStatus") ? "—" : reader["CourseStatus"].ToString()
-                            });
-                        }
-                    }
-                }
+                    FK_RequiredCourseLevels = IsNull("FK_RequiredCourseLevels") ? 0 : reader.GetInt32(Ord("FK_RequiredCourseLevels")),
+                    DESCRIPCTION_LEVEL = IsNull("DESCRIPCTION_LEVEL") ? null : reader.GetString(Ord("DESCRIPCTION_LEVEL")),
+
+                    Requiered = !IsNull("Requiered") && Convert.ToBoolean(reader["Requiered"]),
+                    FK_DeliveryMode = IsNull("FK_DeliveryMode") ? 0 : Convert.ToInt32(reader["FK_DeliveryMode"]),
+                    // DESCRIPTION_DELIVERYMODE -> no viene en el SP actual
+
+                    CourseValidityDays = IsNull("CourseValidityDays") ? (int?)null : Convert.ToInt32(reader["CourseValidityDays"]),
+
+                    UserName = IsNull("UserName") ? userName : reader["UserName"]?.ToString() ?? userName,
+                    CONTROL_NUMBER = IsNull("CONTROL_NUMBER") ? "—" : reader["CONTROL_NUMBER"]?.ToString() ?? "—",
+                    NAMES = IsNull("NAMES") ? "—" : reader["NAMES"]?.ToString() ?? "—",
+                    LAST_NAME = IsNull("LAST_NAME") ? "—" : reader["LAST_NAME"]?.ToString() ?? "—",
+                    SECOND_NAME = IsNull("SECOND_NAME") ? "—" : reader["SECOND_NAME"]?.ToString() ?? "—",
+
+                    LastUpdateDate = IsNull("LastUpdateDate") ? (DateTime?)null : Convert.ToDateTime(reader["LastUpdateDate"]),
+                    CourseStatus = IsNull("CourseStatus") ? "—" : reader["CourseStatus"]?.ToString() ?? "—"
+                });
             }
 
             return View(result);

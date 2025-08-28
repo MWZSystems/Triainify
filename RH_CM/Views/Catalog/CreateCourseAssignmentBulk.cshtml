@@ -3,7 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var positions = (IEnumerable<dynamic>)ViewBag.Positions;     // CtPositions: PkPosition, NamePosition
-    var courses = (IEnumerable<dynamic>)ViewBag.Courses;       // CtCourses:   PkCourse, CourseName
+    var courses = (IEnumerable<dynamic>)ViewBag.Courses;       // CtCourses:   PkCourse,   CourseName
     var levels = (IEnumerable<dynamic>)ViewBag.LevelCourses;  // CtLevelcourses: PkLevelcourse, DescripctionLevel
     var modes = (IEnumerable<dynamic>)ViewBag.DeliveryModes; // CtDeliverymodes: PkDeliverymode, DescriptionDeliverymode
 }
@@ -20,8 +20,8 @@
             <div class="card-header">
                 <h5 class="card-title">Course Assignment Details (Bulk)</h5>
                 <h6 class="card-subtitle text-muted">
-                    Selecciona múltiples <strong>Positions</strong>, múltiples <strong>Courses</strong> y múltiples <strong>Course Levels</strong>.<br />
-                    El <em>Delivery Mode</em> y <em>Required</em> se aplican a todas las combinaciones generadas.
+                    Select multiple <strong>Positions</strong>, multiple <strong>Courses</strong>, and multiple <strong>Course Levels</strong>.<br />
+                    <em>Delivery Mode</em> and <em>Required</em> apply to all generated combinations.
                 </h6>
             </div>
 
@@ -31,18 +31,20 @@
 
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                    <!-- Selector múltiple: Positions y Courses -->
+                    <!-- Multi-select columns: Positions / Courses / Levels -->
                     <div class="row">
                         <!-- POSITIONS -->
                         <div class="mb-3 col-md-4">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <label class="form-label fw-bold">Positions <span class="text-danger">*</span></label>
+                                <label class="form-label fw-bold mb-0">Positions <span class="text-danger">*</span></label>
                                 <div class="d-flex gap-2">
+                                    <input id="searchPositions" class="form-control form-control-sm" placeholder="Search" style="max-width: 190px;" />
                                     <button type="button" class="btn btn-sm btn-outline-primary" onclick="toggleAll('SelectedPositions', true)">Select All</button>
                                     <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleAll('SelectedPositions', false)">Clear</button>
                                 </div>
                             </div>
-                            <div class="border rounded p-2" style="max-height: 320px; overflow:auto">
+
+                            <div id="posWrapper" class="border rounded p-2" style="max-height: 320px; overflow:auto">
                                 @foreach (var p in positions)
                                 {
                                     <div class="form-check">
@@ -56,13 +58,15 @@
                         <!-- COURSES -->
                         <div class="mb-3 col-md-4">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <label class="form-label fw-bold">Courses <span class="text-danger">*</span></label>
+                                <label class="form-label fw-bold mb-0">Courses <span class="text-danger">*</span></label>
                                 <div class="d-flex gap-2">
+                                    <input id="searchCourses" class="form-control form-control-sm" placeholder="Search" style="max-width: 190px;" />
                                     <button type="button" class="btn btn-sm btn-outline-primary" onclick="toggleAll('SelectedCourses', true)">Select All</button>
                                     <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleAll('SelectedCourses', false)">Clear</button>
                                 </div>
                             </div>
-                            <div class="border rounded p-2" style="max-height: 320px; overflow:auto">
+
+                            <div id="courseWrapper" class="border rounded p-2" style="max-height: 320px; overflow:auto">
                                 @foreach (var c in courses)
                                 {
                                     <div class="form-check">
@@ -73,16 +77,18 @@
                             </div>
                         </div>
 
-                        <!-- LEVELS (MULTI) -->
+                        <!-- LEVELS -->
                         <div class="mb-3 col-md-4">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <label class="form-label fw-bold">Course Levels <span class="text-danger">*</span></label>
+                                <label class="form-label fw-bold mb-0">Course Levels <span class="text-danger">*</span></label>
                                 <div class="d-flex gap-2">
+                                    <input id="searchLevels" class="form-control form-control-sm" placeholder="Search" style="max-width: 190px;" />
                                     <button type="button" class="btn btn-sm btn-outline-primary" onclick="toggleAll('SelectedLevels', true)">Select All</button>
                                     <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleAll('SelectedLevels', false)">Clear</button>
                                 </div>
                             </div>
-                            <div class="border rounded p-2" style="max-height: 320px; overflow:auto">
+
+                            <div id="levelWrapper" class="border rounded p-2" style="max-height: 320px; overflow:auto">
                                 @foreach (var l in levels)
                                 {
                                     <div class="form-check">
@@ -94,21 +100,20 @@
                         </div>
                     </div>
 
-                    <!-- Indicadores -->
+                    <!-- Counters -->
                     <div class="row mb-2">
                         <div class="col-md-12">
                             <span class="badge bg-info text-dark me-2" id="badge-count-pos">Positions: 0</span>
                             <span class="badge bg-info text-dark me-2" id="badge-count-cou">Courses: 0</span>
                             <span class="badge bg-info text-dark me-2" id="badge-count-lev">Levels: 0</span>
-                            <span class="badge bg-primary" id="badge-count-total">Combinaciones (P×C×L): 0</span>
+                            <span class="badge bg-primary" id="badge-count-total">Combinations (P×C×L): 0</span>
                         </div>
                     </div>
 
                     <hr />
 
-                    <!-- Metadatos aplicados a todas las combinaciones -->
+                    <!-- Metadata applied to all combinations -->
                     <div class="row">
-                        <!-- DELIVERY MODE (único) -->
                         <div class="mb-3 col-md-6">
                             <label class="form-label">Delivery Mode <span class="text-danger">*</span></label>
                             <select class="form-control" name="FkDeliveryMode">
@@ -120,11 +125,10 @@
                             </select>
                         </div>
 
-                        <!-- REQUIRED -->
                         <div class="mb-3 col-md-6">
                             <label class="form-label">Required</label>
                             <div class="form-check">
-                                <!-- hidden para garantizar false si se desmarca -->
+                                <!-- hidden to guarantee false when unchecked -->
                                 <input type="hidden" name="Requiered" value="false" />
                                 <input class="form-check-input" type="checkbox" name="Requiered" value="true" id="Requiered" checked />
                                 <label class="form-check-label" for="Requiered">Is Required?</label>
@@ -132,7 +136,7 @@
                         </div>
                     </div>
 
-                    <!-- Botones -->
+                    <!-- Actions -->
                     <div class="row">
                         <div class="col-12 text-end">
                             <a asp-action="IndexCourseassignments" class="btn btn-secondary">
@@ -145,6 +149,10 @@
                     </div>
                 </form>
             </div>
+
+            <div class="card-footer text-muted small">
+                Tip: the search boxes are accent-insensitive and treat <code>ñ</code> differently from <code>n</code> (type “ñ” to match “Ñ/ñ”).
+            </div>
         </div>
     </div>
 </div>
@@ -153,11 +161,13 @@
     @await Html.PartialAsync("_ValidationScriptsPartial")
 
     <script>
+        // Bulk select / clear
         function toggleAll(name, check) {
             document.querySelectorAll(`input[name='${name}']`).forEach(el => { el.checked = check; });
             updateCounts();
         }
 
+        // Counters
         function updateCounts() {
             const countPos = document.querySelectorAll("input[name='SelectedPositions']:checked").length;
             const countCou = document.querySelectorAll("input[name='SelectedCourses']:checked").length;
@@ -167,21 +177,58 @@
             document.getElementById("badge-count-pos").textContent = `Positions: ${countPos}`;
             document.getElementById("badge-count-cou").textContent = `Courses: ${countCou}`;
             document.getElementById("badge-count-lev").textContent = `Levels: ${countLev}`;
-            document.getElementById("badge-count-total").textContent = `Combinaciones (P×C×L): ${total}`;
+            document.getElementById("badge-count-total").textContent = `Combinations (P×C×L): ${total}`;
         }
 
-        // Hook a cambios para refrescar el contador
+        // --- Spanish-friendly search: accent-insensitive and Ñ-aware ---
+        // 1) Lowercase using 'es' locale
+        // 2) Normalize to NFD
+        // 3) Convert any "n" + tilde (n\u0303) to "ñ"
+        // 4) Strip other diacritics (á→a, é→e, ü→u, etc.)
+        function foldEs(str) {
+            return (str ?? "")
+                .toString()
+                .toLocaleLowerCase("es")
+                .normalize("NFD")
+                .replace(/n\u0303/g, "ñ")          // n + tilde -> ñ
+                .replace(/[\u0300-\u036f]/g, "");  // remove other diacritics
+        }
+
+        // Attach a filter to a checkbox list by matching its label text
+        function attachFilter(inputId, wrapperSelector) {
+            const input = document.getElementById(inputId);
+            const wrapper = document.querySelector(wrapperSelector);
+
+            if (!input || !wrapper) return;
+
+            input.addEventListener("input", () => {
+                const q = foldEs(input.value);
+                wrapper.querySelectorAll(".form-check").forEach(row => {
+                    const label = row.querySelector("label");
+                    const txt = foldEs(label ? label.textContent : "");
+                    row.style.display = txt.includes(q) ? "" : "none";
+                });
+            });
+        }
+
+        // Hook up filters
+        attachFilter("searchPositions", "#posWrapper");
+        attachFilter("searchCourses",   "#courseWrapper");
+        attachFilter("searchLevels",    "#levelWrapper");
+
+        // Update counters when selections change
         document.addEventListener("change", (e) => {
             if (e.target && (e.target.name === "SelectedPositions" || e.target.name === "SelectedCourses" || e.target.name === "SelectedLevels")) {
                 updateCounts();
             }
         });
 
+        // Notyf feedback
         $(document).ready(function () {
             updateCounts();
 
             if ("@TempData["SuccessMessage"]" !== "") {
-                window.notyf.open({
+                window.notyf?.open({
                     type: 'success',
                     message: "@TempData["SuccessMessage"]",
                     ripple: true,
@@ -192,7 +239,7 @@
             }
 
             if ("@TempData["ErrorMessage"]" !== "") {
-                window.notyf.open({
+                window.notyf?.open({
                     type: 'error',
                     message: "@TempData["ErrorMessage"]",
                     ripple: true,
