@@ -16,8 +16,11 @@
         </h1>
     </div>
     <div class="col-auto">
-        <a class="btn btn-facebook" asp-action="CreateCourseMaterial">
-            <i class="align-middle fas fa-plus-square"></i> CREATE NEW MATERIAL
+        <a class="btn btn-facebook" asp-action="CreateCourseMaterial" asp-route-type="PDF">
+            <i class="align-middle fas fa-plus-square"></i> CREATE PDF MATERIAL
+        </a>
+        <a class="btn btn-primary" asp-action="CreateCourseMaterial" asp-route-type="VIDEO">
+            <i class="align-middle fas fa-video"></i> CREATE VIDEO MATERIAL
         </a>
     </div>
 </div>

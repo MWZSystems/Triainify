@@ -34,10 +34,12 @@ namespace RH_CM.Controllers
         // GET: CtCoursematerial/Create
         [HttpGet]
         [Authorize(Roles = "Administrador, RHGerente")]
-        public IActionResult CreateCourseMaterial()
+        public IActionResult CreateCourseMaterial(string type)
         {
-            // Ya no cargamos listas ni ViewBags
-            return View(new CtCoursematerial());
+            var model = new CtCoursematerial();
+            ViewBag.Type = type;
+
+            return View(model);
         }
 
 
@@ -50,7 +52,7 @@ namespace RH_CM.Controllers
             if (uploadedFiles == null || !uploadedFiles.Any())
             {
                 TempData["ErrorMessage"] = "You must upload at least one PDF file.";
-                return RedirectToAction(nameof(CreateCourseMaterial));
+                return RedirectToAction(nameof(CreateCourseMaterial), new { type = "PDF" });
             }
 
             foreach (var uploadedFile in uploadedFiles)
@@ -62,7 +64,7 @@ namespace RH_CM.Controllers
                 if (!fileName.EndsWith(".pdf"))
                 {
                     TempData["ErrorMessage"] = "Only PDF files are allowed (.pdf).";
-                    return RedirectToAction(nameof(CreateCourseMaterial));
+                    return RedirectToAction(nameof(CreateCourseMaterial), new { type = "PDF" });
                 }
 
                 // Verificar si ya existe un material con ese nombre (opcional)
@@ -73,7 +75,7 @@ namespace RH_CM.Controllers
                 if (existsName)
                 {
                     TempData["ErrorMessage"] = $"A material with the name {fileName} already exists.";
-                    return RedirectToAction(nameof(CreateCourseMaterial));
+                    return RedirectToAction(nameof(CreateCourseMaterial), new { type = "PDF" });
                 }
 
                 // Guardar archivo
@@ -111,7 +113,7 @@ namespace RH_CM.Controllers
             if (string.IsNullOrEmpty(filePath))
             {
                 TempData["ErrorMessage"] = "Please Choose a Video File";
-                return RedirectToAction(nameof(CreateCourseMaterial));
+                return RedirectToAction(nameof(CreateCourseMaterial), new { type = "VIDEO" });
             }
 
             // Lista de extensiones permitidas
@@ -123,7 +125,7 @@ namespace RH_CM.Controllers
             if (!allowedExtensions.Contains(fileExtension))
             {
                 TempData["ErrorMessage"] = "Not Valid Extension, must end with .exe, .mp4, .avi, .mov, .mkv, .wmv";
-                return RedirectToAction(nameof(CreateCourseMaterial));
+                return RedirectToAction(nameof(CreateCourseMaterial), new { type = "VIDEO" });
             }
 
 
@@ -131,7 +133,7 @@ namespace RH_CM.Controllers
             if (!filePath.Contains("/") && !filePath.Contains("\\"))
             {
                 TempData["ErrorMessage"] = "Please enter full path! use: '/' or '\\' to be valid.";
-                return RedirectToAction(nameof(CreateCourseMaterial));
+                return RedirectToAction(nameof(CreateCourseMaterial), new { type = "VIDEO" });
             }
 
 
@@ -144,7 +146,7 @@ namespace RH_CM.Controllers
             if (existsName)
             {
                 TempData["ErrorMessage"] = "A Video material with the same name already exists.";
-                return RedirectToAction(nameof(CreateCourseMaterial));
+                return RedirectToAction(nameof(CreateCourseMaterial), new { type = "VIDEO" });
             }
 
 
@@ -166,66 +168,6 @@ namespace RH_CM.Controllers
             TempData["SuccessMessage"] = "Material created successfully.";
             return RedirectToAction(nameof(IndexCourseMaterial));
         }
-
-        //    // POST: CtCoursematerial/Create
-        //    [HttpPost]
-        //[Authorize(Roles = "Administrador, RHGerente")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> CreateCourseMaterial(CtCoursematerial model, IFormFile uploadedFile)
-        //{
-        //    // Validar nombre
-        //    if (string.IsNullOrWhiteSpace(model.NameMaterial))
-        //    {
-        //        TempData["ErrorMessage"] = "Material Name is required.";
-        //        return View(model);
-        //    }
-
-        //    // (Opcional) Evitar duplicado por nombre (ajusta si quieres case-insensitive)
-        //    var existsName = await _context.CtCoursematerials
-        //        .AsNoTracking()
-        //        .AnyAsync(m => m.NameMaterial == model.NameMaterial && m.Available == 1);
-        //    if (existsName)
-        //    {
-        //        TempData["ErrorMessage"] = "A material with the same name already exists.";
-        //        return View(model);
-        //    }
-
-        //    // Validar archivo
-        //    if (uploadedFile == null || uploadedFile.Length == 0)
-        //    {
-        //        TempData["ErrorMessage"] = "You must upload a PDF file.";
-        //        return View(model);
-        //    }
-        //    var fileName = uploadedFile.FileName?.ToLowerInvariant() ?? "";
-        //    if (!fileName.EndsWith(".pdf"))
-        //    {
-        //        TempData["ErrorMessage"] = "Only PDF files are allowed (.pdf).";
-        //        return View(model);
-        //    }
-        //    // (Opcional) validar content-type reportado por el navegador
-        //    // if (uploadedFile.ContentType != "application/pdf") { ... }
-
-        //    // Guardar archivo en varbinary(max)
-        //    using (var ms = new MemoryStream())
-        //    {
-        //        await uploadedFile.CopyToAsync(ms);
-        //        model.File = ms.ToArray();
-        //    }
-
-        //    // Metadatos
-        //    model.CreateUser = User.Identity?.Name ?? "Unknown";
-        //    model.CreateDate = DateTime.Now;
-        //    model.LastUpdateUser = User.Identity?.Name ?? "Unknown";
-        //    model.LastUpdateDate = DateTime.Now;
-        //    model.Available = 1;
-
-        //    _context.Add(model);
-        //    await _context.SaveChangesAsync();
-
-        //    TempData["SuccessMessage"] = "Material created successfully.";
-        //    return RedirectToAction(nameof(IndexCourseMaterial));
-        //}
-
 
 
         // GET: CtCoursematerial/Edit/5
@@ -276,14 +218,6 @@ namespace RH_CM.Controllers
 
             var existing = await _context.CtCoursematerials.FindAsync(id);
             if (existing == null) return NotFound();
-
-
-            //// Validaciones mínimas
-            //if (string.IsNullOrWhiteSpace(model.NameMaterial))
-            //{
-            //    TempData["ErrorMessage"] = "Material Name is required.";
-            //    return View(model);
-            //}
 
             var fileName = uploadedFile.FileName?.ToLowerInvariant() ?? "";
 
