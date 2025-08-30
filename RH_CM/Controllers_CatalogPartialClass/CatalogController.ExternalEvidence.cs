@@ -12,67 +12,32 @@ namespace RH_CM.Controllers
         [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
         public async Task<IActionResult> IndexExternalEvidence()
         {
-            List<GetExternalEvidenceDTOs> answer = await _externalEvidenceService.GetIndex();
-            return View(answer);
+            List<ExternalEvidenceDTOs> result = await _externalEvidenceService.GetIndex();
+            
+            return View(result);
         }
 
 
         [HttpGet]
         [Authorize(Roles = "Administrador, RHGerente")]
-        public async Task<IActionResult> CreateExternalEvidence(List<IFormFile> uploadedFiles)
+        public async Task<IActionResult> CreateExternalEvidence()
         {
-            if (uploadedFiles == null || !uploadedFiles.Any())
-            {
-                TempData["ErrorMessage"] = "You must upload at least one PDF file.";
-                return RedirectToAction(nameof(CreateCourseMaterial), new { type = "PDF" });
-            }
+            CreateExternalEvidenceDTOs result = await _externalEvidenceService.GetCreateExternalEvidence();
 
-            foreach (var uploadedFile in uploadedFiles)
-            {
-                if (uploadedFile.Length == 0) continue;
+            return View(result);
+        }
 
-                var fileName = uploadedFile.FileName?.ToLowerInvariant() ?? "";
+        [HttpPost]
+        [Authorize(Roles = "Administrador, RHGerente")]
+        public async Task<IActionResult> CreateExternalEvidence(CreateExternalEvidenceInputDTOs model)
+        {
+            model.UserName = User.Identity?.Name ?? "Unknown";
 
-                if (!fileName.EndsWith(".pdf"))
-                {
-                    TempData["ErrorMessage"] = "Only PDF files are allowed (.pdf).";
-                    return RedirectToAction(nameof(CreateCourseMaterial), new { type = "PDF" });
-                }
+            ServiceAnswer serviceAnswer = await _externalEvidenceService.PostCreateExternalEvidence(model);
 
-                // Verificar si ya existe un material con ese nombre (opcional)
-                var existsName = await _context.CtCoursematerials
-                    .AsNoTracking()
-                    .AnyAsync(m => m.NameMaterial == fileName && m.Available == 1);
+            TempData[serviceAnswer.MessageType] = serviceAnswer.Message;
 
-                if (existsName)
-                {
-                    TempData["ErrorMessage"] = $"A material with the name {fileName} already exists.";
-                    return RedirectToAction(nameof(CreateCourseMaterial), new { type = "PDF" });
-                }
-
-                // Guardar archivo
-                using var ms = new MemoryStream();
-                await uploadedFile.CopyToAsync(ms);
-
-                var material = new CtCoursematerial
-                {
-                    NameMaterial = fileName,   // nombre del archivo con extensión
-                    MaterialType = "PDF",
-                    File = ms.ToArray(),
-                    CreateUser = User.Identity?.Name ?? "Unknown",
-                    CreateDate = DateTime.Now,
-                    LastUpdateUser = User.Identity?.Name ?? "Unknown",
-                    LastUpdateDate = DateTime.Now,
-                    Available = 1
-                };
-
-                _context.Add(material);
-            }
-
-            await _context.SaveChangesAsync();
-
-            TempData["SuccessMessage"] = "Materials uploaded successfully.";
-            return RedirectToAction(nameof(IndexCourseMaterial));
+            return RedirectToAction(nameof(CreateExternalEvidence));
         }
 
         [HttpGet]

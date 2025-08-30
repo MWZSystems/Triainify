@@ -1,6 +1,6 @@
 ﻿namespace RH_CM.Service.DTOs
 {
-    public class GetExternalEvidenceDTOs
+    public class ExternalEvidenceDTOs
     {
         public int ID {  get; set; }
         public string? FullName { get; set; }
