@@ -7,6 +7,7 @@ using RH_CM.Service.SQLSMS;
 var builder = WebApplication.CreateBuilder(args);
 
 
+
 builder.Services.AddServices();
 
 // Configurar la conexión a SQL Server para MATERIALES_CHDBContext
@@ -57,6 +58,9 @@ app.UseSession();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Cuentas}/{action=Acceso}/{id?}");
+
+builder.Services.AddSession();
+app.UseSession();
 
 app.Run();
 

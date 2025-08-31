@@ -125,7 +125,6 @@
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
-
     <script>
         // --- Accent-insensitive search filter for Users ---
         function foldEs(str) {
@@ -146,4 +145,30 @@
             });
         });
     </script>
+
+    <script>
+        $(function () {
+            if ("@TempData["SuccessMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+            if ("@TempData["ErrorMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 15000
+                });
+            }
+        });
+    </script>
 }
+

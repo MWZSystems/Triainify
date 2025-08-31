@@ -107,12 +107,12 @@ namespace RH_CM.Service.SQLSMS
         }
 
         /// <summary>
-        /// Ejecuta un Stored Procedure con parámetros y devuelve un número de filas afectadas.
+        /// Ejecuta un Stored Procedure con parámetros y devuelve un mensaje o valor scalar.
         /// </summary>
         /// <param name="storedProcedureName">Nombre del SP</param>
         /// <param name="parameters">Diccionario con nombre de parámetro y valor</param>
-        /// <returns>Número de filas afectadas</returns>
-        public async Task<int> ExecuteStoredProcedureAsync(string storedProcedureName, Dictionary<string, object> parameters)
+        /// <returns>Valor scalar devuelto por el SP (por ejemplo, 'completed')</returns>
+        public async Task<string> ExecuteStoredProcedureScalarAsync(string storedProcedureName, Dictionary<string, object> parameters)
         {
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand(storedProcedureName, conn);
@@ -127,12 +127,35 @@ namespace RH_CM.Service.SQLSMS
             }
 
             await conn.OpenAsync();
-            return await cmd.ExecuteNonQueryAsync();
+
+            // ExecuteScalarAsync devuelve el primer valor de la primera fila
+            var result = await cmd.ExecuteScalarAsync();
+
+            // Convertir a string (o null si no devuelve nada)
+            return result?.ToString();
         }
 
+        /// <summary>
+        /// Ejecuta un query que devuelve un solo valor VARBINARY y lo retorna como byte[].
+        /// </summary>
+        /// <param name="sql">Consulta SQL que devuelve una sola columna y una sola fila.</param>
+        /// <returns>Valor como byte[], o null si no hay resultados.</returns>
+        public async Task<byte[]> QuerySingleBinaryAsync(string sql)
+        {
+            using var conn = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand(sql, conn);
+            await conn.OpenAsync();
 
+            var result = await cmd.ExecuteScalarAsync();
+            if (result == DBNull.Value || result == null)
+                return null;
+
+            return (byte[])result;
+        }
 
     }
+
+
 
     // Extensión para verificar si la columna existe
     public static class SqlDataReaderExtensions

@@ -17,7 +17,6 @@ namespace RH_CM.Controllers
             return View(result);
         }
 
-
         [HttpGet]
         [Authorize(Roles = "Administrador, RHGerente")]
         public async Task<IActionResult> CreateExternalEvidence()
@@ -33,55 +32,55 @@ namespace RH_CM.Controllers
         {
             model.UserName = User.Identity?.Name ?? "Unknown";
 
-            ServiceAnswer serviceAnswer = await _externalEvidenceService.PostCreateExternalEvidence(model);
+            ServiceAnswerAndFeedbackDTOs serviceAnswerAndFeedbackDTO = await _externalEvidenceService.PostCreateExternalEvidence(model);
 
-            TempData[serviceAnswer.MessageType] = serviceAnswer.Message;
+            TempData[serviceAnswerAndFeedbackDTO.ServiceAnswer.MessageType] = serviceAnswerAndFeedbackDTO.ServiceAnswer.Message;
 
+            if (serviceAnswerAndFeedbackDTO.FeedbackFile != null)
+            {
+                string fechaActual = DateTime.Now.ToString("yyyyMMdd");
+                return File(
+                     serviceAnswerAndFeedbackDTO.FeedbackFile,
+                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                     $"External_Evidence_Error_Feedback_{fechaActual}.xlsx"
+                 );
+            }
+
+            // Si no hay archivo, solo recarga la vista con mensaje
             return RedirectToAction(nameof(CreateExternalEvidence));
         }
 
         [HttpGet]
         public async Task<IActionResult> ViewEvidenceMaterial(int id)
         {
-            var material = await _context.CtCoursematerials.FindAsync(id);
-            if (material == null)
-                return NotFound();
+            ServiceAnswerAndFeedbackDTOs serviceAnswerAndFeedbackDTOs = new ServiceAnswerAndFeedbackDTOs();
 
-            return File(material.File, "application/pdf");
+            serviceAnswerAndFeedbackDTOs = await _externalEvidenceService.GetEvidenceMaterial(id,0);
+
+            return File(serviceAnswerAndFeedbackDTOs.FeedbackFile, "application/pdf");
         }
 
-
+        [HttpGet]
         public async Task<IActionResult> DownloadEvidenceMaterial(int id)
         {
-            var material = await _context.CtCoursematerials.FindAsync(id);
-            if (material == null)
-                return NotFound();
+            ServiceAnswerAndFeedbackDTOs serviceAnswerAndFeedbackDTOs = new ServiceAnswerAndFeedbackDTOs();
 
-            return File(material.File, "application/pdf", $"{material.NameMaterial}.pdf");
+            serviceAnswerAndFeedbackDTOs = await _externalEvidenceService.GetEvidenceMaterial(id,1);
+
+            return File(serviceAnswerAndFeedbackDTOs.FeedbackFile, "application/pdf", $"{serviceAnswerAndFeedbackDTOs.ServiceAnswer.Message}.pdf");
         }
 
-        // POST: CtCoursematerial/Toggle/5
         [HttpPost]
         [Authorize(Roles = "Administrador, RHGerente")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleEvidenceMaterial(int id)
         {
-            var material = await _context.CtCoursematerials.FindAsync(id);
-            if (material == null)
-            {
-                TempData["ErrorMessage"] = "Material not found.";
-                return RedirectToAction(nameof(IndexCourseMaterial));
-            }
+            ServiceAnswer serviceAnswer = new ServiceAnswer();
 
-            material.Available = material.Available == 1 ? 0 : 1;
-            material.LastUpdateUser = User.Identity?.Name ?? "Unknown";
-            material.LastUpdateDate = DateTime.Now;
+            serviceAnswer = await _externalEvidenceService.ToggleRecord(id);
 
-            _context.Update(material);
-            await _context.SaveChangesAsync();
-
-            TempData["SuccessMessage"] = "Material status updated successfully.";
-            return RedirectToAction(nameof(IndexCourseMaterial));
+            TempData[serviceAnswer.MessageType] = serviceAnswer.Message;
+            return RedirectToAction(nameof(IndexExternalEvidence));
         }
 
 

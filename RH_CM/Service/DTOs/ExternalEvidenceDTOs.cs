@@ -7,6 +7,7 @@
         public string? CourseName { get; set; }
         public string? LevelName { get; set; }
         public decimal? Score { get; set; }
+        public DateTime? CreateDate { get; set; }
         public string? Status { get; set; }
 
     }
