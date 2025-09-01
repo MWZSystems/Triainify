@@ -3,18 +3,50 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using RH_CM.Models;
+using RH_CM.ViewModels;
 using System.Data;
 
 namespace RH_CM.Controllers
 {
     public partial class CatalogController
     {
-        // GET: SyCoursecompleted
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        //// GET: SyCoursecompleted
+        //[Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        //public async Task<IActionResult> IndexCourseCompleted()
+        //{
+        //    var items = await _context.SyCoursecompleteds.AsNoTracking().ToListAsync();
+        //    return View(items);
+        //}
         public async Task<IActionResult> IndexCourseCompleted()
         {
-            var items = await _context.SyCoursecompleteds.AsNoTracking().ToListAsync();
-            return View(items);
+            var query =
+                from s in _context.SyCoursecompleteds.AsNoTracking()
+                join ca in _context.CtCourseassignments.AsNoTracking() on s.FkCourseAssignment equals ca.PkCourseAssignment
+                join cs in _context.CtCoursestatuses.AsNoTracking() on s.FkCourseStatus equals cs.PkCoursestatus
+                join dm in _context.CtDeliverymodes.AsNoTracking() on s.FkDeliveryMode equals dm.PkDeliverymode into dmj
+                from dm in dmj.DefaultIfEmpty()
+                join hc in _context.SyHeadcounts.AsNoTracking() on s.FkHeadcount equals hc.PkHeadcount
+                orderby s.PkCourseCompleted descending
+                select new
+                {
+                    s.PkCourseCompleted,
+                    s.FkCourseAssignment,
+                    s.FkCourseStatus,
+                    s.FkDeliveryMode,
+                    s.FkHeadcount,
+                    StatusName = cs.DescriptionCoursestatus,
+                    DeliveryName = s.FkDeliveryMode == 0 ? "Not Assigned" : (dm != null ? dm.DescriptionDeliverymode : "Not Assigned"),
+                    HeadcountName = hc.Names + " " + (hc.LastName ?? "") + " " + (hc.SecondName ?? ""),
+                    hc.ControlNumber,
+                    s.Avaialble,
+                    s.CreateUser,
+                    s.CreateDate,
+                    s.LastUpdateUser,
+                    s.LastUpdateDate
+                };
+
+            var data = await query.ToListAsync();
+            return View(data);
         }
 
         // GET: SyCoursecompleted/Create
