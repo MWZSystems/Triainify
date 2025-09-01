@@ -10,6 +10,7 @@ namespace RH_CM.Models
         public int FkCourseStatus { get; set; }
         public int FkDeliveryMode { get; set; }
         public int FkHeadcount { get; set; }
+        public int Score { get; set; }
         public string CreateUser { get; set; } = null!;
         public DateTime CreateDate { get; set; }
         public string LastUpdateUser { get; set; } = null!;

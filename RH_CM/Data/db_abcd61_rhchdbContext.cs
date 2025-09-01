@@ -48,8 +48,9 @@ namespace RH_CM.Data
         public virtual DbSet<CtTestConsolidado2> CtTestConsolidado2s { get; set; } = null!;
         public virtual DbSet<CtVideomaterial> CtVideomaterials { get; set; } = null!;
         public virtual DbSet<SyCoursecompleted> SyCoursecompleteds { get; set; } = null!;
-        public virtual DbSet<SyCousemovement> SyCousemovements { get; set; } = null!;
+        public virtual DbSet<SyCoursemovement> SyCoursemovements { get; set; } = null!;
         public virtual DbSet<SyExcludedcourseassignment> SyExcludedcourseassignments { get; set; } = null!;
+        public virtual DbSet<SyExternalevidence> SyExternalevidences { get; set; } = null!;
         public virtual DbSet<SyHeadcount> SyHeadcounts { get; set; } = null!;
         public virtual DbSet<SyUserAnswer> SyUserAnswers { get; set; } = null!;
 
@@ -975,11 +976,14 @@ namespace RH_CM.Data
                 entity.Property(e => e.LastUpdateUser).HasMaxLength(50);
             });
 
-            modelBuilder.Entity<SyCousemovement>(entity =>
+            modelBuilder.Entity<SyCoursemovement>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.PkMovementCourse)
+                    .HasName("PK__SY_COURS__76E4EDC702F5803C");
 
-                entity.ToTable("SY_COUSEMOVEMENTS");
+                entity.ToTable("SY_COURSEMOVEMENTS");
+
+                entity.Property(e => e.PkMovementCourse).HasColumnName("PK_MovementCourse");
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
@@ -996,8 +1000,6 @@ namespace RH_CM.Data
                 entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.LastUpdateUser).HasMaxLength(50);
-
-                entity.Property(e => e.PkMovementCourse).HasColumnName("PK_MovementCourse");
             });
 
             modelBuilder.Entity<SyExcludedcourseassignment>(entity =>
@@ -1019,6 +1021,36 @@ namespace RH_CM.Data
                 entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.LastUpdateUser).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<SyExternalevidence>(entity =>
+            {
+                entity.HasKey(e => e.PkExternalEvidence)
+                    .HasName("PK__SY_EXTER__8A61E2F3816BC57B");
+
+                entity.ToTable("SY_EXTERNALEVIDENCE");
+
+                entity.Property(e => e.PkExternalEvidence).HasColumnName("PK_ExternalEvidence");
+
+                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.CreateUser)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EvidenceFileName)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FkMovementCourse).HasColumnName("FK_MovementCourse");
+
+                entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
+
+                entity.Property(e => e.LastUpdateUser)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Score).HasColumnType("decimal(5, 2)");
             });
 
             modelBuilder.Entity<SyHeadcount>(entity =>

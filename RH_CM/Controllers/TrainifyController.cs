@@ -291,7 +291,6 @@ namespace RH_CM.Controllers
             return RedirectToAction(nameof(IndexCourseCompleted));
         }
 
-
         // GET: DeleteCourseCompleted/5
         public async Task<IActionResult> DeleteCourseCompleted(int id)
         {
