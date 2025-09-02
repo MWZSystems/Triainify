@@ -124,21 +124,34 @@ namespace RH_CM.Controllers
         }
 
         [Authorize(Roles = "Administrador")]
-        public IActionResult CreateCourseCompletedBulk(int? fkCourse)
+        public IActionResult CreateCourseCompletedBulk(int? fkCourse, int? fkLevel)
         {
-            int selectedFkCourse = fkCourse ??
-                _context.CtCourses.AsNoTracking()
-                    .OrderBy(c => c.CourseName)
-                    .Select(c => c.PkCourse)
-                    .FirstOrDefault();
+            //int selectedFkCourse = fkCourse ??
+            //    _context.CtCourses.AsNoTracking()
+            //        .OrderBy(c => c.CourseName)
+            //        .Select(c => c.PkCourse)
+            //        .FirstOrDefault();
 
-            LoadCourseCompletedBulkViewBags(selectedFkCourse);
+            //// AHORA desde CtLevelcourse (PkLevelcourse = FkRequiredCourseLevels)
+            //int selectedFkLevel = fkLevel ??
+            //    _context.CtLevelcourses.AsNoTracking()
+            //        .OrderBy(l => l.DescripctionLevel) // <-- campo del modelo
+            //        .Select(l => l.PkLevelcourse)
+            //        .FirstOrDefault();
+
+            // Si no se pasa parámetro, dejamos 0 para que no haya selección al inicio
+            int selectedFkCourse = fkCourse ?? 0;
+            int selectedFkLevel = fkLevel ?? 0;
+
+            LoadCourseCompletedBulkViewBags(selectedFkCourse, selectedFkLevel);
+
             ViewBag.SelectedFkCourse = selectedFkCourse;
+            ViewBag.SelectedFkLevel = selectedFkLevel;
+
             return View();
         }
 
-        // Carga de combos y de la lista de personas RELACIONADAS por posición al curso
-        private void LoadCourseCompletedBulkViewBags(int selectedFkCourse)
+        private void LoadCourseCompletedBulkViewBags(int selectedFkCourse, int selectedFkLevel)
         {
             // Cursos
             ViewBag.Courses = _context.CtCourses
@@ -147,21 +160,53 @@ namespace RH_CM.Controllers
                 .OrderBy(x => x.CourseName)
                 .ToList();
 
-            // Headcounts relacionados por posición con CourseAssignments del curso elegido
+            // Niveles requeridos: CtLevelcourse (PkLevelcourse = FkRequiredCourseLevels)
+            ViewBag.Levels = _context.CtLevelcourses
+                .AsNoTracking()
+                .Select(l => new { l.PkLevelcourse, l.DescripctionLevel })
+                .OrderBy(x => x.DescripctionLevel)
+                .ToList();
+
+            // Headcounts relacionados por posición contra CourseAssignments (curso + nivel)
+            // Muestra el NamePosition desde CtPosition
             ViewBag.Headcounts = _context.SyHeadcounts
                 .AsNoTracking()
                 .Where(h => _context.CtCourseassignments
-                    .Any(ca => ca.FkPosition == h.FkPosition && ca.FkCourse == selectedFkCourse))
+                    .Any(ca => ca.FkCourse == selectedFkCourse
+                               && ca.FkRequiredCourseLevels == selectedFkLevel
+                               && ca.FkPosition == h.FkPosition))
                 .Select(h => new
                 {
                     h.PkHeadcount,
-                    Display = h.ControlNumber + " - " + h.Names + " " + h.LastName + " " + h.SecondName,
-                    // Mostrar qué CourseAssignment se usará (criterio: el PK más bajo/alto; aquí el más bajo)
+                    // Trae el nombre de la posición (LEFT JOIN via subquery)
+                    PositionName = _context.CtPositions
+                        .AsNoTracking()
+                        .Where(p => p.PkPosition == h.FkPosition)
+                        .Select(p => p.NamePosition)
+                        .FirstOrDefault(),
+
+                    // Mantén tu CourseAssignmentId (el PK más bajo que cumple curso+nivel+posición)
                     CourseAssignmentId = _context.CtCourseassignments
-                        .Where(ca => ca.FkPosition == h.FkPosition && ca.FkCourse == selectedFkCourse)
+                        .Where(ca => ca.FkCourse == selectedFkCourse
+                                     && ca.FkRequiredCourseLevels == selectedFkLevel
+                                     && ca.FkPosition == h.FkPosition)
                         .OrderBy(ca => ca.PkCourseAssignment)
                         .Select(ca => ca.PkCourseAssignment)
-                        .FirstOrDefault()
+                        .FirstOrDefault(),
+
+                    // Display amigable: "Control - Nombre Apellidos | Puesto"
+                    // (se agrega el NamePosition y se limpian espacios)
+                    Display = (
+                        (h.ControlNumber + " - " +
+                        h.Names + " " +
+                        (h.LastName ?? "") + " " +
+                        (h.SecondName ?? "")).Trim() +
+                        " | " +
+                        (_context.CtPositions
+                            .Where(p => p.PkPosition == h.FkPosition)
+                            .Select(p => p.NamePosition)
+                            .FirstOrDefault() ?? "Sin posición")
+                    )
                 })
                 .OrderBy(x => x.Display)
                 .ToList();
@@ -180,6 +225,8 @@ namespace RH_CM.Controllers
                 .OrderBy(x => x.Text)
                 .ToList();
         }
+
+
 
         [HttpPost]
         [Authorize(Roles = "Administrador")]
@@ -267,7 +314,6 @@ namespace RH_CM.Controllers
             // Mantén el curso seleccionado al regresar al GET
             return RedirectToAction(nameof(CreateCourseCompletedBulk), new { fkCourse = FkCourse });
         }
-
 
         // GET: SyCoursecompleted/Edit/5
         [Authorize(Roles = "Administrador")]
