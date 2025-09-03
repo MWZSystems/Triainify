@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RH_CM.Models;
 using RH_CM.Service.DTOs;
 
 namespace RH_CM.Controllers
@@ -12,8 +11,7 @@ namespace RH_CM.Controllers
         [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
         public async Task<IActionResult> IndexExternalEvidence()
         {
-            List<ExternalEvidenceDTOs> result = await _externalEvidenceService.GetIndex();
-            
+            List<ExternalEvidenceDTOs> result = await _externalEvidenceService.GetIndexAsync();
             return View(result);
         }
 
@@ -21,8 +19,7 @@ namespace RH_CM.Controllers
         [Authorize(Roles = "Administrador, RHGerente")]
         public async Task<IActionResult> CreateExternalEvidence()
         {
-            CreateExternalEvidenceDTOs result = await _externalEvidenceService.GetCreateExternalEvidence();
-
+            CreateExternalEvidenceDTOs result = await _externalEvidenceService.GetCreateExternalEvidenceAsync();
             return View(result);
         }
 
@@ -32,7 +29,7 @@ namespace RH_CM.Controllers
         {
             model.UserName = User.Identity?.Name ?? "Unknown";
 
-            ServiceAnswerAndFeedbackDTOs serviceAnswerAndFeedbackDTO = await _externalEvidenceService.PostCreateExternalEvidence(model);
+            ServiceAnswerAndFeedbackDTOs serviceAnswerAndFeedbackDTO = await _externalEvidenceService.PostCreateExternalEvidenceAsync(model);
 
             TempData[serviceAnswerAndFeedbackDTO.ServiceAnswer.MessageType] = serviceAnswerAndFeedbackDTO.ServiceAnswer.Message;
 
@@ -53,20 +50,14 @@ namespace RH_CM.Controllers
         [HttpGet]
         public async Task<IActionResult> ViewEvidenceMaterial(int id)
         {
-            ServiceAnswerAndFeedbackDTOs serviceAnswerAndFeedbackDTOs = new ServiceAnswerAndFeedbackDTOs();
-
-            serviceAnswerAndFeedbackDTOs = await _externalEvidenceService.GetEvidenceMaterial(id,0);
-
+            ServiceAnswerAndFeedbackDTOs serviceAnswerAndFeedbackDTOs = await _externalEvidenceService.GetEvidenceMaterialAsync(id,0);
             return File(serviceAnswerAndFeedbackDTOs.FeedbackFile, "application/pdf");
         }
 
         [HttpGet]
         public async Task<IActionResult> DownloadEvidenceMaterial(int id)
         {
-            ServiceAnswerAndFeedbackDTOs serviceAnswerAndFeedbackDTOs = new ServiceAnswerAndFeedbackDTOs();
-
-            serviceAnswerAndFeedbackDTOs = await _externalEvidenceService.GetEvidenceMaterial(id,1);
-
+            ServiceAnswerAndFeedbackDTOs serviceAnswerAndFeedbackDTOs = await _externalEvidenceService.GetEvidenceMaterialAsync(id,1);
             return File(serviceAnswerAndFeedbackDTOs.FeedbackFile, "application/pdf", $"{serviceAnswerAndFeedbackDTOs.ServiceAnswer.Message}.pdf");
         }
 
@@ -75,10 +66,7 @@ namespace RH_CM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleEvidenceMaterial(int id)
         {
-            ServiceAnswer serviceAnswer = new ServiceAnswer();
-
-            serviceAnswer = await _externalEvidenceService.ToggleRecord(id);
-
+            ServiceAnswer serviceAnswer = await _externalEvidenceService.ToggleRecord(id);
             TempData[serviceAnswer.MessageType] = serviceAnswer.Message;
             return RedirectToAction(nameof(IndexExternalEvidence));
         }
@@ -89,12 +77,8 @@ namespace RH_CM.Controllers
         [Authorize(Roles = "Administrador, RHGerente")]
         public async Task<IActionResult> EditEvidenceMaterial(int? id)
         {
-            if (id == null) return NotFound();
-
-            var material = await _context.CtCoursematerials.FindAsync(id);
-            if (material == null) return NotFound();
-
-            return View(material); // ya no cargamos ViewBags
+            EditExternalEvidenceDTOs getResult = await _externalEvidenceService.GetUpdateRecordAsync(id);
+            return View(getResult);
         }
 
 
@@ -102,51 +86,11 @@ namespace RH_CM.Controllers
         [HttpPost]
         [Authorize(Roles = "Administrador, RHGerente")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditEvidenceMaterial(/*int id,*/ CtCoursematerial model, IFormFile? uploadedFile)
+        public async Task<IActionResult> EditEvidenceMaterial(EditExternalEvidenceDTOs DTOs, IFormFile? uploadedFile)
         {
-            //if (id != model.PkCoursematerial) return NotFound();
-
-            int id = model.PkCoursematerial;
-
-
-            if (uploadedFile == null || uploadedFile.Length == 0)
-            {
-                TempData["ErrorMessage"] = "Choose a File.";
-                return RedirectToAction(nameof(EditCourseMaterial), new { id });
-            }
-
-
-            var existing = await _context.CtCoursematerials.FindAsync(id);
-            if (existing == null) return NotFound();
-
-            var fileName = uploadedFile.FileName?.ToLowerInvariant() ?? "";
-
-            // Actualizar campos editables
-            existing.NameMaterial = fileName;
-            existing.LastUpdateUser = User.Identity?.Name ?? "Unknown";
-            existing.LastUpdateDate = DateTime.Now;
-
-
-            // Si subió nuevo archivo (PDF)
-            if (uploadedFile != null && uploadedFile.Length > 0)
-            {
-                //var fileName = uploadedFile.FileName?.ToLowerInvariant() ?? "";
-                if (!fileName.EndsWith(".pdf"))
-                {
-                    TempData["ErrorMessage"] = "Only PDF files are allowed (.pdf).";
-                    return RedirectToAction(nameof(EditCourseMaterial), new { id });
-                }
-
-                using var ms = new MemoryStream();
-                await uploadedFile.CopyToAsync(ms);
-                existing.File = ms.ToArray();
-            }
-
-            _context.Update(existing);
-            await _context.SaveChangesAsync();
-
-            TempData["SuccessMessage"] = "Material updated successfully.";
-            return RedirectToAction(nameof(IndexCourseMaterial));
+            ServiceAnswer serviceAnswer = await _externalEvidenceService.PostUpdateRecordAsync(DTOs, uploadedFile);
+            TempData[serviceAnswer.MessageType] = serviceAnswer.Message;
+            return RedirectToAction(nameof(IndexExternalEvidence));
         }
 
 
@@ -155,26 +99,9 @@ namespace RH_CM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteEvidenceMaterial(int id)
         {
-
-            var validation = await _context.CtCourseLevelMaterials
-            .FirstOrDefaultAsync(x => x.FkCourseMaterial == id);
-
-            if (validation != null)
-            {
-                TempData["ErrorMessage"] = "This material is linked to a Course-Level";
-                return RedirectToAction(nameof(IndexCourseMaterial));
-            }
-
-
-            var material = await _context.CtCoursematerials.FindAsync(id);
-            if (material != null)
-            {
-
-                _context.CtCoursematerials.Remove(material);
-                await _context.SaveChangesAsync();
-            }
-            TempData["SuccessMessage"] = "Material has been deleted Successfully";
-            return RedirectToAction(nameof(IndexCourseMaterial));
+            ServiceAnswer serviceAnswer = await _externalEvidenceService.PostDeleteRecordAsync(id);
+            TempData[serviceAnswer.MessageType] = serviceAnswer.Message;
+            return RedirectToAction(nameof(IndexExternalEvidence));
         }
 
 

@@ -1,7 +1,11 @@
-﻿namespace RH_CM.Service.DTOs
+﻿using DocumentFormat.OpenXml.Bibliography;
+
+namespace RH_CM.Service.DTOs
 {
     public class ServiceAnswer
     {
+        public const string MessageType_Success  = "SuccessMessage";
+        public const string MessageType_Error = "ErrorMessage";
         public bool Success { get; set; }
         public string? MessageType { get; set; }
         public string? Message { get; set; }

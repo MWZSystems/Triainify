@@ -26,7 +26,7 @@ namespace RH_CM.Service.ExternalEvidence
         /// Gets Data for index in object List<GetExternalEvidenceDTOs>
         /// </summary>
         /// <returns></returns>
-        public async Task<List<ExternalEvidenceDTOs>> GetIndex()
+        public async Task<List<ExternalEvidenceDTOs>> GetIndexAsync()
         {
             //Gets data for preliminary Crud Table
 
@@ -49,6 +49,7 @@ namespace RH_CM.Service.ExternalEvidence
 
             List<ExternalEvidenceDTOs> result = await _unitOfWork.QueryListAsync<ExternalEvidenceDTOs>(sql);
 
+
             return result;
 
         }
@@ -58,11 +59,11 @@ namespace RH_CM.Service.ExternalEvidence
         /// Returns from DB the List<object> needed for the view
         /// </summary>
         /// <returns></returns>
-        public async Task<CreateExternalEvidenceDTOs> GetCreateExternalEvidence()
+        public async Task<CreateExternalEvidenceDTOs> GetCreateExternalEvidenceAsync()
         {
             //Gets data for Combobox in CreateExternalEvidence
 
-            CreateExternalEvidenceDTOs result = new();
+            CreateExternalEvidenceDTOs DTOs = new();
 
             string query1 = @"
 
@@ -76,7 +77,7 @@ namespace RH_CM.Service.ExternalEvidence
                                 LEFT JOIN dbo.CT_POSITION B ON A.FK_POSITION = B.PK_POSITION
                                WHERE A.AVAILABLE = 1";
 
-            result.User = await _unitOfWork.QuerySingleColumnAsync<string>(query1);
+            DTOs.User = await _unitOfWork.QuerySingleColumnAsync<string>(query1);
 
             string query2 = @"
                                 SELECT DISTINCT 
@@ -86,17 +87,15 @@ namespace RH_CM.Service.ExternalEvidence
                                 WHERe A.Available = 1
                                 --AND B.FK_DeliveryMode = 2 -- Comentado mientras emmanuel carga externos";
 
-            result.Course = await _unitOfWork.QuerySingleColumnAsync<string>(query2);
+            DTOs.Course = await _unitOfWork.QuerySingleColumnAsync<string>(query2);
 
-            result.Level = new List<string> { "Introducción", "Básico", "Intermedio", "Avanzado" };
+            DTOs.Level = new List<string> { "Introducción", "Básico", "Intermedio", "Avanzado" };
 
-
-            return result;
-
+            return DTOs;
         }
 
 
-        public async Task<ServiceAnswerAndFeedbackDTOs> PostCreateExternalEvidence(CreateExternalEvidenceInputDTOs DTOs)
+        public async Task<ServiceAnswerAndFeedbackDTOs> PostCreateExternalEvidenceAsync(CreateExternalEvidenceInputDTOs DTOs)
         {
             //Post data from view to db
 
@@ -126,11 +125,8 @@ namespace RH_CM.Service.ExternalEvidence
             feedBackDT.Columns.Add("EvidenceFilename", typeof(string));
             feedBackDT.Columns.Add("FeedBackComment", typeof(string));
 
-
             ServiceAnswerAndFeedbackDTOs serviceAnswerAndFeedback = new();
             serviceAnswerAndFeedback.FeedbackFile = null;
-
-
 
             if (!PDFValidation(DTOs.UploadedFile))
             {
@@ -260,7 +256,7 @@ namespace RH_CM.Service.ExternalEvidence
         /// <param name="id"></param>
         /// <param name="choose"> 0 -> For only byte[] | 1 -> For File name in ServiceAnswer.Message </param>
         /// <returns></returns>
-        public async Task<ServiceAnswerAndFeedbackDTOs> GetEvidenceMaterial(int id, int choose)
+        public async Task<ServiceAnswerAndFeedbackDTOs> GetEvidenceMaterialAsync(int id, int choose)
         {
 
             ServiceAnswerAndFeedbackDTOs serviceAnswerAndFeedbackDTOs = new ServiceAnswerAndFeedbackDTOs();
@@ -340,13 +336,141 @@ namespace RH_CM.Service.ExternalEvidence
                 return serviceAnswer;
         }
 
-        public async Task<ServiceAnswer> GetUpdateRecord(int id)
+        public async Task<EditExternalEvidenceDTOs> GetUpdateRecordAsync(int? id)
+        {
+            List<EditExternalEvidenceDTOs> result = new();
+            //PK evidence
+            //ControlNumber
+            //FullName
+            //Position
+            //Course
+            //Level
+            //Pdf --Edit
+            //Score --Edit
+
+            string query = $@"  SELECT EV.PK_ExternalEvidence
+		                        ,HC.CONTROL_NUMBER As ControlNumber
+		                        ,HC.NAMES + ' ' + HC.LAST_NAME + ' ' + HC.SECOND_NAME AS FullName
+		                        ,PO.NAME_POSITION As NamePosition
+		                        ,CO.CourseName
+		                        ,LC.DESCRIPCTION_LEVEL AS [Level]
+		                        ,EV.EvidenceFile
+		                        ,EV.Score
+
+                          FROM [dbo].[SY_EXTERNALEVIDENCE] EV
+		                        LEFT JOIN dbo.SY_COURSEMOVEMENTS CM ON EV.FK_MovementCourse = CM.PK_MovementCourse
+		                        LEFT JOIN dbo.SY_COURSECOMPLETED CC ON CC.PK_CourseCompleted = CM.FK_CourseCompleted
+		                        LEFT JOIN dbo.SY_HEADCOUNT HC ON CM.FK_Headcount = HC.PK_HEADCOUNT
+		                        LEFT JOIN dbo.CT_POSITION PO ON PO.PK_POSITION = HC.FK_POSITION
+		                        LEFT JOIN dbo.CT_COURSEASSIGNMENTS CA ON Ca.PK_CourseAssignment = CC.FK_CourseAssignment
+		                        LEFT JOIN dbo.CT_COURSE CO ON CO.PK_Course = CA.FK_Course
+		                        LEFT JOIN [dbo].[CT_LEVELCOURSE] LC ON LC.PK_LEVELCOURSE = CA.FK_RequiredCourseLevels
+	                        WHERE EV.PK_ExternalEvidence = {id}";
+
+            result = await _unitOfWork.QueryListAsync<EditExternalEvidenceDTOs>(query);
+
+
+            //PK evidence
+            //Pdf
+            //Score
+
+            return result.FirstOrDefault();
+        }
+
+        public async Task<ServiceAnswer> PostUpdateRecordAsync(EditExternalEvidenceDTOs DTOs, IFormFile file)
+        {
+            ServiceAnswer serviceAnswer = new();
+            int? PK_ExternalEvidence = DTOs.PK_ExternalEvidence;
+            byte[] fileBinary = null;
+            string fileNamePDF = null;
+            decimal? Score = DTOs.Score == 0 ? (decimal?)null : DTOs.Score;
+
+            fileBinary = new byte[1]; // un byte con valor 0
+
+            if (Score == null && file == null)
+            {
+                serviceAnswer.MessageType = "ErrorMessage";
+                serviceAnswer.Message = "No data was provided for update";
+                return serviceAnswer;
+            }
+
+            if (file != null)
+            {
+                var fileName = file.FileName?.ToLowerInvariant() ?? "";
+
+
+                if (!fileName.EndsWith(".pdf"))
+                {
+                    serviceAnswer.MessageType = "ErrorMessage";
+                    serviceAnswer.Message = "Only PDFs can be provided.";
+                    return serviceAnswer;
+                }
+
+                //Save file in Binary
+                using (var memoryStream = new MemoryStream())
+                {
+                    file.CopyTo(memoryStream);
+                    fileBinary = memoryStream.ToArray();
+                }
+
+                fileNamePDF = file.FileName;
+            }
+
+
+            var parameters = new Dictionary<string, object>
+                {
+                    { "@pPK_ExternalEvidence", PK_ExternalEvidence },
+                    { "@pScore", Score },
+                    { "@pFile", fileBinary },
+                    { "@pFileName", fileNamePDF }
+                };
+
+
+            string result = await _unitOfWork.ExecuteStoredProcedureScalarAsync("dbo.sp_PostEditExternalEvidence", parameters);
+
+            if (result != "Completed")
+            {
+                serviceAnswer.MessageType = "ErrorMessage";
+                serviceAnswer.Message = "UpdateFailed";
+                return serviceAnswer;
+            }
+
+            serviceAnswer.MessageType = "SuccessMessage";
+            serviceAnswer.Message = "Record Updated";
+
+            return serviceAnswer;
+
+        }
+
+        public async Task<ServiceAnswer> PostDeleteRecordAsync(int? id)
         {
             ServiceAnswer serviceAnswer = new();
 
+            //Es un SP en Cadena.
 
-            return serviceAnswer;
+            //1 El SP debe de Eliminar el registro de External Evidence
+            //2 Eliminar la linea del SY_CourseMovements
+            //3 Si existe un registro anterior en SY_CourseMovements usarlo para actualizar el Coursecompleted > Para que vuelva a cobrar ese curso
+            //si no existe record anterior. Borrarlo de CourseCompleted
+
+            string Query = @$"EXECUTE [dbo].[sp_DeleteEvidenceMaterial] {id}";
+
+            string answer = await _unitOfWork.QuerySingleScalarAsync(Query);
+
+            if (answer == "Completed")
+            {
+                serviceAnswer.MessageType = ServiceAnswer.MessageType_Success;
+                serviceAnswer.Message = $"Record {id} Successfully Deleted";
+            }
+            else
+            {
+                serviceAnswer.MessageType = ServiceAnswer.MessageType_Error;
+                serviceAnswer.Message = $"Record could not be deleted";
+            }
+
+                return serviceAnswer;
         }
+
         /// <summary>
         /// Validates IFormFile not empty. And 'PDF' Extension
         /// </summary>
