@@ -978,9 +978,12 @@ namespace RH_CM.Data
 
             modelBuilder.Entity<SyCoursemovement>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.PkMovementCourse)
+                    .HasName("PK__SY_COURS__76E4EDC702F5803C");
 
                 entity.ToTable("SY_COURSEMOVEMENTS");
+
+                entity.Property(e => e.PkMovementCourse).HasColumnName("PK_MovementCourse");
 
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
@@ -997,8 +1000,6 @@ namespace RH_CM.Data
                 entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.LastUpdateUser).HasMaxLength(50);
-
-                entity.Property(e => e.PkMovementCourse).HasColumnName("PK_MovementCourse");
             });
 
             modelBuilder.Entity<SyExcludedcourseassignment>(entity =>
@@ -1025,7 +1026,7 @@ namespace RH_CM.Data
             modelBuilder.Entity<SyExternalevidence>(entity =>
             {
                 entity.HasKey(e => e.PkExternalEvidence)
-                    .HasName("PK__SY_EXTER__8A61E2F323FB6926");
+                    .HasName("PK__SY_EXTER__8A61E2F3816BC57B");
 
                 entity.ToTable("SY_EXTERNALEVIDENCE");
 
@@ -1035,6 +1036,10 @@ namespace RH_CM.Data
 
                 entity.Property(e => e.CreateUser)
                     .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EvidenceFileName)
+                    .HasMaxLength(100)
                     .IsUnicode(false);
 
                 entity.Property(e => e.FkMovementCourse).HasColumnName("FK_MovementCourse");

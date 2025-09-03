@@ -196,7 +196,7 @@ namespace RH_CM.Controllers
             var departments = await _context.CtDepartments.ToListAsync();
             var positions = await _context.CtPositions.ToListAsync();
             var syHeadCounts = await _context.SyHeadcounts
-            .Where(h => h.Available == 1)
+            //.Where(h => h.Available == 1)
             .ToListAsync();
 
 

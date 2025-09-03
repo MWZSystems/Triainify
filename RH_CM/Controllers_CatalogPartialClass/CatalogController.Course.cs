@@ -278,7 +278,6 @@ namespace RH_CM.Controllers
             return RedirectToAction(nameof(IndexCourse));
         }
 
-
         private bool CtCourseExists(int id)
         {
             return _context.CtCourses.Any(e => e.PkCourse == id);

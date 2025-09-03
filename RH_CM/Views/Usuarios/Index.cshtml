@@ -1,26 +1,50 @@
 ﻿@model IEnumerable<RH_CM.ViewModels.AppUsuario>
+
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
 @{
     ViewData["Title"] = "User administrator";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1 class="text-center">User administrator</h1>
-
 <div class="row">
-    <div class="col-sm-12">
-        <div class="card">
-            <div class="card-body">
-                
-                    @if (Model.Count() > 0)
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">
+            <i class="align-middle fas fa-users-cog"></i> @ViewData["Title"]
+        </h1>
+    </div>
+    <div class="col-auto">
+        <a class="btn btn-facebook" asp-controller="Usuarios" asp-action="Crear">
+            <i class="align-middle fas fa-user-plus"></i> CREATE NEW USER
+        </a>
+    </div>
+</div>
+
+<!-- Loader -->
+<div id="loader" class="text-center my-5">
+    <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<!-- Tabla envuelta en contenedor oculto -->
+<div id="tableContainer" style="display:none;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+
+                    @if (Model != null && Model.Any())
                     {
-                        <table id="datatables-reponsive" class="table table-striped table-hover" style="width:100%">
-                            <thead class="table-secondary">
+                        <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
+                            <thead class="table-primary">
                                 <tr>
-                                    <th>@Html.DisplayNameFor(m => m.UserName)</th>
-                                    <th>@Html.DisplayNameFor(m => m.Email)</th>
-                                    <th>@Html.DisplayNameFor(m => m.Names)</th>
-                                    <th>@Html.DisplayNameFor(m => m.LastName)</th>
-                                    <th>@Html.DisplayNameFor(m => m.Rol)</th>
+                                    <th>@Html.DisplayNameFor(m => m.First().UserName)</th>
+                                    @* <th>@Html.DisplayNameFor(m => m.First().Email)</th> *@
+                                    <th>Nombre completo</th>
+                                    <th>@Html.DisplayNameFor(m => m.First().Rol)</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -28,73 +52,79 @@
                                 @foreach (var item in Model)
                                 {
                                     <tr>
-                                        <td>@Html.DisplayFor(m => item.UserName)</td>
-                                        <td>@Html.DisplayFor(m => item.Email)</td>
-                                        <td>@Html.DisplayFor(m => item.Names)</td>
-                                        <td>@Html.DisplayFor(m => item.LastName)</td>
-                                        <td>@Html.DisplayFor(m => item.Rol)</td>
+                                        <td>@Html.DisplayFor(_ => item.UserName)</td>
+                                        @* <td>@Html.DisplayFor(_ => item.Email)</td> *@
+                                        <td>@($"{item.Names} {item.LastName}")</td>
+                                        <td>@Html.DisplayFor(_ => item.Rol)</td>
                                         <td>
                                             <div class="text-center">
-                                                <form asp-action="Borrar" asp-route-idUsuario="@item.Id">
-                                                    <a class="btn btn-primary" asp-controller="Usuarios" asp-action="Editar" asp-route-id="@item.Id">Editar</a>
+                                                <form asp-controller="Usuarios" asp-action="Borrar" asp-route-idUsuario="@item.Id" method="post" style="display:inline;">
+                                                    <a class="btn btn-warning" asp-controller="Usuarios" asp-action="Editar" asp-route-id="@item.Id">
+                                                        <i class="fas fa-edit"></i> Editar
+                                                    </a>
 
-                                                    <!--Asignar claims-->
-                                                    <a class="btn btn-success" asp-controller="Usuarios" asp-action="AdministrarClaimsUsuario" asp-route-idUsuario="@item.Id" style="cursor:pointer;">Asignar Permisos/Claims</a>
+                                                    <!-- Asignar claims -->
+                                                    <a class="btn btn-success" asp-controller="Usuarios" asp-action="AdministrarClaimsUsuario" asp-route-idUsuario="@item.Id" style="cursor:pointer;">
+                                                        <i class="fas fa-user-shield"></i> Permisos/Claims
+                                                    </a>
 
                                                     @if (item.LockoutEnd == null || item.LockoutEnd < DateTime.Now)
                                                     {
-                                                        //Aquí se muestra la opción para bloquear el usuario
-                                                        <button asp-action="BloquearDesbloquear" asp-route-idUsuario="@item.Id" class="btn btn-outline-light" style="cursor:pointer">
-                                                            <strong>Bloquear</strong>
+                                                        <!-- Bloquear -->
+                                                        <button asp-controller="Usuarios" asp-action="BloquearDesbloquear" asp-route-idUsuario="@item.Id" class="btn btn-outline-light" style="cursor:pointer">
+                                                            <i class="fas fa-user-lock"></i> <strong>Bloquear</strong>
                                                         </button>
                                                     }
                                                     else
                                                     {
-                                                        //Aquí se muestra la opción para desbloquear el usuario
-                                                        <button asp-action="BloquearDesbloquear" asp-route-idUsuario="@item.Id" class="btn btn-warning" style="cursor:pointer">
-                                                            <strong>Desbloquear</strong>
+                                                        <!-- Desbloquear -->
+                                                        <button asp-controller="Usuarios" asp-action="BloquearDesbloquear" asp-route-idUsuario="@item.Id" class="btn btn-warning" style="cursor:pointer">
+                                                            <i class="fas fa-unlock"></i> <strong>Desbloquear</strong>
                                                         </button>
                                                     }
 
-                                                    <button type="submit" onclick="return confirm('Esta seguro de querer borrar este registro?')" class="btn btn-danger">
-                                                        Borrar
+                                                    <button type="submit" onclick="return confirm('¿Está seguro de querer borrar este registro?')" class="btn btn-danger">
+                                                        <i class="align-middle fas fa-trash-alt"></i> Borrar
                                                     </button>
-
                                                 </form>
                                             </div>
                                         </td>
                                     </tr>
                                 }
                             </tbody>
-                        </table>
 
+                        </table>
                     }
                     else
                     {
                         <p>No hay registros</p>
                     }
-                
+
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 
     <script>
         $(document).ready(function () {
-            //Llamar a datatable
+            // Ocultar tabla y mostrar loader
+            $('#tableContainer').hide();
+            $('#loader').show();
+
+            // Inicializar DataTable con traducción al español y sin orden automático
             $('#datatables-responsive').DataTable({
                 responsive: true,
+                order: [], // sin orden automático, respeta el orden del servidor
                 language: {
                     "decimal": "",
                     "emptyTable": "No hay información",
                     "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
-                    "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+                    "infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
                     "infoFiltered": "(Filtrado de _MAX_ total entradas)",
-                    "infoPostFix": "",
                     "thousands": ",",
                     "lengthMenu": "Mostrar _MENU_ Entradas",
                     "loadingRecords": "Cargando...",
@@ -103,39 +133,40 @@
                     "zeroRecords": "Sin resultados encontrados",
                     "paginate": {
                         "first": "Primero",
-                        "last": "Ultimo",
+                        "last": "Último",
                         "next": "Siguiente",
                         "previous": "Anterior"
                     }
+                },
+                initComplete: function () {
+                    $('#loader').fadeOut(200, function () {
+                        $('#tableContainer').fadeIn(200);
+                    });
                 }
             });
 
-            // Mostrar mensaje de éxito en el modal
-            if ("@TempData["Correcto"]" !== "") {
+            // Notificaciones (acepta tanto Correcto/Error como SuccessMessage/ErrorMessage)
+            var ok = "@(TempData["Correcto"] ?? TempData["SuccessMessage"])";
+            var err = "@(TempData["Error"] ?? TempData["ErrorMessage"])";
+
+            if (ok && ok !== "") {
                 window.notyf.open({
                     type: 'success',
-                    message: "@TempData["Correcto"]",
+                    message: ok,
                     ripple: true,
                     dismissible: true,
-                    position: {
-                        x: 'center',
-                        y: 'top'
-                    },
+                    position: { x: 'center', y: 'top' },
                     duration: 5000
                 });
             }
 
-            // Mostrar mensaje de error en el modal
-            if ("@TempData["Error"]" !== "") {
+            if (err && err !== "") {
                 window.notyf.open({
                     type: 'error',
-                    message: "@TempData["Error"]",
+                    message: err,
                     ripple: true,
                     dismissible: true,
-                    position: {
-                        x: 'center',
-                        y: 'top'
-                    },
+                    position: { x: 'center', y: 'top' },
                     duration: 5000
                 });
             }
