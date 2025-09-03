@@ -1,0 +1,151 @@
+﻿@model RH_CM.Service.DTOs.EditExternalEvidenceDTOs
+
+@{
+    ViewData["Title"] = "Edit External Evidence";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">
+            <i class="align-middle fas fa-graduation-cap"></i> @ViewData["Title"]
+        </h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+
+            <div class="card-header">
+                <h5 class="card-title">External Evidence Details</h5>
+                <h6 class="card-subtitle text-muted">
+                    Please fill the fields that you want to update = <strong>File</strong>(pdf) or <strong>Score</strong>(between 0 and 100), for this record. Only filled fields will be updated.
+                </h6>
+            </div>
+
+            <div class="card-header">
+                    <div class="mb-3 text-center d-flex flex-wrap justify-content-center gap-3">
+                        <div class="p-3 fw-bold rounded fs-3">
+                            ID: @Model.PK_ExternalEvidence
+                        </div>
+                        <div class="p-3 fw-bold rounded fs-3">
+                            Control Number: @Model.ControlNumber
+                        </div>
+                        <div class="p-3 fw-bold rounded fs-3">
+                            Name: @Model.FullName
+                        </div>
+                        <div class="p-3 fw-bold rounded fs-3">
+                            Position: @Model.NamePosition
+                        </div>
+                        <div class="p-3 fw-bold rounded fs-3">
+                            Course: @Model.CourseName
+                        </div>
+                        <div class="p-3 fw-bold rounded fs-3">
+                            Level: @Model.Level
+                        </div>
+                    </div>
+                @* <h5 class="card-title mb-0">Matrix - @first?.UserName</h5> *@
+            </div>
+
+           
+
+            <div class="card-body">
+
+
+                <form asp-action="EditEvidenceMaterial" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+
+                    <!-- Hidden PK -->
+                    <input type="hidden" asp-for="PK_ExternalEvidence" />
+
+                    <!-- SCORE -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Score <span class="text-danger">*</span></label>
+                        <input type="number"
+                               name="Score"
+                               class="form-control"
+                               step="0.01"
+                               min="0.00"
+                               max="100.00"
+                               placeholder="0.00 - 100.00"
+                                />
+                        <small class="form-text text-muted">Allowed range: 0.00 – 100.00 | Current Score: @Model.Score</small>
+                    </div>
+
+                    <!-- Upload only one File -->
+                    <div class="mb-3 col-md-12">
+                        <label class="form-label">
+                            Upload File (PDF) <span class="text-danger">*</span>
+                        </label>
+                        <input type="file" name="uploadedFile" class="form-control" accept=".pdf" />
+                    </div>
+
+
+                    <!-- ACTIONS -->
+                    <div class="text-end">
+                        <a asp-action="IndexExternalEvidence" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        // --- Accent-insensitive search filter for Users ---
+        function foldEs(str) {
+            return (str ?? "")
+                .toString()
+                .toLocaleLowerCase("es")
+                .normalize("NFD")
+                .replace(/n\u0303/g, "ñ") // ñ aware
+                .replace(/[\u0300-\u036f]/g, ""); // remove other diacritics
+        }
+
+        document.getElementById("searchUsers")?.addEventListener("input", function () {
+            const q = foldEs(this.value);
+            document.querySelectorAll("#userWrapper .form-check").forEach(row => {
+                const label = row.querySelector("label");
+                const txt = foldEs(label ? label.textContent : "");
+                row.style.display = txt.includes(q) ? "" : "none";
+            });
+        });
+    </script>
+
+    <script>
+        $(function () {
+            if ("@TempData["SuccessMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+            if ("@TempData["ErrorMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 15000
+                });
+            }
+        });
+    </script>
+}
+
+
+

@@ -1,0 +1,174 @@
+﻿@model RH_CM.Service.DTOs.CreateExternalEvidenceDTOs
+
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    ViewData["Title"] = "Create External Evidence";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">CREATE EXTERNAL EVIDENCE</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">External Evidence Details</h5>
+                <h6 class="card-subtitle text-muted">
+                    Please select <strong>User(s)</strong>, a <strong>Course</strong>, and a <strong>Level</strong>.
+                    Then assign a <em>Score</em> between 0 and 100.
+                </h6>
+            </div>
+
+            <div class="card-body">
+                <form asp-action="CreateExternalEvidence" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <!-- USERS -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label fw-bold mb-0">Users <span class="text-danger">*</span></label>
+                            <input id="searchUsers" class="form-control form-control-sm" placeholder="Search User..." style="max-width: 200px;" />
+                        </div>
+
+                        <div id="userWrapper" class="border rounded p-2" style="max-height: 300px; overflow:auto">
+                            @if (Model.User != null && Model.User.Any())
+                            {
+                                foreach (var u in Model.User)
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input sel-user" type="checkbox" name="SelectedUsers" value="@u" id="user_@u" />
+                                        <label class="form-check-label" for="user_@u">@u</label>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p class="text-muted">No users available.</p>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- COURSE -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Course <span class="text-danger">*</span></label>
+                        <select class="form-control" name="SelectedCourse" required>
+                            <option value="">-- Select Course --</option>
+                            @if (Model.Course != null && Model.Course.Any())
+                            {
+                                foreach (var c in Model.Course)
+                                {
+                                    <option value="@c">@c</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <!-- LEVEL -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Level <span class="text-danger">*</span></label>
+                        <select class="form-control" name="SelectedLevel" required>
+                            <option value="">-- Select Level --</option>
+                            @if (Model.Level != null && Model.Level.Any())
+                            {
+                                foreach (var l in Model.Level)
+                                {
+                                    <option value="@l">@l</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <!-- SCORE -->
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Score <span class="text-danger">*</span></label>
+                        <input type="number"
+                               name="Score"
+                               class="form-control"
+                               step="0.01"
+                               min="0.00"
+                               max="100.00"
+                               placeholder="0.00 - 100.00"
+                               required />
+                        <small class="form-text text-muted">Allowed range: 0.00 – 100.00</small>
+                    </div>
+
+                    <!-- Upload only one File -->
+                    <div class="mb-3 col-md-12">
+                        <label class="form-label">
+                            Upload File (PDF) <span class="text-danger">*</span>
+                        </label>
+                        <input type="file" name="uploadedFile" class="form-control" accept=".pdf" required />
+                    </div>
+
+                    <!-- ACTIONS -->
+                    <div class="text-end">
+                        <a asp-action="IndexExternalEvidence" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        // --- Accent-insensitive search filter for Users ---
+        function foldEs(str) {
+            return (str ?? "")
+                .toString()
+                .toLocaleLowerCase("es")
+                .normalize("NFD")
+                .replace(/n\u0303/g, "ñ") // ñ aware
+                .replace(/[\u0300-\u036f]/g, ""); // remove other diacritics
+        }
+
+        document.getElementById("searchUsers")?.addEventListener("input", function () {
+            const q = foldEs(this.value);
+            document.querySelectorAll("#userWrapper .form-check").forEach(row => {
+                const label = row.querySelector("label");
+                const txt = foldEs(label ? label.textContent : "");
+                row.style.display = txt.includes(q) ? "" : "none";
+            });
+        });
+    </script>
+
+    <script>
+        $(function () {
+            if ("@TempData["SuccessMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+            if ("@TempData["ErrorMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 15000
+                });
+            }
+        });
+    </script>
+}
+

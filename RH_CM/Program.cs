@@ -1,8 +1,14 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RH_CM.Data;
+using RH_CM.Service.ExternalEvidence;
+using RH_CM.Service.SQLSMS;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+
+builder.Services.AddServices();
 
 // Configurar la conexión a SQL Server para MATERIALES_CHDBContext
 builder.Services.AddDbContext<db_abcd61_rhchdbContext>(Options =>
@@ -52,6 +58,9 @@ app.UseSession();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Cuentas}/{action=Acceso}/{id?}");
+
+builder.Services.AddSession();
+app.UseSession();
 
 app.Run();
 
