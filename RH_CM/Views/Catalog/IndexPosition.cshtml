@@ -41,10 +41,10 @@
                                 <tr>
                                     <th>@Html.DisplayNameFor(model => model.PkPosition)</th>
                                     <th>@Html.DisplayNameFor(model => model.NamePosition)</th>
-                                    <th>@Html.DisplayNameFor(model => model.NamePositionEnglish)</th>
+                                    @* <th>@Html.DisplayNameFor(model => model.NamePositionEnglish)</th> *@
                                     <th>@Html.DisplayNameFor(model => model.Createdate)</th>
-                                    <th>@Html.DisplayNameFor(model => model.Lastupdatedate)</th>
-                                    <th>Status</th>
+                                   @*  <th>@Html.DisplayNameFor(model => model.Lastupdatedate)</th> *@
+                                    @* <th>Status</th> *@
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -54,10 +54,10 @@
                                     <tr>
                                         <td>@item.PkPosition</td>
                                         <td>@item.NamePosition</td>
-                                        <td>@item.NamePositionEnglish</td>
+                                        @* <td>@item.NamePositionEnglish</td> *@
                                         <td>@item.Createdate</td>
-                                        <td>@item.Lastupdatedate</td>
-                                        <td>
+                                        @* <td>@item.Lastupdatedate</td> *@
+                                        @* <td>
                                             @{
                                                 string availabilityText = item.Available switch
                                                 {
@@ -67,7 +67,7 @@
                                                 };
                                             }
                                             @availabilityText
-                                        </td>
+                                        </td> *@
                                         <td>
                                             <div class="text-center">
                                                 <form asp-action="TogglePosition" asp-route-id="@item.PkPosition" method="post" style="display:inline;">

@@ -19,17 +19,28 @@
                 <div class="dropdown-menu dropdown-menu-start dropdown-mega" aria-labelledby="servicesDropdown">
                     <div class="d-md-flex align-items-start justify-content-start">
                         <div class="dropdown-mega-list">
-                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseassignments"><i class="align-middle fas fa-outdent"></i> Course assignments</a>
-                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseLevelMaterial"><i class="align-middle fas fa-file-signature"></i> CourseLevelMaterial</a>
+                            <a class="dropdown-item" asp-controller="HeadCount" asp-action="IndexHeadCount"><i class="align-middle fas fa-user-plus"></i> Onboarding</a>
+                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexSupervisor"><i class="align-middle fas fa-users-cog"></i> Supervisor</a>
                             <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexDepartment"><i class="align-middle fas fa-store-alt"></i> Department</a>
-                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexExternalEvidence"><i class="align-middle fas fa-receipt"></i> External Evidence</a>
                             <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexPosition"><i class="align-middle fas fa-chess-board"></i> Position</a>
                             <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourse"><i class="align-middle fas fa-book"></i> Course</a>
                             <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseMaterial"><i class="align-middle fas fa-file-pdf"></i> CourseMaterial</a>
-                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexSupervisor"><i class="align-middle fas fa-users-cog"></i> Supervisor</a>
-                            <a class="dropdown-item" asp-controller="HeadCount" asp-action="IndexHeadCount"><i class="align-middle fas fa-user-plus"></i> Onboarding</a>
+
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item px-2 dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    ASSIGNMENTS
+                </a>
+                <div class="dropdown-menu dropdown-menu-start dropdown-mega" aria-labelledby="servicesDropdown">
+                    <div class="d-md-flex align-items-start justify-content-start">
+                        <div class="dropdown-mega-list">
+                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseassignments"><i class="align-middle fas fa-outdent"></i> Course assignments</a>
+                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseLevelMaterial"><i class="align-middle fas fa-file-signature"></i> CourseLevelMaterial</a>
+                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexExternalEvidence"><i class="align-middle fas fa-receipt"></i> External Evidence</a>
                             <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseCompleted"><i class="align-middle fas fa-check-circle"></i> Course Completed</a>
-                            @* <a class="dropdown-item" asp-controller="Trainify" asp-action="Index"><i class="align-middle fas fa-list-check"></i> Course Completed2</a> *@
 
                             <!-- Separador -->
                             <hr class="dropdown-divider" />
@@ -40,12 +51,6 @@
                                 <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexTest">
                                     <i class="align-middle fas fa-clipboard-list"></i> Test
                                 </a>
-                                @* <a class="dropdown-item" asp-controller="Catalog" asp-action="AnswerTest">
-                                    <i class="align-middle fas fa-clipboard-list"></i> Test
-                                </a> *@
-                                @* <a class="dropdown-item" asp-controller="Catalog" asp-action="CreateQuestions">
-                                    <i class="align-middle fas fa-clipboard-list"></i> Questions
-                                </a> *@
                                 
                             </div>
 
