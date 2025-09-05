@@ -41,10 +41,7 @@
                                 <tr>
                                     <th>@Html.DisplayNameFor(model => model.PkPosition)</th>
                                     <th>@Html.DisplayNameFor(model => model.NamePosition)</th>
-                                    @* <th>@Html.DisplayNameFor(model => model.NamePositionEnglish)</th> *@
-                                    <th>@Html.DisplayNameFor(model => model.Createdate)</th>
-                                   @*  <th>@Html.DisplayNameFor(model => model.Lastupdatedate)</th> *@
-                                    @* <th>Status</th> *@
+                                    <th>@Html.DisplayNameFor(model => model.NamePositionEnglish)</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -54,20 +51,7 @@
                                     <tr>
                                         <td>@item.PkPosition</td>
                                         <td>@item.NamePosition</td>
-                                        @* <td>@item.NamePositionEnglish</td> *@
-                                        <td>@item.Createdate</td>
-                                        @* <td>@item.Lastupdatedate</td> *@
-                                        @* <td>
-                                            @{
-                                                string availabilityText = item.Available switch
-                                                {
-                                                    1 => "Habilitado",
-                                                    0 => "Deshabilitado",
-                                                    _ => "Deshabilitado"
-                                                };
-                                            }
-                                            @availabilityText
-                                        </td> *@
+                                        <td>@item.NamePositionEnglish</td>
                                         <td>
                                             <div class="text-center">
                                                 <form asp-action="TogglePosition" asp-route-id="@item.PkPosition" method="post" style="display:inline;">
@@ -110,59 +94,57 @@
 
     <script>
         $(document).ready(function () {
+            // Mostrar loader al inicio
             $('#tableContainer').hide();
             $('#loader').show();
 
-            $('#datatables-responsive').DataTable({
-                responsive: true,
-                order: [5, 'desc'],
-                language: {
-                    "decimal": "",
-                    "emptyTable": "No hay información",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
-                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
-                    "thousands": ",",
-                    "lengthMenu": "Mostrar _MENU_ Entradas",
-                    "loadingRecords": "Cargando...",
-                    "processing": "Procesando...",
-                    "search": "Buscar:",
-                    "zeroRecords": "Sin resultados encontrados",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
+            // Solo inicializa DataTable si la tabla existe en el DOM
+            var $tbl = $('#datatables-responsive');
+            if ($tbl.length) {
+                $tbl.DataTable({
+                    responsive: true,
+                    // La primera columna existe (0). Ajusta a la que necesites.
+                    order: [[0, 'desc']],
+                    initComplete: function () {
+                        $('#loader').fadeOut(200, function () {
+                            $('#tableContainer').fadeIn(200);
+                        });
                     }
-                },
-                initComplete: function () {
-                    $('#loader').fadeOut(200, function () {
-                        $('#tableContainer').fadeIn(200);
-                    });
-                }
-            });
-
-            if ("@TempData["SuccessMessage"]" !== "") {
-                window.notyf.open({
-                    type: 'success',
-                    message: "@TempData["SuccessMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
+                });
+            } else {
+                // No hay tabla (Model.Any() == false), mostrar el contenedor igualmente
+                $('#loader').fadeOut(200, function () {
+                    $('#tableContainer').fadeIn(200);
                 });
             }
 
-            if ("@TempData["ErrorMessage"]" !== "") {
-                window.notyf.open({
-                    type: 'error',
-                    message: "@TempData["ErrorMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
+            // Notificaciones (solo si Notyf está definido)
+            var success = "@(TempData["SuccessMessage"] ?? "")";
+            var error = "@(TempData["ErrorMessage"] ?? "")";
+
+            if (typeof window.notyf !== 'undefined') {
+                if (success) {
+                    window.notyf.open({
+                        type: 'success',
+                        message: success,
+                        ripple: true,
+                        dismissible: true,
+                        position: { x: 'center', y: 'top' },
+                        duration: 5000
+                    });
+                }
+                if (error) {
+                    window.notyf.open({
+                        type: 'error',
+                        message: error,
+                        ripple: true,
+                        dismissible: true,
+                        position: { x: 'center', y: 'top' },
+                        duration: 5000
+                    });
+                }
             }
         });
     </script>
+
 }

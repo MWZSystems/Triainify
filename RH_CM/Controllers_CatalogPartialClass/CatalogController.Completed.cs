@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using ClosedXML.Excel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -21,32 +22,118 @@ namespace RH_CM.Controllers
         {
             var query =
                 from s in _context.SyCoursecompleteds.AsNoTracking()
-                join ca in _context.CtCourseassignments.AsNoTracking() on s.FkCourseAssignment equals ca.PkCourseAssignment
-                join cs in _context.CtCoursestatuses.AsNoTracking() on s.FkCourseStatus equals cs.PkCoursestatus
-                join dm in _context.CtDeliverymodes.AsNoTracking() on s.FkDeliveryMode equals dm.PkDeliverymode into dmj
-                from dm in dmj.DefaultIfEmpty()
-                join hc in _context.SyHeadcounts.AsNoTracking() on s.FkHeadcount equals hc.PkHeadcount
+                join ca in _context.CtCourseassignments.AsNoTracking()
+                    on s.FkCourseAssignment equals ca.PkCourseAssignment
+                join c in _context.CtCourses.AsNoTracking()
+                    on ca.FkCourse equals c.PkCourse
+                join lc in _context.CtLevelcourses.AsNoTracking()                 // <-- NUEVO
+                    on ca.FkRequiredCourseLevels equals lc.PkLevelcourse          // <-- NUEVO
+                join hc in _context.SyHeadcounts.AsNoTracking()
+                    on s.FkHeadcount equals hc.PkHeadcount
                 orderby s.PkCourseCompleted descending
                 select new
                 {
                     s.PkCourseCompleted,
-                    s.FkCourseAssignment,
-                    s.FkCourseStatus,
-                    s.FkDeliveryMode,
-                    s.FkHeadcount,
-                    StatusName = cs.DescriptionCoursestatus,
-                    DeliveryName = s.FkDeliveryMode == 0 ? "Not Assigned" : (dm != null ? dm.DescriptionDeliverymode : "Not Assigned"),
-                    HeadcountName = hc.Names + " " + (hc.LastName ?? "") + " " + (hc.SecondName ?? ""),
                     hc.ControlNumber,
+                    HeadcountName = hc.Names + " " + (hc.LastName ?? "") + " " + (hc.SecondName ?? ""),
+                    CourseName = c.CourseName,
+                    LevelDescription = lc.DescripctionLevel,   // <-- usa el nombre exacto de tu campo
                     s.Avaialble,
-                    s.CreateUser,
-                    s.CreateDate,
-                    s.LastUpdateUser,
                     s.LastUpdateDate
                 };
 
             var data = await query.ToListAsync();
             return View(data);
+        }
+
+        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        [HttpGet]
+        public async Task<IActionResult> ExportCourseCompletedToExcel()
+        {
+            // 1) Mismo query que IndexCourseCompleted (mismas uniones y columnas)
+            var data =
+                await (from s in _context.SyCoursecompleteds.AsNoTracking()
+                       join ca in _context.CtCourseassignments.AsNoTracking()
+                            on s.FkCourseAssignment equals ca.PkCourseAssignment
+                       join c in _context.CtCourses.AsNoTracking()
+                            on ca.FkCourse equals c.PkCourse
+                       join lc in _context.CtLevelcourses.AsNoTracking()
+                            on ca.FkRequiredCourseLevels equals lc.PkLevelcourse
+                       join hc in _context.SyHeadcounts.AsNoTracking()
+                            on s.FkHeadcount equals hc.PkHeadcount
+                       orderby s.PkCourseCompleted descending
+                       select new
+                       {
+                           s.PkCourseCompleted,
+                           hc.ControlNumber,
+                           HeadcountName = hc.Names + " " + (hc.LastName ?? "") + " " + (hc.SecondName ?? ""),
+                           CourseName = c.CourseName,
+                           LevelDescription = lc.DescripctionLevel, // ajusta a DescriptionLevel si aplica
+                           s.Avaialble,                              // (int 0/1 en tu modelo)
+                           s.LastUpdateDate
+                       }).ToListAsync();
+
+            // 2) Crear Excel
+            using var wb = new XLWorkbook();
+            var ws = wb.Worksheets.Add("CourseCompleted");
+
+            // Encabezados EXACTOS (mismo orden que el select new de arriba)
+            ws.Cell(1, 1).Value = "PkCourseCompleted";
+            ws.Cell(1, 2).Value = "ControlNumber";
+            ws.Cell(1, 3).Value = "HeadcountName";
+            ws.Cell(1, 4).Value = "CourseName";
+            ws.Cell(1, 5).Value = "LevelDescription";
+            ws.Cell(1, 6).Value = "Available";          // corresponde a Avaialble (0/1)
+            ws.Cell(1, 7).Value = "LastUpdateDate";
+
+            var header = ws.Range("A1:G1");
+            header.Style.Font.Bold = true;
+            header.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            header.Style.Fill.BackgroundColor = XLColor.LightGreen;
+
+            // 3) Escribir filas (manteniendo tipos)
+            int row = 2;
+            foreach (var x in data)
+            {
+                ws.Cell(row, 1).Value = x.PkCourseCompleted;
+                ws.Cell(row, 2).Value = x.ControlNumber;
+                ws.Cell(row, 3).Value = x.HeadcountName?.Trim();
+                ws.Cell(row, 4).Value = x.CourseName;
+                ws.Cell(row, 5).Value = x.LevelDescription;
+
+                // Si prefieres 0/1, usa: ws.Cell(row, 6).Value = x.Avaialble;
+                // Si prefieres texto, deja esta línea:
+                ws.Cell(row, 6).Value = (Convert.ToInt32(x.Avaialble) == 1) ? "Sí" : "No";
+
+                ws.Cell(row, 7).Value = x.LastUpdateDate;
+                row++;
+            }
+
+            // 4) Estilos y formatos
+            int lastRow = row - 1;
+            var dataRange = ws.Range(1, 1, lastRow, 7);
+            dataRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+            dataRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+            dataRange.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+            dataRange.SetAutoFilter();
+
+            // Formato de fecha/hora para LastUpdateDate
+            ws.Column(7).Style.DateFormat.Format = "yyyy-MM-dd HH:mm:ss";
+
+            ws.Columns().AdjustToContents();
+            ws.SheetView.FreezeRows(1);
+
+            // 5) Descargar
+            string fechaActual = DateTime.Now.ToString("yyyyMMdd");
+            using var stream = new MemoryStream();
+            wb.SaveAs(stream);
+            var content = stream.ToArray();
+
+            return File(
+                content,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                $"CourseCompleted_{fechaActual}.xlsx"
+            );
         }
 
         // GET: SyCoursecompleted/Create
@@ -225,8 +312,6 @@ namespace RH_CM.Controllers
                 .OrderBy(x => x.Text)
                 .ToList();
         }
-
-
 
         [HttpPost]
         [Authorize(Roles = "Administrador")]

@@ -1,39 +1,48 @@
 ﻿@model IEnumerable<dynamic>
-
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
 
 @{
-    ViewData["Title"] = "Course Completions";
+    ViewData["Title"] = "Course Completed";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="row align-items-center mb-3">
+<div class="row">
     <div class="col">
-        <h1 class="h3 mb-0 text-center text-md-start">
-            <i class="fas fa-list-check"></i> @ViewData["Title"]
+        <h1 class="h3 mb-3 text-center">
+            <i class="align-middle fas fa-outdent"></i> @ViewData["Title"]
         </h1>
     </div>
-    <div class="col-auto d-flex gap-2">
-        <!-- Botones agregados desde la vista de referencia -->
+    <div class="col-auto">
+        <!-- Crear registros en bulk -->
         <a class="btn btn-primary" asp-action="CreateCourseCompletedBulk">
             <i class="align-middle fas fa-layer-group"></i> CREATE BULK
         </a>
-        <a asp-action="CreateCourseCompleted" class="btn btn-facebook">
+
+        <!-- Crear nuevo registro -->
+        <a class="btn btn-facebook" asp-action="CreateCourseCompleted">
             <i class="align-middle fas fa-plus-square"></i> CREATE NEW
+        </a>
+
+        <!-- Eliminar registros en bulk -->
+        <a class="btn btn-danger" asp-action="IndexDeleteCourseCompleted">
+            <i class="align-middle fas fa-trash-alt"></i> DELETE BULK
+        </a>
+
+        <!-- Exportar a Excel -->
+        <a class="btn btn-success" asp-action="ExportCourseCompletedToExcel">
+            <i class="align-middle fas fa-file-excel"></i> EXPORT TO EXCEL
         </a>
     </div>
 </div>
 
-<!-- Loader -->
 <div id="loader" class="text-center my-5">
     <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
         <span class="visually-hidden">Loading...</span>
     </div>
 </div>
 
-<!-- Tabla envuelta en contenedor oculto -->
 <div id="tableContainer" style="display:none;">
     <div class="card">
         <div class="card-body">
@@ -43,28 +52,21 @@
                 <table id="tbl-coursecompleted" class="table table-striped table-hover" style="width:100%">
                     <thead class="table-primary">
                         <tr>
-                            <th>#</th>
-                            <th>Assignment</th>
-                            <th>Status</th>
-                            <th>Delivery Mode</th>
-                            <th>Employee</th>
                             <th>Control #</th>
-                            <th>Created</th>
+                            <th>Employee</th>
+                            <th>Course</th>
+                            <th>Level</th>    @* NUEVO *@
                             <th>Updated</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
 
-                    <!-- Filtros por columna -->
                     <tfoot>
                         <tr>
-                            <th>#</th>
-                            <th>Assignment</th>
-                            <th>Status</th>
-                            <th>Delivery Mode</th>
-                            <th>Employee</th>
                             <th>Control #</th>
-                            <th>Created</th>
+                            <th>Employee</th>
+                            <th>Course</th>
+                            <th>Level</th>   @* NUEVO *@
                             <th>Updated</th>
                             <th></th>
                         </tr>
@@ -74,16 +76,12 @@
                         @foreach (var x in Model)
                         {
                             <tr>
-                                <td>@x.PkCourseCompleted</td>
-                                <td>@x.FkCourseAssignment</td>
-                                <td>@x.StatusName</td>
-                                <td>@x.DeliveryName</td>
-                                <td>@x.HeadcountName</td>
                                 <td>@x.ControlNumber</td>
-                                <td>@(((DateTime)x.CreateDate).ToString("yyyy-MM-dd HH:mm"))</td>
+                                <td>@x.HeadcountName</td>
+                                <td>@x.CourseName</td>
+                                <td>@x.LevelDescription</td>  @* NUEVO *@
                                 <td>@(((DateTime)x.LastUpdateDate).ToString("yyyy-MM-dd HH:mm"))</td>
                                 <td class="text-nowrap">
-                                    <!-- Botón Toggle Availability (jalado de la vista referencia) -->
                                     <form asp-action="ToggleCourseCompleted" asp-route-id="@x.PkCourseCompleted" method="post" class="d-inline"
                                           onsubmit="return confirm('Are you sure you want to toggle the availability of this record?');">
                                         <button type="submit"
@@ -93,12 +91,10 @@
                                         </button>
                                     </form>
 
-                                    <!-- Edit -->
                                     <a asp-action="EditCourseCompleted" asp-route-id="@x.PkCourseCompleted" class="btn btn-warning btn-sm" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
 
-                                    <!-- Delete solo para Administrador -->
                                     @if (User.Identity.IsAuthenticated && User.IsInRole("Administrador"))
                                     {
                                         <form asp-action="DeleteCourseCompleted" asp-route-id="@x.PkCourseCompleted" method="post" class="d-inline"
@@ -125,73 +121,41 @@
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
-
     <script>
         $(document).ready(function () {
-            // Ocultar tabla y mostrar loader
             $('#tableContainer').hide();
             $('#loader').show();
 
-            // Colocar inputs/selects en el footer ANTES de inicializar DataTable
-            // Índices: 0:#, 1:Assignment, 2:Status, 3:Delivery Mode, 4:Employee, 5:Control #, 6:Created, 7:Updated, 8:Actions
+            // Índices: 0:Control #, 1:Employee, 2:Course, 3:Level, 4:Updated, 5:Actions
             $('#tbl-coursecompleted tfoot th').each(function (i) {
                 switch (i) {
-                    case 1: // Assignment (texto)
-                    case 4: // Employee (texto)
-                    case 5: // Control # (texto)
+                    case 0: // Control #
+                    case 1: // Employee
+                    case 2: // Course
+                    case 3: // Level
                         $(this).html('<input type="text" class="form-control form-control-sm" placeholder="Filter ' + $('thead th').eq(i).text() + '" />');
                         break;
 
-                    case 2: // Status (select dinámico)
-                        $(this).html('<select id="statusFilter" class="form-select form-select-sm"><option value="">(All)</option></select>');
-                        break;
-
-                    case 3: // Delivery Mode (select dinámico)
-                        $(this).html('<select id="deliveryFilter" class="form-select form-select-sm"><option value="">(All)</option></select>');
-                        break;
-
-                    // Filtros de fecha simples (texto libre "YYYY-MM-DD")
-                    case 6: // Created
-                    case 7: // Updated
+                    case 4: // Updated (fecha)
                         $(this).html('<input type="text" class="form-control form-control-sm" placeholder="YYYY-MM-DD" />');
                         break;
 
-                    default: // # y Actions sin filtro
+                    default:
                         $(this).html('');
                         break;
                 }
             });
 
-            // Inicializar DataTable
             var table = $('#tbl-coursecompleted').DataTable({
                 responsive: true,
                 order: [[0, 'desc']],
                 pageLength: 25,
                 lengthMenu: [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]],
-                language: {
-                    "decimal": "",
-                    "emptyTable": "No hay información",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
-                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
-                    "thousands": ",",
-                    "lengthMenu": "Mostrar _MENU_ Entradas",
-                    "loadingRecords": "Cargando...",
-                    "processing": "Procesando...",
-                    "search": "Buscar:",
-                    "zeroRecords": "Sin resultados encontrados",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    }
-                },
                 initComplete: function () {
                     var api = this.api();
 
-                    // 1) Inputs de texto (Assignment, Employee, Control #)
-                    [1, 4, 5].forEach(function (colIdx) {
+                    // Texto: Control #, Employee, Course, Level
+                    [0, 1, 2, 3].forEach(function (colIdx) {
                         $('tfoot th').eq(colIdx).find('input').on('keyup change clear', function () {
                             if (api.column(colIdx).search() !== this.value) {
                                 api.column(colIdx).search(this.value).draw();
@@ -199,45 +163,11 @@
                         });
                     });
 
-                    // 2) Filtros de fecha (texto libre, coincide por prefijo YYYY-MM-DD)
-                    [6, 7].forEach(function (colIdx) {
-                        $('tfoot th').eq(colIdx).find('input').on('keyup change clear', function () {
-                            var val = this.value;
-                            api.column(colIdx).search(val).draw();
-                        });
+                    // Fecha: Updated
+                    $('tfoot th').eq(4).find('input').on('keyup change clear', function () {
+                        api.column(4).search(this.value).draw();
                     });
 
-                    // 3) Select dinámico para Status (exact match)
-                    var statusColumn = api.column(2);
-                    var $statusSelect = $('#statusFilter');
-                    var statusValues = [];
-                    statusColumn.data().each(function (d) {
-                        if (d && statusValues.indexOf(d) === -1) statusValues.push(d);
-                    });
-                    statusValues.sort().forEach(function (val) {
-                        var esc = $.fn.dataTable.util.escapeRegex(val);
-                        $statusSelect.append('<option value="^' + esc + '$">' + val + '</option>');
-                    });
-                    $statusSelect.on('change', function () {
-                        statusColumn.search(this.value, true, false).draw();
-                    });
-
-                    // 4) Select dinámico para Delivery Mode (exact match)
-                    var deliveryColumn = api.column(3);
-                    var $deliverySelect = $('#deliveryFilter');
-                    var deliveryValues = [];
-                    deliveryColumn.data().each(function (d) {
-                        if (d && deliveryValues.indexOf(d) === -1) deliveryValues.push(d);
-                    });
-                    deliveryValues.sort().forEach(function (val) {
-                        var esc = $.fn.dataTable.util.escapeRegex(val);
-                        $deliverySelect.append('<option value="^' + esc + '$">' + val + '</option>');
-                    });
-                    $deliverySelect.on('change', function () {
-                        deliveryColumn.search(this.value, true, false).draw();
-                    });
-
-                    // Ocultar loader y mostrar tabla cuando DataTable está listo
                     $('#loader').fadeOut(150, function () {
                         $('#tableContainer').fadeIn(150);
                     });
