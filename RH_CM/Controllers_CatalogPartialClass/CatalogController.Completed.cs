@@ -213,19 +213,6 @@ namespace RH_CM.Controllers
         [Authorize(Roles = "Administrador")]
         public IActionResult CreateCourseCompletedBulk(int? fkCourse, int? fkLevel)
         {
-            //int selectedFkCourse = fkCourse ??
-            //    _context.CtCourses.AsNoTracking()
-            //        .OrderBy(c => c.CourseName)
-            //        .Select(c => c.PkCourse)
-            //        .FirstOrDefault();
-
-            //// AHORA desde CtLevelcourse (PkLevelcourse = FkRequiredCourseLevels)
-            //int selectedFkLevel = fkLevel ??
-            //    _context.CtLevelcourses.AsNoTracking()
-            //        .OrderBy(l => l.DescripctionLevel) // <-- campo del modelo
-            //        .Select(l => l.PkLevelcourse)
-            //        .FirstOrDefault();
-
             // Si no se pasa parámetro, dejamos 0 para que no haya selección al inicio
             int selectedFkCourse = fkCourse ?? 0;
             int selectedFkLevel = fkLevel ?? 0;
@@ -314,41 +301,135 @@ namespace RH_CM.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> CreateCourseCompletedBulk(
+            int FkCourse,
+            int FkRequiredCourseLevels,
+            int[] SelectedHeadcounts,
+            int Score,
+            bool allowUpsert = true)
+        {
+            if (FkCourse <= 0 || FkRequiredCourseLevels <= 0 || SelectedHeadcounts == null || SelectedHeadcounts.Length == 0)
+            {
+                TempData["ErrorMessage"] = "Selecciona curso, nivel y al menos una persona.";
+                return RedirectToAction(nameof(CreateCourseCompletedBulk), new { fkCourse = FkCourse, fkLevel = FkRequiredCourseLevels });
+            }
+
+            // Construir TVP dbo.IntIdList(Id INT)
+            var tvp = new System.Data.DataTable();
+            tvp.Columns.Add("Id", typeof(int));
+            foreach (var id in SelectedHeadcounts.Distinct()) tvp.Rows.Add(id);
+
+            var pHeadcounts = new Microsoft.Data.SqlClient.SqlParameter("@Headcounts", tvp)
+            {
+                SqlDbType = System.Data.SqlDbType.Structured,
+                TypeName = "dbo.IntIdList"
+            };
+            var pFkCourse = new Microsoft.Data.SqlClient.SqlParameter("@FkCourse", FkCourse);
+            var pScore = new Microsoft.Data.SqlClient.SqlParameter("@Score", Score);
+            var pUserName = new Microsoft.Data.SqlClient.SqlParameter("@UserName", User?.Identity?.Name ?? "system");
+            var pAllowUpsert = new Microsoft.Data.SqlClient.SqlParameter("@AllowUpsert", allowUpsert);
+
+            // Llama al SP ACTUALIZADO (sin FkCourseStatus / FkDeliveryMode)
+            var sql = "EXEC dbo.sp_BulkCreateCourseCompleted_ByCourse @Headcounts, @FkCourse, @Score, @UserName, @AllowUpsert";
+            await _context.Database.ExecuteSqlRawAsync(sql, pHeadcounts, pFkCourse, pScore, pUserName, pAllowUpsert);
+
+            TempData["SuccessMessage"] = "Registros creados/actualizados correctamente.";
+            return RedirectToAction(nameof(CreateCourseCompletedBulk), new { fkCourse = FkCourse, fkLevel = FkRequiredCourseLevels });
+        }
+
+        [Authorize(Roles = "Administrador")]
+        public IActionResult DeleteCourseCompletedBulk(int? fkCourse, int? fkLevel)
+        {
+            int selectedFkCourse = fkCourse ?? 0;
+            int selectedFkLevel = fkLevel ?? 0;
+
+            // Combos
+            LoadCourseCompletedBulkViewBags(selectedFkCourse, selectedFkLevel);
+
+            ViewBag.SelectedFkCourse = selectedFkCourse;
+            ViewBag.SelectedFkLevel = selectedFkLevel;
+
+            // Exigir curso + nivel antes de listar
+            bool needFilters = (selectedFkCourse <= 0 || selectedFkLevel <= 0);
+            ViewBag.NeedFilters = needFilters;
+
+            var rows = new List<CourseCompletedRowDtoViewModel>();
+            if (!needFilters)
+            {
+                var cs = _context.Database.GetDbConnection().ConnectionString;
+
+                using var conn = new SqlConnection(cs);
+                using var cmd = new SqlCommand("dbo.sp_BulkSearchCourseCompleted", conn)
+                { CommandType = CommandType.StoredProcedure };
+
+                cmd.Parameters.Add(new SqlParameter("@FkCourse", SqlDbType.Int) { Value = selectedFkCourse });
+                cmd.Parameters.Add(new SqlParameter("@FkLevel", SqlDbType.Int) { Value = selectedFkLevel });
+
+                try
+                {
+                    conn.Open();
+                }
+                catch (SqlException ex)
+                {
+                    var state = ex.Errors.Count > 0 ? ex.Errors[0].State : (byte)0;
+                    var msg = $"SQL ERROR: {ex.Number}, STATE: {state}, MESSAGE: {ex.Message}";
+                    // Loguea si tienes logger; aquí relanzamos con detalle:
+                    throw new Exception($"Error al conectar a la base de datos. Detalle: {msg}", ex);
+                }
+
+                using var rdr = cmd.ExecuteReader();
+
+                // helpers para DBNull
+                static string GetString(SqlDataReader r, string col)
+                    => r.IsDBNull(r.GetOrdinal(col)) ? "" : r.GetString(r.GetOrdinal(col));
+                static int GetInt(SqlDataReader r, string col)
+                    => r.IsDBNull(r.GetOrdinal(col)) ? 0 : r.GetInt32(r.GetOrdinal(col));
+                static DateTime GetDate(SqlDataReader r, string col)
+                    => r.IsDBNull(r.GetOrdinal(col)) ? DateTime.MinValue : r.GetDateTime(r.GetOrdinal(col));
+
+                while (rdr.Read())
+                {
+                    // CONTROL_NUMBER puede no ser nvarchar en algunos diseños; convertir a string por seguridad
+                    string control = rdr.IsDBNull(rdr.GetOrdinal("HeadcountControlNumber"))
+                        ? ""
+                        : Convert.ToString(rdr.GetValue(rdr.GetOrdinal("HeadcountControlNumber")));
+
+                    rows.Add(new CourseCompletedRowDtoViewModel
+                    {
+                        PkCourseCompleted = GetInt(rdr, "PK_CourseCompleted"),
+                        HeadcountControlNumber = control,
+                        HeadcountFullName = GetString(rdr, "HeadcountFullName"),
+                        CourseName = GetString(rdr, "CourseName"),
+                        LevelName = GetString(rdr, "LevelName"),
+                        StatusName = GetString(rdr, "StatusName"),
+                        DeliveryModeName = GetString(rdr, "DeliveryModeName"),
+                        Score = GetInt(rdr, "Score"),
+                        CreateDate = GetDate(rdr, "CreateDate")
+                    });
+                }
+            }
+
+            ViewBag.CourseCompletedRows = rows;
+            return View();
+        }
+
+        [HttpPost]
         [Authorize(Roles = "Administrador")]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateCourseCompletedBulk(
-            [FromForm] int[] SelectedHeadcounts,
+        public IActionResult DeleteCourseCompletedBulk(
+            [FromForm] int[] SelectedCourseCompletedIds,
+            [FromForm] bool SoftDelete,
+            // Hidden para rehidratar filtros al volver
             [FromForm] int FkCourse,
-            [FromForm] int FkCourseStatus,
-            [FromForm] int FkDeliveryMode,
-            [FromForm] int Score
+            [FromForm] int FkLevel
         )
         {
-            // Validaciones (igual)
-            if (SelectedHeadcounts == null || SelectedHeadcounts.Length == 0)
+            if (SelectedCourseCompletedIds == null || SelectedCourseCompletedIds.Length == 0)
             {
-                TempData["ErrorMessage"] = "Selecciona al menos un Headcount.";
-                return RedirectToAction(nameof(CreateCourseCompletedBulk), new { fkCourse = FkCourse });
-            }
-            if (FkCourse <= 0)
-            {
-                TempData["ErrorMessage"] = "Selecciona el Curso a completar.";
-                return RedirectToAction(nameof(CreateCourseCompletedBulk));
-            }
-            if (FkCourseStatus <= 0)
-            {
-                TempData["ErrorMessage"] = "Course Status es obligatorio.";
-                return RedirectToAction(nameof(CreateCourseCompletedBulk), new { fkCourse = FkCourse });
-            }
-            if (FkDeliveryMode <= 0)
-            {
-                TempData["ErrorMessage"] = "Delivery Mode es obligatorio.";
-                return RedirectToAction(nameof(CreateCourseCompletedBulk), new { fkCourse = FkCourse });
-            }
-            if (Score < 0 || Score > 100)
-            {
-                TempData["ErrorMessage"] = "Score debe estar entre 0 y 100.";
-                return RedirectToAction(nameof(CreateCourseCompletedBulk), new { fkCourse = FkCourse });
+                TempData["ErrorMessage"] = "Selecciona al menos un registro a eliminar.";
+                return RedirectToAction(nameof(DeleteCourseCompletedBulk), new { fkCourse = FkCourse, fkLevel = FkLevel });
             }
 
             static DataTable ToTvp(int[] ids)
@@ -359,45 +440,38 @@ namespace RH_CM.Controllers
                 return dt;
             }
 
-            var tvpHeadcounts = ToTvp(SelectedHeadcounts);
+            var tvpIds = ToTvp(SelectedCourseCompletedIds);
             var user = User?.Identity?.Name ?? "Unknown";
 
             try
             {
                 string cs = _context.Database.GetDbConnection().ConnectionString;
                 using var conn = new SqlConnection(cs);
-                using var cmd = new SqlCommand("dbo.sp_BulkCreateCourseCompleted_ByCourse", conn)
-                {
-                    CommandType = CommandType.StoredProcedure
-                };
+                using var cmd = new SqlCommand("dbo.sp_BulkDeleteCourseCompleted", conn)
+                { CommandType = CommandType.StoredProcedure };
 
-                var pHc = cmd.Parameters.AddWithValue("@Headcounts", tvpHeadcounts);
-                pHc.SqlDbType = SqlDbType.Structured;
-                pHc.TypeName = "dbo.IntIdList";
+                var pIds = cmd.Parameters.AddWithValue("@CourseCompletedIds", tvpIds);
+                pIds.SqlDbType = SqlDbType.Structured;
+                pIds.TypeName = "dbo.IntIdList";
 
-                cmd.Parameters.Add(new SqlParameter("@FkCourse", SqlDbType.Int) { Value = FkCourse });
-                cmd.Parameters.Add(new SqlParameter("@FkCourseStatus", SqlDbType.Int) { Value = FkCourseStatus });
-                cmd.Parameters.Add(new SqlParameter("@FkDeliveryMode", SqlDbType.Int) { Value = FkDeliveryMode });
-                cmd.Parameters.Add(new SqlParameter("@Score", SqlDbType.Int) { Value = Score });
                 cmd.Parameters.Add(new SqlParameter("@UserName", SqlDbType.NVarChar, 256) { Value = user });
-                cmd.Parameters.Add(new SqlParameter("@AllowUpsert", SqlDbType.Bit) { Value = 1 });
+                cmd.Parameters.Add(new SqlParameter("@SoftDelete", SqlDbType.Bit) { Value = SoftDelete });
 
                 conn.Open();
-                // Tu SP NO devuelve result sets. Usa ExecuteNonQuery.
                 int affected = cmd.ExecuteNonQuery();
 
                 if (affected == 0)
-                    TempData["ErrorMessage"] = "No se generaron cambios (posibles duplicados o sin CourseAssignment por posición/curso).";
+                    TempData["ErrorMessage"] = "No se eliminaron registros (verifica selección y filtros).";
                 else
                     TempData["SuccessMessage"] = $"Operación completada. Filas afectadas: {affected}.";
             }
             catch (SqlException)
             {
-                TempData["ErrorMessage"] = "Ocurrió un error al crear los completados masivos.";
+                TempData["ErrorMessage"] = "Ocurrió un error al eliminar los completados masivos.";
             }
 
-            // Mantén el curso seleccionado al regresar al GET
-            return RedirectToAction(nameof(CreateCourseCompletedBulk), new { fkCourse = FkCourse });
+            // Volver con los mismos filtros (solo curso y nivel)
+            return RedirectToAction(nameof(DeleteCourseCompletedBulk), new { fkCourse = FkCourse, fkLevel = FkLevel });
         }
 
         // GET: SyCoursecompleted/Edit/5
@@ -551,8 +625,6 @@ namespace RH_CM.Controllers
 
             return RedirectToAction(nameof(IndexCourseCompleted));
         }
-
-
 
         private bool SyCourseCompletedExists(int id)
         {

@@ -4,8 +4,6 @@
 
     var headcounts = (IEnumerable<dynamic>)ViewBag.Headcounts;   // filtrados por fkCourse + fkLevel
     var courses = (IEnumerable<dynamic>)ViewBag.Courses;
-    var statuses = (IEnumerable<dynamic>)ViewBag.CourseStatus;
-    var modes = (IEnumerable<dynamic>)ViewBag.DeliveryModes;
     var levels = (IEnumerable<dynamic>)ViewBag.Levels;
 
     int selectedFkCourse = (int)(ViewBag.SelectedFkCourse ?? 0);
@@ -157,30 +155,8 @@
                             </div>
                         </div>
 
-                        <!-- METADATA -->
+                        <!-- METADATA (solo Score) -->
                         <div class="mb-3 col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Course Status <span class="text-danger">*</span></label>
-                                <select class="form-control select2" name="FkCourseStatus" required id="FkCourseStatus">
-                                    <option value="">-- Select Course Status --</option>
-                                    @foreach (var s in statuses)
-                                    {
-                                        <option value="@s.PkCoursestatus">@s.DescriptionCoursestatus</option>
-                                    }
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Delivery Mode <span class="text-danger">*</span></label>
-                                <select class="form-control select2" name="FkDeliveryMode" required id="FkDeliveryMode">
-                                    <option value="">-- Select Delivery Mode --</option>
-                                    @foreach (var d in modes)
-                                    {
-                                        <option value="@d.Id">@d.Text</option>
-                                    }
-                                </select>
-                            </div>
-
                             <div class="mb-3">
                                 <label class="form-label">Score (0–100) <span class="text-danger">*</span></label>
                                 <input class="form-control" type="number" name="Score" min="0" max="100" step="1" value="100" required />
@@ -280,4 +256,3 @@
         });
     </script>
 }
-
