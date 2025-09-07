@@ -69,18 +69,17 @@
                                           onsubmit="return confirm('Are you sure you want to toggle the availability of this head count?');">
                                         <button type="submit" class="btn @(item.Available == 1 ? "btn-success" : "btn-secondary")">
                                             <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
-                                            @(item.Available == 1 ? "Enable" : "Disable")
                                         </button>
                                     </form>
 
                                     <a class="btn btn-warning" asp-action="EditHeadCount" asp-route-id="@item.PkHeadcount">
-                                        <i class="fas fa-edit"></i> Edit
+                                        <i class="fas fa-edit"></i>
                                     </a>
 
                                     <form asp-action="DeleteHeadCount" asp-route-id="@item.PkHeadcount" method="post" class="d-inline"
                                           onsubmit="return confirm('Are you sure you want to delete this item?');">
                                         <button type="submit" class="btn btn-danger">
-                                            <i class="align-middle fas fa-window-close"></i> Delete
+                                            <i class="align-middle fas fa-window-close"></i>
                                         </button>
                                     </form>
                                 </td>

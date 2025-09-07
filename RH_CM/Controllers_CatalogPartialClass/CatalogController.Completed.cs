@@ -295,33 +295,43 @@ namespace RH_CM.Controllers
             ViewBag.Levels = _context.CtLevelcourses
                 .AsNoTracking()
                 .Where(l => l.Available == 1)
-                .OrderBy(l => l.DescripctionLevel)
+                .OrderBy(l => l.PkLevelcourse)
                 .Select(l => new { l.PkLevelcourse, l.DescripctionLevel })
                 .ToList();
 
             // --- Headcounts:
             //     Solo los disponibles (Available=1) que además tengan al menos un CourseAssignment disponible (Available=1)
             //     que conecte su FK_Position con el curso y nivel seleccionados.
+            // --- Headcounts:
             ViewBag.Headcounts = _context.SyHeadcounts
                 .AsNoTracking()
-                .Where(h => h.Available == 1
+                .Where(h =>
+                    h.Available == 1
+                    // Debe existir un CourseAssignment disponible que conecte curso + nivel + posición
                     && _context.CtCourseassignments.Any(ca =>
                            ca.Available == 1
                            && ca.FkCourse == selectedFkCourse
                            && ca.FkRequiredCourseLevels == selectedFkLevel
-                           && ca.FkPosition == h.FkPosition))
+                           && ca.FkPosition == h.FkPosition)
+                    // Y NO debe existir ya un CourseCompleted (activo) para ese headcount
+                    && !_context.SyCoursecompleteds.Any(cc =>
+                           cc.Avaialble == 1
+                           && cc.FkHeadcount == h.PkHeadcount
+                           && _context.CtCourseassignments.Any(ca2 =>
+                                  ca2.PkCourseAssignment == cc.FkCourseAssignment
+                                  && ca2.FkCourse == selectedFkCourse
+                                  && ca2.FkRequiredCourseLevels == selectedFkLevel))
+                )
                 .Select(h => new
                 {
                     h.PkHeadcount,
 
-                    // Nombre de la posición (LEFT JOIN via subquery)
                     PositionName = _context.CtPositions
                         .AsNoTracking()
                         .Where(p => p.PkPosition == h.FkPosition)
                         .Select(p => p.NamePosition)
                         .FirstOrDefault(),
 
-                    // CourseAssignmentId (el PK más bajo que cumple curso+nivel+posición y está disponible)
                     CourseAssignmentId = _context.CtCourseassignments
                         .Where(ca => ca.Available == 1
                                      && ca.FkCourse == selectedFkCourse
@@ -331,7 +341,6 @@ namespace RH_CM.Controllers
                         .Select(ca => ca.PkCourseAssignment)
                         .FirstOrDefault(),
 
-                    // Display amigable
                     Display = (
                         (h.ControlNumber + " - " +
                          h.Names + " " + (h.LastName ?? "") + " " + (h.SecondName ?? "")).Trim()
@@ -381,7 +390,7 @@ namespace RH_CM.Controllers
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> CreateCourseCompletedBulk(
             int FkCourse,
-            int FkRequiredCourseLevels,   // <-- este es el nivel
+            int FkRequiredCourseLevels,
             int[] SelectedHeadcounts,
             bool allowUpsert = true)
         {
@@ -391,10 +400,30 @@ namespace RH_CM.Controllers
                 return RedirectToAction(nameof(CreateCourseCompletedBulk), new { fkCourse = FkCourse, fkLevel = FkRequiredCourseLevels });
             }
 
+            // Headcounts que YA tienen CourseCompleted (activo) para este curso+nivel
+            var alreadyCompletedHc = (
+                from cc in _context.SyCoursecompleteds.AsNoTracking()
+                join ca in _context.CtCourseassignments.AsNoTracking()
+                    on cc.FkCourseAssignment equals ca.PkCourseAssignment
+                where cc.Avaialble == 1
+                   && ca.FkCourse == FkCourse
+                   && ca.FkRequiredCourseLevels == FkRequiredCourseLevels
+                select cc.FkHeadcount
+            ).ToHashSet();
+
+            // Quita de la selección los ya completados
+            var filtered = SelectedHeadcounts.Distinct().Where(hc => !alreadyCompletedHc.Contains(hc)).ToArray();
+
+            if (filtered.Length == 0)
+            {
+                TempData["ErrorMessage"] = "Todas las personas seleccionadas ya tienen el curso completado para ese nivel.";
+                return RedirectToAction(nameof(CreateCourseCompletedBulk), new { fkCourse = FkCourse, fkLevel = FkRequiredCourseLevels });
+            }
+
             // TVP dbo.IntIdList(Id INT)
             var tvp = new System.Data.DataTable();
             tvp.Columns.Add("Id", typeof(int));
-            foreach (var id in SelectedHeadcounts.Distinct()) tvp.Rows.Add(id);
+            foreach (var id in filtered) tvp.Rows.Add(id);
 
             var pHeadcounts = new Microsoft.Data.SqlClient.SqlParameter("@Headcounts", tvp)
             {
@@ -402,11 +431,10 @@ namespace RH_CM.Controllers
                 TypeName = "dbo.IntIdList"
             };
             var pFkCourse = new Microsoft.Data.SqlClient.SqlParameter("@FkCourse", FkCourse);
-            var pFkLevel = new Microsoft.Data.SqlClient.SqlParameter("@FkLevel", FkRequiredCourseLevels); // <-- NUEVO
+            var pFkLevel = new Microsoft.Data.SqlClient.SqlParameter("@FkLevel", FkRequiredCourseLevels);
             var pUserName = new Microsoft.Data.SqlClient.SqlParameter("@UserName", User?.Identity?.Name ?? "system");
             var pAllowUpsert = new Microsoft.Data.SqlClient.SqlParameter("@AllowUpsert", allowUpsert);
 
-            // El SP ahora recibe @FkLevel también (Score=100 fijo adentro)
             var sql = "EXEC dbo.sp_BulkCreateCourseCompleted_ByCourse @Headcounts, @FkCourse, @FkLevel, @UserName, @AllowUpsert";
             await _context.Database.ExecuteSqlRawAsync(sql, pHeadcounts, pFkCourse, pFkLevel, pUserName, pAllowUpsert);
 

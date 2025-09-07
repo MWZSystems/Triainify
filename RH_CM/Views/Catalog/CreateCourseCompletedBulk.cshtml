@@ -225,19 +225,37 @@
             // Select2
             $('.select2').select2({ theme: 'bootstrap4', placeholder: 'Select an option', allowClear: true });
 
-            // Reflejar bloqueo en los select2
-            const locked = @lockFilters.ToString();
+            // Reflejar bloqueo en los select2 (boolean válido en JS)
+            const locked = @Json.Serialize(lockFilters);
             if (locked) {
                 $('#FkCourse').prop('disabled', true).trigger('change.select2');
                 $('#FkLevel').prop('disabled', true).trigger('change.select2');
             }
 
-            // Notificaciones
-            if ('@TempData["SuccessMessage"]' !== '') {
-                window.notyf?.open({ type: 'success', message: '@TempData["SuccessMessage"]', duration: 5000, position: { x: 'center', y: 'top' } });
+            // Notificaciones (formato solicitado) con serialización segura
+            const successMsg = @Html.Raw(Json.Serialize(TempData["SuccessMessage"]));
+            const errorMsg   = @Html.Raw(Json.Serialize(TempData["ErrorMessage"]));
+
+            if (successMsg) {
+                window.notyf?.open?.({
+                    type: 'success',
+                    message: successMsg,
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
             }
-            if ('@TempData["ErrorMessage"]' !== '') {
-                window.notyf?.open({ type: 'error', message: '@TempData["ErrorMessage"]', duration: 5000, position: { x: 'center', y: 'top' } });
+
+            if (errorMsg) {
+                window.notyf?.open?.({
+                    type: 'error',
+                    message: errorMsg,
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
             }
         });
     </script>
