@@ -6,53 +6,14 @@
 @{
     ViewData["Title"] = "Course Completed (Summary)";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Clase específica para activar el tema azul petróleo
+    ViewData["BodyClass"] = "page-coursecompleted-summary";
 }
-
-<style>
-    /* Ajuste general para fuente y tabla */
-    .card-body {
-        font-size: 1.05rem; /* ligeramente más grande para mejor lectura */
-    }
-
-    #tbl-coursecompleted thead th {
-        font-size: 1rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        text-align: center; /* Encabezados centrados */
-    }
-
-    /* Estilo general para celdas del body */
-    #tbl-coursecompleted tbody td {
-        font-size: 1.05rem;
-        padding: 12px 8px;
-        text-align: center; /* Centramos todas las columnas */
-    }
-
-        /* Course a la izquierda */
-        #tbl-coursecompleted tbody td.col-course {
-            text-align: left !important;
-        }
-
-    #tbl-coursecompleted tbody tr:hover {
-        background-color: #f1f5f9; /* tono claro al pasar el mouse */
-    }
-
-    /* Total columna centrada y destacada */
-    #tbl-coursecompleted td.col-total {
-        font-weight: 600;
-        text-align: center !important;
-    }
-
-    /* Botones en el header */
-    .header-actions .btn {
-        font-size: 0.9rem;
-        padding: 6px 12px;
-    }
-</style>
 
 <div class="row mb-3">
     <div class="col">
-        <h1 class="h3 mb-0 text-center">
+        <h1 class="h3 mb-0 text-center title-accent">
             <i class="align-middle fas fa-outdent"></i> @ViewData["Title"]
         </h1>
     </div>
@@ -78,7 +39,7 @@
         {
             <div class="table-responsive">
                 <table id="tbl-coursecompleted" class="table table-hover align-middle table-bordered" style="width:100%">
-                    <thead class="table-primary">
+                    <thead class="table-accent">
                         <tr>
                             <th>Course</th>
                             <th>Level</th>

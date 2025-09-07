@@ -80,15 +80,16 @@ body .navbar .nav-link .text-dark {
 }
 
 /* ======================================
-   ======= Departments: Azul =======
+   ======= Departments: Coral Suave =======
    ====================================== */
 body.page-departments .table thead.table-accent {
-    background-color: #cfe2ff;
+    background-color: #ffe4d6; /* coral muy claro, cálido y suave */
 }
 
 body.page-departments .title-accent {
-    color: #052c65;
+    color: #7f2900; /* coral oscuro para el título */
 }
+
 
 
 /* ======================================
@@ -158,4 +159,31 @@ body.page-course-materials .table thead.table-accent {
 
 body.page-course-materials .title-accent {
     color: #842029; /* rojo intenso tipo danger-emphasis */
+}
+
+/* ======================================
+   ======= Course Completed Summary: Azul Petróleo =======
+   ====================================== */
+body.page-coursecompleted-summary .table thead.table-accent {
+    background-color: #d6f2f0; /* Azul petróleo muy claro, tono suave */
+}
+
+body.page-coursecompleted-summary .title-accent {
+    color: #004d4a; /* Azul petróleo intenso para el título */
+}
+
+/* ======================================
+   ======= Course Assignments: Fucsia =======
+   ====================================== */
+body.page-course-assignments .table thead.table-accent {
+    background-color: #fde2f3; /* fucsia muy claro, distinto de morado/rojo */
+}
+
+body.page-course-assignments .title-accent {
+    color: #a61b6a; /* fucsia intenso para títulos */
+}
+
+/* (opcional) un sutil borde al thead para más contraste */
+body.page-course-assignments .table thead.table-accent th {
+    border-bottom: 1px solid #a61b6a33;
 }

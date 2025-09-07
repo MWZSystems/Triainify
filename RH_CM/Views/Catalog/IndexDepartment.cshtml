@@ -7,11 +7,14 @@
 @{
     ViewData["Title"] = "Department";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Muy importante para activar la paleta coral de Departments
+    ViewData["BodyClass"] = "page-departments";
 }
 
 <div class="row">
     <div class="col">
-        <h1 class="h3 mb-3 text-center">
+        <h1 class="h3 mb-3 text-center title-accent">
             <i class="align-middle fas fa-store-alt"></i> @ViewData["Title"]
         </h1>
     </div>
@@ -38,7 +41,7 @@
             {
                 <div class="table-responsive">
                     <table id="datatables-dept" class="table table-striped table-hover align-middle" style="width:100%">
-                        <thead class="table-primary">
+                        <thead class="table-accent">
                             <tr>
                                 <th>@Html.DisplayNameFor(m => m.First().NameDeparment)</th>
                                 <th>@Html.DisplayNameFor(m => m.First().Createuser)</th>
@@ -106,16 +109,16 @@
             $('#tableContainer').hide();
             $('#loader').show();
 
-            // Inicializamos DataTable
+            // Inicializamos DataTable (ahora la 1ª col es Department)
             const table = $('#datatables-dept').DataTable({
                 responsive: true,
-                order: [[0, 'asc']], // ahora ordena por la columna Department
+                order: [[0, 'asc']],
                 pageLength: 25,
                 lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
                 initComplete: function () {
                     const api = this.api();
 
-                    // Filtros por columnas de texto (ahora son 3 columnas filtrables)
+                    // Filtros por columnas de texto (3 columnas filtrables)
                     [0, 1, 2].forEach(function (colIdx) {
                         $('thead tr:eq(1) th').eq(colIdx).find('input').on('keyup change clear', function () {
                             if (api.column(colIdx).search() !== this.value) {
@@ -133,7 +136,7 @@
 
             // Notificaciones
             if ("@TempData["SuccessMessage"]" !== "") {
-                window.notyf?.open({
+                window.notyf?.open?.({
                     type: 'success',
                     message: "@TempData["SuccessMessage"]",
                     ripple: true,
@@ -144,7 +147,7 @@
             }
 
             if ("@TempData["ErrorMessage"]" !== "") {
-                window.notyf?.open({
+                window.notyf?.open?.({
                     type: 'error',
                     message: "@TempData["ErrorMessage"]",
                     ripple: true,

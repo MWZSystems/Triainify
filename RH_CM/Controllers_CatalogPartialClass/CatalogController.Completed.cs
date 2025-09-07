@@ -281,12 +281,6 @@ namespace RH_CM.Controllers
             }
         }
 
-        /// <summary>
-        /// Pobla combos (Courses/Levels) con Available=1.
-        /// </summary>
-        /// <summary>
-        /// Pobla combos (Courses/Levels/Headcounts/Status/DeliveryModes) solo con Available = 1.
-        /// </summary>
         private void LoadCourseCompletedBulkViewBags(int selectedFkCourse, int selectedFkLevel)
         {
             // --- Courses (solo disponibles)
