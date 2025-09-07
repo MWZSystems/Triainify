@@ -3,138 +3,144 @@
 @{
     ViewData["Title"] = "Onboarding";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // BodyClass para diferenciar esta pantalla (cian)
+    ViewData["BodyClass"] = "page-headcounts";
 }
 
 <div class="row">
     <div class="col">
-        <h1 class="h3 mb-3 text-center"><i class="align-middle fas fa-user-plus"></i> @ViewData["Title"]</h1>
+        <h1 class="h3 mb-3 text-center">
+            <i class="align-middle fas fa-user-plus"></i> @ViewData["Title"]
+        </h1>
     </div>
     <div class="col-auto">
+        <!-- Botón AZUL (sin cambios) -->
         <a class="btn btn-facebook" asp-action="CreateHeadCount">
             <i class="align-middle fas fa-plus-square"></i> CREATE NEW ONBOARDING
         </a>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-sm-12">
-        <div class="card">
-            <div class="card-body">
+<div class="card shadow-sm">
+    <div class="card-body">
 
-                <!-- Loader -->
-                <div id="loader" class="text-center my-4">
-                    <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-
-                @if (Model.SyHeadCount.Any())
-                {
-                    <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%; display:none;">
-                        <thead class="table-primary">
-                            <tr>
-                                <th>Control Number</th>
-                                <th>Name</th>
-                                <th>Department</th>
-                                <th>Position</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.SyHeadCount)
-                            {
-                                <tr>
-                                    <td>@item.ControlNumber</td>
-                                    <td>@item.Names @item.LastName @item.SecondName</td>
-                                    <td>@Model.Departments.FirstOrDefault(d => d.PkDepartment == item.FkDepartment)?.NameDeparment</td>
-                                    <td>@Model.Positions.FirstOrDefault(p => p.PkPosition == item.FkPosition)?.NamePosition</td>
-                                    <td>
-                                        <div class="text-center">
-                                            <form asp-action="ToggleAvailabilityHeadCount" asp-route-id="@item.PkHeadcount" method="post" style="display:inline;">
-                                                <button type="submit" onclick="return confirm('Are you sure you want to toggle the availability of this head count?')" class="btn @(item.Available == 1 ? "btn-success" : "btn-secondary")">
-                                                    <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
-                                                    @(item.Available == 1 ? "Enable" : "Disable")
-                                                </button>
-                                            </form>
-                                            <a class="btn btn-warning" asp-action="EditHeadCount" asp-route-id="@item.PkHeadcount">
-                                                <i class="fas fa-edit"></i> Edit
-                                            </a>
-                                            <form asp-action="DeleteHeadCount" asp-route-id="@item.PkHeadcount" method="post" style="display:inline;">
-                                                <button type="submit" onclick="return confirm('Are you sure you want to delete this item?')" class="btn btn-danger">
-                                                    <i class="align-middle fas fa-window-close"></i> Delete
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <p>No records found</p>
-                }
-
+        <!-- Loader -->
+        <div id="loader" class="text-center my-4">
+            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
             </div>
         </div>
+
+        @if (Model?.SyHeadCount != null && Model.SyHeadCount.Any())
+        {
+            <div class="table-responsive" id="tableContainer" style="display:none;">
+                <table id="datatables-hc" class="table table-striped table-hover align-middle" style="width:100%">
+                    <thead class="table-accent">
+                        <tr>
+                            <th>Control Number</th>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>Position</th>
+                            <th>Actions</th>
+                        </tr>
+                        <!-- Filtros por columna -->
+                        <tr class="table-light">
+                            <th><input class="form-control form-control-sm" placeholder="Control Number" /></th>
+                            <th><input class="form-control form-control-sm" placeholder="Name" /></th>
+                            <th><input class="form-control form-control-sm" placeholder="Department" /></th>
+                            <th><input class="form-control form-control-sm" placeholder="Position" /></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.SyHeadCount)
+                        {
+                            var deptName = Model.Departments.FirstOrDefault(d => d.PkDepartment == item.FkDepartment)?.NameDeparment;
+                            var posName = Model.Positions.FirstOrDefault(p => p.PkPosition == item.FkPosition)?.NamePosition;
+
+                            <tr>
+                                <td>@item.ControlNumber</td>
+                                <td>@item.Names @item.LastName @item.SecondName</td>
+                                <td>@deptName</td>
+                                <td>@posName</td>
+                                <td class="text-center">
+                                    <form asp-action="ToggleAvailabilityHeadCount" asp-route-id="@item.PkHeadcount" method="post" class="d-inline"
+                                          onsubmit="return confirm('Are you sure you want to toggle the availability of this head count?');">
+                                        <button type="submit" class="btn @(item.Available == 1 ? "btn-success" : "btn-secondary")">
+                                            <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
+                                            @(item.Available == 1 ? "Enable" : "Disable")
+                                        </button>
+                                    </form>
+
+                                    <a class="btn btn-warning" asp-action="EditHeadCount" asp-route-id="@item.PkHeadcount">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+
+                                    <form asp-action="DeleteHeadCount" asp-route-id="@item.PkHeadcount" method="post" class="d-inline"
+                                          onsubmit="return confirm('Are you sure you want to delete this item?');">
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="align-middle fas fa-window-close"></i> Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Control Number</th>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>Position</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="mb-0">No records found</p>
+        }
+
     </div>
 </div>
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
-
     <script>
-        $(document).ready(function () {
-            var table = $('#datatables-responsive').DataTable({
+        $(function () {
+            const table = $('#datatables-hc').DataTable({
                 responsive: true,
                 order: [[0, 'asc']],
-                language: {
-                    "decimal": "",
-                    "emptyTable": "No hay información",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
-                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
-                    "thousands": ",",
-                    "lengthMenu": "Mostrar _MENU_ Entradas",
-                    "loadingRecords": "Cargando...",
-                    "processing": "Procesando...",
-                    "search": "Buscar:",
-                    "zeroRecords": "Sin resultados encontrados",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    }
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]],
+                initComplete: function () {
+                    const api = this.api();
+                    // Filtros por texto: Control, Name, Department, Position
+                    [0, 1, 2, 3].forEach(function (colIdx) {
+                        $('thead tr:eq(1) th').eq(colIdx).find('input')
+                            .on('keyup change clear', function () {
+                                if (api.column(colIdx).search() !== this.value) {
+                                    api.column(colIdx).search(this.value).draw();
+                                }
+                            });
+                    });
+
+                    // Loader -> Tabla
+                    $('#loader').fadeOut(200, function () {
+                        $('#tableContainer').fadeIn(200);
+                    });
                 }
             });
 
-            // Ocultar loader y mostrar tabla al finalizar la carga
-            $('#loader').hide();
-            $('#datatables-responsive').show();
-
             // Notificaciones
             if ("@TempData["SuccessMessage"]" !== "") {
-                window.notyf.open({
-                    type: 'success',
-                    message: "@TempData["SuccessMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
+                window.notyf?.open?.({ type: 'success', message: "@TempData["SuccessMessage"]", duration: 5000, position: { x: 'center', y: 'top' } });
             }
-
             if ("@TempData["ErrorMessage"]" !== "") {
-                window.notyf.open({
-                    type: 'error',
-                    message: "@TempData["ErrorMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
+                window.notyf?.open?.({ type: 'error', message: "@TempData["ErrorMessage"]", duration: 5000, position: { x: 'center', y: 'top' } });
             }
         });
     </script>

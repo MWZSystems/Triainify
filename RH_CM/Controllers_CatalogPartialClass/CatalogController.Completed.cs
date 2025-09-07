@@ -1,6 +1,7 @@
 ﻿using ClosedXML.Excel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using RH_CM.Models;
@@ -11,14 +12,84 @@ namespace RH_CM.Controllers
 {
     public partial class CatalogController
     {
-        //// GET: SyCoursecompleted
-        //[Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
-        //public async Task<IActionResult> IndexCourseCompleted()
-        //{
-        //    var items = await _context.SyCoursecompleteds.AsNoTracking().ToListAsync();
-        //    return View(items);
-        //}
-        public async Task<IActionResult> IndexCourseCompleted()
+
+        public async Task<IActionResult> Index()
+        {
+            var lista = new List<CourseCompletedViewModel>();
+
+            // Obtener el connection string desde el contexto de EF Core
+            var connectionString = _context.Database.GetConnectionString();
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+
+                using (var command = new SqlCommand("dbo.sp_GetCourseCompleted", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            var item = new CourseCompletedViewModel
+                            {
+                                PkCourseCompleted = reader.GetInt32(reader.GetOrdinal("PK_CourseCompleted")),
+                                FkCourseAssignment = reader.GetInt32(reader.GetOrdinal("FK_CourseAssignment")),
+                                FkCourseStatus = reader.GetInt32(reader.GetOrdinal("FK_CourseStatus")),
+                                FkDeliveryMode = reader.GetInt32(reader.GetOrdinal("FK_DeliveryMode")),
+                                FkHeadcount = reader.GetInt32(reader.GetOrdinal("FK_Headcount")),
+                                Score = reader.GetInt32(reader.GetOrdinal("Score")),
+                                CreateUser = reader.GetString(reader.GetOrdinal("CreateUser")),
+                                CreateDate = reader.GetDateTime(reader.GetOrdinal("CreateDate")),
+                                LastUpdateUser = reader.GetString(reader.GetOrdinal("LastUpdateUser")),
+                                LastUpdateDate = reader.GetDateTime(reader.GetOrdinal("LastUpdateDate")),
+                                Avaialble = reader.GetInt32(reader.GetOrdinal("Avaialble"))
+                            };
+
+                            lista.Add(item);
+                        }
+                    }
+                }
+            }
+
+            return View(lista);
+        }
+
+        public IActionResult IndexCourseCompleted()
+        {
+            var rows = new List<CourseCompletedSummaryItemViewModel>();
+            var cs = _context.Database.GetDbConnection().ConnectionString;
+
+            using var conn = new SqlConnection(cs);
+            using var cmd = new SqlCommand("dbo.sp_IndexCourseCompletedSummary", conn)
+            { CommandType = CommandType.StoredProcedure };
+
+            conn.Open();
+            using var rdr = cmd.ExecuteReader();
+
+            int ordCourse = rdr.GetOrdinal("CourseName");
+            int ordLevel = rdr.GetOrdinal("LevelName");
+            int ordDeliv = rdr.GetOrdinal("DeliveryModeName");
+            int ordStat = rdr.GetOrdinal("Course_Status");
+            int ordTotal = rdr.GetOrdinal("TotalCompletions");
+
+            while (rdr.Read())
+            {
+                rows.Add(new CourseCompletedSummaryItemViewModel
+                {
+                    CourseName = rdr.IsDBNull(ordCourse) ? "" : rdr.GetString(ordCourse),
+                    LevelName = rdr.IsDBNull(ordLevel) ? "" : rdr.GetString(ordLevel),
+                    DeliveryModeName = rdr.IsDBNull(ordDeliv) ? "" : rdr.GetString(ordDeliv),
+                    Course_Status = rdr.IsDBNull(ordStat) ? "" : rdr.GetString(ordStat),
+                    TotalCompletions = rdr.IsDBNull(ordTotal) ? 0 : rdr.GetInt32(ordTotal)
+                });
+            }
+
+            return View(rows);
+        }
+
+        public async Task<IActionResult> IndexCourseCompleted2()
         {
             var query =
                 from s in _context.SyCoursecompleteds.AsNoTracking()
@@ -210,10 +281,96 @@ namespace RH_CM.Controllers
             }
         }
 
+        /// <summary>
+        /// Pobla combos (Courses/Levels) con Available=1.
+        /// </summary>
+        /// <summary>
+        /// Pobla combos (Courses/Levels/Headcounts/Status/DeliveryModes) solo con Available = 1.
+        /// </summary>
+        private void LoadCourseCompletedBulkViewBags(int selectedFkCourse, int selectedFkLevel)
+        {
+            // --- Courses (solo disponibles)
+            ViewBag.Courses = _context.CtCourses
+                .AsNoTracking()
+                .Where(c => c.Available == 1)
+                .OrderBy(c => c.CourseName)
+                .Select(c => new { c.PkCourse, c.CourseName })
+                .ToList();
+
+            // --- Levels (solo disponibles)
+            ViewBag.Levels = _context.CtLevelcourses
+                .AsNoTracking()
+                .Where(l => l.Available == 1)
+                .OrderBy(l => l.DescripctionLevel)
+                .Select(l => new { l.PkLevelcourse, l.DescripctionLevel })
+                .ToList();
+
+            // --- Headcounts:
+            //     Solo los disponibles (Available=1) que además tengan al menos un CourseAssignment disponible (Available=1)
+            //     que conecte su FK_Position con el curso y nivel seleccionados.
+            ViewBag.Headcounts = _context.SyHeadcounts
+                .AsNoTracking()
+                .Where(h => h.Available == 1
+                    && _context.CtCourseassignments.Any(ca =>
+                           ca.Available == 1
+                           && ca.FkCourse == selectedFkCourse
+                           && ca.FkRequiredCourseLevels == selectedFkLevel
+                           && ca.FkPosition == h.FkPosition))
+                .Select(h => new
+                {
+                    h.PkHeadcount,
+
+                    // Nombre de la posición (LEFT JOIN via subquery)
+                    PositionName = _context.CtPositions
+                        .AsNoTracking()
+                        .Where(p => p.PkPosition == h.FkPosition)
+                        .Select(p => p.NamePosition)
+                        .FirstOrDefault(),
+
+                    // CourseAssignmentId (el PK más bajo que cumple curso+nivel+posición y está disponible)
+                    CourseAssignmentId = _context.CtCourseassignments
+                        .Where(ca => ca.Available == 1
+                                     && ca.FkCourse == selectedFkCourse
+                                     && ca.FkRequiredCourseLevels == selectedFkLevel
+                                     && ca.FkPosition == h.FkPosition)
+                        .OrderBy(ca => ca.PkCourseAssignment)
+                        .Select(ca => ca.PkCourseAssignment)
+                        .FirstOrDefault(),
+
+                    // Display amigable
+                    Display = (
+                        (h.ControlNumber + " - " +
+                         h.Names + " " + (h.LastName ?? "") + " " + (h.SecondName ?? "")).Trim()
+                        + " | " +
+                        (_context.CtPositions
+                            .Where(p => p.PkPosition == h.FkPosition)
+                            .Select(p => p.NamePosition)
+                            .FirstOrDefault() ?? "Sin posición")
+                    )
+                })
+                .OrderBy(x => x.Display)
+                .ToList();
+
+            // --- Course Status (solo disponibles)
+            ViewBag.CourseStatus = _context.CtCoursestatuses
+                .AsNoTracking()
+                .Where(s => s.Available == 1)
+                .OrderBy(s => s.DescriptionCoursestatus)
+                .Select(s => new { s.PkCoursestatus, s.DescriptionCoursestatus })
+                .ToList();
+
+            // --- Delivery Modes (solo disponibles)
+            ViewBag.DeliveryModes = _context.CtDeliverymodes
+                .AsNoTracking()
+                .Where(d => d.Available == 1)
+                .OrderBy(d => d.DescriptionDeliverymode)
+                .Select(d => new { Id = d.PkDeliverymode, Text = d.DescriptionDeliverymode })
+                .ToList();
+        }
+
         [Authorize(Roles = "Administrador")]
         public IActionResult CreateCourseCompletedBulk(int? fkCourse, int? fkLevel)
         {
-            // Si no se pasa parámetro, dejamos 0 para que no haya selección al inicio
             int selectedFkCourse = fkCourse ?? 0;
             int selectedFkLevel = fkLevel ?? 0;
 
@@ -225,89 +382,13 @@ namespace RH_CM.Controllers
             return View();
         }
 
-        private void LoadCourseCompletedBulkViewBags(int selectedFkCourse, int selectedFkLevel)
-        {
-            // Cursos
-            ViewBag.Courses = _context.CtCourses
-                .AsNoTracking()
-                .Select(c => new { c.PkCourse, c.CourseName })
-                .OrderBy(x => x.CourseName)
-                .ToList();
-
-            // Niveles requeridos: CtLevelcourse (PkLevelcourse = FkRequiredCourseLevels)
-            ViewBag.Levels = _context.CtLevelcourses
-                .AsNoTracking()
-                .Select(l => new { l.PkLevelcourse, l.DescripctionLevel })
-                .OrderBy(x => x.DescripctionLevel)
-                .ToList();
-
-            // Headcounts relacionados por posición contra CourseAssignments (curso + nivel)
-            // Muestra el NamePosition desde CtPosition
-            ViewBag.Headcounts = _context.SyHeadcounts
-                .AsNoTracking()
-                .Where(h => _context.CtCourseassignments
-                    .Any(ca => ca.FkCourse == selectedFkCourse
-                               && ca.FkRequiredCourseLevels == selectedFkLevel
-                               && ca.FkPosition == h.FkPosition))
-                .Select(h => new
-                {
-                    h.PkHeadcount,
-                    // Trae el nombre de la posición (LEFT JOIN via subquery)
-                    PositionName = _context.CtPositions
-                        .AsNoTracking()
-                        .Where(p => p.PkPosition == h.FkPosition)
-                        .Select(p => p.NamePosition)
-                        .FirstOrDefault(),
-
-                    // Mantén tu CourseAssignmentId (el PK más bajo que cumple curso+nivel+posición)
-                    CourseAssignmentId = _context.CtCourseassignments
-                        .Where(ca => ca.FkCourse == selectedFkCourse
-                                     && ca.FkRequiredCourseLevels == selectedFkLevel
-                                     && ca.FkPosition == h.FkPosition)
-                        .OrderBy(ca => ca.PkCourseAssignment)
-                        .Select(ca => ca.PkCourseAssignment)
-                        .FirstOrDefault(),
-
-                    // Display amigable: "Control - Nombre Apellidos | Puesto"
-                    // (se agrega el NamePosition y se limpian espacios)
-                    Display = (
-                        (h.ControlNumber + " - " +
-                        h.Names + " " +
-                        (h.LastName ?? "") + " " +
-                        (h.SecondName ?? "")).Trim() +
-                        " | " +
-                        (_context.CtPositions
-                            .Where(p => p.PkPosition == h.FkPosition)
-                            .Select(p => p.NamePosition)
-                            .FirstOrDefault() ?? "Sin posición")
-                    )
-                })
-                .OrderBy(x => x.Display)
-                .ToList();
-
-            // CourseStatus
-            ViewBag.CourseStatus = _context.CtCoursestatuses
-                .AsNoTracking()
-                .Select(s => new { s.PkCoursestatus, s.DescriptionCoursestatus })
-                .OrderBy(s => s.DescriptionCoursestatus)
-                .ToList();
-
-            // DeliveryModes
-            ViewBag.DeliveryModes = _context.CtDeliverymodes
-                .AsNoTracking()
-                .Select(d => new { Id = d.PkDeliverymode, Text = d.DescriptionDeliverymode })
-                .OrderBy(x => x.Text)
-                .ToList();
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> CreateCourseCompletedBulk(
             int FkCourse,
-            int FkRequiredCourseLevels,
+            int FkRequiredCourseLevels,   // <-- este es el nivel
             int[] SelectedHeadcounts,
-            int Score,
             bool allowUpsert = true)
         {
             if (FkCourse <= 0 || FkRequiredCourseLevels <= 0 || SelectedHeadcounts == null || SelectedHeadcounts.Length == 0)
@@ -316,7 +397,7 @@ namespace RH_CM.Controllers
                 return RedirectToAction(nameof(CreateCourseCompletedBulk), new { fkCourse = FkCourse, fkLevel = FkRequiredCourseLevels });
             }
 
-            // Construir TVP dbo.IntIdList(Id INT)
+            // TVP dbo.IntIdList(Id INT)
             var tvp = new System.Data.DataTable();
             tvp.Columns.Add("Id", typeof(int));
             foreach (var id in SelectedHeadcounts.Distinct()) tvp.Rows.Add(id);
@@ -327,18 +408,58 @@ namespace RH_CM.Controllers
                 TypeName = "dbo.IntIdList"
             };
             var pFkCourse = new Microsoft.Data.SqlClient.SqlParameter("@FkCourse", FkCourse);
-            var pScore = new Microsoft.Data.SqlClient.SqlParameter("@Score", Score);
+            var pFkLevel = new Microsoft.Data.SqlClient.SqlParameter("@FkLevel", FkRequiredCourseLevels); // <-- NUEVO
             var pUserName = new Microsoft.Data.SqlClient.SqlParameter("@UserName", User?.Identity?.Name ?? "system");
             var pAllowUpsert = new Microsoft.Data.SqlClient.SqlParameter("@AllowUpsert", allowUpsert);
 
-            // Llama al SP ACTUALIZADO (sin FkCourseStatus / FkDeliveryMode)
-            var sql = "EXEC dbo.sp_BulkCreateCourseCompleted_ByCourse @Headcounts, @FkCourse, @Score, @UserName, @AllowUpsert";
-            await _context.Database.ExecuteSqlRawAsync(sql, pHeadcounts, pFkCourse, pScore, pUserName, pAllowUpsert);
+            // El SP ahora recibe @FkLevel también (Score=100 fijo adentro)
+            var sql = "EXEC dbo.sp_BulkCreateCourseCompleted_ByCourse @Headcounts, @FkCourse, @FkLevel, @UserName, @AllowUpsert";
+            await _context.Database.ExecuteSqlRawAsync(sql, pHeadcounts, pFkCourse, pFkLevel, pUserName, pAllowUpsert);
 
-            TempData["SuccessMessage"] = "Registros creados/actualizados correctamente.";
+            TempData["SuccessMessage"] = "Registros creados/actualizados correctamente";
             return RedirectToAction(nameof(CreateCourseCompletedBulk), new { fkCourse = FkCourse, fkLevel = FkRequiredCourseLevels });
         }
 
+
+        /// <summary>
+        /// Pobla combos (Courses/Levels) con Available=1.
+        /// </summary>
+        private void LoadDeleteCourseCompletedBulkViewBags(int selectedFkCourse, int selectedFkLevel)
+        {
+            var courses = _context.CtCourses!
+                .AsNoTracking()
+                .Where(c => c.Available == 1)
+                .OrderBy(c => c.CourseName)
+                .Select(c => new { c.PkCourse, c.CourseName })
+                .ToList();
+
+            var levels = _context.CtLevelcourses!
+                .AsNoTracking()
+                .Where(l => l.Available == 1)
+                .OrderBy(l => l.DescripctionLevel)
+                .Select(l => new { l.PkLevelcourse, l.DescripctionLevel })
+                .ToList();
+
+            ViewBag.Courses = courses
+                .Select(c => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+                {
+                    Value = c.PkCourse.ToString(),
+                    Text = c.CourseName,
+                    Selected = c.PkCourse == selectedFkCourse
+                })
+                .ToList();
+
+            ViewBag.Levels = levels
+                .Select(l => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+                {
+                    Value = l.PkLevelcourse.ToString(),
+                    Text = l.DescripctionLevel,
+                    Selected = l.PkLevelcourse == selectedFkLevel
+                })
+                .ToList();
+        }
+
+        // GET: DeleteCourseCompletedBulk  (LISTA con EF/LINQ — SIN SP)
         [Authorize(Roles = "Administrador")]
         public IActionResult DeleteCourseCompletedBulk(int? fkCourse, int? fkLevel)
         {
@@ -346,82 +467,92 @@ namespace RH_CM.Controllers
             int selectedFkLevel = fkLevel ?? 0;
 
             // Combos
-            LoadCourseCompletedBulkViewBags(selectedFkCourse, selectedFkLevel);
+            LoadDeleteCourseCompletedBulkViewBags(selectedFkCourse, selectedFkLevel);
 
             ViewBag.SelectedFkCourse = selectedFkCourse;
             ViewBag.SelectedFkLevel = selectedFkLevel;
 
-            // Exigir curso + nivel antes de listar
+            // Requerir curso + nivel
             bool needFilters = (selectedFkCourse <= 0 || selectedFkLevel <= 0);
             ViewBag.NeedFilters = needFilters;
 
             var rows = new List<CourseCompletedRowDtoViewModel>();
+
             if (!needFilters)
             {
-                var cs = _context.Database.GetDbConnection().ConnectionString;
-
-                using var conn = new SqlConnection(cs);
-                using var cmd = new SqlCommand("dbo.sp_BulkSearchCourseCompleted", conn)
-                { CommandType = CommandType.StoredProcedure };
-
-                cmd.Parameters.Add(new SqlParameter("@FkCourse", SqlDbType.Int) { Value = selectedFkCourse });
-                cmd.Parameters.Add(new SqlParameter("@FkLevel", SqlDbType.Int) { Value = selectedFkLevel });
-
-                try
-                {
-                    conn.Open();
-                }
-                catch (SqlException ex)
-                {
-                    var state = ex.Errors.Count > 0 ? ex.Errors[0].State : (byte)0;
-                    var msg = $"SQL ERROR: {ex.Number}, STATE: {state}, MESSAGE: {ex.Message}";
-                    // Loguea si tienes logger; aquí relanzamos con detalle:
-                    throw new Exception($"Error al conectar a la base de datos. Detalle: {msg}", ex);
-                }
-
-                using var rdr = cmd.ExecuteReader();
-
-                // helpers para DBNull
-                static string GetString(SqlDataReader r, string col)
-                    => r.IsDBNull(r.GetOrdinal(col)) ? "" : r.GetString(r.GetOrdinal(col));
-                static int GetInt(SqlDataReader r, string col)
-                    => r.IsDBNull(r.GetOrdinal(col)) ? 0 : r.GetInt32(r.GetOrdinal(col));
-                static DateTime GetDate(SqlDataReader r, string col)
-                    => r.IsDBNull(r.GetOrdinal(col)) ? DateTime.MinValue : r.GetDateTime(r.GetOrdinal(col));
-
-                while (rdr.Read())
-                {
-                    // CONTROL_NUMBER puede no ser nvarchar en algunos diseños; convertir a string por seguridad
-                    string control = rdr.IsDBNull(rdr.GetOrdinal("HeadcountControlNumber"))
-                        ? ""
-                        : Convert.ToString(rdr.GetValue(rdr.GetOrdinal("HeadcountControlNumber")));
-
-                    rows.Add(new CourseCompletedRowDtoViewModel
+                // Construimos la lista con EF (joins) — solo disponibles
+                var query =
+                    from cc in _context.SyCoursecompleteds.AsNoTracking()
+                    join ca in _context.CtCourseassignments.AsNoTracking()
+                        on cc.FkCourseAssignment equals ca.PkCourseAssignment
+                    join c in _context.CtCourses.AsNoTracking()
+                        on ca.FkCourse equals c.PkCourse
+                    join lc in _context.CtLevelcourses.AsNoTracking()
+                        on ca.FkRequiredCourseLevels equals lc.PkLevelcourse
+                    join cs in _context.CtCoursestatuses.AsNoTracking()
+                        on cc.FkCourseStatus equals cs.PkCoursestatus
+                    join dm in _context.CtDeliverymodes.AsNoTracking()
+                        on cc.FkDeliveryMode equals dm.PkDeliverymode
+                    join h in _context.SyHeadcounts.AsNoTracking()
+                        on cc.FkHeadcount equals h.PkHeadcount
+                    where
+                        // disponibles
+                        cc.Avaialble == 1
+                        && (c.Available == 1 || c.Available == null)
+                        && (ca.Available == 1 || ca.Available == null)
+                        && (lc.Available == 1 || lc.Available == null)
+                        && (cs.Available == 1 || cs.Available == null)
+                        && (dm.Available == 1 || dm.Available == null)
+                        && (h.Available == 1 || h.Available == null)
+                        // filtros obligatorios
+                        && ca.FkCourse == selectedFkCourse
+                        && ca.FkRequiredCourseLevels == selectedFkLevel
+                    select new
                     {
-                        PkCourseCompleted = GetInt(rdr, "PK_CourseCompleted"),
-                        HeadcountControlNumber = control,
-                        HeadcountFullName = GetString(rdr, "HeadcountFullName"),
-                        CourseName = GetString(rdr, "CourseName"),
-                        LevelName = GetString(rdr, "LevelName"),
-                        StatusName = GetString(rdr, "StatusName"),
-                        DeliveryModeName = GetString(rdr, "DeliveryModeName"),
-                        Score = GetInt(rdr, "Score"),
-                        CreateDate = GetDate(rdr, "CreateDate")
-                    });
-                }
+                        cc.PkCourseCompleted,
+                        cc.Score,
+                        cc.CreateDate,
+                        HeadcountControlNumber = h.ControlNumber,
+                        HeadcountFullName = (
+                            (h.Names ?? "") + " "
+                            + (h.LastName ?? "") + " "
+                            + (h.SecondName ?? "")
+                        ).Trim(),
+                        CourseName = c.CourseName,
+                        LevelName = lc.DescripctionLevel,
+                        StatusName = cs.DescriptionCoursestatus,
+                        DeliveryModeName = dm.DescriptionDeliverymode
+                    };
+
+                rows = query
+                    .OrderBy(x => x.CourseName)
+                    .ThenByDescending(x => x.CreateDate)
+                    .Select(x => new CourseCompletedRowDtoViewModel
+                    {
+                        PkCourseCompleted = x.PkCourseCompleted,
+                        HeadcountControlNumber = x.HeadcountControlNumber.ToString() ?? "",
+                        HeadcountFullName = x.HeadcountFullName ?? "",
+                        CourseName = x.CourseName ?? "",
+                        LevelName = x.LevelName ?? "",
+                        StatusName = x.StatusName ?? "",
+                        DeliveryModeName = x.DeliveryModeName ?? "",
+                        Score = x.Score,
+                        CreateDate = x.CreateDate
+                    })
+                    .ToList();
             }
 
             ViewBag.CourseCompletedRows = rows;
             return View();
         }
 
+        // POST: DeleteCourseCompletedBulk (BORRADO con SP + TVP, igual que ya tenías)
         [HttpPost]
         [Authorize(Roles = "Administrador")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteCourseCompletedBulk(
             [FromForm] int[] SelectedCourseCompletedIds,
             [FromForm] bool SoftDelete,
-            // Hidden para rehidratar filtros al volver
             [FromForm] int FkCourse,
             [FromForm] int FkLevel
         )
@@ -465,12 +596,11 @@ namespace RH_CM.Controllers
                 else
                     TempData["SuccessMessage"] = $"Operación completada. Filas afectadas: {affected}.";
             }
-            catch (SqlException)
+            catch (SqlException ex)
             {
-                TempData["ErrorMessage"] = "Ocurrió un error al eliminar los completados masivos.";
+                TempData["ErrorMessage"] = $"Ocurrió un error al eliminar los completados masivos. Detalle: {ex.Message}";
             }
 
-            // Volver con los mismos filtros (solo curso y nivel)
             return RedirectToAction(nameof(DeleteCourseCompletedBulk), new { fkCourse = FkCourse, fkLevel = FkLevel });
         }
 

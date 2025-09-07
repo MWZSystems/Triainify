@@ -1,0 +1,161 @@
+﻿/* ================================
+   Estilos Globales y por BodyClass
+   ================================ */
+
+/* ==== Tamaño de fuente unificado ==== */
+.card-body {
+    font-size: 1rem;
+}
+
+/* ==== Utilitarias ==== */
+.table-accent {
+}
+
+.btn-accent {
+}
+
+.title-accent {
+}
+
+/* Encabezados DataTables comunes */
+#datatables-pos thead th,
+#datatables-dept thead th,
+#datatables-sup thead th,
+#datatables-hc thead th {
+    text-transform: uppercase;
+    letter-spacing: .3px;
+}
+
+/* Celdas comunes */
+#datatables-pos tbody td,
+#datatables-dept tbody td,
+#datatables-sup tbody td,
+#datatables-hc tbody td {
+    vertical-align: middle;
+}
+
+/* Botones en celdas de acciones */
+.actions .btn {
+    margin: 0 .15rem;
+}
+
+/* ================================
+   NAVBAR: Tipografía global + overrides por página
+   ================================ */
+
+/* --- Base para TODAS las páginas --- */
+body .navbar .nav-link {
+    font-size: 1.05rem; /* un poco más grande */
+    font-weight: 600; /* semibold */
+    letter-spacing: .2px;
+}
+
+body .navbar .dropdown-menu .dropdown-item {
+    font-size: .98rem;
+    font-weight: 500;
+}
+
+body .navbar .dropdown-header {
+    font-size: .9rem;
+    font-weight: 700; /* headers del mega menú más marcados */
+    text-transform: uppercase;
+    letter-spacing: .3px;
+}
+
+/* Nombre de usuario */
+body .navbar .nav-link .text-dark {
+    font-weight: 600;
+}
+
+/* Ajuste móvil */
+@media (max-width: 576px) {
+    body .navbar .nav-link {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    body .navbar .dropdown-menu .dropdown-item {
+        font-size: .95rem;
+    }
+}
+
+/* ======================================
+   ======= Departments: Azul =======
+   ====================================== */
+body.page-departments .table thead.table-accent {
+    background-color: #cfe2ff;
+}
+
+body.page-departments .title-accent {
+    color: #052c65;
+}
+
+
+/* ======================================
+   ======= Positions: Verde =======
+   ====================================== */
+body.page-positions .table thead.table-accent {
+    background-color: #d1e7dd;
+}
+
+body.page-positions .title-accent {
+    color: #0f5132;
+}
+
+/* ======================================
+   ======= Supervisors: Morado =======
+   ====================================== */
+body.page-supervisors .table thead.table-accent {
+    background-color: #e2d9f3;
+}
+
+body.page-supervisors .title-accent {
+    color: #3d2466;
+}
+
+/* ======================================
+   ======= Headcounts / Onboarding: Cian =======
+   ====================================== */
+body.page-headcounts .table thead.table-accent {
+    background-color: #cff4fc;
+}
+
+body.page-headcounts .title-accent {
+    color: #055160;
+}
+
+/* ===========================
+   Offboarding: escala grises
+   =========================== */
+
+/* Encabezado de tabla gris medio */
+body.page-offboarding .table thead.table-accent {
+    background-color: #e1e5ea; /* gris claro medio */
+}
+
+/* Título en gris oscuro */
+body.page-offboarding .title-accent {
+    color: #343a40; /* gris muy oscuro */
+}
+
+/* ======================================
+   ======= Courses: Ámbar =======
+   ====================================== */
+body.page-courses .table thead.table-accent {
+    background-color: #ffe69c; /* warning-subtle */
+}
+
+body.page-courses .title-accent {
+    color: #664d03; /* warning-emphasis */
+}
+
+/* ======================================
+   ======= Course Materials: Rojo =======
+   ====================================== */
+body.page-course-materials .table thead.table-accent {
+    background-color: #f8d7da; /* rojo suave tipo danger-subtle */
+}
+
+body.page-course-materials .title-accent {
+    color: #842029; /* rojo intenso tipo danger-emphasis */
+}

@@ -1,0 +1,200 @@
+﻿@model IEnumerable<dynamic>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    ViewData["Title"] = "Course Completed";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">
+            <i class="align-middle fas fa-outdent"></i> @ViewData["Title"]
+        </h1>
+    </div>
+    <div class="col-auto">
+        <!-- Crear registros en bulk -->
+        <a class="btn btn-primary" asp-action="CreateCourseCompletedBulk">
+            <i class="align-middle fas fa-layer-group"></i> CREATE BULK
+        </a>
+
+        <!-- Crear nuevo registro -->
+        <a class="btn btn-facebook" asp-action="CreateCourseCompleted">
+            <i class="align-middle fas fa-plus-square"></i> CREATE NEW
+        </a>
+
+        <!-- Eliminar registros en bulk -->
+        <a class="btn btn-danger" asp-action="DeleteCourseCompletedBulk">
+            <i class="align-middle fas fa-trash-alt"></i> DELETE BULK
+        </a>
+
+        <!-- Exportar a Excel -->
+        <a class="btn btn-success" asp-action="ExportCourseCompletedToExcel">
+            <i class="align-middle fas fa-file-excel"></i> EXPORT TO EXCEL
+        </a>
+    </div>
+</div>
+
+<div id="loader" class="text-center my-5">
+    <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<div id="tableContainer" style="display:none;">
+    <div class="card">
+        <div class="card-body">
+
+            @if (Model != null && Model.Any())
+            {
+                <table id="tbl-coursecompleted" class="table table-striped table-hover" style="width:100%">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Control #</th>
+                            <th>Employee</th>
+                            <th>Course</th>
+                            <th>Level</th>    @* NUEVO *@
+                            <th>Updated</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tfoot>
+                        <tr>
+                            <th>Control #</th>
+                            <th>Employee</th>
+                            <th>Course</th>
+                            <th>Level</th>   @* NUEVO *@
+                            <th>Updated</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+
+                    <tbody>
+                        @foreach (var x in Model)
+                        {
+                            <tr>
+                                <td>@x.ControlNumber</td>
+                                <td>@x.HeadcountName</td>
+                                <td>@x.CourseName</td>
+                                <td>@x.LevelDescription</td>  @* NUEVO *@
+                                <td>@(((DateTime)x.LastUpdateDate).ToString("yyyy-MM-dd HH:mm"))</td>
+                                <td class="text-nowrap">
+                                    <form asp-action="ToggleCourseCompleted" asp-route-id="@x.PkCourseCompleted" method="post" class="d-inline"
+                                          onsubmit="return confirm('Are you sure you want to toggle the availability of this record?');">
+                                        <button type="submit"
+                                                class="btn @( (Convert.ToInt32(x.Avaialble) == 1) ? "btn-success btn-sm" : "btn-secondary btn-sm")"
+                                                title="Toggle Availability">
+                                            <i class="align-middle fas @( (Convert.ToInt32(x.Avaialble) == 1) ? "fa-toggle-on" : "fa-toggle-off")"></i>
+                                        </button>
+                                    </form>
+
+                                    <a asp-action="EditCourseCompleted" asp-route-id="@x.PkCourseCompleted" class="btn btn-warning btn-sm" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+
+                                    @if (User.Identity.IsAuthenticated && User.IsInRole("Administrador"))
+                                    {
+                                        <form asp-action="DeleteCourseCompleted" asp-route-id="@x.PkCourseCompleted" method="post" class="d-inline"
+                                              onsubmit="return confirm('Are you sure you want to delete this record?');">
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Delete">
+                                                <i class="align-middle fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="mb-0">No records found</p>
+            }
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        $(document).ready(function () {
+            $('#tableContainer').hide();
+            $('#loader').show();
+
+            // Índices: 0:Control #, 1:Employee, 2:Course, 3:Level, 4:Updated, 5:Actions
+            $('#tbl-coursecompleted tfoot th').each(function (i) {
+                switch (i) {
+                    case 0: // Control #
+                    case 1: // Employee
+                    case 2: // Course
+                    case 3: // Level
+                        $(this).html('<input type="text" class="form-control form-control-sm" placeholder="Filter ' + $('thead th').eq(i).text() + '" />');
+                        break;
+
+                    case 4: // Updated (fecha)
+                        $(this).html('<input type="text" class="form-control form-control-sm" placeholder="YYYY-MM-DD" />');
+                        break;
+
+                    default:
+                        $(this).html('');
+                        break;
+                }
+            });
+
+            var table = $('#tbl-coursecompleted').DataTable({
+                responsive: true,
+                order: [[0, 'desc']],
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]],
+                initComplete: function () {
+                    var api = this.api();
+
+                    // Texto: Control #, Employee, Course, Level
+                    [0, 1, 2, 3].forEach(function (colIdx) {
+                        $('tfoot th').eq(colIdx).find('input').on('keyup change clear', function () {
+                            if (api.column(colIdx).search() !== this.value) {
+                                api.column(colIdx).search(this.value).draw();
+                            }
+                        });
+                    });
+
+                    // Fecha: Updated
+                    $('tfoot th').eq(4).find('input').on('keyup change clear', function () {
+                        api.column(4).search(this.value).draw();
+                    });
+
+                    $('#loader').fadeOut(150, function () {
+                        $('#tableContainer').fadeIn(150);
+                    });
+                }
+            });
+
+            // Notificaciones
+            if ("@TempData["SuccessMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+            if ("@TempData["ErrorMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+        });
+    </script>
+}

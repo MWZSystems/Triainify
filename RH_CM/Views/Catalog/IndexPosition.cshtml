@@ -7,14 +7,20 @@
 @{
     ViewData["Title"] = "Position";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Mantén la clase para diferenciar la página (solo usa acento en tabla, no en botones)
+    ViewData["BodyClass"] = "page-positions";
 }
 
 <div class="row">
     <div class="col">
-        <h1 class="h3 mb-3 text-center"><i class="align-middle fas fa-chess-board"></i> @ViewData["Title"]</h1>
+        <h1 class="h3 mb-3 text-center">
+            <i class="align-middle fas fa-chess-board"></i> @ViewData["Title"]
+        </h1>
     </div>
     <div class="col-auto">
-        <a class="btn btn-facebook" asp-action="CreatePosition">
+        <!-- Botón en AZUL, respetando tu color original -->
+        <a class="btn btn-primary" asp-action="CreatePosition">
             <i class="align-middle fas fa-plus-square"></i> CREATE NEW POSITION
         </a>
     </div>
@@ -27,124 +33,122 @@
     </div>
 </div>
 
-<!-- Tabla envuelta en contenedor oculto -->
+<!-- Tabla -->
 <div id="tableContainer" style="display:none;">
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="card">
-                <div class="card-body">
-
-                    @if (Model.Any())
-                    {
-                        <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
-                            <thead class="table-primary">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table id="datatables-pos" class="table table-striped table-hover align-middle" style="width:100%">
+                        <thead class="table-accent">
+                            <tr>
+                                <th>@Html.DisplayNameFor(m => m.First().NamePosition)</th>
+                                <th>@Html.DisplayNameFor(m => m.First().NamePositionEnglish)</th>
+                                <th>Actions</th>
+                            </tr>
+                            <!-- Filtros por columna -->
+                            <tr class="table-light">
+                                <th><input class="form-control form-control-sm" placeholder="Position" /></th>
+                                <th><input class="form-control form-control-sm" placeholder="Position (EN)" /></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
                                 <tr>
-                                    <th>@Html.DisplayNameFor(model => model.PkPosition)</th>
-                                    <th>@Html.DisplayNameFor(model => model.NamePosition)</th>
-                                    <th>@Html.DisplayNameFor(model => model.NamePositionEnglish)</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-                                        <td>@item.PkPosition</td>
-                                        <td>@item.NamePosition</td>
-                                        <td>@item.NamePositionEnglish</td>
-                                        <td>
-                                            <div class="text-center">
-                                                <form asp-action="TogglePosition" asp-route-id="@item.PkPosition" method="post" style="display:inline;">
-                                                    <button type="submit" onclick="return confirm('Are you sure you want to toggle the availability of this position?')" class="btn @(item.Available == 1 ? "btn-success" : "btn-secondary")">
-                                                        <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
-                                                        @(item.Available == 1 ? "Enable" : "Disable")
-                                                    </button>
-                                                </form>
-                                                <a class="btn btn-warning" asp-action="EditPosition" asp-route-id="@item.PkPosition">
-                                                    <i class="fas fa-edit"></i> Edit
-                                                </a>
-                                                @if (User.Identity.IsAuthenticated && User.IsInRole("Administrador"))
-                                                {
-                                                    <form asp-action="DeleteConfirmedPosition" asp-route-id="@item.PkPosition" method="post" style="display:inline;">
-                                                        <button type="submit" onclick="return confirm('Are you sure you want to delete this position?')" class="btn btn-danger">
-                                                            <i class="align-middle fas fa-trash-alt"></i> Delete
-                                                        </button>
-                                                    </form>
-                                                }
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    }
-                    else
-                    {
-                        <p>No records found</p>
-                    }
+                                    <td>@item.NamePosition</td>
+                                    <td>@item.NamePositionEnglish</td>
+                                    <td class="actions text-center">
+                                        <!-- Botones se quedan en AZUL/AMARILLO/ROJO como tenías -->
+                                        <a class="btn btn-warning btn-sm" asp-action="EditPosition" asp-route-id="@item.PkPosition" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
 
+                                        @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Administrador"))
+                                        {
+                                            <form asp-action="DeleteConfirmedPosition" asp-route-id="@item.PkPosition" method="post" class="d-inline"
+                                                  onsubmit="return confirm('Are you sure you want to delete this position?');">
+                                                <button type="submit" class="btn btn-danger btn-sm" title="Delete">
+                                                    <i class="align-middle fas fa-trash-alt"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Position</th>
+                                <th>Position (EN)</th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
-            </div>
+            }
+            else
+            {
+                <p class="mb-0">No records found</p>
+            }
         </div>
     </div>
 </div>
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
-
     <script>
         $(document).ready(function () {
-            // Mostrar loader al inicio
+            // Ocultamos tabla y mostramos loader
             $('#tableContainer').hide();
             $('#loader').show();
 
-            // Solo inicializa DataTable si la tabla existe en el DOM
-            var $tbl = $('#datatables-responsive');
-            if ($tbl.length) {
-                $tbl.DataTable({
-                    responsive: true,
-                    // La primera columna existe (0). Ajusta a la que necesites.
-                    order: [[0, 'desc']],
-                    initComplete: function () {
-                        $('#loader').fadeOut(200, function () {
-                            $('#tableContainer').fadeIn(200);
+            const table = $('#datatables-pos').DataTable({
+                responsive: true,
+                order: [[0, 'asc']], // Ahora ordena por la columna NamePosition
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]],
+                initComplete: function () {
+                    const api = this.api();
+
+                    // Filtros por texto: Position, Position (EN)
+                    [0, 1].forEach(function (colIdx) {
+                        $('thead tr:eq(1) th').eq(colIdx).find('input').on('keyup change clear', function () {
+                            if (api.column(colIdx).search() !== this.value) {
+                                api.column(colIdx).search(this.value).draw();
+                            }
                         });
-                    }
-                });
-            } else {
-                // No hay tabla (Model.Any() == false), mostrar el contenedor igualmente
-                $('#loader').fadeOut(200, function () {
-                    $('#tableContainer').fadeIn(200);
+                    });
+
+                    $('#loader').fadeOut(200, function () {
+                        $('#tableContainer').fadeIn(200);
+                    });
+                }
+            });
+
+            // Notificaciones
+            if ("@TempData["SuccessMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
                 });
             }
-
-            // Notificaciones (solo si Notyf está definido)
-            var success = "@(TempData["SuccessMessage"] ?? "")";
-            var error = "@(TempData["ErrorMessage"] ?? "")";
-
-            if (typeof window.notyf !== 'undefined') {
-                if (success) {
-                    window.notyf.open({
-                        type: 'success',
-                        message: success,
-                        ripple: true,
-                        dismissible: true,
-                        position: { x: 'center', y: 'top' },
-                        duration: 5000
-                    });
-                }
-                if (error) {
-                    window.notyf.open({
-                        type: 'error',
-                        message: error,
-                        ripple: true,
-                        dismissible: true,
-                        position: { x: 'center', y: 'top' },
-                        duration: 5000
-                    });
-                }
+            if ("@TempData["ErrorMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
             }
         });
     </script>
-
 }

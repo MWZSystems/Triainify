@@ -11,7 +11,9 @@
 
 <div class="row">
     <div class="col">
-        <h1 class="h3 mb-3 text-center"><i class="align-middle fas fa-store-alt"></i> @ViewData["Title"]</h1>
+        <h1 class="h3 mb-3 text-center">
+            <i class="align-middle fas fa-store-alt"></i> @ViewData["Title"]
+        </h1>
     </div>
     <div class="col-auto">
         <a class="btn btn-facebook" asp-action="CreateDepartment">
@@ -27,117 +29,102 @@
     </div>
 </div>
 
-<!-- Tabla envuelta en contenedor oculto -->
+<!-- Tabla -->
 <div id="tableContainer" style="display:none;">
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="card">
-                <div class="card-body">
+    <div class="card shadow-sm">
+        <div class="card-body">
 
-                    @if (Model.Any())
-                    {
-                        <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
-                            <thead class="table-primary">
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table id="datatables-dept" class="table table-striped table-hover align-middle" style="width:100%">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>@Html.DisplayNameFor(m => m.First().NameDeparment)</th>
+                                <th>@Html.DisplayNameFor(m => m.First().Createuser)</th>
+                                <th>@Html.DisplayNameFor(m => m.First().Createdate)</th>
+                                <th>Actions</th>
+                            </tr>
+                            <!-- Filtros por columna -->
+                            <tr class="table-light">
+                                <th><input class="form-control form-control-sm" placeholder="Department" /></th>
+                                <th><input class="form-control form-control-sm" placeholder="Created by" /></th>
+                                <th><input class="form-control form-control-sm" placeholder="YYYY-MM-DD" /></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
                                 <tr>
-                                    <th>@Html.DisplayNameFor(model => model.First().PkDepartment)</th>
-                                    <th>@Html.DisplayNameFor(model => model.First().NameDeparment)</th>
-                                    <th>@Html.DisplayNameFor(model => model.First().Createuser)</th>
-                                    <th>@Html.DisplayNameFor(model => model.First().Createdate)</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <td>@item.NameDeparment</td>
+                                    <td>@item.Createuser</td>
+                                    <td>@item.Createdate.ToString("yyyy-MM-dd HH:mm")</td>
+                                    <td class="actions text-center">
+                                        <a class="btn btn-warning btn-sm" asp-action="EditDepartment" asp-route-id="@item.PkDepartment" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+
+                                        @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Administrador"))
+                                        {
+                                            <form asp-action="DeleteDepartment" asp-route-id="@item.PkDepartment" method="post" class="d-inline"
+                                                  onsubmit="return confirm('Are you sure you want to delete this department?');">
+                                                <button type="submit" class="btn btn-danger btn-sm" title="Delete">
+                                                    <i class="align-middle fas fa-trash-alt"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-                                        <td>@item.PkDepartment</td>
-                                        <td>@item.NameDeparment</td>
-                                        <td>@item.Createuser</td>
-                                        <td>@item.Createdate</td>
-                                        <td>
-                                            @{
-                                                string availabilityText = item.Available switch
-                                                {
-                                                    1 => "Habilitado",
-                                                    0 => "Deshabilitado",
-                                                    _ => "Deshabilitado"
-                                                };
-                                            }
-                                            @availabilityText
-                                        </td>
-                                        <td>
-                                            <div class="text-center">
-                                                <form asp-action="ToggleDepartment" asp-route-id="@item.PkDepartment" method="post" style="display:inline;">
-                                                    <button type="submit" onclick="return confirm('Are you sure you want to toggle the availability of this department?')" class="btn @(item.Available == 1 ? "btn-success" : "btn-secondary")">
-                                                        <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
-                                                        @(item.Available == 1 ? "Enable" : "Disable")
-                                                    </button>
-                                                </form>
-
-                                                <a class="btn btn-warning" asp-action="EditDepartment" asp-route-id="@item.PkDepartment">
-                                                    <i class="fas fa-edit"></i> Edit
-                                                </a>
-                                                @if (User.Identity.IsAuthenticated && (User.IsInRole("Administrador")))
-                                                {
-                                                    <form asp-action="DeleteDepartment" asp-route-id="@item.PkDepartment" method="post" style="display:inline;">
-                                                        <button type="submit" onclick="return confirm('Are you sure you want to delete this department?')" class="btn btn-danger">
-                                                            <i class="align-middle fas fa-trash-alt"></i>
-                                                            Delete
-                                                        </button>
-                                                    </form>
-                                                }
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    }
-                    else
-                    {
-                        <p>No records found</p>
-                    }
-
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Department</th>
+                                <th>Created by</th>
+                                <th>Created date</th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
-            </div>
+            }
+            else
+            {
+                <p class="mb-0">No records found</p>
+            }
+
         </div>
     </div>
 </div>
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
-
     <script>
         $(document).ready(function () {
-            // Ocultar tabla y mostrar loader
+            // Ocultamos tabla y mostramos loader
             $('#tableContainer').hide();
             $('#loader').show();
 
-            // Inicializar DataTable con traducción al español y sin orden automático
-            $('#datatables-responsive').DataTable({
+            // Inicializamos DataTable
+            const table = $('#datatables-dept').DataTable({
                 responsive: true,
-                order: [],
-                language: {
-                    "decimal": "",
-                    "emptyTable": "No hay información",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
-                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
-                    "thousands": ",",
-                    "lengthMenu": "Mostrar _MENU_ Entradas",
-                    "loadingRecords": "Cargando...",
-                    "processing": "Procesando...",
-                    "search": "Buscar:",
-                    "zeroRecords": "Sin resultados encontrados",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    }
-                },
+                order: [[0, 'asc']], // ahora ordena por la columna Department
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
                 initComplete: function () {
+                    const api = this.api();
+
+                    // Filtros por columnas de texto (ahora son 3 columnas filtrables)
+                    [0, 1, 2].forEach(function (colIdx) {
+                        $('thead tr:eq(1) th').eq(colIdx).find('input').on('keyup change clear', function () {
+                            if (api.column(colIdx).search() !== this.value) {
+                                api.column(colIdx).search(this.value).draw();
+                            }
+                        });
+                    });
+
+                    // Mostrar tabla
                     $('#loader').fadeOut(200, function () {
                         $('#tableContainer').fadeIn(200);
                     });
@@ -146,29 +133,23 @@
 
             // Notificaciones
             if ("@TempData["SuccessMessage"]" !== "") {
-                window.notyf.open({
+                window.notyf?.open({
                     type: 'success',
                     message: "@TempData["SuccessMessage"]",
                     ripple: true,
                     dismissible: true,
-                    position: {
-                        x: 'center',
-                        y: 'top'
-                    },
+                    position: { x: 'center', y: 'top' },
                     duration: 5000
                 });
             }
 
             if ("@TempData["ErrorMessage"]" !== "") {
-                window.notyf.open({
+                window.notyf?.open({
                     type: 'error',
                     message: "@TempData["ErrorMessage"]",
                     ripple: true,
                     dismissible: true,
-                    position: {
-                        x: 'center',
-                        y: 'top'
-                    },
+                    position: { x: 'center', y: 'top' },
                     duration: 5000
                 });
             }

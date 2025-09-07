@@ -4,15 +4,24 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - RH</title>
-    <link rel="stylesheet" href="~/Assets/dist/css/light.css" asp-append-version="true" />
-    <link rel="shortcut icon" href="~/assets/favicon.ico">
-    @RenderSection("head", false)
 
-    <link href="~/assets/dist/css/select2.css" rel="stylesheet" />
-    <script src="~/assets/dist/js/select2.js"></script>
+    <!-- Estilos base del tema -->
+    <link rel="stylesheet" href="~/assets/dist/css/light.css" asp-append-version="true" />
+    <link rel="shortcut icon" href="~/assets/favicon.ico" />
 
+    <!-- Select2 (global) -->
+    <link rel="stylesheet" href="~/assets/dist/css/select2.css" asp-append-version="true" />
+
+    @RenderSection("head", required: false)
+
+    <!-- Paletas/acentos por página -->
+    <link rel="stylesheet" href="~/assets/dist/css/bodyclass.css" asp-append-version="true" />
 </head>
-<body data-theme="default" data-layout="fluid" data-sidebar-position="left" data-sidebar-behavior="sticky">
+
+    <body class="@((string)ViewData["BodyClass"] ?? "")"
+      data-theme="default" data-layout="fluid"
+      data-sidebar-position="left" data-sidebar-behavior="sticky">
+
     <div class="wrapper">
         @* <partial name="_Sidebar" /> *@
         <main class="main">
@@ -27,8 +36,12 @@
             <partial name="_Footer" />
         </main>
     </div>
-    <script src="~/assets/dist/js/app.js"></script>
 
-    @await RenderSectionAsync("Scripts", required: false)
+    <!-- JS base -->
+    <script src="~/assets/dist/js/app.js" asp-append-version="true"></script>
+    <!-- Select2 (global) -->
+    <script src="~/assets/dist/js/select2.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

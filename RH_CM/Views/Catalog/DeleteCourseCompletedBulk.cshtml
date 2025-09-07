@@ -5,13 +5,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var rows = (IEnumerable<CourseCompletedRowDtoViewModel>)ViewBag.CourseCompletedRows;
-    var courses = (IEnumerable<dynamic>)ViewBag.Courses;
-    var levels = (IEnumerable<dynamic>)ViewBag.Levels;
+    var courses = (IEnumerable<SelectListItem>)ViewBag.Courses;
+    var levels = (IEnumerable<SelectListItem>)ViewBag.Levels;
 
     int selectedFkCourse = (int)(ViewBag.SelectedFkCourse ?? 0);
     int selectedFkLevel = (int)(ViewBag.SelectedFkLevel ?? 0);
 
-    bool lockFilters = false; // en delete no bloqueamos
+    bool lockFilters = false;
     bool needFilters = (bool)(ViewBag.NeedFilters ?? (selectedFkCourse <= 0 || selectedFkLevel <= 0));
 }
 
@@ -21,7 +21,6 @@
     </div>
 </div>
 
-<!-- Filtros (GET) -->
 <div class="row mb-3">
     <div class="col-md-12">
         <form method="get" asp-action="DeleteCourseCompletedBulk" class="card card-body" id="filterForm">
@@ -32,42 +31,25 @@
                         <option value="">-- Select Course --</option>
                         @foreach (var c in courses)
                         {
-                            if (c.PkCourse == selectedFkCourse)
-                            {
-                                <option value="@c.PkCourse" selected>@c.CourseName</option>
-                            }
-                            else
-                            {
-                                <option value="@c.PkCourse">@c.CourseName</option>
-                            }
+                            <option value="@c.Value" selected="@(c.Selected)">@c.Text</option>
                         }
                     </select>
                 </div>
-
                 <div class="col-md-3">
                     <label class="form-label">Required Level <span class="text-danger">*</span></label>
                     <select class="form-control select2" name="fkLevel" id="FkLevel" @(lockFilters ? "disabled" : "") required>
                         <option value="">-- Select Level --</option>
                         @foreach (var l in levels)
                         {
-                            if (l.PkLevelcourse == selectedFkLevel)
-                            {
-                                <option value="@l.PkLevelcourse" selected>@l.DescripctionLevel</option>
-                            }
-                            else
-                            {
-                                <option value="@l.PkLevelcourse">@l.DescripctionLevel</option>
-                            }
+                            <option value="@l.Value" selected="@(l.Selected)">@l.Text</option>
                         }
                     </select>
                 </div>
-
                 <div class="col-md-2 align-self-end">
                     <button type="submit" class="btn btn-primary w-100" id="btnSearch">
                         <i class="fas fa-search"></i> Search
                     </button>
                 </div>
-
                 <div class="col-md-2 align-self-end">
                     <a href="@Url.Action("DeleteCourseCompletedBulk")" class="btn btn-outline-secondary w-100">
                         <i class="fas fa-undo"></i> Clear
@@ -83,13 +65,12 @@
             }
             else
             {
-                <small class="text-muted mt-2 d-block">Puedes refinar cambiando Course/Level (los registros siempre muestran Available=1).</small>
+                <small class="text-muted mt-2 d-block">Puedes refinar seleccionando otro curso/nivel.</small>
             }
         </form>
     </div>
 </div>
 
-<!-- Tabla + acción -->
 @if (!needFilters)
 {
     <div class="row">
@@ -110,7 +91,6 @@
                     <form asp-action="DeleteCourseCompletedBulk" method="post">
                         @Html.AntiForgeryToken()
 
-                        <!-- Preservar filtros en el POST -->
                         <input type="hidden" name="FkCourse" value="@selectedFkCourse" />
                         <input type="hidden" name="FkLevel" value="@selectedFkLevel" />
 
@@ -189,20 +169,15 @@
     @await Html.PartialAsync("_ValidationScriptsPartial")
 
     <script>
-        // Seleccionar/deseleccionar todos
         function toggleAll(name, check) {
             document.querySelectorAll(`input[name='${name}']`).forEach(el => { el.checked = check; });
             updateCounts();
         }
-
-        // Contador de seleccionados
         function updateCounts() {
             const count = document.querySelectorAll("input[name='SelectedCourseCompletedIds']:checked").length;
             const badge = document.getElementById('badge-count-rows');
             if (badge) badge.textContent = `Seleccionados: ${count}`;
         }
-
-        // Normalización para búsqueda (ignora acentos; trata ñ distinto de n)
         function foldEs(str) {
             return (str ?? '')
                 .toString()
@@ -211,11 +186,9 @@
                 .replace(/n\u0303/g, 'ñ')
                 .replace(/[\u0300-\u036f]/g, '');
         }
-
-        // Buscador: filtra filas de la tabla
-        function attachFilter(inputId, tableBodySelector) {
+        function attachFilter(inputId, tbodySelector) {
             const input = document.getElementById(inputId);
-            const tbody = document.querySelector(tableBodySelector);
+            const tbody = document.querySelector(tbodySelector);
             if (!input || !tbody) return;
             input.addEventListener('input', () => {
                 const q = foldEs(input.value);
@@ -227,7 +200,6 @@
         }
         attachFilter('searchRows', '#rowsWrapper');
 
-        // Reglas: exigir Course + Level para habilitar Search
         function hasValue(v) { return v !== null && v !== undefined && v !== '' && v !== '0'; }
         function toggleSearchButton() {
             const courseVal = $('#FkCourse').val();
@@ -235,35 +207,17 @@
             const enabled   = hasValue(courseVal) && hasValue(levelVal);
             $('#btnSearch').prop('disabled', !enabled);
         }
-
-        document.addEventListener('change', (e) => {
-            if (e.target && e.target.name === 'SelectedCourseCompletedIds') updateCounts();
-        });
-
         $(document).ready(function () {
             updateCounts();
             $('.select2').select2({ theme: 'bootstrap4', placeholder: 'Select an option', allowClear: true });
-
             $('#FkCourse, #FkLevel').on('change', toggleSearchButton);
             toggleSearchButton();
 
-            $('#filterForm').on('submit', function (e) {
-                const ok = hasValue($('#FkCourse').val()) && hasValue($('#FkLevel').val());
-                if (!ok) {
-                    e.preventDefault();
-                    window.notyf?.open({
-                        type: 'warning',
-                        message: 'Selecciona Course y Required Level antes de buscar.',
-                        duration: 4000
-                    });
-                }
-            });
-
             if ('@TempData["SuccessMessage"]' !== '') {
-                window.notyf?.open({ type: 'success', message: '@TempData["SuccessMessage"]', ripple: true, dismissible: true, position: { x: 'center', y: 'top' }, duration: 5000 });
+                window.notyf?.open({ type: 'success', message: '@TempData["SuccessMessage"]', duration: 5000, position: { x: 'center', y: 'top' } });
             }
             if ('@TempData["ErrorMessage"]' !== '') {
-                window.notyf?.open({ type: 'error', message: '@TempData["ErrorMessage"]', ripple: true, dismissible: true, position: { x: 'center', y: 'top' }, duration: 5000 });
+                window.notyf?.open({ type: 'error', message: '@TempData["ErrorMessage"]', duration: 5000, position: { x: 'center', y: 'top' } });
             }
         });
     </script>

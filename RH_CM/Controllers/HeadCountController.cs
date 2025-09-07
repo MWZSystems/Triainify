@@ -196,7 +196,7 @@ namespace RH_CM.Controllers
             var departments = await _context.CtDepartments.ToListAsync();
             var positions = await _context.CtPositions.ToListAsync();
             var syHeadCounts = await _context.SyHeadcounts
-            //.Where(h => h.Available == 1)
+            .Where(h => h.Available == 1)
             .ToListAsync();
 
 
@@ -228,6 +228,7 @@ namespace RH_CM.Controllers
                 SyHeadCount = syHeadCounts
             };
 
+            // Usa el nombre real del .cshtml que ya tienes
             return View(model);
         }
 
@@ -262,7 +263,6 @@ namespace RH_CM.Controllers
 
             return model;
         }
-
 
         // GET: HeadCount/Create
         [Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
@@ -572,17 +572,23 @@ namespace RH_CM.Controllers
                 return RedirectToAction(nameof(IndexHeadCount));
             }
 
-            // Alterna el valor de Available entre 0 y 1
-            headCount.Available = headCount.Available == 1 ? 0 : 1;
+            // Determina el nuevo valor
+            var newAvailable = (headCount.Available == 1) ? 0 : 1;
 
-            // (Opcional) Si tu entidad tiene campos de auditoría, actualízalos aquí:
-            // headCount.LastUpdateUser = User.Identity?.Name ?? "Unknown";
+            // Aplica cambios
+            headCount.Available = newAvailable;
+            headCount.Layoffday = (newAvailable == 0) ? DateTime.Now : (DateTime?)null;
+
+            // (Opcional) auditoría
+            // headCount.LastUpdateUser = User.Identity?.Name ?? "system";
             // headCount.LastUpdateDate = DateTime.Now;
+
             try
             {
                 _context.Update(headCount);
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = headCount.Available == 1
+
+                TempData["SuccessMessage"] = (newAvailable == 1)
                     ? "Head count enabled successfully."
                     : "Head count disabled successfully.";
             }
@@ -590,20 +596,13 @@ namespace RH_CM.Controllers
             {
                 TempData["ErrorMessage"] = "Concurrency error while updating the head count.";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Unexpected error while updating the head count.";
+                TempData["ErrorMessage"] = $"Unexpected error while updating the head count: {ex.Message}";
             }
 
             return RedirectToAction(nameof(IndexHeadCount));
         }
-
-
-        private bool HeadCountExists(int id)
-        {
-            return _context.SyHeadcounts.Any(e => e.PkHeadcount == id);
-        }
-
 
 
     }
