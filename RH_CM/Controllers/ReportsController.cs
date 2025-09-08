@@ -1,5 +1,8 @@
-﻿using ClosedXML.Excel;
+﻿using ClosedXML;
+using ClosedXML.Excel;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
@@ -9,33 +12,27 @@ using RH_CM.Models;
 using RH_CM.ViewModels;
 using System.Data;
 
-//using ClosedXML;
-//using ClosedXML.Excel;
-//using Microsoft.AspNetCore.Authorization;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.AspNetCore.Identity;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.AspNetCore.Mvc.Rendering;
-//using Microsoft.Data.SqlClient;
-//using Microsoft.EntityFrameworkCore;
-//using OfficeOpenXml;
-//using RH_CM.Data;
-//using RH_CM.Models;
-//using RH_CM.ViewModels;
-//using System.Data;
-
-
 namespace RH_CM.Controllers
 {
     public class ReportsController : Controller
     {
         private readonly db_abcd61_rhchdbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public ReportsController(db_abcd61_rhchdbContext context)
+        public ReportsController(db_abcd61_rhchdbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
+        //private readonly db_abcd61_rhchdbContext _context;
+        //private readonly UserManager<IdentityUser> _userManager;
+
+        //public TrainifyController(db_abcd61_rhchdbContext context, UserManager<IdentityUser> userManager)
+        //{
+        //    _context = context;
+        //    _userManager = userManager;
+        //}
         // Combo de posiciones (NamePosition siempre)
         private void LoadPositions(int selectedFkPosition = 0)
         {
