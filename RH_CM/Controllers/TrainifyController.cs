@@ -167,11 +167,6 @@ namespace RH_CM.Controllers
             return View(result);
         }
 
-        /// <summary>
-        /// AUN FALTA VALIDAR ESTA SEGUNDA PARTE
-        /// </summary>
-        /// <returns></returns>
-
         // GET: IndexCourseCompleted
         public async Task<IActionResult> IndexCourseCompleted()
         {

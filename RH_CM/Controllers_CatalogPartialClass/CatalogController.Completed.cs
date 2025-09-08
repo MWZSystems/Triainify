@@ -89,34 +89,6 @@ namespace RH_CM.Controllers
             return View(rows);
         }
 
-        public async Task<IActionResult> IndexCourseCompleted2()
-        {
-            var query =
-                from s in _context.SyCoursecompleteds.AsNoTracking()
-                join ca in _context.CtCourseassignments.AsNoTracking()
-                    on s.FkCourseAssignment equals ca.PkCourseAssignment
-                join c in _context.CtCourses.AsNoTracking()
-                    on ca.FkCourse equals c.PkCourse
-                join lc in _context.CtLevelcourses.AsNoTracking()                 // <-- NUEVO
-                    on ca.FkRequiredCourseLevels equals lc.PkLevelcourse          // <-- NUEVO
-                join hc in _context.SyHeadcounts.AsNoTracking()
-                    on s.FkHeadcount equals hc.PkHeadcount
-                orderby s.PkCourseCompleted descending
-                select new
-                {
-                    s.PkCourseCompleted,
-                    hc.ControlNumber,
-                    HeadcountName = hc.Names + " " + (hc.LastName ?? "") + " " + (hc.SecondName ?? ""),
-                    CourseName = c.CourseName,
-                    LevelDescription = lc.DescripctionLevel,   // <-- usa el nombre exacto de tu campo
-                    s.Avaialble,
-                    s.LastUpdateDate
-                };
-
-            var data = await query.ToListAsync();
-            return View(data);
-        }
-
         [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
         [HttpGet]
         public async Task<IActionResult> ExportCourseCompletedToExcel()
@@ -205,80 +177,6 @@ namespace RH_CM.Controllers
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 $"CourseCompleted_{fechaActual}.xlsx"
             );
-        }
-
-        // GET: SyCoursecompleted/Create
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
-        public IActionResult CreateCourseCompleted()
-        {
-            return View();
-        }
-
-        // POST: SyCoursecompleted/Create
-        [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateCourseCompleted(SyCoursecompleted model)
-        {
-            // Validaciones manuales de requeridos / rangos
-            if (model.FkCourseAssignment <= 0)
-            {
-                TempData["ErrorMessage"] = "El campo Course Assignment es requerido.";
-                return View(model);
-            }
-            if (model.FkCourseStatus <= 0)
-            {
-                TempData["ErrorMessage"] = "El campo Course Status es requerido.";
-                return View(model);
-            }
-            if (model.FkDeliveryMode <= 0)
-            {
-                TempData["ErrorMessage"] = "El campo Delivery Mode es requerido.";
-                return View(model);
-            }
-            if (model.FkHeadcount <= 0)
-            {
-                TempData["ErrorMessage"] = "El campo Headcount es requerido.";
-                return View(model);
-            }
-            if (model.Score < 0 || model.Score > 100)
-            {
-                TempData["ErrorMessage"] = "Score debe estar entre 0 y 100.";
-                return View(model);
-            }
-
-            // (Opcional) Validación de duplicados según tu lógica de negocio:
-            // Una finalización por asignación y empleado.
-            bool alreadyExists = await _context.SyCoursecompleteds
-                .AnyAsync(c =>
-                    c.FkCourseAssignment == model.FkCourseAssignment &&
-                    c.FkHeadcount == model.FkHeadcount);
-
-            if (alreadyExists)
-            {
-                TempData["ErrorMessage"] = "Ya existe un registro de finalización para esta asignación y empleado.";
-                return View(model);
-            }
-
-            // Asignar valores automáticos
-            model.CreateUser = User?.Identity?.Name ?? "Unknown";
-            model.CreateDate = DateTime.Now;
-            model.LastUpdateUser = User?.Identity?.Name ?? "Unknown";
-            model.LastUpdateDate = DateTime.Now;
-            model.Avaialble = 1; // ojo: se respeta el nombre del modelo
-
-            try
-            {
-                _context.Add(model);
-                await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Registro de curso completado creado correctamente.";
-                return RedirectToAction(nameof(IndexCourseCompleted));
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = $"Ocurrió un error al crear el registro: {ex.Message}";
-                return View(model);
-            }
         }
 
         private void LoadCourseCompletedBulkViewBags(int selectedFkCourse, int selectedFkLevel)
@@ -392,7 +290,8 @@ namespace RH_CM.Controllers
             int FkCourse,
             int FkRequiredCourseLevels,
             int[] SelectedHeadcounts,
-            bool allowUpsert = true)
+            bool allowUpsert
+            = true)
         {
             if (FkCourse <= 0 || FkRequiredCourseLevels <= 0 || SelectedHeadcounts == null || SelectedHeadcounts.Length == 0)
             {
@@ -442,7 +341,6 @@ namespace RH_CM.Controllers
             return RedirectToAction(nameof(CreateCourseCompletedBulk), new { fkCourse = FkCourse, fkLevel = FkRequiredCourseLevels });
         }
 
-
         /// <summary>
         /// Pobla combos (Courses/Levels) con Available=1.
         /// </summary>
@@ -458,7 +356,7 @@ namespace RH_CM.Controllers
             var levels = _context.CtLevelcourses!
                 .AsNoTracking()
                 .Where(l => l.Available == 1)
-                .OrderBy(l => l.DescripctionLevel)
+                .OrderBy(l => l.PkLevelcourse)
                 .Select(l => new { l.PkLevelcourse, l.DescripctionLevel })
                 .ToList();
 
@@ -624,110 +522,6 @@ namespace RH_CM.Controllers
             }
 
             return RedirectToAction(nameof(DeleteCourseCompletedBulk), new { fkCourse = FkCourse, fkLevel = FkLevel });
-        }
-
-        // GET: SyCoursecompleted/Edit/5
-        [Authorize(Roles = "Administrador")]
-        public async Task<IActionResult> EditCourseCompleted(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var item = await _context.SyCoursecompleteds.FindAsync(id);
-            if (item == null)
-            {
-                return NotFound();
-            }
-            return View(item);
-        }
-
-        // POST: SyCoursecompleted/Edit/5
-        [HttpPost]
-        [Authorize(Roles = "Administrador")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditCourseCompleted(int id, SyCoursecompleted model)
-        {
-            if (id != model.PkCourseCompleted)
-            {
-                TempData["ErrorMessage"] = "El registro especificado no fue encontrado.";
-                return RedirectToAction(nameof(IndexCourseCompleted));
-            }
-
-            // Validaciones manuales
-            if (model.FkCourseAssignment <= 0)
-            {
-                TempData["ErrorMessage"] = "El campo Course Assignment es requerido.";
-                return View(model);
-            }
-            if (model.FkCourseStatus <= 0)
-            {
-                TempData["ErrorMessage"] = "El campo Course Status es requerido.";
-                return View(model);
-            }
-            if (model.FkDeliveryMode <= 0)
-            {
-                TempData["ErrorMessage"] = "El campo Delivery Mode es requerido.";
-                return View(model);
-            }
-            if (model.FkHeadcount <= 0)
-            {
-                TempData["ErrorMessage"] = "El campo Headcount es requerido.";
-                return View(model);
-            }
-            if (model.Score < 0 || model.Score > 100)
-            {
-                TempData["ErrorMessage"] = "Score debe estar entre 0 y 100.";
-                return View(model);
-            }
-
-            // (Opcional) Chequeo de duplicados excluyendo el registro actual
-            bool alreadyExists = await _context.SyCoursecompleteds
-                .AnyAsync(c =>
-                    c.FkCourseAssignment == model.FkCourseAssignment &&
-                    c.FkHeadcount == model.FkHeadcount &&
-                    c.PkCourseCompleted != model.PkCourseCompleted);
-
-            if (alreadyExists)
-            {
-                TempData["ErrorMessage"] = "Ya existe un registro de finalización para esta asignación y empleado.";
-                return View(model);
-            }
-
-            try
-            {
-                var existing = await _context.SyCoursecompleteds.FindAsync(id);
-                if (existing == null)
-                {
-                    TempData["ErrorMessage"] = "El registro ya no existe en la base de datos.";
-                    return NotFound();
-                }
-
-                // Actualizar campos permitidos
-                existing.FkCourseAssignment = model.FkCourseAssignment;
-                existing.FkCourseStatus = model.FkCourseStatus;
-                existing.FkDeliveryMode = model.FkDeliveryMode;
-                existing.FkHeadcount = model.FkHeadcount;
-                existing.Score = model.Score;
-                existing.LastUpdateUser = User?.Identity?.Name ?? "Unknown";
-                existing.LastUpdateDate = DateTime.Now;
-
-                _context.Update(existing);
-                await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Registro actualizado correctamente.";
-                return RedirectToAction(nameof(EditCourseCompleted), new { id = existing.PkCourseCompleted });
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                TempData["ErrorMessage"] = "Hubo un error de concurrencia al actualizar el registro.";
-                return View(model);
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = $"Ocurrió un error al actualizar el registro: {ex.Message}";
-                return View(model);
-            }
         }
 
         // POST: SyCoursecompleted/Toggle/5

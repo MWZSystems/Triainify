@@ -1,0 +1,261 @@
+﻿@model IEnumerable<RH_CM.ViewModels.CoursesByPositionViewModel>
+
+@{
+    ViewData["Title"] = "Courses by Position";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Evita NullReference cuando aún no hay selección
+    var data = Model?.ToList() ?? new List<RH_CM.ViewModels.CoursesByPositionViewModel>();
+
+    var fkPos = (int)(ViewBag.SelectedFkPosition ?? 0);
+    var positions = (IEnumerable<dynamic>)ViewBag.Positions ?? Enumerable.Empty<dynamic>();
+    var first = data.FirstOrDefault();
+
+    // Prioriza SIEMPRE NamePosition del combo; si no existe, usa lo que venga del SP; luego "—"
+    var posName = positions.FirstOrDefault(p => p.PkPosition == fkPos)?.Name
+                  ?? first?.PositionName
+                  ?? "—";
+
+    // Mapa de niveles (ordenados)
+    var levelMap = data
+        .Where(m => m.LevelId.HasValue)
+        .GroupBy(m => m.LevelId!.Value)
+        .Select(g => new
+        {
+            Level = g.Key,
+            Name = g.Select(x => x.LevelName)
+                    .FirstOrDefault(n => !string.IsNullOrWhiteSpace(n)) ?? $"Level {g.Key}"
+        })
+        .OrderBy(x => x.Level)
+        .ToList();
+
+    var levels = levelMap.Select(x => x.Level).ToList();
+
+    // Cursos agrupados ⇒ celdas por nivel
+    var courseGroups = data
+        .GroupBy(x => new { x.FK_Course, x.CourseName })
+        .OrderBy(g => g.Key.CourseName)
+        .Select(g => new
+        {
+            CourseId = g.Key.FK_Course,
+            CourseName = g.Key.CourseName,
+            Cells = levels.Select(l =>
+            {
+                var cell = g.FirstOrDefault(r => r.LevelId == l);
+                if (cell == null)
+                {
+                    return new { Level = l, Status = "NO REQUIRED", Class = "bg-secondary", Title = "" };
+                }
+                var title = "";
+                if (!string.IsNullOrWhiteSpace(cell.DeliveryMode)) title += $"Delivery: {cell.DeliveryMode}";
+                if (cell.CourseValidityDays.HasValue) title += (title == "" ? "" : " | ") + $"Validity: {cell.CourseValidityDays} days";
+
+                return cell.Requiered
+                    ? new { Level = l, Status = "REQUIRED", Class = "bg-success", Title = title }
+                    : new { Level = l, Status = "OPTIONAL", Class = "bg-info", Title = title };
+            }).ToList()
+        })
+        .ToList();
+
+    // Resumen para chart
+    int requiredCount = data.Count(m => m.Requiered);
+    int optionalCount = data.Count(m => !m.Requiered);
+    int totalCourses = courseGroups.Count;
+    int totalAssigns = data.Count;
+}
+
+<div class="row mb-3">
+    <div class="col">
+        <h1 class="h3 mb-0 text-center title-accent">
+            <i class="align-middle fas fa-outdent"></i> @ViewData["Title"]
+        </h1>
+    </div>
+</div>
+
+<!-- Filtro: Position (GET) -->
+<div class="row mb-3">
+    <div class="col-md-10 offset-md-1">
+        <form method="get" asp-action="CoursesByPosition" class="card card-body">
+            <div class="row align-items-end g-3">
+                <div class="col-md-10">
+                    <label class="form-label">Position <span class="text-danger">*</span></label>
+                    <select class="form-control select2" name="fkPosition" id="fkPosition" required>
+                        <option value="">-- Select Position --</option>
+                        @foreach (var p in positions)
+                        {
+                            <option value="@p.PkPosition" selected="@(p.PkPosition == fkPos)">@p.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2 text-end">
+                    <button type="submit" class="btn btn-primary mt-3 mt-md-0 w-100">
+                        <i class="fas fa-search"></i> Load
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@if (fkPos > 0)
+{
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="row">
+                <!-- MATRIX -->
+                <div class="col-xl-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="mb-3 text-center d-flex flex-wrap justify-content-center gap-3">
+                                <div class="p-3 fw-bold rounded fs-3">
+                                    Position: @posName (@fkPos)
+                                </div>
+                                <div class="p-3 fw-bold rounded fs-3">
+                                    Courses: @totalCourses
+                                </div>
+                                <div class="p-3 fw-bold rounded fs-3">
+                                    Assignments: @totalAssigns
+                                </div>
+                                <div class="p-3 fw-bold rounded fs-3">
+                                    Required: @requiredCount | Optional: @optionalCount
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            @if (data.Any())
+                            {
+                                <table id="datatables-responsive" class="table table-striped">
+                                    <thead class="table-primary">
+                                        <tr>
+                                            <th>Course</th>
+                                            @foreach (var lm in levelMap)
+                                            {
+                                                <th>@lm.Name</th>
+                                            }
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var c in courseGroups)
+                                        {
+                                            <tr>
+                                                <td>@c.CourseName</td>
+                                                @foreach (var cell in c.Cells)
+                                                {
+                                                    <td title="@cell.Title"><span class="badge @cell.Class">@cell.Status</span></td>
+                                                }
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+                                <p>No data.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUMMARY + CHART (mismo layout) -->
+                <div class="col-xl-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Course Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="py-3">
+                                <div class="chart chart-xs">
+                                    <canvas id="chart-position-summary"></canvas>
+                                </div>
+                            </div>
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Status</th>
+                                        <th class="text-end">Count</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td><i class="fas fa-square-full text-success"></i> REQUIRED</td><td class="text-end">@requiredCount</td></tr>
+                                    <tr><td><i class="fas fa-square-full text-info"></i> OPTIONAL</td><td class="text-end">@optionalCount</td></tr>
+                                </tbody>
+                            </table>
+                            <small class="text-muted d-block mt-2">
+                                Tip: pasa el cursor sobre cada badge para ver Delivery Mode y vigencia.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <!-- /SUMMARY -->
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        $(function () {
+            // Select2 en el filtro
+            $('.select2').select2({ theme: 'bootstrap4', placeholder: 'Select an option', allowClear: true });
+
+            // DataTable si hay matriz renderizada
+            const tbl = document.getElementById('datatables-responsive');
+            if (tbl) {
+                $('#datatables-responsive').DataTable({
+                    responsive: true,
+                    order: [],
+                    pageLength: 50,
+                    lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
+                });
+            }
+
+            // Notificaciones (como en tus vistas)
+            const successMsg = @Html.Raw(Json.Serialize(TempData["SuccessMessage"]));
+            const errorMsg   = @Html.Raw(Json.Serialize(TempData["ErrorMessage"]));
+            if (successMsg) {
+                window.notyf?.open?.({
+                    type: 'success',
+                    message: successMsg,
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+            if (errorMsg) {
+                window.notyf?.open?.({
+                    type: 'error',
+                    message: errorMsg,
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+
+            // Chart (mismo estilo que MatrizbyEmployee, pero REQUIRED/OPTIONAL)
+            const chartEl = document.getElementById("chart-position-summary");
+            if (chartEl) {
+                new Chart(chartEl, {
+                    type: "pie",
+                    data: {
+                        labels: ["REQUIRED", "OPTIONAL"],
+                        datasets: [{
+                            data: [@requiredCount, @optionalCount],
+                            backgroundColor: ["#198754", "#0dcaf0"],
+                            borderWidth: 5,
+                            borderColor: "#ffffff"
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: "70%",
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+        });
+    </script>
+}
