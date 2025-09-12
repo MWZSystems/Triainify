@@ -162,8 +162,54 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- STATUS LEGEND (ahora SÍ dentro de la misma columna) -->
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Status Legend</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm my-2">
+                            <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="badge bg-success">COMPLETED</span></td>
+                                    <td>Course completed.</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-danger">PENDING</span></td>
+                                    <td>Course overdue or still pending.</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-warning">EXPIRING SOON</span></td>
+                                    <td>Course validity is about to expire.</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-dark">PERMANENTLY</span></td>
+                                    <td>The course has permanent validity.</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-primary">SCHEDULED</span></td>
+                                    <td>The course is pending but already scheduled.</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-secondary">NO REQUIRED</span></td>
+                                    <td>The course is not required for this level.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- /STATUS LEGEND -->
             </div>
             <!-- /SUMMARY -->
+
+
         </div>
     </div>
 </div>

@@ -126,13 +126,6 @@ namespace RH_CM.Controllers
             return View(result);
         }
 
-
-        // GET: ReportsController
-        public ActionResult SupervisorEmployeesCheck()
-        {
-            return View();
-        }
-
         // GET: ReportsController
         public ActionResult MatrizByEmployeesCheck()
         {
