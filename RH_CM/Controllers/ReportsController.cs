@@ -25,15 +25,6 @@ namespace RH_CM.Controllers
             _userManager = userManager;
         }
 
-        //private readonly db_abcd61_rhchdbContext _context;
-        //private readonly UserManager<IdentityUser> _userManager;
-
-        //public TrainifyController(db_abcd61_rhchdbContext context, UserManager<IdentityUser> userManager)
-        //{
-        //    _context = context;
-        //    _userManager = userManager;
-        //}
-        // Combo de posiciones (NamePosition siempre)
         private void LoadPositions(int selectedFkPosition = 0)
         {
             var positions = _context.CtPositions
@@ -164,109 +155,6 @@ namespace RH_CM.Controllers
         public async Task<IActionResult> HeadCountbySupervisor()
         {
             return View();
-        }
-
-        // GET: CtCoursematerial
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
-        public IActionResult CourseToDobyEmpleyee()
-        {
-            var materials = _context.CtCoursematerials
-                .AsNoTracking()
-                .Where(m => m.Available == 1)
-                .OrderBy(m => m.NameMaterial)
-                .Select(m => new
-                {
-                    m.PkCoursematerial,
-                    MaterialName = m.NameMaterial,
-                    m.Available,
-                    m.CreateUser,
-                    m.CreateDate
-                })
-                .ToList();
-
-            return View(materials);
-        }
-
-
-        // GET: ReportsController
-        public ActionResult TestQuestions()
-        {
-            return View();
-        }
-
-        public ActionResult TestQuestions2()
-        {
-            return View();
-        }
-
-
-        // GET: ReportsController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: ReportsController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: ReportsController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: ReportsController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: ReportsController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: ReportsController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: ReportsController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
         }
     }
 }
