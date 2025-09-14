@@ -187,3 +187,20 @@ body.page-course-assignments .title-accent {
 body.page-course-assignments .table thead.table-accent th {
     border-bottom: 1px solid #a61b6a33;
 }
+
+/* ======================================
+   ======= Matrix by Position: Índigo =======
+   ====================================== */
+body.page-matrix-position .table thead.table-accent {
+    background-color: #e0e7ff; /* índigo muy claro (suave) */
+}
+
+body.page-matrix-position .title-accent {
+    color: #3730a3; /* índigo intenso para el título */
+}
+
+/* (opcional) Sutil borde inferior del thead para contraste */
+body.page-matrix-position .table thead.table-accent th {
+    border-bottom: 1px solid #3730a333;
+}
+

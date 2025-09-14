@@ -1,0 +1,113 @@
+﻿@model RH_CM.ViewModels.SelectPositionViewModel
+
+@{
+    ViewData["Title"] = "Select Position";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">SELECT POSITION</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Choose Position</h5>
+                <h6 class="card-subtitle text-muted">Select a position to view its course matrix.</h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="SelectPosition" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="row">
+                        <!-- Position -->
+                        <div class="mb-3 col-md-8">
+                            <label asp-for="SelectedPositionId" class="form-label">
+                                Position <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="SelectedPositionId"
+                                    class="form-control select2"
+                                    data-placeholder="-- Select Position --"
+                                    asp-items="Model.Positions">
+                                <option></option>
+                            </select>
+                            <span asp-validation-for="SelectedPositionId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="row">
+                        <div class="col-12 text-end">
+                            <a href="javascript:history.back()" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="align-middle fas fa-check-circle"></i> Continue
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        $(document).ready(function () {
+            // Notificaciones (Notyf)
+            if ("@TempData["SuccessMessage"]" !== "") {
+                window.notyf?.open({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+            if ("@TempData["ErrorMessage"]" !== "") {
+                window.notyf?.open({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+            if ("@TempData["WarningMessage"]" !== "") {
+                window.notyf?.open({
+                    type: 'warning',
+                    message: "@TempData["WarningMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+            if ("@TempData["InfoMessage"]" !== "") {
+                window.notyf?.open({
+                    type: 'info',
+                    message: "@TempData["InfoMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+
+            // Inicializa Select2
+            $(".select2").select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
+}

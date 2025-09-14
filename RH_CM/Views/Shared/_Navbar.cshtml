@@ -67,14 +67,17 @@
             <div class="dropdown-menu dropdown-menu-start dropdown-mega" aria-labelledby="servicesDropdown">
                 <div class="d-md-flex align-items-start justify-content-start">
                     <div class="dropdown-mega-list">
-                            <a class="dropdown-item" asp-controller="Reports" asp-action="CoursesByPosition">
+                            <a class="dropdown-item" asp-controller="Trainify" asp-action="MatrizbyPositionSelectPosition">
                                 <i class="align-middle fas fa-clipboard-list"></i> Matriz By Position
+                            </a>
+                            <a class="dropdown-item" asp-controller="Reports" asp-action="MatrizbySupervisor">
+                                <i class="align-middle fas fa-clipboard-list"></i> Matriz by Supervisor
                             </a>
                             <a class="dropdown-item" asp-controller="Reports" asp-action="MatrizByDeparmentGeneral_RH">
                                 <i class="align-middle fas fa-clipboard-list"></i> Department RH
                             </a>
                             <a class="dropdown-item" asp-controller="Reports" asp-action="HeadCountbySupervisor">
-                                <i class="align-middle fas fa-clipboard-list"></i> HeadCountBySupervisor
+                                <i class="align-middle fas fa-clipboard-list"></i> HeadCount By Supervisor
                             </a>
                     </div>
                 </div>
@@ -88,8 +91,9 @@
                 <div class="d-md-flex align-items-start justify-content-start">
                     <div class="dropdown-mega-list">
                             <a class="dropdown-item" asp-controller="Trainify" asp-action="MatrizbyEmployee">
-                                <i class="align-middle fas fa-clipboard-list"></i> MatrizbyEmployee
+                                <i class="align-middle fas fa-clipboard-list"></i> Matriz by Employee
                             </a>
+
                             <a class="dropdown-item" asp-controller="Trainify" asp-action="LearningTrainify">
                                 <i class="align-middle fas fa-graduation-cap"></i> Learning
                             </a>

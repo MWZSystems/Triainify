@@ -25,36 +25,16 @@ namespace RH_CM.Controllers
             _userManager = userManager;
         }
 
-        private void LoadPositions(int selectedFkPosition = 0)
-        {
-            var positions = _context.CtPositions
-                .AsNoTracking()
-                .Where(p => p.Available == 1)
-                .OrderBy(p => p.NamePosition)
-                .Select(p => new
-                {
-                    p.PkPosition,
-                    Name = p.NamePosition
-                })
-                .ToList();
-
-            ViewBag.Positions = positions;
-            ViewBag.SelectedFkPosition = selectedFkPosition;
-        }
-
-        // === CARGA DESDE SP (misma forma que MatrizbyEmployee) ===
-        [Authorize]
+        // =============== MATRIZ POR SUPERVISOR =================
         [HttpGet]
-        public async Task<IActionResult> CoursesByPosition(int? fkPosition)
+        public async Task<IActionResult> MatrizbySupervisor(int supervisorId)
         {
-            // Cargar siempre el combo (NamePosition)
-            LoadPositions(fkPosition ?? 0);
+            supervisorId = 9; // <-- supervisor fijo
+            var result = new List<MatrizBySupervisorViewModel>();
 
-            var result = new List<CoursesByPositionViewModel>();
-
-            if (fkPosition is null || fkPosition <= 0)
+            if (supervisorId <= 0)
             {
-                TempData["ErrorMessage"] = TempData["ErrorMessage"] ?? "Selecciona una posición para consultar sus cursos.";
+                TempData["ErrorMessage"] = "Parámetro 'supervisorId' inválido.";
                 return View(result);
             }
 
@@ -65,65 +45,115 @@ namespace RH_CM.Controllers
                 await using var connection = new SqlConnection(connectionString);
                 await connection.OpenAsync();
 
-                await using var command = new SqlCommand("sp_GetCoursesByPosition", connection)
+                await using var command = new SqlCommand("dbo.sp_GetMatrizbySupervisorCourseAssignments", connection)
                 {
                     CommandType = CommandType.StoredProcedure
                 };
-                command.Parameters.Add(new SqlParameter("@FkPosition", SqlDbType.Int) { Value = fkPosition.Value });
+                command.Parameters.Add(new SqlParameter("@SupervisorId", SqlDbType.Int) { Value = supervisorId });
 
                 await using var reader = await command.ExecuteReaderAsync();
 
-                // Helpers idénticos a MatrizbyEmployee
                 int Ord(string n) => reader.GetOrdinal(n);
                 bool IsNull(string n) => reader.IsDBNull(Ord(n));
 
                 while (await reader.ReadAsync())
                 {
-                    result.Add(new CoursesByPositionViewModel
+                    result.Add(new MatrizBySupervisorViewModel
                     {
-                        // columnas según tu muestra del SP
-                        FK_Position = IsNull("FK_Position") ? 0 : reader.GetInt32(Ord("FK_Position")),
-                        PositionName = IsNull("PositionName") ? "" : reader.GetString(Ord("PositionName")),
+                        PK_HEADCOUNT = IsNull("PK_HEADCOUNT") ? 0 : reader.GetInt32(Ord("PK_HEADCOUNT")),
+                        UserName = IsNull("UserName") ? null : reader.GetString(Ord("UserName")),
+                        CONTROL_NUMBER = IsNull("CONTROL_NUMBER") ? null : reader["CONTROL_NUMBER"]?.ToString(),
+                        NAMES = IsNull("NAMES") ? null : reader["NAMES"]?.ToString(),
+                        LAST_NAME = IsNull("LAST_NAME") ? null : reader["LAST_NAME"]?.ToString(),
+                        SECOND_NAME = IsNull("SECOND_NAME") ? null : reader["SECOND_NAME"]?.ToString(),
 
-                        PK_CourseAssignment = IsNull("PK_CourseAssignment") ? 0 : reader.GetInt32(Ord("PK_CourseAssignment")),
-                        FK_Course = IsNull("FK_Course") ? 0 : reader.GetInt32(Ord("FK_Course")),
-                        CourseName = IsNull("CourseName") ? "" : reader.GetString(Ord("CourseName")),
+                        FK_Position = IsNull("FK_Position") ? 0 : Convert.ToInt32(reader["FK_Position"]),
+                        NAME_POSITION_ENGLISH = IsNull("NAME_POSITION_ENGLISH") ? null : reader["NAME_POSITION_ENGLISH"]?.ToString(),
 
-                        // si LevelId es INT en SQL, GetInt32 es correcto; si fuera smallint/tinyint, usa Convert.ToInt32
-                        LevelId = IsNull("LevelId") ? (int?)null : reader.GetInt32(Ord("LevelId")),
-                        LevelName = IsNull("LevelName") ? null : reader.GetString(Ord("LevelName")),
-
-                        // Requiered en DB puede ser bit o int -> Convert.ToBoolean es seguro
-                        Requiered = !IsNull("Requiered") && Convert.ToBoolean(reader["Requiered"]),
-
-                        // DeliveryModeId puede venir como int; Convert.ToInt32 es seguro
-                        DeliveryModeId = IsNull("DeliveryModeId") ? (int?)null : Convert.ToInt32(reader["DeliveryModeId"]),
-                        DeliveryMode = IsNull("DeliveryMode") ? null : reader["DeliveryMode"]?.ToString(),
-
-                        CourseValidityDays = IsNull("CourseValidityDays") ? (int?)null : Convert.ToInt32(reader["CourseValidityDays"])
+                        Completed = IsNull("Completed") ? 0 : Convert.ToInt32(reader["Completed"]),
+                        Pending = IsNull("Pending") ? 0 : Convert.ToInt32(reader["Pending"]),
+                        ExpiringSoon = IsNull("Expiring Soon") ? 0 : Convert.ToInt32(reader["Expiring Soon"]),
+                        Permanent = IsNull("Permanent") ? 0 : Convert.ToInt32(reader["Permanent"]),
+                        Scheduled = IsNull("Scheduled") ? 0 : Convert.ToInt32(reader["Scheduled"])
                     });
                 }
 
-                if (!result.Any())
-                {
-                    TempData["ErrorMessage"] = "No hay cursos asignados para la posición seleccionada.";
-                }
+                if (result.Count == 0)
+                    TempData["ErrorMessage"] = $"No se encontraron empleados para el supervisor {supervisorId}.";
                 else
-                {
-                    // El header de la vista prioriza NamePosition del combo; este mensaje usa lo que vino del SP
-                    TempData["SuccessMessage"] = $"Se encontraron {result.Count} asignaciones para la posición {result.First().PositionName}.";
-                }
+                    TempData["SuccessMessage"] = $"Se encontraron {result.Count} empleados para el supervisor {supervisorId}.";
             }
             catch (SqlException ex)
             {
-                TempData["ErrorMessage"] = $"Error SQL al consultar los cursos: {ex.Message}";
+                TempData["ErrorMessage"] = $"Error SQL: {ex.Message}";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Ocurrió un error al consultar los cursos por posición.";
+                TempData["ErrorMessage"] = $"Error: {ex.Message}";
             }
 
-            return View(result);
+            return View(result);  // View: Views/Trainify/MatrizbySupervisor.cshtml
+        }
+
+        // =============== AJUSTE: abrir Matriz por EMPLEADO por UserName ===============
+        // Antes: tomaba siempre el usuario logueado.
+        // Ahora: si viene userName en la ruta, se usa; si no, se usa el actual.
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> MatrizbyEmployee(string? userName)
+        {
+            var effectiveUser = string.IsNullOrWhiteSpace(userName)
+                ? User?.Identity?.Name
+                : userName;
+
+            var result = new List<MatrizByEmployeeViewModel>();
+
+            if (string.IsNullOrWhiteSpace(effectiveUser))
+            {
+                TempData["ErrorMessage"] = "No se pudo determinar el usuario.";
+                return View(result);
+            }
+
+            string connectionString = _context.Database.GetDbConnection().ConnectionString;
+
+            await using var connection = new SqlConnection(connectionString);
+            await connection.OpenAsync();
+
+            await using var command = new SqlCommand("sp_GetMatrizbyEmployeeCourseAssignments", connection)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            command.Parameters.Add(new SqlParameter("@UserName", SqlDbType.NVarChar, 256) { Value = effectiveUser });
+
+            await using var reader = await command.ExecuteReaderAsync();
+
+            int Ord(string n) => reader.GetOrdinal(n);
+            bool IsNull(string n) => reader.IsDBNull(Ord(n));
+
+            while (await reader.ReadAsync())
+            {
+                result.Add(new MatrizByEmployeeViewModel
+                {
+                    FK_Position = IsNull("FK_Position") ? 0 : reader.GetInt32(Ord("FK_Position")),
+                    NAME_POSITION_ENGLISH = IsNull("NAME_POSITION_ENGLISH") ? "—" : reader.GetString(Ord("NAME_POSITION_ENGLISH")),
+                    FK_Course = IsNull("FK_Course") ? 0 : reader.GetInt32(Ord("FK_Course")),
+                    CourseName = IsNull("CourseName") ? "—" : reader.GetString(Ord("CourseName")),
+                    FK_RequiredCourseLevels = IsNull("FK_RequiredCourseLevels") ? 0 : reader.GetInt32(Ord("FK_RequiredCourseLevels")),
+                    DESCRIPCTION_LEVEL = IsNull("DESCRIPCTION_LEVEL") ? null : reader.GetString(Ord("DESCRIPCTION_LEVEL")),
+                    Requiered = !IsNull("Requiered") && Convert.ToBoolean(reader["Requiered"]),
+                    FK_DeliveryMode = IsNull("FK_DeliveryMode") ? 0 : Convert.ToInt32(reader["FK_DeliveryMode"]),
+                    CourseValidityDays = IsNull("CourseValidityDays") ? (int?)null : Convert.ToInt32(reader["CourseValidityDays"]),
+                    UserName = IsNull("UserName") ? effectiveUser : reader["UserName"]?.ToString() ?? effectiveUser,
+                    CONTROL_NUMBER = IsNull("CONTROL_NUMBER") ? "—" : reader["CONTROL_NUMBER"]?.ToString() ?? "—",
+                    NAMES = IsNull("NAMES") ? "—" : reader["NAMES"]?.ToString() ?? "—",
+                    LAST_NAME = IsNull("LAST_NAME") ? "—" : reader["LAST_NAME"]?.ToString() ?? "—",
+                    SECOND_NAME = IsNull("SECOND_NAME") ? "—" : reader["SECOND_NAME"]?.ToString() ?? "—",
+                    LastUpdateDate = IsNull("LastUpdateDate") ? (DateTime?)null : Convert.ToDateTime(reader["LastUpdateDate"]),
+                    CourseStatus = IsNull("CourseStatus") ? "—" : reader["CourseStatus"]?.ToString() ?? "—"
+                });
+            }
+
+            return View(result); // tu vista existente
         }
 
         // GET: ReportsController
@@ -136,16 +166,11 @@ namespace RH_CM.Controllers
         public ActionResult MatrizByEmployeesGeneral()
         {
             return View();
+
         }
 
         // GET: ReportsController
         public ActionResult MatrizByDeparmentGeneral_RH()
-        {
-            return View();
-        }
-
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
-        public async Task<IActionResult> HeadCountbySupervisor()
         {
             return View();
         }
