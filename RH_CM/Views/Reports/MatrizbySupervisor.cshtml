@@ -1,20 +1,21 @@
 ﻿@model IEnumerable<RH_CM.ViewModels.MatrizBySupervisorViewModel>
 
 @{
-    ViewData["Title"] = "Matrix by Supervisor";
+    ViewData["Title"] = "Matriz by Supervisor";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="row align-items-center mb-3">
+<div class="row">
     <div class="col">
-        <h1 class="h3 mb-0 text-center text-md-start">
+        <h1 class="h3 mb-3 text-center">
             <i class="fas fa-users-gear"></i> @ViewData["Title"]
         </h1>
     </div>
-    <div class="col-auto d-flex gap-2">
-        <!-- Espacio para acciones futuras, exportar, etc. -->
+    <div class="col-auto">
+        
     </div>
 </div>
+
 
 <div class="row">
     <div class="col-12">
@@ -29,8 +30,8 @@
                             <th class="text-center"><span class="badge bg-success">Completed</span></th>
                             <th class="text-center"><span class="badge bg-danger">Pending</span></th>
                             <th class="text-center"><span class="badge bg-warning text-dark">Expiring Soon</span></th>
-                            <th class="text-center"><span class="badge bg-primary">Permanent</span></th>
-                            <th class="text-center"><span class="badge bg-dark">Scheduled</span></th>
+                            <th class="text-center"><span class="badge bg-dark">Permanent</span></th>
+                            <th class="text-center"><span class="badge bg-primary">Scheduled</span></th>
                             <th class="text-center">Actions</th>
                         </tr>
                         <!-- Filtros por columna (opcionales) -->
