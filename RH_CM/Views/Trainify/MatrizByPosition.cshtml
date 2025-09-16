@@ -1,0 +1,188 @@
+﻿@model RH_CM.ViewModels.MatrizByPositionPageViewModel
+
+@{
+    ViewData["Title"] = "Position Matrix";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Nuevo body class para esta pantalla (colores abajo en el CSS del sitio)
+    ViewData["BodyClass"] = "page-matrix-position";
+
+    var data = Model?.Results?.ToList() ?? new List<RH_CM.ViewModels.MatrizByPositionViewModel>();
+    var first = data.FirstOrDefault();
+    var positionName = first?.NAME_POSITION_ENGLISH ?? Model?.PositionNameEnglish ?? "—";
+    var fkPos = first?.FK_Position ?? Model?.SelectedPositionId ?? 0;
+
+    var levelMap = data
+        .Where(m => m.FK_RequiredCourseLevels > 0)
+        .GroupBy(m => m.FK_RequiredCourseLevels)
+        .Select(g => new
+        {
+            Level = g.Key,
+            Name = g.Select(x => x.DESCRIPCTION_LEVEL)
+                    .FirstOrDefault(n => !string.IsNullOrWhiteSpace(n)) ?? $"Level {g.Key}"
+        })
+        .OrderBy(x => x.Level)
+        .ToList();
+
+    var levels = levelMap.Select(x => x.Level).ToList();
+
+    var courseGroups = data
+        .GroupBy(x => new { x.FK_Course, x.CourseName })
+        .OrderBy(g => g.Key.CourseName)
+        .Select(g => new
+        {
+            CourseId = g.Key.FK_Course,
+            CourseName = g.Key.CourseName,
+            Cells = levels.Select(l =>
+            {
+                var cell = g.FirstOrDefault(r => r.FK_RequiredCourseLevels == l);
+                if (cell == null)
+                    return new { Level = l, Status = "NO REQUIRED", Class = "bg-secondary", Title = "" };
+
+                var title = cell.CourseValidityDays.HasValue ? $"Validity: {cell.CourseValidityDays} days" : "";
+                return cell.Requiered
+                    ? new { Level = l, Status = "REQUIRED", Class = "bg-success", Title = title }
+                    : new { Level = l, Status = "OPTIONAL", Class = "bg-info", Title = title };
+            }).ToList()
+        })
+        .ToList();
+
+    int totalCourses = courseGroups.Count;
+    int totalAssigns = data.Count;
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center title-accent">
+            <i class="fas fa-list-check"></i> @ViewData["Title"]
+        </h1>
+    </div>
+    <div class="col-auto">
+        <a asp-action="MatrizbyPositionSelectPosition" asp-controller="Trainify" class="btn btn-secondary">
+            <i class="fas fa-rotate-left"></i> CHANGE POSITION
+        </a>
+    </div>
+</div>
+
+@if (data.Any())
+{
+    <div class="row">
+        <div class="col-xl-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <div class="mb-3 text-center d-flex flex-wrap justify-content-center gap-3">
+                        <div class="p-3 fw-bold rounded fs-3">
+                            Position: @positionName 
+                        </div>
+                        <div class="p-3 fw-bold rounded fs-3">
+                            Courses: @totalCourses
+                        </div>
+                        <div class="p-3 fw-bold rounded fs-3">
+                            Assignments: @totalAssigns
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table id="datatables-responsive" class="table table-striped table-hover align-middle w-100">
+                        <thead class="table-accent">
+                            <tr>
+                                <th>Course</th>
+                                @foreach (var lm in levelMap)
+                                {
+                                    <th>@lm.Name</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in courseGroups)
+                            {
+                                <tr>
+                                    <td>@c.CourseName</td>
+                                    @foreach (var cell in c.Cells)
+                                    {
+                                        <td title="@cell.Title"><span class="badge @cell.Class">@cell.Status</span></td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Course</th>
+                                @foreach (var lm in levelMap)
+                                {
+                                    <th>@lm.Name</th>
+                                }
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATUS LEGEND -->
+        <div class="col-xl-4">
+            <div class="card mt-3 mt-xl-0">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Status Legend</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm my-2">
+                        <thead><tr><th>Status</th><th>Description</th></tr></thead>
+                        <tbody>
+                            <tr><td><span class="badge bg-success">REQUIRED</span></td><td>Course required for the level.</td></tr>
+                            <tr><td><span class="badge bg-info">OPTIONAL</span></td><td>Course optional for the level.</td></tr>
+                            <tr><td><span class="badge bg-secondary">NO REQUIRED</span></td><td>Not required for this level.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /STATUS LEGEND -->
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        No data to display for this position.
+        <a asp-action="MatrizbyPositionSelectPosition" asp-controller="Trainify" class="alert-link">Choose another position</a>.
+    </div>
+}
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        $(function () {
+            const tbl = document.getElementById('datatables-responsive');
+            if (tbl) {
+                $('#datatables-responsive').DataTable({
+                    responsive: true,
+                    order: [],
+                    pageLength: 50,
+                    lengthMenu: [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]]
+                });
+            }
+
+            // Solo success y error
+            if ("@TempData["SuccessMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+            if ("@TempData["ErrorMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+        });
+    </script>
+}

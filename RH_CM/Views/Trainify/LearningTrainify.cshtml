@@ -8,8 +8,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var first = Model?.FirstOrDefault();
-    // Cuenta de cursos (distinct por nombre; si prefieres por FK_Course, cambia la key)
-    var courseGroups = Model?.GroupBy(m => m.CourseName).ToList() ?? new List<IGrouping<string, RH_CM.ViewModels.LearningCourseToDoViewModel>>();
+    var courseGroups = Model?.GroupBy(m => m.CourseName).ToList()
+                     ?? new List<IGrouping<string, RH_CM.ViewModels.LearningCourseToDoViewModel>>();
 }
 
 <div class="row">
@@ -42,7 +42,6 @@
                         </div>
                     </div>
                 }
-                @* <h5 class="card-title mb-0">Matrix - @first?.UserName</h5> *@
             </div>
 
             <div class="card-body">
@@ -53,7 +52,9 @@
                         <thead class="table-primary">
                             <tr>
                                 <th># Assign.</th>
+                                <th># Course</th>
                                 <th>Course</th>
+                                <th># LevelId</th>   @* 👈 nuevo: FK_RequiredCourseLevels *@
                                 <th>Level</th>
                                 <th>Delivery</th>
                                 <th>Validity (days)</th>
@@ -67,7 +68,9 @@
                             {
                                 <tr>
                                     <td>@item.PK_CourseAssignment</td>
+                                    <td>@item.FK_Course</td>
                                     <td>@item.CourseName</td>
+                                    <td>@item.FK_RequiredCourseLevels</td> @* 👈 nuevo *@
                                     <td>@item.CourseLevel</td>
                                     <td>@item.DeliveryMode</td>
                                     <td>@(item.CourseValidityDays?.ToString() ?? "—")</td>
@@ -75,29 +78,15 @@
                                     <td>@(item.LastUpdateDate?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
                                     <td>
                                         <div class="text-center d-flex gap-1">
-                                            <!-- Ajusta estas rutas según tus controladores/acciones reales -->
-                                            <a class="btn btn-info"
-                                               asp-controller="Catalog"
-                                               asp-action="ViewCourse"
-                                               asp-route-assignmentId="@item.PK_CourseAssignment"
-                                               title="View course">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-
+                                            <!-- Iniciar: abre en nueva pestaña → StartCourse(courseId, levelId) -->
                                             <a class="btn btn-primary"
                                                asp-controller="Catalog"
                                                asp-action="StartCourse"
-                                               asp-route-assignmentId="@item.PK_CourseAssignment"
-                                               title="Start">
+                                               asp-route-courseId="@item.FK_Course"
+                                               asp-route-levelId="@item.FK_RequiredCourseLevels"
+                                               title="Start"
+                                               target="_blank" rel="noopener">
                                                 <i class="fas fa-play"></i>
-                                            </a>
-
-                                            <a class="btn btn-outline-warning"
-                                               asp-controller="Catalog"
-                                               asp-action="TakeTest"
-                                               asp-route-assignmentId="@item.PK_CourseAssignment"
-                                               title="Take test">
-                                                <i class="fas fa-pencil"></i>
                                             </a>
                                         </div>
                                     </td>
@@ -122,42 +111,25 @@
         $(document).ready(function () {
             $('#datatables-learning').DataTable({
                 responsive: true,
-                order: [[1, 'asc'], [2, 'asc']], // Course, Level
-                language: {
-                    "decimal": "",
-                    "emptyTable": "No hay información",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
-                    "infoFiltered": "(filtrado de _MAX_ entradas)",
-                    "thousands": ",",
-                    "lengthMenu": "Mostrar _MENU_ entradas",
-                    "loadingRecords": "Cargando...",
-                    "processing": "Procesando...",
-                    "search": "Buscar:",
-                    "zeroRecords": "Sin resultados encontrados",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    }
-                }
+                // Columnas: 0=#Assign, 1=#Course, 2=Course, 3=#LevelId, 4=Level, ...
+                order: [[2, 'asc'], [4, 'asc']]
             });
 
-            if ("@TempData["SuccessMessage"]" !== "") {
+            // Notificaciones (Notyf) con comillas seguras
+            if ('@TempData["SuccessMessage"]' !== '') {
                 window.notyf?.open?.({
                     type: 'success',
-                    message: "@TempData["SuccessMessage"]",
+                    message: '@TempData["SuccessMessage"]',
                     ripple: true,
                     dismissible: true,
                     position: { x: 'center', y: 'top' },
                     duration: 5000
                 });
             }
-            if ("@TempData["ErrorMessage"]" !== "") {
+            if ('@TempData["ErrorMessage"]' !== '') {
                 window.notyf?.open?.({
                     type: 'error',
-                    message: "@TempData["ErrorMessage"]",
+                    message: '@TempData["ErrorMessage"]',
                     ripple: true,
                     dismissible: true,
                     position: { x: 'center', y: 'top' },

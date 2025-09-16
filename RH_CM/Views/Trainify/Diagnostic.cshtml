@@ -1,0 +1,182 @@
+﻿@model RH_CM.ViewModels.SubmitTestViewModel
+
+@{
+    ViewData["Title"] = "Answer Diagnostic";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">@Model.TestName</h1>
+        <p class="text-center text-muted">Please answer the following questions.</p>
+
+        @* (Opcional) Muestra contexto de curso/nivel si lo tienes *@
+        @if (Model.NextCourseId > 0 || Model.NextLevelId > 0)
+        {
+            <div class="text-center">
+                @if (Model.NextCourseId > 0)
+                {
+                    <span class="badge bg-primary me-1">Course ID: @Model.NextCourseId</span>
+                }
+                @if (Model.NextLevelId > 0)
+                {
+                    <span class="badge bg-info">Level ID: @Model.NextLevelId</span>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="card border-primary">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">Diagnostic</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="SubmitDiagnostic" asp-controller="Trainify" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden" asp-for="FkTest" />
+                    <input type="hidden" asp-for="NextCourseId" />
+                    <input type="hidden" asp-for="NextLevelId" />
+
+                    @for (int i = 0; i < Model.Questions.Count; i++)
+                    {
+                        var q = Model.Questions[i];
+                        var inputType = q.IsMultiple ? "checkbox" : "radio";
+                        var groupName = $"q{i}_single"; // agrupar radios por pregunta
+
+                        <div class="card mb-3 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="mb-3">
+                                    Q@(i + 1). @q.QuestionText
+                                    @if (q.IsMultiple)
+                                    {
+                                        <span class="badge bg-info ms-2">Multiple choice</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary ms-2">Single choice</span>
+                                    }
+                                </h5>
+
+                                <input type="hidden" name="Questions[@i].FkQuestion" value="@q.FkQuestion" />
+                                <input type="hidden" name="Questions[@i].IsMultiple" value="@(q.IsMultiple.ToString().ToLower())" />
+
+                                <div class="vstack gap-2">
+                                    @for (int j = 0; j < q.Options.Count; j++)
+                                    {
+                                        var o = q.Options[j];
+
+                                        <div class="form-check d-flex align-items-center p-2 border rounded">
+                                            @* Hidden para que el binder reciba IsSelected *@
+                                            <input type="hidden"
+                                                   id="isSel_@(i)_@(j)"
+                                                   class="is-sel"
+                                                   data-q="@i"
+                                                   name="Questions[@i].Options[@j].IsSelected"
+                                                   value="false" />
+
+                                            <input type="hidden" name="Questions[@i].Options[@j].FkOption" value="@o.FkOption" />
+                                            <input type="hidden" name="Questions[@i].Options[@j].OptionText" value="@o.OptionText" />
+
+                                            @if (q.IsMultiple)
+                                            {
+                                                <input class="form-check-input me-2 opt-checkbox"
+                                                       type="checkbox"
+                                                       data-q="@i"
+                                                       data-j="@j"
+                                                       id="chk_q@(i)_o@(j)" />
+                                                <label class="form-check-label w-100" for="chk_q@(i)_o@(j)">
+                                                    @o.OptionText
+                                                </label>
+                                            }
+                                            else
+                                            {
+                                                <input class="form-check-input me-2 opt-radio"
+                                                       type="radio"
+                                                       name="@groupName"
+                                                       data-q="@i"
+                                                       data-j="@j"
+                                                       id="rad_q@(i)_o@(j)" />
+                                                <label class="form-check-label w-100" for="rad_q@(i)_o@(j)">
+                                                    @o.OptionText
+                                                </label>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="text-end">
+                        <a asp-action="IndexTest" asp-controller="Catalog" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        // Checkboxes (multiple): solo setean su hidden a true/false
+        document.addEventListener('change', function (e) {
+            if (e.target && e.target.classList.contains('opt-checkbox')) {
+                const q = e.target.getAttribute('data-q');
+                const j = e.target.getAttribute('data-j');
+                const hidden = document.getElementById(`isSel_${q}_${j}`);
+                if (hidden) hidden.value = e.target.checked ? "true" : "false";
+            }
+        });
+
+        // Radios (single): en cada pregunta pone todos a false y el elegido a true
+        document.addEventListener('change', function (e) {
+            if (e.target && e.target.classList.contains('opt-radio')) {
+                const q = e.target.getAttribute('data-q');
+                const j = e.target.getAttribute('data-j');
+
+                // Poner todos en false para esa pregunta
+                document.querySelectorAll(`input.is-sel[data-q="${q}"]`)
+                    .forEach(h => h.value = "false");
+
+                // Activar el seleccionado
+                const hidden = document.getElementById(`isSel_${q}_${j}`);
+                if (hidden) hidden.value = "true";
+            }
+        });
+
+        // Notificaciones (success/error)
+        document.addEventListener('DOMContentLoaded', function () {
+            if ('@TempData["SuccessMessage"]' !== '') {
+                window.notyf?.open({
+                    type: 'success',
+                    message: '@TempData["SuccessMessage"]',
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+            if ('@TempData["ErrorMessage"]' !== '') {
+                window.notyf?.open({
+                    type: 'error',
+                    message: '@TempData["ErrorMessage"]',
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+        });
+    </script>
+}
