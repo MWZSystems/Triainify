@@ -26,7 +26,7 @@ namespace RH_CM.Controllers
             var levels = _context.CtLevelcourses
                 .AsNoTracking()
                 .Where(l => l.Available == 1)
-                .OrderBy(l => l.DescripctionLevel)
+                .OrderBy(l => l.PkLevelcourse)
                 .ToList();
 
             // IDs de materiales YA usados en algún vínculo Course–Level–Material
@@ -35,12 +35,36 @@ namespace RH_CM.Controllers
                 .Select(x => x.FkCourseMaterial)
                 .ToHashSet(); // eficiente para Contains()
 
-            // Materiales disponibles y NO asignados en CT_COURSE_LEVEL_MATERIAL
-            var materials = _context.CtCoursematerials
-                .AsNoTracking()
-                .Where(m => m.Available == 1 && !usedMaterialIds.Contains(m.PkCoursematerial))
-                .OrderBy(m => m.NameMaterial)
-                .ToList();
+
+
+            //// Materiales disponibles y NO asignados en CT_COURSE_LEVEL_MATERIAL
+            //var materials = _context.CtCoursematerials
+            //    .AsNoTracking()
+            //    .Where(m => m.Available == 1 && !usedMaterialIds.Contains(m.PkCoursematerial))
+            //    .OrderBy(m => m.NameMaterial)
+            //    .ToList();
+
+
+            //Traerse la entidad completa es un problema porque los PDFs son pesados, se cambia para tener un SELECt unicamente lo que se requiere.
+
+            var partialData = _context.CtCoursematerials
+                 .AsNoTracking()
+                 .Where(m => m.Available == 1)
+                 .OrderBy(m => m.NameMaterial)
+                 .Select(m => new
+                 {
+                     m.PkCoursematerial,
+                     m.NameMaterial
+                 })
+                 .ToList();
+
+            // Mapear a CtCoursematerial para que sea compatible con el ViewBag
+            var materials = partialData.Select(x => new CtCoursematerial
+            {
+                PkCoursematerial = x.PkCoursematerial,
+                NameMaterial = x.NameMaterial
+            }).ToList();
+
 
             // Nunca dejes null en los ViewBags
             ViewBag.Courses = courses ?? new List<CtCourse>();
@@ -228,7 +252,7 @@ namespace RH_CM.Controllers
 
             TempData["SuccessMessage"] = "Link created successfully.";
             LoadCourseLevelMaterialViewBags();
-            return RedirectToAction(nameof(IndexCourseLevelMaterial));
+            return RedirectToAction(nameof(CreateCourseLevelMaterial));
         }
 
         // =============================
