@@ -12,6 +12,7 @@ using RH_CM.Data;
 using RH_CM.Models;
 using RH_CM.ViewModels;
 using System.Data;
+using static RH_CM.ViewModels.ViewModels;
 
 namespace RH_CM.Controllers
 {
@@ -195,81 +196,6 @@ namespace RH_CM.Controllers
                     LastUpdateDate = IsNull("LastUpdateDate") ? (DateTime?)null : Convert.ToDateTime(reader["LastUpdateDate"]),
                     CourseStatus = IsNull("CourseStatus") ? "—" : reader["CourseStatus"]?.ToString() ?? "—"
                 });
-            }
-
-            return View(result);
-        }
-
-        [Authorize]
-        public async Task<IActionResult> LearningTrainify()
-        {
-            var result = new List<LearningCourseToDoViewModel>();
-            var userName = User?.Identity?.Name;
-
-            if (string.IsNullOrWhiteSpace(userName))
-            {
-                TempData["ErrorMessage"] = "No se pudo obtener el usuario actual.";
-                return View(result);
-            }
-
-            string connectionString = _context.Database.GetDbConnection().ConnectionString;
-
-            try
-            {
-                using var connection = new SqlConnection(connectionString);
-                await connection.OpenAsync();
-
-                using var command = new SqlCommand("sp_GetCoursestoDo_Learning", connection)
-                {
-                    CommandType = CommandType.StoredProcedure
-                };
-                command.Parameters.Add(new SqlParameter("@UserName", SqlDbType.NVarChar, 256) { Value = userName });
-
-                using var reader = await command.ExecuteReaderAsync();
-
-                int Ord(string n) => reader.GetOrdinal(n);
-                bool IsNull(string n) => reader.IsDBNull(Ord(n));
-                bool HasCol(string n)
-                {
-                    var schema = reader.GetSchemaTable();
-                    if (schema == null) return false;
-                    foreach (DataRow r in schema.Rows)
-                        if (string.Equals(r["ColumnName"]?.ToString(), n, StringComparison.OrdinalIgnoreCase))
-                            return true;
-                    return false;
-                }
-
-                while (await reader.ReadAsync())
-                {
-                    var vm = new LearningCourseToDoViewModel
-                    {
-                        PK_CourseAssignment = IsNull("PK_CourseAssignment") ? 0 : reader.GetInt32(Ord("PK_CourseAssignment")),
-                        //FK_Position = IsNull("FK_Position") ? 0 : reader.GetInt32(Ord("FK_Position")),
-                        NAME_POSITION_ENGLISH = IsNull("NAME_POSITION_ENGLISH") ? "—" : reader.GetString(Ord("NAME_POSITION_ENGLISH")),
-
-                        FK_Course = HasCol("FK_Course") && !IsNull("FK_Course") ? reader.GetInt32(Ord("FK_Course")) : 0,
-                        CourseName = IsNull("CourseName") ? "—" : reader.GetString(Ord("CourseName")),
-                        CourseLevel = HasCol("CourseLevel") && !IsNull("CourseLevel") ? reader.GetString(Ord("CourseLevel")) : "—",
-                        DeliveryMode = HasCol("DeliveryMode") && !IsNull("DeliveryMode") ? reader.GetString(Ord("DeliveryMode")) : "—",
-                        CourseValidityDays = HasCol("CourseValidityDays") && !IsNull("CourseValidityDays") ? Convert.ToInt32(reader["CourseValidityDays"]) : (int?)null,
-
-                        //UserName = IsNull("UserName") ? userName : reader["UserName"].ToString()!,
-                        CONTROL_NUMBER = HasCol("CONTROL_NUMBER") && !IsNull("CONTROL_NUMBER") ? reader["CONTROL_NUMBER"].ToString()! : "—",
-                        FullName = HasCol("FullName") && !IsNull("FullName") ? reader["FullName"].ToString()! : "—",
-
-                        LastUpdateDate = HasCol("LastUpdateDate") && !IsNull("LastUpdateDate") ? Convert.ToDateTime(reader["LastUpdateDate"]) : (DateTime?)null,
-                        CourseStatus = HasCol("CourseStatus") && !IsNull("CourseStatus") ? reader["CourseStatus"].ToString()! : "—"
-                    };
-
-                    result.Add(vm);
-                }
-
-                if (result.Count == 0)
-                    TempData["SuccessMessage"] = "No hay cursos pendientes requeridos para mostrar.";
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = $"Error al cargar cursos: {ex.Message}";
             }
 
             return View(result);
@@ -646,5 +572,269 @@ namespace RH_CM.Controllers
             sw.Write("</tbody></table>");
             return sw.ToString();
         }
+
+        [Authorize]
+        public async Task<IActionResult> LearningTrainify()
+        {
+            var result = new List<LearningCourseToDoViewModel>();
+            var userName = User?.Identity?.Name;
+
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                TempData["ErrorMessage"] = "No se pudo obtener el usuario actual.";
+                return View(result);
+            }
+
+            string connectionString = _context.Database.GetDbConnection().ConnectionString;
+
+            try
+            {
+                using var connection = new SqlConnection(connectionString);
+                await connection.OpenAsync();
+
+                using var command = new SqlCommand("sp_GetCoursestoDo_Learning", connection)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+                command.Parameters.Add(new SqlParameter("@UserName", SqlDbType.NVarChar, 256) { Value = userName });
+
+                using var reader = await command.ExecuteReaderAsync();
+
+                int Ord(string n) => reader.GetOrdinal(n);
+                bool IsNull(string n) => reader.IsDBNull(Ord(n));
+                bool HasCol(string n)
+                {
+                    var schema = reader.GetSchemaTable();
+                    if (schema == null) return false;
+                    foreach (DataRow r in schema.Rows)
+                        if (string.Equals(r["ColumnName"]?.ToString(), n, StringComparison.OrdinalIgnoreCase))
+                            return true;
+                    return false;
+                }
+
+                while (await reader.ReadAsync())
+                {
+                    var vm = new LearningCourseToDoViewModel
+                    {
+                        PK_CourseAssignment = IsNull("PK_CourseAssignment") ? 0 : reader.GetInt32(Ord("PK_CourseAssignment")),
+                        //FK_Position = IsNull("FK_Position") ? 0 : reader.GetInt32(Ord("FK_Position")),
+                        NAME_POSITION_ENGLISH = IsNull("NAME_POSITION_ENGLISH") ? "—" : reader.GetString(Ord("NAME_POSITION_ENGLISH")),
+
+                        FK_Course = HasCol("FK_Course") && !IsNull("FK_Course") ? reader.GetInt32(Ord("FK_Course")) : 0,
+                        CourseName = IsNull("CourseName") ? "—" : reader.GetString(Ord("CourseName")),
+                        CourseLevel = HasCol("CourseLevel") && !IsNull("CourseLevel") ? reader.GetString(Ord("CourseLevel")) : "—",
+                        DeliveryMode = HasCol("DeliveryMode") && !IsNull("DeliveryMode") ? reader.GetString(Ord("DeliveryMode")) : "—",
+                        CourseValidityDays = HasCol("CourseValidityDays") && !IsNull("CourseValidityDays") ? Convert.ToInt32(reader["CourseValidityDays"]) : (int?)null,
+
+                        //UserName = IsNull("UserName") ? userName : reader["UserName"].ToString()!,
+                        CONTROL_NUMBER = HasCol("CONTROL_NUMBER") && !IsNull("CONTROL_NUMBER") ? reader["CONTROL_NUMBER"].ToString()! : "—",
+                        FullName = HasCol("FullName") && !IsNull("FullName") ? reader["FullName"].ToString()! : "—",
+
+                        LastUpdateDate = HasCol("LastUpdateDate") && !IsNull("LastUpdateDate") ? Convert.ToDateTime(reader["LastUpdateDate"]) : (DateTime?)null,
+                        CourseStatus = HasCol("CourseStatus") && !IsNull("CourseStatus") ? reader["CourseStatus"].ToString()! : "—"
+                    };
+
+                    result.Add(vm);
+                }
+
+                if (result.Count == 0)
+                    TempData["SuccessMessage"] = "No hay cursos pendientes requeridos para mostrar.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error al cargar cursos: {ex.Message}";
+            }
+
+            return View(result);
+        }
+
+        // Visualizar preguntas y diseño para contestar (solo UI)
+        [Authorize(Roles = "Empleado, RHGerente, Administrador")]
+        [HttpGet]
+        public async Task<IActionResult> Diagnostic(int id)
+        {
+            // Carga el test
+            var test = await _context.CtTests
+                .Where(t => t.PkTest == id && t.Available == 1)
+                .FirstOrDefaultAsync();
+
+            if (test == null)
+            {
+                TempData["ErrorMessage"] = "Test not found or not available.";
+                return RedirectToAction("IndexTest", "Catalog");
+            }
+
+            // Carga preguntas disponibles
+            var questions = await _context.CtQuestions
+                .Where(q => q.FkTest == test.PkTest && q.Available == 1)
+                .OrderBy(q => q.PkQuestions)
+                .ToListAsync();
+
+            var model = new SubmitTestViewModel
+            {
+                FkTest = test.PkTest,
+                TestName = test.TestName,
+                Questions = new List<SubmitQuestionViewModel>()
+            };
+
+            foreach (var question in questions)
+            {
+                var options = await _context.CtOptions
+                    .Where(o => o.FkQuestions == question.PkQuestions && o.Available == 1)
+                    .OrderBy(o => o.PkOptions)
+                    .ToListAsync();
+
+                var qVm = new SubmitQuestionViewModel
+                {
+                    FkQuestion = question.PkQuestions,
+                    QuestionText = question.Question,
+                    // IsMultiple se deduce por cuántas están marcadas como respuesta correcta en catálogo
+                    IsMultiple = options.Count(o => o.Answer == 1) > 1,
+                    Options = options.Select(o => new SubmitOptionViewModel
+                    {
+                        FkOption = o.PkOptions,
+                        OptionText = o.Options,
+                        IsSelected = false // El usuario elegirá
+                    }).ToList()
+                };
+
+                model.Questions.Add(qVm);
+            }
+
+            if (!model.Questions.Any())
+            {
+                TempData["ErrorMessage"] = "This test has no questions.";
+                return RedirectToAction("IndexTest", "Catalog");
+            }
+
+            return View("Diagnostic", model);
+        }
+
+        // POST: guarda en dbo.SY_USER_DIAGNOSTIC
+        [Authorize(Roles = "Empleado, RHGerente, Administrador")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SubmitDiagnostic(SubmitTestViewModel model)
+        {
+            if (model?.Questions == null || !model.Questions.Any())
+            {
+                TempData["ErrorMessage"] = "There are no answers to submit.";
+                return RedirectToAction("IndexTest", "Catalog");
+            }
+
+            // Debe existir al menos una selección en todo el test
+            var hasAnySelection = model.Questions
+                .SelectMany(q => q.Options ?? new List<SubmitOptionViewModel>())
+                .Any(o => o.IsSelected);
+
+            if (!hasAnySelection)
+            {
+                TempData["ErrorMessage"] = "Please select at least one option before submitting.";
+                return View("Diagnostic", model);
+            }
+
+            var currentUser = User.Identity?.Name ?? "Anon";
+            var now = DateTime.Now;
+
+            // Mapa de opciones correctas por pregunta (Answer = 1)
+            var questionIds = model.Questions.Select(q => q.FkQuestion).Distinct().ToList();
+
+            var correctMap = await _context.CtOptions
+                .Where(o => questionIds.Contains(o.FkQuestions) && o.Available == 1 && o.Answer == 1)
+                .GroupBy(o => o.FkQuestions)
+                .Select(g => new
+                {
+                    FkQuestion = g.Key,
+                    Ids = g.Select(x => x.PkOptions).ToList(),
+                    Csv = string.Join(",", g.OrderBy(x => x.PkOptions).Select(x => x.PkOptions))
+                })
+                .ToDictionaryAsync(x => x.FkQuestion, x => (Ids: x.Ids, Csv: x.Csv));
+
+            // Guardar y preparar resultado
+            var resultVm = new DiagnosticResultViewModel
+            {
+                FkTest = model.FkTest,
+                TestName = model.TestName,
+                Questions = new List<DiagnosticQuestionResultViewModel>()
+            };
+
+            using var tx = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                foreach (var q in model.Questions)
+                {
+                    var selectedIds = (q.Options ?? new List<SubmitOptionViewModel>())
+                        .Where(o => o.IsSelected)
+                        .Select(o => o.FkOption)
+                        .OrderBy(id => id)
+                        .ToList();
+
+                    var csvSelected = string.Join(",", selectedIds);
+                    var correctIds = correctMap.TryGetValue(q.FkQuestion, out var tuple) ? tuple.Ids : new List<int>();
+                    var csvCorrect = correctMap.TryGetValue(q.FkQuestion, out var tuple2) ? tuple2.Csv : string.Empty;
+
+                    // Insertar 1 fila por pregunta en SY_USER_DIAGNOSTIC
+                    var row = new SyUserDiagnostic
+                    {
+                        FkTest = model.FkTest,                // PkTest
+                        FkQuestions = q.FkQuestion,           // PkQuestions
+                        FkOptionSelected = csvSelected,       // "5" o "5,7,9"
+                        FkOptionCorrected = csvCorrect,       // correctas del catálogo
+                        Createuser = currentUser,
+                        Createdate = now,
+                        Available = 1
+                    };
+                    _context.SyUserDiagnostics.Add(row);
+
+                    // Construir detalle para la vista de resultados
+                    var optionResults = (q.Options ?? new List<SubmitOptionViewModel>())
+                        .Select(o => new DiagnosticOptionResultViewModel
+                        {
+                            FkOption = o.FkOption,
+                            OptionText = o.OptionText,
+                            IsSelected = selectedIds.Contains(o.FkOption),
+                            IsCorrect = correctIds.Contains(o.FkOption)
+                        })
+                        .OrderBy(o => o.FkOption)
+                        .ToList();
+
+                    // Una pregunta se considera correcta si el conjunto seleccionado == conjunto correcto
+                    bool questionCorrect =
+                        selectedIds.Count == correctIds.Count &&
+                        !selectedIds.Except(correctIds).Any() &&
+                        !correctIds.Except(selectedIds).Any();
+
+                    resultVm.Questions.Add(new DiagnosticQuestionResultViewModel
+                    {
+                        FkQuestion = q.FkQuestion,
+                        QuestionText = q.QuestionText,
+                        IsMultiple = q.IsMultiple,
+                        SelectedOptionIds = selectedIds,
+                        CorrectOptionIds = correctIds,
+                        IsCorrect = questionCorrect,
+                        Options = optionResults
+                    });
+                }
+
+                await _context.SaveChangesAsync();
+                await tx.CommitAsync();
+
+                // Calcular calificación
+                resultVm.TotalQuestions = resultVm.Questions.Count;
+                resultVm.CorrectCount = resultVm.Questions.Count(x => x.IsCorrect);
+                resultVm.Score = (int)Math.Round((double)resultVm.CorrectCount * 100.0 / Math.Max(1, resultVm.TotalQuestions), 0);
+
+                // Mostrar resultados detallados
+                return View("DiagnosticResult", resultVm);
+            }
+            catch (Exception ex)
+            {
+                await tx.RollbackAsync();
+                TempData["ErrorMessage"] = $"Error saving diagnostic: {ex.Message}";
+                return View("Diagnostic", model);
+            }
+        }
+
+
     }
 }

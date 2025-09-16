@@ -1,0 +1,77 @@
+﻿@model RH_CM.ViewModels.ViewModels.DiagnosticResultViewModel
+
+@{
+    ViewData["Title"] = "Diagnostic Result";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-2 text-center">Diagnostic Result: @Model.TestName</h1>
+        <p class="text-center text-muted">
+            Correct: <strong>@Model.CorrectCount / @Model.TotalQuestions</strong> |
+            Score: <strong>@Model.Score</strong>/100
+        </p>
+        <div class="progress mb-3" style="height: 20px;">
+            <div class="progress-bar" role="progressbar" style="width:@Model.Score%"></div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        @for (int i = 0; i < Model.Questions.Count; i++)
+        {
+            var q = Model.Questions[i];
+            var statusClass = q.IsCorrect ? "bg-success text-white" : "bg-danger text-white";
+            var statusText = q.IsCorrect ? "Correct" : "Incorrect";
+
+            <div class="card mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center @statusClass">
+                    <strong>Q@(i + 1). @q.QuestionText</strong>
+                    <span class="badge @(q.IsCorrect ? "bg-light text-success" : "bg-light text-danger")">@statusText</span>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        @foreach (var opt in q.Options)
+                        {
+                            var liClass =
+                            opt.IsSelected && opt.IsCorrect ? "list-group-item list-group-item-success" :
+                            opt.IsSelected && !opt.IsCorrect ? "list-group-item list-group-item-danger" :
+                            !opt.IsSelected && opt.IsCorrect ? "list-group-item list-group-item-warning" :
+                            "list-group-item";
+
+                            <li class="@liClass">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>
+                                        @opt.OptionText
+                                        @if (opt.IsCorrect)
+                                        {
+                                            <span class="badge bg-success ms-2">Correct</span>
+                                        }
+                                        @if (opt.IsSelected)
+                                        {
+                                            <span class="badge bg-primary ms-2">Selected</span>
+                                        }
+                                    </span>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+
+                    <div class="mt-2 small text-muted">
+                        Selected: @string.Join(", ", q.SelectedOptionIds)
+                        <br />
+                        Correct: @string.Join(", ", q.CorrectOptionIds)
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="text-end">
+            <a asp-action="IndexTest" asp-controller="Catalog" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to tests
+            </a>
+        </div>
+    </div>
+</div>

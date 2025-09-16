@@ -25,17 +25,82 @@ namespace RH_CM.Controllers
             _userManager = userManager;
         }
 
-        // =============== MATRIZ POR SUPERVISOR =================
+        // ================= Helper: combo de supervisores =================
+        private async Task<List<SelectListItem>> GetSupervisorsAsync()
+        {
+            var rows = await (
+                from s in _context.CtSupervisors.AsNoTracking()
+                join h in _context.SyHeadcounts.AsNoTracking()
+                    on s.FkHeadcount equals h.PkHeadcount
+                where s.Available == 1 && h.Available == 1
+                orderby h.ControlNumber, h.Names, h.LastName, h.SecondName
+                select new
+                {
+                    s.PkSupervisorId,
+                    h.ControlNumber,
+                    h.Names,
+                    h.LastName,
+                    h.SecondName
+                }
+            ).ToListAsync(); // ← materializa aquí
+
+            return rows
+                .Select(x =>
+                {
+                    var fullName = string.Join(" ",
+                        new[] { x.Names, x.LastName, x.SecondName }
+                        .Where(p => !string.IsNullOrWhiteSpace(p))
+                        .Select(p => p!.Trim())
+                    );
+
+                    return new SelectListItem
+                    {
+                        Value = x.PkSupervisorId.ToString(),
+                        Text = $"[{x.ControlNumber}] {fullName} — Supervisor #{x.PkSupervisorId}"
+                    };
+                })
+                .ToList();
+        }
+
+        // ------------------- Ventana A: Selector -------------------
+        [HttpGet]
+        public async Task<IActionResult> MatrizbySupervisorSelect()
+        {
+            var vm = new SelectSupervisorViewModel
+            {
+                Supervisors = await GetSupervisorsAsync()
+            };
+            return View(vm); // View: MatrizbySupervisorSelect.cshtml
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MatrizbySupervisorSelect(SelectSupervisorViewModel vm)
+        {
+            if (!vm.SelectedSupervisorId.HasValue || vm.SelectedSupervisorId.Value <= 0)
+            {
+                TempData["ErrorMessage"] = "Selecciona un supervisor válido.";
+                vm.Supervisors = await GetSupervisorsAsync();
+                return View(vm);
+            }
+
+            return RedirectToAction(nameof(MatrizbySupervisor), new { supervisorId = vm.SelectedSupervisorId.Value });
+        }
+
+        // ------------------- Ventana B: Matriz (SOLO muestra) -------------------
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> MatrizbySupervisor(int supervisorId)
         {
-            supervisorId = 9; // <-- supervisor fijo
+            // ❶ Quitar el valor fijo:
+            // supervisorId = 9;  // <-- ELIMINADO
+
             var result = new List<MatrizBySupervisorViewModel>();
 
             if (supervisorId <= 0)
             {
-                TempData["ErrorMessage"] = "Parámetro 'supervisorId' inválido.";
-                return View(result);
+                TempData["ErrorMessage"] = "Primero selecciona un supervisor.";
+                return RedirectToAction(nameof(MatrizbySupervisorSelect));
             }
 
             try
@@ -66,10 +131,8 @@ namespace RH_CM.Controllers
                         NAMES = IsNull("NAMES") ? null : reader["NAMES"]?.ToString(),
                         LAST_NAME = IsNull("LAST_NAME") ? null : reader["LAST_NAME"]?.ToString(),
                         SECOND_NAME = IsNull("SECOND_NAME") ? null : reader["SECOND_NAME"]?.ToString(),
-
                         FK_Position = IsNull("FK_Position") ? 0 : Convert.ToInt32(reader["FK_Position"]),
                         NAME_POSITION_ENGLISH = IsNull("NAME_POSITION_ENGLISH") ? null : reader["NAME_POSITION_ENGLISH"]?.ToString(),
-
                         Completed = IsNull("Completed") ? 0 : Convert.ToInt32(reader["Completed"]),
                         Pending = IsNull("Pending") ? 0 : Convert.ToInt32(reader["Pending"]),
                         ExpiringSoon = IsNull("Expiring Soon") ? 0 : Convert.ToInt32(reader["Expiring Soon"]),
@@ -92,7 +155,7 @@ namespace RH_CM.Controllers
                 TempData["ErrorMessage"] = $"Error: {ex.Message}";
             }
 
-            return View(result);  // View: Views/Trainify/MatrizbySupervisor.cshtml
+            return View(result);  // View existente: Views/Trainify/MatrizbySupervisor.cshtml
         }
 
         // =============== AJUSTE: abrir Matriz por EMPLEADO por UserName ===============

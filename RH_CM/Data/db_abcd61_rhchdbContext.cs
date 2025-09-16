@@ -53,6 +53,7 @@ namespace RH_CM.Data
         public virtual DbSet<SyExternalevidence> SyExternalevidences { get; set; } = null!;
         public virtual DbSet<SyHeadcount> SyHeadcounts { get; set; } = null!;
         public virtual DbSet<SyUserAnswer> SyUserAnswers { get; set; } = null!;
+        public virtual DbSet<SyUserDiagnostic> SyUserDiagnostics { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1207,6 +1208,37 @@ namespace RH_CM.Data
                 entity.Property(e => e.IsCorrected).HasColumnName("IS_CORRECTED");
 
                 entity.Property(e => e.IsSelected).HasColumnName("IS_SELECTED");
+            });
+
+            modelBuilder.Entity<SyUserDiagnostic>(entity =>
+            {
+                entity.HasKey(e => e.PkUserDiagnostic);
+
+                entity.ToTable("SY_USER_DIAGNOSTIC");
+
+                entity.Property(e => e.PkUserDiagnostic).HasColumnName("PK_USER_DIAGNOSTIC");
+
+                entity.Property(e => e.Available).HasColumnName("AVAILABLE");
+
+                entity.Property(e => e.Createdate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CREATEDATE");
+
+                entity.Property(e => e.Createuser)
+                    .HasMaxLength(250)
+                    .HasColumnName("CREATEUSER");
+
+                entity.Property(e => e.FkOptionCorrected)
+                    .HasMaxLength(50)
+                    .HasColumnName("FK_OPTION_CORRECTED");
+
+                entity.Property(e => e.FkOptionSelected)
+                    .HasMaxLength(50)
+                    .HasColumnName("FK_OPTION_SELECTED");
+
+                entity.Property(e => e.FkQuestions).HasColumnName("FK_QUESTIONS");
+
+                entity.Property(e => e.FkTest).HasColumnName("FK_TEST");
             });
 
             OnModelCreatingPartial(modelBuilder);
