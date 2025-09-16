@@ -5,6 +5,8 @@
         public int FkTest { get; set; }
         public string TestName { get; set; } = string.Empty;
         public List<SubmitQuestionViewModel> Questions { get; set; } = new();
+        public int NextCourseId { get; set; }   // para abrir material luego del diagnóstico
+        public int NextLevelId { get; set; }
     }
 
     public class SubmitQuestionViewModel

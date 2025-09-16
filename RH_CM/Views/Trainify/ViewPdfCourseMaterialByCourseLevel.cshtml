@@ -1,0 +1,81 @@
+﻿@model RH_CM.ViewModels.CourseMaterialViewerViewModel
+
+@{
+    ViewData["Title"] = Model.CourseName != null
+        ? $"Material: {Model.CourseName}"
+        : "Course Material";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">
+            <i class="fas fa-file-pdf"></i> @ViewData["Title"]
+        </h1>
+
+        <div class="text-center mb-2">
+            <span class="badge bg-primary me-1">Course ID: @Model.CourseId</span>
+            <span class="badge bg-info">Level ID: @Model.LevelId</span>
+        </div>
+
+        <div class="text-center mb-3">
+            <a class="btn btn-outline-secondary"
+               href="@Model.StreamUrl"
+               target="_blank" rel="noopener">
+                Open in new tab
+            </a>
+            <a class="btn btn-outline-primary"
+               href="@Url.Action("LearningTrainify", "Trainify")">
+                Back to Learning
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <!-- Visor PDF embebido -->
+        <div class="ratio ratio-16x9 border rounded">
+            <iframe src="@Model.StreamUrl#toolbar=1&navpanes=0"
+                    title="PDF"
+                    frameborder="0">
+            </iframe>
+        </div>
+
+        <noscript>
+            <p class="mt-3">
+                JavaScript is disabled. <a href="@Model.StreamUrl" target="_blank" rel="noopener">
+                    Click here
+                </a> to open the PDF in a new tab.
+            </p>
+        </noscript>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        // Notificaciones (Notyf) si llegan desde TempData
+        if ('@TempData["SuccessMessage"]' !== '') {
+            window.notyf?.open({
+                type: 'success',
+                message: '@TempData["SuccessMessage"]',
+                ripple: true,
+                dismissible: true,
+                position: { x: 'center', y: 'top' },
+                duration: 5000
+            });
+        }
+        if ('@TempData["ErrorMessage"]' !== '') {
+            window.notyf?.open({
+                type: 'error',
+                message: '@TempData["ErrorMessage"]',
+                ripple: true,
+                dismissible: true,
+                position: { x: 'center', y: 'top' },
+                duration: 5000
+            });
+        }
+    </script>
+}
