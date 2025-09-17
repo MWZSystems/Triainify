@@ -24,26 +24,21 @@ namespace RH_CM.Data
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; } = null!;
         public virtual DbSet<AspNetUserToken> AspNetUserTokens { get; set; } = null!;
         public virtual DbSet<CtCorrectanswer> CtCorrectanswers { get; set; } = null!;
-        public virtual DbSet<CtCorrectanswersBackup> CtCorrectanswersBackups { get; set; } = null!;
         public virtual DbSet<CtCourse> CtCourses { get; set; } = null!;
         public virtual DbSet<CtCourseLevelMaterial> CtCourseLevelMaterials { get; set; } = null!;
         public virtual DbSet<CtCourseassignment> CtCourseassignments { get; set; } = null!;
         public virtual DbSet<CtCoursematerial> CtCoursematerials { get; set; } = null!;
-        public virtual DbSet<CtCoursematerialBackUp> CtCoursematerialBackUps { get; set; } = null!;
         public virtual DbSet<CtCoursestatus> CtCoursestatuses { get; set; } = null!;
         public virtual DbSet<CtDeliverymode> CtDeliverymodes { get; set; } = null!;
         public virtual DbSet<CtDepartment> CtDepartments { get; set; } = null!;
         public virtual DbSet<CtLevelcourse> CtLevelcourses { get; set; } = null!;
         public virtual DbSet<CtOption> CtOptions { get; set; } = null!;
-        public virtual DbSet<CtOptionsBackup> CtOptionsBackups { get; set; } = null!;
         public virtual DbSet<CtOptiontype> CtOptiontypes { get; set; } = null!;
         public virtual DbSet<CtPosition> CtPositions { get; set; } = null!;
         public virtual DbSet<CtQuestion> CtQuestions { get; set; } = null!;
-        public virtual DbSet<CtQuestionsBackup> CtQuestionsBackups { get; set; } = null!;
         public virtual DbSet<CtResult> CtResults { get; set; } = null!;
         public virtual DbSet<CtSupervisor> CtSupervisors { get; set; } = null!;
         public virtual DbSet<CtTest> CtTests { get; set; } = null!;
-        public virtual DbSet<CtTestBackup> CtTestBackups { get; set; } = null!;
         public virtual DbSet<CtTestConsolidado> CtTestConsolidados { get; set; } = null!;
         public virtual DbSet<CtTestConsolidado2> CtTestConsolidado2s { get; set; } = null!;
         public virtual DbSet<CtVideomaterial> CtVideomaterials { get; set; } = null!;
@@ -183,40 +178,6 @@ namespace RH_CM.Data
                     .HasColumnName("LASTUPDATEUSER");
             });
 
-            modelBuilder.Entity<CtCorrectanswersBackup>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.ToTable("CT_CORRECTANSWERS_BACKUP");
-
-                entity.Property(e => e.Available).HasColumnName("AVAILABLE");
-
-                entity.Property(e => e.Createdate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("CREATEDATE");
-
-                entity.Property(e => e.Createuser)
-                    .HasMaxLength(250)
-                    .HasColumnName("CREATEUSER");
-
-                entity.Property(e => e.FkOptions)
-                    .IsUnicode(false)
-                    .HasColumnName("FK_OPTIONS");
-
-                entity.Property(e => e.FkQuestions).HasColumnName("FK_QUESTIONS");
-
-                entity.Property(e => e.Lastupatedate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("LASTUPATEDATE");
-
-                entity.Property(e => e.Lastupdateuser)
-                    .HasMaxLength(250)
-                    .HasColumnName("LASTUPDATEUSER");
-
-                entity.Property(e => e.PkAnswers)
-                    .ValueGeneratedOnAdd()
-                    .HasColumnName("PK_ANSWERS");
-            });
 
             modelBuilder.Entity<CtCourse>(entity =>
             {
@@ -333,44 +294,6 @@ namespace RH_CM.Data
                 entity.Property(e => e.UrlPath)
                     .HasMaxLength(500)
                     .HasColumnName("URL_PATH");
-            });
-
-            modelBuilder.Entity<CtCoursematerialBackUp>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.ToTable("CT_COURSEMATERIAL_BackUP");
-
-                entity.Property(e => e.Available).HasColumnName("available");
-
-                entity.Property(e => e.Createdate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("createdate");
-
-                entity.Property(e => e.Createuser)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("createuser");
-
-                entity.Property(e => e.File).HasColumnName("FILE");
-
-                entity.Property(e => e.Lastupdatedate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("lastupdatedate");
-
-                entity.Property(e => e.Lastupdateuser)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("lastupdateuser");
-
-                entity.Property(e => e.NameMaterial)
-                    .HasMaxLength(100)
-                    .IsUnicode(false)
-                    .HasColumnName("NAME_MATERIAL");
-
-                entity.Property(e => e.PkCoursematerial)
-                    .ValueGeneratedOnAdd()
-                    .HasColumnName("PK_COURSEMATERIAL");
             });
 
             modelBuilder.Entity<CtCoursestatus>(entity =>
@@ -532,40 +455,6 @@ namespace RH_CM.Data
                 entity.Property(e => e.Options).HasColumnName("OPTIONS");
             });
 
-            modelBuilder.Entity<CtOptionsBackup>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.ToTable("CT_OPTIONS_BACKUP");
-
-                entity.Property(e => e.Answer).HasColumnName("ANSWER");
-
-                entity.Property(e => e.Available).HasColumnName("AVAILABLE");
-
-                entity.Property(e => e.Createdate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("CREATEDATE");
-
-                entity.Property(e => e.Createuser)
-                    .HasMaxLength(250)
-                    .HasColumnName("CREATEUSER");
-
-                entity.Property(e => e.FkQuestions).HasColumnName("FK_QUESTIONS");
-
-                entity.Property(e => e.Lastupatedate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("LASTUPATEDATE");
-
-                entity.Property(e => e.Lastupdateuser)
-                    .HasMaxLength(250)
-                    .HasColumnName("LASTUPDATEUSER");
-
-                entity.Property(e => e.Options).HasColumnName("OPTIONS");
-
-                entity.Property(e => e.PkOptions)
-                    .ValueGeneratedOnAdd()
-                    .HasColumnName("PK_OPTIONS");
-            });
 
             modelBuilder.Entity<CtOptiontype>(entity =>
             {
@@ -663,41 +552,6 @@ namespace RH_CM.Data
                 entity.Property(e => e.Lastupdateuser)
                     .HasMaxLength(250)
                     .HasColumnName("LASTUPDATEUSER");
-
-                entity.Property(e => e.Question).HasColumnName("QUESTION");
-            });
-
-            modelBuilder.Entity<CtQuestionsBackup>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.ToTable("CT_QUESTIONS_BACKUP");
-
-                entity.Property(e => e.Available).HasColumnName("AVAILABLE");
-
-                entity.Property(e => e.Createdate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("CREATEDATE");
-
-                entity.Property(e => e.Createuser)
-                    .HasMaxLength(250)
-                    .HasColumnName("CREATEUSER");
-
-                entity.Property(e => e.FkTest).HasColumnName("FK_TEST");
-
-                entity.Property(e => e.FkTypeOption).HasColumnName("FK_TYPE_OPTION");
-
-                entity.Property(e => e.Lastupatedate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("LASTUPATEDATE");
-
-                entity.Property(e => e.Lastupdateuser)
-                    .HasMaxLength(250)
-                    .HasColumnName("LASTUPDATEUSER");
-
-                entity.Property(e => e.PkQuestions)
-                    .ValueGeneratedOnAdd()
-                    .HasColumnName("PK_QUESTIONS");
 
                 entity.Property(e => e.Question).HasColumnName("QUESTION");
             });
@@ -808,43 +662,7 @@ namespace RH_CM.Data
                     .HasMaxLength(250)
                     .HasColumnName("TEST_NAME");
             });
-
-            modelBuilder.Entity<CtTestBackup>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.ToTable("CT_TEST_BACKUP");
-
-                entity.Property(e => e.Available).HasColumnName("AVAILABLE");
-
-                entity.Property(e => e.Createdate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("CREATEDATE");
-
-                entity.Property(e => e.Createuser)
-                    .HasMaxLength(250)
-                    .HasColumnName("CREATEUSER");
-
-                entity.Property(e => e.FkCourse).HasColumnName("FK_COURSE");
-
-                entity.Property(e => e.FkLevelcourse).HasColumnName("FK_LEVELCOURSE");
-
-                entity.Property(e => e.Lastupatedate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("LASTUPATEDATE");
-
-                entity.Property(e => e.Lastupdateuser)
-                    .HasMaxLength(250)
-                    .HasColumnName("LASTUPDATEUSER");
-
-                entity.Property(e => e.PkTest)
-                    .ValueGeneratedOnAdd()
-                    .HasColumnName("PK_TEST");
-
-                entity.Property(e => e.TestName)
-                    .HasMaxLength(250)
-                    .HasColumnName("TEST_NAME");
-            });
+           
 
             modelBuilder.Entity<CtTestConsolidado>(entity =>
             {
