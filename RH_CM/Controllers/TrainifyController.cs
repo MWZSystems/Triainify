@@ -595,40 +595,29 @@ namespace RH_CM.Controllers
             ).AnyAsync();
         }
 
-        // ✅ Ruta ABSOLUTA: /Catalog/StartCourse?courseId=..&levelId=..
         [Authorize]
         [HttpGet("/Catalog/StartCourse")]
         public async Task<IActionResult> StartCourse([FromQuery] int courseId, [FromQuery] int levelId)
         {
-            // 1) Validar que exista DIAGNÓSTICO (test) para curso+nivel
-            var hasTest = await ExistsDiagnosticTestAsync(courseId, levelId);
-            if (!hasTest)
+            if (!await ExistsDiagnosticTestAsync(courseId, levelId))
             {
-                TempData["ErrorMessage"] = "No diagnostic test found for this course/level. Please contact HR to add the test.";
+                TempData["ErrorMessage"] = "No diagnostic test found for this course/level. Please contact HR.";
                 return RedirectToAction("LearningTrainify", "Trainify");
             }
 
-            // 2) Validar que exista MATERIAL (PDF/URL) para curso+nivel
-            var hasMaterial = await ExistsMaterialAsync(courseId, levelId);
-            if (!hasMaterial)
+            if (!await ExistsMaterialAsync(courseId, levelId))
             {
-                TempData["ErrorMessage"] = "No course material (PDF/URL) linked to this course/level. Please contact HR to add the material.";
+                TempData["ErrorMessage"] = "No course material (PDF/URL) linked to this course/level. Please contact HR.";
                 return RedirectToAction("LearningTrainify", "Trainify");
             }
 
-            // 3) Buscar el test más reciente (por si hay varios)
-            var test = await _context.CtTests
-                .AsNoTracking()
+            var test = await _context.CtTests.AsNoTracking()
                 .Where(t => t.Available == 1 && t.FkCourse == courseId && t.FkLevelcourse == levelId)
                 .OrderByDescending(t => t.PkTest)
                 .FirstOrDefaultAsync();
 
-            // 4) Ir al Diagnóstico (el botón ya abre en pestaña nueva)
-            return RedirectToAction("Diagnostic", "Trainify",
-                new { id = test!.PkTest, courseId = courseId, levelId = levelId });
+            return RedirectToAction("Diagnostic", "Trainify", new { id = test!.PkTest, courseId, levelId });
         }
-
-
         [Authorize]
         public async Task<IActionResult> LearningTrainify()
         {
@@ -707,12 +696,11 @@ namespace RH_CM.Controllers
         }
 
         // ✅ Vista que muestra el visor con iframe
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> ViewPdfCourseMaterialByCourseLevel(int courseId, int levelId)
+        // ✅ RUTA EXPLÍCITA: coincide exactamente con tu URL
+        [HttpGet("/Catalog/ViewPdfCourseMaterialByCourseLevel")]
+        public async Task<IActionResult> ViewPdfCourseMaterialByCourseLevel([FromQuery] int courseId, [FromQuery] int levelId)
         {
-            var link = await _context.CtCourseLevelMaterials
-                .AsNoTracking()
+            var link = await _context.CtCourseLevelMaterials.AsNoTracking()
                 .Where(x => x.Available == 1 && x.FkCourse == courseId && x.FkLevelCourse == levelId)
                 .OrderByDescending(x => x.PkCourseLevelMaterial)
                 .FirstOrDefaultAsync();
@@ -723,8 +711,7 @@ namespace RH_CM.Controllers
                 return RedirectToAction("LearningTrainify", "Trainify");
             }
 
-            var material = await _context.CtCoursematerials
-                .AsNoTracking()
+            var material = await _context.CtCoursematerials.AsNoTracking()
                 .FirstOrDefaultAsync(m => m.PkCoursematerial == link.FkCourseMaterial && (m.Available ?? 0) == 1);
 
             if (material == null)
@@ -741,6 +728,20 @@ namespace RH_CM.Controllers
 
             TempData["ErrorMessage"] = "The material exists but has no file or URL. Please contact HR.";
             return RedirectToAction("LearningTrainify", "Trainify");
+        }
+
+        // (Opcional) Si usas una vista con iframe:
+        [HttpGet("/Catalog/OpenPdfCourseMaterialByCourseLevel")]
+        public IActionResult OpenPdfCourseMaterialByCourseLevel([FromQuery] int courseId, [FromQuery] int levelId)
+        {
+            var vm = new RH_CM.ViewModels.CourseMaterialViewerViewModel
+            {
+                CourseId = courseId,
+                LevelId = levelId,
+                StreamUrl = Url.Action(nameof(ViewPdfCourseMaterialByCourseLevel), "Catalog",
+                                       new { courseId, levelId }) ?? string.Empty
+            };
+            return View("OpenPdfCourseMaterialByCourseLevel", vm);
         }
 
         [Authorize]
@@ -779,63 +780,40 @@ namespace RH_CM.Controllers
             return RedirectToAction("LearningTrainify", "Trainify");
         }
 
-
-        [Authorize]
-        [HttpGet("/Catalog/OpenPdfCourseMaterialByCourseLevel")]
-        public IActionResult OpenPdfCourseMaterialByCourseLevel([FromQuery] int courseId, [FromQuery] int levelId)
-        {
-            var vm = new RH_CM.ViewModels.CourseMaterialViewerViewModel
-            {
-                CourseId = courseId,
-                LevelId = levelId,
-                // Esta URL es la que YA tienes y devuelve el PDF (File(...))
-                StreamUrl = Url.Action("ViewPdfCourseMaterialByCourseLevel", "Catalog",
-                                       new { courseId, levelId }) ?? string.Empty
-            };
-
-            return View("OpenPdfCourseMaterialByCourseLevel", vm);
-        }
-
         [Authorize(Roles = "Empleado, RHGerente, Administrador")]
         [HttpGet]
         public async Task<IActionResult> Diagnostic(int id, int? courseId, int? levelId)
         {
             var currentUser = User?.Identity?.Name ?? "Anon";
 
-            var test = await _context.CtTests
-                .FirstOrDefaultAsync(t => t.PkTest == id && t.Available == 1);
-
+            var test = await _context.CtTests.FirstOrDefaultAsync(t => t.PkTest == id && t.Available == 1);
             if (test == null)
             {
                 TempData["ErrorMessage"] = "Test not found or not available.";
                 return RedirectToAction("LearningTrainify", "Trainify");
             }
 
-            // Si ya contestó HOY, saltar al PDF SOLO si hay material; si no, error y regresar
-            var answeredToday = await _context.SyUserDiagnostics
-                .AsNoTracking()
+            var cId = courseId ?? test.FkCourse;
+            var lId = levelId ?? test.FkLevelcourse;
+
+            // ¿ya contestó HOY?
+            var answeredToday = await _context.SyUserDiagnostics.AsNoTracking()
                 .AnyAsync(d => d.FkTest == test.PkTest
                                && d.Createuser == currentUser
                                && EF.Functions.DateDiffDay(d.Createdate, DateTime.Now) == 0);
 
-            var cId = courseId ?? test.FkCourse;
-            var lId = levelId ?? test.FkLevelcourse;
-
             if (answeredToday)
             {
-                var hasMaterial = await ExistsMaterialAsync(cId, lId);
-                if (!hasMaterial)
-                {
-                    TempData["ErrorMessage"] = "You already answered today, but there's no course material linked. Please contact HR to add the material.";
-                    return RedirectToAction("LearningTrainify", "Trainify");
-                }
+                // Mostrar vista intermedia con botón "Continuar" (abre el PDF)
+                ViewBag.CourseId = cId;
+                ViewBag.LevelId = lId;
 
-                TempData["SuccessMessage"] = "You already answered today. Opening the material.";
-                return RedirectToAction("ViewPdfCourseMaterialByCourseLevel", "Catalog",
-                    new { courseId = cId, levelId = lId });
+                // Por seguridad, validamos material aquí también
+                ViewBag.HasMaterial = await ExistsMaterialAsync(cId, lId);
+                return View("DiagnosticAlreadyAnswered");
             }
 
-            // Cargar preguntas...
+            // Cargar preguntas
             var questions = await _context.CtQuestions
                 .Where(q => q.FkTest == test.PkTest && q.Available == 1)
                 .OrderBy(q => q.PkQuestions)
@@ -878,7 +856,7 @@ namespace RH_CM.Controllers
             return View("Diagnostic", model);
         }
 
-        // POST: guarda en dbo.SY_USER_DIAGNOSTIC y muestra resultado (correctas/incorrectas + score)
+        // POST: guarda en dbo.SY_USER_DIAGNOSTIC y muestra resultado
         [Authorize(Roles = "Empleado, RHGerente, Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -903,17 +881,34 @@ namespace RH_CM.Controllers
             var currentUser = User.Identity?.Name ?? "Anon";
             var now = DateTime.Now;
 
-            // Guardado (igual que ya lo tenías)...
+            // IDs de preguntas del POST
             var questionIds = model.Questions.Select(q => q.FkQuestion).Distinct().ToList();
+
+            // ✅ Mapa de textos de pregunta desde BD (por seguridad)
+            var questionTextMap = await _context.CtQuestions
+                .Where(qq => questionIds.Contains(qq.PkQuestions))
+                .ToDictionaryAsync(qq => qq.PkQuestions, qq => qq.Question);
+
+            // ✅ Mapa de opciones correctas (como ya lo tenías)
             var correctMap = await _context.CtOptions
                 .Where(o => questionIds.Contains(o.FkQuestions) && o.Available == 1 && o.Answer == 1)
                 .GroupBy(o => o.FkQuestions)
                 .Select(g => new
                 {
                     FkQuestion = g.Key,
+                    Ids = g.Select(x => x.PkOptions).ToList(),
                     Csv = string.Join(",", g.OrderBy(x => x.PkOptions).Select(x => x.PkOptions))
                 })
-                .ToDictionaryAsync(x => x.FkQuestion, x => x.Csv);
+                .ToDictionaryAsync(x => x.FkQuestion, x => (Ids: x.Ids, Csv: x.Csv));
+
+            var resultVm = new DiagnosticResultViewModel
+            {
+                FkTest = model.FkTest,
+                TestName = model.TestName,
+                NextCourseId = model.NextCourseId,
+                NextLevelId = model.NextLevelId,
+                Questions = new List<DiagnosticQuestionResultViewModel>()
+            };
 
             using var tx = await _context.Database.BeginTransactionAsync();
             try
@@ -926,15 +921,52 @@ namespace RH_CM.Controllers
                         .OrderBy(id => id)
                         .ToList();
 
+                    var csvSelected = string.Join(",", selectedIds);
+                    var correctIds = correctMap.TryGetValue(q.FkQuestion, out var t1) ? t1.Ids : new List<int>();
+                    var csvCorrect = correctMap.TryGetValue(q.FkQuestion, out var t2) ? t2.Csv : string.Empty;
+
                     _context.SyUserDiagnostics.Add(new SyUserDiagnostic
                     {
                         FkTest = model.FkTest,
                         FkQuestions = q.FkQuestion,
-                        FkOptionSelected = string.Join(",", selectedIds),
-                        FkOptionCorrected = correctMap.TryGetValue(q.FkQuestion, out var csv) ? csv : string.Empty,
+                        FkOptionSelected = csvSelected,
+                        FkOptionCorrected = csvCorrect,
                         Createuser = currentUser,
                         Createdate = now,
                         Available = 1
+                    });
+
+                    var optionResults = (q.Options ?? new List<SubmitOptionViewModel>())
+                        .Select(o => new DiagnosticOptionResultViewModel
+                        {
+                            FkOption = o.FkOption,
+                            OptionText = o.OptionText,
+                            IsSelected = selectedIds.Contains(o.FkOption),
+                            IsCorrect = correctIds.Contains(o.FkOption)
+                        })
+                        .OrderBy(o => o.FkOption)
+                        .ToList();
+
+                    bool questionCorrect =
+                        selectedIds.Count == correctIds.Count &&
+                        !selectedIds.Except(correctIds).Any() &&
+                        !correctIds.Except(selectedIds).Any();
+
+                    // ✅ Usa el texto que vino del POST; si no vino, toma el de BD
+                    var safeQuestionText =
+                        !string.IsNullOrWhiteSpace(q.QuestionText)
+                            ? q.QuestionText
+                            : (questionTextMap.TryGetValue(q.FkQuestion, out var qt) ? qt : string.Empty);
+
+                    resultVm.Questions.Add(new DiagnosticQuestionResultViewModel
+                    {
+                        FkQuestion = q.FkQuestion,
+                        QuestionText = safeQuestionText,      // 👈 ahora sí llega a la vista
+                        IsMultiple = q.IsMultiple,
+                        SelectedOptionIds = selectedIds,
+                        CorrectOptionIds = correctIds,
+                        IsCorrect = questionCorrect,
+                        Options = optionResults
                     });
                 }
 
@@ -948,22 +980,13 @@ namespace RH_CM.Controllers
                 return View("Diagnostic", model);
             }
 
-            // ✅ Validar material ANTES de redirigir al PDF
-            var hasMaterial = await ExistsMaterialAsync(model.NextCourseId, model.NextLevelId);
-            if (!hasMaterial)
-            {
-                TempData["ErrorMessage"] = "Diagnostic submitted, but the course material is missing. Please contact HR to add the material.";
-                return RedirectToAction("LearningTrainify", "Trainify");
-            }
+            // score + material
+            resultVm.TotalQuestions = resultVm.Questions.Count;
+            resultVm.CorrectCount = resultVm.Questions.Count(x => x.IsCorrect);
+            resultVm.Score = (int)Math.Round((double)resultVm.CorrectCount * 100.0 / Math.Max(1, resultVm.TotalQuestions), 0);
+            resultVm.HasMaterial = await ExistsMaterialAsync(resultVm.NextCourseId, resultVm.NextLevelId);
 
-            TempData["SuccessMessage"] = "Diagnostic sent successfully. Opening course material...";
-            return RedirectToAction("ViewPdfCourseMaterialByCourseLevel", "Catalog",
-                new { courseId = model.NextCourseId, levelId = model.NextLevelId });
+            return View("DiagnosticResult", resultVm);
         }
-
-
-
-
-
     }
 }

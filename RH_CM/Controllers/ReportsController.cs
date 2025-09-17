@@ -220,19 +220,6 @@ namespace RH_CM.Controllers
         }
 
         // GET: ReportsController
-        public ActionResult MatrizByEmployeesCheck()
-        {
-            return View();
-        }
-
-        // GET: ReportsController
-        public ActionResult MatrizByEmployeesGeneral()
-        {
-            return View();
-
-        }
-
-        // GET: ReportsController
         public ActionResult MatrizByDeparmentGeneral_RH()
         {
             return View();

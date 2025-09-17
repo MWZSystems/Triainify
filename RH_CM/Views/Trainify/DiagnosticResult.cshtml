@@ -8,12 +8,28 @@
 <div class="row">
     <div class="col">
         <h1 class="h3 mb-2 text-center">Diagnostic Result: @Model.TestName</h1>
+
+        <div class="text-center mb-2">
+            @if (Model.NextCourseId > 0)
+            {
+                <span class="badge bg-primary rounded-pill me-1">Course ID: @Model.NextCourseId</span>
+            }
+            @if (Model.NextLevelId > 0)
+            {
+                <span class="badge bg-info rounded-pill">Level ID: @Model.NextLevelId</span>
+            }
+        </div>
+
         <p class="text-center text-muted">
             Correct: <strong>@Model.CorrectCount / @Model.TotalQuestions</strong> |
             Score: <strong>@Model.Score</strong>/100
         </p>
+
         <div class="progress mb-3" style="height: 20px;">
-            <div class="progress-bar" role="progressbar" style="width:@Model.Score%"></div>
+            <div class="progress-bar" role="progressbar"
+                 style="width:@Model.Score%;"
+                 aria-valuenow="@Model.Score" aria-valuemin="0" aria-valuemax="100">
+            </div>
         </div>
     </div>
 </div>
@@ -23,49 +39,160 @@
         @for (int i = 0; i < Model.Questions.Count; i++)
         {
             var q = Model.Questions[i];
-            var statusClass = q.IsCorrect ? "bg-success text-white" : "bg-danger text-white";
-            var statusText = q.IsCorrect ? "Correct" : "Incorrect";
 
-            <div class="card mb-3">
-                <div class="card-header d-flex justify-content-between align-items-center @statusClass">
-                    <strong>Q@(i + 1). @q.QuestionText</strong>
-                    <span class="badge @(q.IsCorrect ? "bg-light text-success" : "bg-light text-danger")">@statusText</span>
-                </div>
-                <div class="card-body">
-                    <ul class="list-group">
+            <div class="card mb-3 border-0 shadow-sm">
+                <div class="card-body p-0">
+                    <!-- Franja de la pregunta con fondo tipo alert (verde/rojo) -->
+                    <div class="alert @(q.IsCorrect ? "alert-success" : "alert-danger") mb-0 rounded-0 rounded-top">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <strong>@q.QuestionText</strong>
+
+                            @* Badge tipo pill con estado *@
+                            @if (q.IsCorrect)
+                            {
+                                <span class="badge rounded-pill bg-success">Correct</span>
+                            }
+                            else
+                            {
+                                <span class="badge rounded-pill bg-danger">Incorrect</span>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Opciones -->
+                    <ul class="list-group list-group-flush">
                         @foreach (var opt in q.Options)
                         {
                             var liClass =
-                            opt.IsSelected && opt.IsCorrect ? "list-group-item list-group-item-success" :
-                            opt.IsSelected && !opt.IsCorrect ? "list-group-item list-group-item-danger" :
-                            !opt.IsSelected && opt.IsCorrect ? "list-group-item list-group-item-warning" :
+                            (opt.IsSelected && opt.IsCorrect) ? "list-group-item list-group-item-success" :
+                            (opt.IsSelected && !opt.IsCorrect) ? "list-group-item list-group-item-danger" :
+                            (!opt.IsSelected && opt.IsCorrect) ? "list-group-item" :
                             "list-group-item";
 
                             <li class="@liClass">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span>
-                                        @opt.OptionText
-                                        @if (opt.IsCorrect)
-                                        {
-                                            <span class="badge bg-success ms-2">Correct</span>
-                                        }
-                                        @if (opt.IsSelected)
-                                        {
-                                            <span class="badge bg-primary ms-2">Selected</span>
-                                        }
-                                    </span>
+                                <div class="d-flex align-items-start gap-2">
+                                    @* Ícono a la izquierda (solo íconos y colores) *@
+                                    @if (opt.IsSelected && opt.IsCorrect)
+                                    {
+                                        <i class="fas fa-check text-success mt-1"></i>
+                                    }
+                                    else if (opt.IsSelected && !opt.IsCorrect)
+                                    {
+                                        <i class="fas fa-times text-danger mt-1"></i>
+                                    }
+                                    else if (!opt.IsSelected && opt.IsCorrect)
+                                    {
+                                        <i class="fas fa-check text-primary mt-1"></i> @* correcta no seleccionada: azul *@
+                                    }
+                                    else
+                                    {
+                                        <i class="far fa-circle text-muted mt-1"></i>
+                                    }
+
+                                    <div class="flex-grow-1">
+                                        <span>@opt.OptionText</span>
+                                    </div>
                                 </div>
                             </li>
                         }
                     </ul>
 
-                    <div class="mt-2 small text-muted">
-                        Selected: @string.Join(", ", q.SelectedOptionIds)
-                        <br />
-                        Correct: @string.Join(", ", q.CorrectOptionIds)
+                    <!-- IDs seleccionadas/correctas -->
+                    <div class="px-3 py-2 small text-muted border-top">
+                        <span class="me-3"><strong>Selected IDs:</strong> @string.Join(", ", q.SelectedOptionIds)</span>
+                        <span><strong>Correct IDs:</strong> @string.Join(", ", q.CorrectOptionIds)</span>
                     </div>
                 </div>
             </div>
         }
     </div>
 </div>
+
+<!-- Siguiente paso: abrir material del curso -->
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="card border-success">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="fw-bold">Next step: Course Material</div>
+                    <div class="text-muted small">
+                        CourseId: @Model.NextCourseId | LevelId: @Model.NextLevelId
+                    </div>
+                </div>
+
+                @if (Model.HasMaterial && Model.NextCourseId > 0 && Model.NextLevelId > 0)
+                {
+                    <button id="btn-continue-open-pdf"
+                            class="btn btn-success"
+                            data-pdf-url="@Url.Action("ViewPdfCourseMaterialByCourseLevel","Catalog",
+                                                                        new { courseId = Model.NextCourseId, levelId = Model.NextLevelId })">
+                    <i class="fas fa-arrow-right"></i> Continue
+                </button>
+                                }
+                else
+                {
+                    <button class="btn btn-secondary" type="button" disabled title="Material is not available">
+                        <i class="fas fa-ban"></i> Continue
+                    </button>
+                    <span class="text-danger ms-2 small">
+                        Course material is not available. Please contact HR.
+                    </span>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        // Botón "Continue": abre el PDF en nueva pestaña y cierra esta ventana (con fallback).
+        (function () {
+            const btn = document.getElementById('btn-continue-open-pdf');
+            if (!btn) return;
+
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const pdfUrl = this.getAttribute('data-pdf-url');
+
+                // 1) Abre el PDF en nueva pestaña
+                try { window.open(pdfUrl, '_blank', 'noopener'); } catch (err) { }
+
+                // 2) Intenta cerrar esta ventana
+                window.close();
+
+                // 3) Fallback: si no se cerró, redirige a LearningTrainify
+                setTimeout(function () {
+                    if (!window.closed) {
+                        window.location.href = '@Url.Action("LearningTrainify", "Trainify")';
+                    }
+                }, 300);
+            });
+        })();
+
+        // Notificaciones (Notyf)
+        document.addEventListener('DOMContentLoaded', function () {
+            if ('@TempData["SuccessMessage"]' !== '') {
+                window.notyf?.open?.({
+                    type: 'success',
+                    message: '@TempData["SuccessMessage"]',
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+            if ('@TempData["ErrorMessage"]' !== '') {
+                window.notyf?.open?.({
+                    type: 'error',
+                    message: '@TempData["ErrorMessage"]',
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+        });
+    </script>
+}
