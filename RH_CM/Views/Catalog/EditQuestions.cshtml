@@ -68,20 +68,24 @@
                                         @for (int o = 0; o < question.Options.Count; o++)
                                         {
                                             var opt = question.Options[o];
-                                            var isChecked = opt.IsCorrect ? "checked" : "";
 
                                             <div class="input-group mb-2 align-items-center">
                                                 <div class="input-group-text">
                                                     @if (inputType == "radio")
                                                     {
+                                                        <!-- Radio único por pregunta -->
                                                         <input type="radio"
-                                                               name="Questions[@q].IsCorrectIndex"
+                                                               name="Questions[@q].SelectedOptionIndex"
                                                                value="@o"
                                                                @(opt.IsCorrect ? "checked" : "") />
+
+                                                        <input type="hidden" name="Questions[@q].Options[@o].IsCorrect" value="@(opt.IsCorrect ? "true" : "false")" />
                                                     }
                                                     else
                                                     {
+                                                        <!-- Checkbox individual -->
                                                         <input type="checkbox"
+                                                               class="option-checkbox"
                                                                name="Questions[@q].Options[@o].IsCorrect"
                                                                value="true"
                                                                @(opt.IsCorrect ? "checked" : "") />
@@ -93,10 +97,10 @@
                                             </div>
                                         }
                                     </div>
-                                </div>
-                            </div>
+                                </div> <!-- /.card-body -->
+                            </div> <!-- /.card -->
                         }
-                    </div>
+                    </div> <!-- /#questions-container -->
 
                     <div class="text-end mt-3">
                         <a asp-action="IndexTest" class="btn btn-secondary">
@@ -107,11 +111,52 @@
                         </button>
                     </div>
                 </form>
-            </div>
-        </div>
+            </div> <!-- /.card-body -->
+        </div> <!-- /.card -->
     </div>
 </div>
 
 @section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            var successMessage = '@TempData["SuccessMessage"]';
+            var errorMessage = '@TempData["ErrorMessage"]';
+
+            if (successMessage && successMessage !== "") {
+                window.notyf.open({
+                    type: 'success',
+                    message: successMessage,
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+
+            if (errorMessage && errorMessage !== "") {
+                window.notyf.open({
+                    type: 'error',
+                    message: errorMessage,
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+
+            // Actualizar hidden de radios para que solo una opción quede en true
+            $(document).on("change", "input[type=radio][name^='Questions'][name$='SelectedOptionIndex']", function () {
+                const qIndex = $(this).closest(".question-block").index();
+                const optionIndex = parseInt($(this).val());
+
+                const options = $(this).closest(".options-container").find("input[type=hidden][name$='.IsCorrect']");
+                options.val("false"); // todas en false
+                options.eq(optionIndex).val("true"); // solo seleccionada en true
+            });
+
+        });
+    </script>
+
     @await Html.PartialAsync("_ValidationScriptsPartial")
 }
