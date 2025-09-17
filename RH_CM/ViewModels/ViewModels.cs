@@ -7,16 +7,13 @@
             public int FkTest { get; set; }
             public string TestName { get; set; } = string.Empty;
 
-            // Para el siguiente paso (abrir material por curso/nivel)
             public int NextCourseId { get; set; }
             public int NextLevelId { get; set; }
+            public bool HasMaterial { get; set; }
 
-            // Resumen
             public int TotalQuestions { get; set; }
             public int CorrectCount { get; set; }
             public int Score { get; set; } // 0..100
-
-            // Detalle por pregunta
             public List<DiagnosticQuestionResultViewModel> Questions { get; set; } = new();
         }
 
@@ -34,6 +31,9 @@
 
             // Detalle por opción
             public List<DiagnosticOptionResultViewModel> Options { get; set; } = new();
+            public int NextCourseId { get; set; }
+            public int NextLevelId { get; set; }
+            public bool HasMaterial { get; set; }  // Para habilitar/deshabilitar el botón Continuar
         }
 
         public class DiagnosticOptionResultViewModel
