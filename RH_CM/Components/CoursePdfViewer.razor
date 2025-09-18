@@ -1,0 +1,59 @@
+﻿@namespace RH_CM.Components
+@using Microsoft.AspNetCore.Components
+@using BlazorBootstrap
+@using BlazorBootstrap.Components
+
+@if (string.IsNullOrWhiteSpace(PdfUrl))
+{
+    <div class="alert alert-warning mb-3">
+        PDF URL is empty. Please contact HR or try again.
+    </div>
+}
+else
+{
+    <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+        <div class="btn-group">
+            @if (!string.IsNullOrWhiteSpace(BackUrl))
+            {
+                <a class="btn btn-outline-primary" href="@BackUrl">⬅ Back to Learning</a>
+            }
+            @if (!string.IsNullOrWhiteSpace(DiagnosticUrl))
+            {
+                <a class="btn btn-primary" href="@DiagnosticUrl">🧪 Go to Diagnostic</a>
+            }
+            @if (!string.IsNullOrWhiteSpace(ExtraUrl))
+            {
+                <a class="btn btn-outline-secondary" href="@ExtraUrl">@ExtraText</a>
+            }
+        </div>
+
+        <small class="text-muted">@eventLog</small>
+    </div>
+
+    <PdfViewer Class="mb-3"
+               Url="@PdfUrl"
+               ShowToolbar="true"
+               ShowSidebar="false"
+               Zoom="PageWidth"
+               Height="82vh"
+               OnDocumentLoaded="OnDocumentLoaded"
+               OnPageChanged="OnPageChanged" />
+}
+
+@code {
+    [Parameter] public string PdfUrl { get; set; } = string.Empty;
+
+    // URLs de navegación (opcionales)
+    [Parameter] public string? BackUrl { get; set; }
+    [Parameter] public string? DiagnosticUrl { get; set; }
+    [Parameter] public string? ExtraUrl { get; set; }
+    [Parameter] public string ExtraText { get; set; } = "Extra";
+
+    private string eventLog { get; set; } = $"Last event: ..., CurrentPage: 0, TotalPages: 0";
+
+    private void OnDocumentLoaded(PdfViewerEventArgs args)
+        => eventLog = $"Last event: OnDocumentLoaded, CurrentPage: {args.CurrentPage}, TotalPages: {args.TotalPages}";
+
+    private void OnPageChanged(PdfViewerEventArgs args)
+        => eventLog = $"Last event: OnPageChanged, CurrentPage: {args.CurrentPage}, TotalPages: {args.TotalPages}";
+}

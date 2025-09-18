@@ -3,6 +3,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- 👇 MUY IMPORTANTE para Blazor: fija las rutas a la raíz del sitio -->
+    <base href="~/" />
+
     <title>@ViewData["Title"] - RH</title>
 
     <!-- Estilos base del tema -->
@@ -12,13 +16,16 @@
     <!-- Select2 (global) -->
     <link rel="stylesheet" href="~/assets/dist/css/select2.css" asp-append-version="true" />
 
+    <!-- Blazor.Bootstrap (solo estilos de componentes) -->
+    <link rel="stylesheet" href="~/_content/Blazor.Bootstrap/blazor.bootstrap.css" />
+
     @RenderSection("head", required: false)
 
     <!-- Paletas/acentos por página -->
     <link rel="stylesheet" href="~/assets/dist/css/bodyclass.css" asp-append-version="true" />
 </head>
 
-    <body class="@((string)ViewData["BodyClass"] ?? "")"
+<body class="@((string)ViewData["BodyClass"] ?? "")"
       data-theme="default" data-layout="fluid"
       data-sidebar-position="left" data-sidebar-behavior="sticky">
 
@@ -41,6 +48,11 @@
     <script src="~/assets/dist/js/app.js" asp-append-version="true"></script>
     <!-- Select2 (global) -->
     <script src="~/assets/dist/js/select2.js" asp-append-version="true"></script>
+
+    <!-- Blazor Server runtime (requerido para componentes interactivos) -->
+    <script src="~/_framework/blazor.server.js"></script>
+    <!-- JS de Blazor.Bootstrap (eventos/funciones de sus componentes) -->
+    <script src="~/_content/Blazor.Bootstrap/blazor.bootstrap.js"></script>
 
     @RenderSection("Scripts", required: false)
 </body>

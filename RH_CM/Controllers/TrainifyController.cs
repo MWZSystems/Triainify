@@ -573,6 +573,14 @@ namespace RH_CM.Controllers
             return sw.ToString();
         }
 
+
+        /// <summary>
+        /// PDF READER
+        /// </summary>
+        /// <param name="courseId"></param>
+        /// <param name="levelId"></param>
+        /// <returns></returns>
+
         private async Task<bool> ExistsDiagnosticTestAsync(int courseId, int levelId)
         {
             return await _context.CtTests
@@ -695,8 +703,7 @@ namespace RH_CM.Controllers
             return View(result);
         }
 
-        // ✅ Vista que muestra el visor con iframe
-        // ✅ RUTA EXPLÍCITA: coincide exactamente con tu URL
+        [Authorize]
         [HttpGet("/Catalog/ViewPdfCourseMaterialByCourseLevel")]
         public async Task<IActionResult> ViewPdfCourseMaterialByCourseLevel([FromQuery] int courseId, [FromQuery] int levelId)
         {
@@ -720,15 +727,27 @@ namespace RH_CM.Controllers
                 return RedirectToAction("LearningTrainify", "Trainify");
             }
 
+            // 1) Archivo en BD -> servir inline con Range
             if (material.File != null && material.File.Length > 0)
-                return File(material.File, "application/pdf");
+            {
+                // Importante: no pases "fileDownloadName" para evitar forzar descarga
+                var fileResult = File(material.File, "application/pdf");
+                Response.Headers["Content-Disposition"] = "inline; filename=\"course-material.pdf\"";
+                Response.Headers["Accept-Ranges"] = "bytes"; // para scroll/seek del visor
+                Response.Headers["X-Content-Type-Options"] = "nosniff";
+                // ASP.NET Core: habilita range processing
+                if (fileResult is FileContentResult fcr) fcr.EnableRangeProcessing = true;
+                return fileResult;
+            }
 
+            // 2) URL externa: redirigir. (Si el origen permite embebido, podrás usar <iframe>)
             if (!string.IsNullOrWhiteSpace(material.UrlPath))
                 return Redirect(material.UrlPath);
 
             TempData["ErrorMessage"] = "The material exists but has no file or URL. Please contact HR.";
             return RedirectToAction("LearningTrainify", "Trainify");
         }
+
 
         // (Opcional) Si usas una vista con iframe:
         [HttpGet("/Catalog/OpenPdfCourseMaterialByCourseLevel")]

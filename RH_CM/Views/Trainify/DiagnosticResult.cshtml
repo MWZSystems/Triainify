@@ -1,4 +1,5 @@
-﻿@model RH_CM.ViewModels.ViewModels.DiagnosticResultViewModel
+﻿@using RV = RH_CM.ViewModels.ViewModels
+@model RV.DiagnosticResultViewModel
 
 @{
     ViewData["Title"] = "Diagnostic Result";
@@ -42,12 +43,9 @@
 
             <div class="card mb-3 border-0 shadow-sm">
                 <div class="card-body p-0">
-                    <!-- Franja de la pregunta con fondo tipo alert (verde/rojo) -->
                     <div class="alert @(q.IsCorrect ? "alert-success" : "alert-danger") mb-0 rounded-0 rounded-top">
                         <div class="d-flex justify-content-between align-items-center">
                             <strong>@q.QuestionText</strong>
-
-                            @* Badge tipo pill con estado *@
                             @if (q.IsCorrect)
                             {
                                 <span class="badge rounded-pill bg-success">Correct</span>
@@ -59,9 +57,8 @@
                         </div>
                     </div>
 
-                    <!-- Opciones -->
                     <ul class="list-group list-group-flush">
-                        @foreach (var opt in q.Options)
+                        @foreach (var opt in (q.Options ?? Enumerable.Empty<RV.DiagnosticOptionResultViewModel>()))
                         {
                             var liClass =
                             (opt.IsSelected && opt.IsCorrect) ? "list-group-item list-group-item-success" :
@@ -71,7 +68,6 @@
 
                             <li class="@liClass">
                                 <div class="d-flex align-items-start gap-2">
-                                    @* Ícono a la izquierda (solo íconos y colores) *@
                                     @if (opt.IsSelected && opt.IsCorrect)
                                     {
                                         <i class="fas fa-check text-success mt-1"></i>
@@ -82,7 +78,7 @@
                                     }
                                     else if (!opt.IsSelected && opt.IsCorrect)
                                     {
-                                        <i class="fas fa-check text-primary mt-1"></i> @* correcta no seleccionada: azul *@
+                                        <i class="fas fa-check text-primary mt-1"></i>
                                     }
                                     else
                                     {
@@ -97,10 +93,9 @@
                         }
                     </ul>
 
-                    <!-- IDs seleccionadas/correctas -->
                     <div class="px-3 py-2 small text-muted border-top">
-                        <span class="me-3"><strong>Selected IDs:</strong> @string.Join(", ", q.SelectedOptionIds)</span>
-                        <span><strong>Correct IDs:</strong> @string.Join(", ", q.CorrectOptionIds)</span>
+                        <span class="me-3"><strong>Selected IDs:</strong> @string.Join(", ", q.SelectedOptionIds ?? new List<int>())</span>
+                        <span><strong>Correct IDs:</strong> @string.Join(", ", q.CorrectOptionIds ?? new List<int>())</span>
                     </div>
                 </div>
             </div>
@@ -108,7 +103,7 @@
     </div>
 </div>
 
-<!-- Siguiente paso: abrir material del curso -->
+<!-- Next step: abrir material del curso en la vista con el visor Blazor -->
 <div class="row">
     <div class="col-md-10 offset-md-1">
         <div class="card border-success">
@@ -122,12 +117,11 @@
 
                 @if (Model.HasMaterial && Model.NextCourseId > 0 && Model.NextLevelId > 0)
                 {
-                    <button id="btn-continue-open-pdf"
-                            class="btn btn-success"
-                            data-pdf-url="@Url.Action("ViewPdfCourseMaterialByCourseLevel","Catalog",
-                                                                        new { courseId = Model.NextCourseId, levelId = Model.NextLevelId })">
+                    <a class="btn btn-success"
+                       href="@Url.Action("OpenPdfCourseMaterialByCourseLevel","Catalog",
+                                                       new { courseId = Model.NextCourseId, levelId = Model.NextLevelId })">
                     <i class="fas fa-arrow-right"></i> Continue
-                </button>
+                </a>
                                 }
                 else
                 {
@@ -146,33 +140,7 @@
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
     <script>
-        // Botón "Continue": abre el PDF en nueva pestaña y cierra esta ventana (con fallback).
         (function () {
-            const btn = document.getElementById('btn-continue-open-pdf');
-            if (!btn) return;
-
-            btn.addEventListener('click', function (e) {
-                e.preventDefault();
-
-                const pdfUrl = this.getAttribute('data-pdf-url');
-
-                // 1) Abre el PDF en nueva pestaña
-                try { window.open(pdfUrl, '_blank', 'noopener'); } catch (err) { }
-
-                // 2) Intenta cerrar esta ventana
-                window.close();
-
-                // 3) Fallback: si no se cerró, redirige a LearningTrainify
-                setTimeout(function () {
-                    if (!window.closed) {
-                        window.location.href = '@Url.Action("LearningTrainify", "Trainify")';
-                    }
-                }, 300);
-            });
-        })();
-
-        // Notificaciones (Notyf)
-        document.addEventListener('DOMContentLoaded', function () {
             if ('@TempData["SuccessMessage"]' !== '') {
                 window.notyf?.open?.({
                     type: 'success',
@@ -193,6 +161,6 @@
                     duration: 5000
                 });
             }
-        });
+        })();
     </script>
 }
