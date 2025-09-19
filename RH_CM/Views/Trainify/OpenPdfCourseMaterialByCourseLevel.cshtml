@@ -1,29 +1,27 @@
 ﻿@model RH_CM.ViewModels.CourseMaterialViewerViewModel
-
 @{
-    ViewData["Title"] = "Course Material";
+    ViewBag.HideNavbar = true;
+    ViewData["Title"] = "OpenPdfCourseMaterialByCourseLevel";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    // Solo necesitamos el URL para avanzar al diagnóstico
-    var diagnosticUrl = Url.Action("StartCourse", "Catalog", new { courseId = Model.CourseId, levelId = Model.LevelId })!;
+    string streamUrl = !string.IsNullOrWhiteSpace(Model?.StreamUrl)
+        ? Model.StreamUrl!.Trim()
+        : (Url.Action(
+            "StreamPdfCourseMaterialByCourseLevel",
+            "Catalog",
+            new { courseId = Model?.CourseId ?? 0, levelId = Model?.LevelId ?? 0 },
+            protocol: Context.Request.Scheme   // <<--- ABSOLUTO
+        ) ?? string.Empty);
+
+    var examUrl = Url.Action("Exam", "Trainify",
+        new { courseId = Model?.CourseId ?? 0, levelId = Model?.LevelId ?? 0 }) ?? "#";
 }
 
-<div class="row">
-    <div class="col">
-        <h1 class="h3 mb-3 text-center">
-            <i class="fas fa-file-pdf"></i> Course Material
-        </h1>
-
-        <div class="text-center mb-2">
-            <span class="badge bg-primary me-1">Course ID: @Model.CourseId</span>
-            <span class="badge bg-info">Level ID: @Model.LevelId</span>
-        </div>
-    </div>
-</div>
-
-@if (string.IsNullOrWhiteSpace(Model?.StreamUrl))
+@if (string.IsNullOrWhiteSpace(streamUrl))
 {
-    <div class="alert alert-warning">No se pudo construir la URL del material.</div>
+    <div class="alert alert-warning">
+        No se pudo construir la URL del material. Contacta a RH.
+    </div>
 }
 else
 {
@@ -32,8 +30,11 @@ else
             <div class="border rounded shadow-sm p-2">
                 <component type="typeof(RH_CM.Components.CoursePdfViewer)"
                            render-mode="ServerPrerendered"
-                           param-PdfUrl="@(Model.StreamUrl)"
-                           param-DiagnosticUrl="@(diagnosticUrl)" />
+                           param-CourseId="Model.CourseId"
+                           param-LevelId="Model.LevelId"
+                           param-StreamUrl="streamUrl"
+                           param-ExamUrl="examUrl"
+                           param-HeightCss="@("calc(100vh - 180px)")" />
             </div>
         </div>
     </div>
@@ -43,11 +44,27 @@ else
     @await Html.PartialAsync("_ValidationScriptsPartial")
 
     <script>
-        if ('@TempData["SuccessMessage"]' !== '') {
-            window.notyf?.open({ type: 'success', message: '@TempData["SuccessMessage"]', duration: 5000 });
-        }
-        if ('@TempData["ErrorMessage"]' !== '') {
-            window.notyf?.open({ type: 'error', message: '@TempData["ErrorMessage"]', duration: 5000 });
-        }
+        (function () {
+            if ('@TempData["SuccessMessage"]' !== '') {
+                window.notyf?.open?.({
+                    type: 'success',
+                    message: '@TempData["SuccessMessage"]',
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+            if ('@TempData["ErrorMessage"]' !== '') {
+                window.notyf?.open?.({
+                    type: 'error',
+                    message: '@TempData["ErrorMessage"]',
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+        })();
     </script>
 }

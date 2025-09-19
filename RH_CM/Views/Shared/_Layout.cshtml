@@ -16,8 +16,8 @@
     <!-- Select2 (global) -->
     <link rel="stylesheet" href="~/assets/dist/css/select2.css" asp-append-version="true" />
 
-    <!-- Blazor.Bootstrap (solo estilos de componentes) -->
-    <link rel="stylesheet" href="~/_content/Blazor.Bootstrap/blazor.bootstrap.css" />
+    <!-- CSS de BootstrapBlazor (desde NuGet) -->
+@*     <link rel="stylesheet" href="~/_content/BootstrapBlazor/css/bootstrap.blazor.bundle.min.css" /> *@
 
     @RenderSection("head", required: false)
 
@@ -32,7 +32,13 @@
     <div class="wrapper">
         @* <partial name="_Sidebar" /> *@
         <main class="main">
-            <partial name="_Navbar" />
+            @{
+                var hideNavbar = ViewBag.HideNavbar as bool? ?? false; // o ViewData["HideNavbar"]
+            }
+            @if (!hideNavbar)
+            {
+                <partial name="_Navbar" />
+            }
 
             <main class="content">
                 <div class="container-fluid p-0">
@@ -44,6 +50,9 @@
         </main>
     </div>
 
+    <!-- JS de BootstrapBlazor (desde NuGet) -->
+    @* <script src="~/_content/BootstrapBlazor/js/bootstrap.blazor.bundle.min.js"></script> *@
+
     <!-- JS base -->
     <script src="~/assets/dist/js/app.js" asp-append-version="true"></script>
     <!-- Select2 (global) -->
@@ -51,8 +60,6 @@
 
     <!-- Blazor Server runtime (requerido para componentes interactivos) -->
     <script src="~/_framework/blazor.server.js"></script>
-    <!-- JS de Blazor.Bootstrap (eventos/funciones de sus componentes) -->
-    <script src="~/_content/Blazor.Bootstrap/blazor.bootstrap.js"></script>
 
     @RenderSection("Scripts", required: false)
 </body>

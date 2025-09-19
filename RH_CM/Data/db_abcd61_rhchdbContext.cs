@@ -178,7 +178,6 @@ namespace RH_CM.Data
                     .HasColumnName("LASTUPDATEUSER");
             });
 
-
             modelBuilder.Entity<CtCourse>(entity =>
             {
                 entity.HasKey(e => e.PkCourse);
@@ -455,7 +454,6 @@ namespace RH_CM.Data
                 entity.Property(e => e.Options).HasColumnName("OPTIONS");
             });
 
-
             modelBuilder.Entity<CtOptiontype>(entity =>
             {
                 entity.HasKey(e => e.PkOptiontype);
@@ -662,7 +660,6 @@ namespace RH_CM.Data
                     .HasMaxLength(250)
                     .HasColumnName("TEST_NAME");
             });
-           
 
             modelBuilder.Entity<CtTestConsolidado>(entity =>
             {
@@ -1017,15 +1014,17 @@ namespace RH_CM.Data
                     .HasMaxLength(250)
                     .HasColumnName("CREATEUSER");
 
-                entity.Property(e => e.FkOptions).HasColumnName("FK_OPTIONS");
+                entity.Property(e => e.FkOptionCorrected)
+                    .HasMaxLength(50)
+                    .HasColumnName("FK_OPTION_CORRECTED");
+
+                entity.Property(e => e.FkOptionSelected)
+                    .HasMaxLength(50)
+                    .HasColumnName("FK_OPTION_SELECTED");
 
                 entity.Property(e => e.FkQuestions).HasColumnName("FK_QUESTIONS");
 
                 entity.Property(e => e.FkTest).HasColumnName("FK_TEST");
-
-                entity.Property(e => e.IsCorrected).HasColumnName("IS_CORRECTED");
-
-                entity.Property(e => e.IsSelected).HasColumnName("IS_SELECTED");
             });
 
             modelBuilder.Entity<SyUserDiagnostic>(entity =>

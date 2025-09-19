@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using RH_CM.Data;
 using RH_CM.Service.ExternalEvidence;
 using RH_CM.Service.SQLSMS;
+using BootstrapBlazor.Components; // ✅ nuevo: BootstrapBlazor
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,9 +21,9 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 
 builder.Services.AddControllersWithViews();
 
-// ✅ Blazor Server + Blazor.Bootstrap (para usar <component> y PdfViewer)
+// ✅ Blazor Server + BootstrapBlazor (para usar <component> y visor PDF)
 builder.Services.AddServerSideBlazor();
-builder.Services.AddBlazorBootstrap();   // Blazor.Bootstrap 3.4.0
+builder.Services.AddBootstrapBlazor();   // ⬅️ reemplaza a AddBlazorBootstrap()
 
 // ✅ HttpClientFactory (útil si haces proxy de PDFs externos)
 builder.Services.AddHttpClient();
