@@ -262,8 +262,11 @@ namespace RH_CM.Controllers
             [FromForm] int[] SelectedCourses,
             [FromForm] int[] SelectedLevels,      // <-- NUEVO
             [FromForm] int FkDeliveryMode,
-            [FromForm] bool Requiered)
+            //[FromForm] bool Requiered
+            [FromForm] string Requiered)
         {
+             bool required = Requiered == "true";
+
             // Validaciones básicas
             if (SelectedPositions == null || SelectedPositions.Length == 0)
             {
@@ -322,7 +325,7 @@ namespace RH_CM.Controllers
                 pLev.TypeName = "dbo.IntIdList";
 
                 cmd.Parameters.Add(new SqlParameter("@FkDeliveryMode", SqlDbType.Int) { Value = FkDeliveryMode });
-                cmd.Parameters.Add(new SqlParameter("@Requiered", SqlDbType.Bit) { Value = Requiered });
+                cmd.Parameters.Add(new SqlParameter("@Requiered", SqlDbType.Bit) { Value = required });
                 cmd.Parameters.Add(new SqlParameter("@UserName", SqlDbType.NVarChar, 256) { Value = user });
 
                 conn.Open();
