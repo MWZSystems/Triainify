@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using RH_CM.Models;
 using ClosedXML.Excel;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace RH_CM.Controllers
 {
@@ -207,7 +208,7 @@ namespace RH_CM.Controllers
         [Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateCourseLevelMaterial(CtCourseLevelMaterial model)
+        public async Task<IActionResult> CreateCourseLevelMaterial(CtCourseLevelMaterial model)
         {
             if (model.FkCourse <= 0)
             {
@@ -224,6 +225,14 @@ namespace RH_CM.Controllers
             if (model.FkCourseMaterial <= 0)
             {
                 TempData["ErrorMessage"] = "Material is required.";
+                LoadCourseLevelMaterialViewBags();
+                return View(model);
+            }
+            if (!await _context.CtCourseassignments
+                             .AnyAsync(ca => ca.FkCourse == model.FkCourse
+                                             && ca.FkRequiredCourseLevels == model.FkLevelCourse))
+            {
+                TempData["ErrorMessage"] = "This Course-Level combination doesn't exist in Courseassignments.";
                 LoadCourseLevelMaterialViewBags();
                 return View(model);
             }

@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Packaging.Signing;
 using RH_CM.Models;
+using RH_CM.Service.DTOs;
 using RH_CM.ViewModels;
 
 namespace RH_CM.Controllers
@@ -46,7 +48,6 @@ namespace RH_CM.Controllers
                 TempData["ErrorMessage"] = "This test has already been answered by a user. Please delete that record first.";
                 return RedirectToAction(nameof(IndexTest));
             }
-
 
             using var transaction = await _context.Database.BeginTransactionAsync();
 
@@ -123,14 +124,67 @@ namespace RH_CM.Controllers
                 .OrderBy(l => l.PkLevelcourse)
                 .ToListAsync();
 
-           
-
-
             return View(ctTest);
         }
 
+        /// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        //hay que agregar un Toggle, al desactivar que no haya impedimento
+        //al activar que valide primero que no haya otro test con la combinacion en available
+
+        // POST: CtTest/Toggle
         [HttpPost]
+        [Authorize(Roles = "Administrador, RHGerente")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleTest(int id)
+        {
+            CtTest test = await _context.CtTests.FindAsync (id);
+            
+            //Validacion si se enciende, checar que no haya ya una combinacion (Course/Level) activa
+            
+
+            if (test.Available == 0 && await _context.CtTests
+                             .AnyAsync(t => t.FkCourse == test.FkCourse
+                                             && t.FkLevelcourse == test.FkLevelcourse
+                                             && t.Available ==1))
+            {
+                TempData["ErrorMessage"] = "There is already a Test Active for this Course/Level, please disable it first.";
+                return RedirectToAction(nameof(IndexTest));
+            }
+
+            test.Available = test.Available == 1 ? 0 : 1;
+
+            var questions = await _context.CtQuestions
+                .Where(q => q.FkTest == test.PkTest)
+                .ToListAsync();
+
+            var questionIds = questions.Select(q => q.PkQuestions).ToList();
+
+            var options = await _context.CtOptions
+                .Where(o => questionIds.Contains(o.FkQuestions))
+                .ToListAsync();
+
+            foreach (var question in questions)
+            {
+                question.Available = test.Available;
+            }
+
+            foreach (var option in options)
+            {
+                option.Available = test.Available;
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Test status updated successfully.";
+            return RedirectToAction(nameof(IndexTest));
+        }
+
+
+
+
+
+            [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrador, RHGerente")]
         public async Task<IActionResult> EditTest(int id, CtTest model)
@@ -156,13 +210,40 @@ namespace RH_CM.Controllers
             }
 
 
-            //Si se modifico el Course/Level
-                //Verificar Si el ID del examen existe en [SY_USER_ANSWERS], Si Si existe, que no permita hacer modificacion.
-                //Que la combinacion si exista en CA
-                //comprobar que no exista ya esa combinacion con un examen
+            var existingTest = await _context.CtTests.FindAsync(id);
+            if (existingTest == null)
+            {
+                TempData["ErrorMessage"] = "Test not found in the database.";
+                return RedirectToAction(nameof(IndexTest));
+            }
 
-            //si la modificacion es solo el nombre del examen, no importa que continue normal
-
+            //Si solo el nombre cambia la operacion continua, si no, hace todas las validaciones extras.
+            if (!(existingTest.TestName != model.TestName && existingTest.FkCourse == model.FkCourse && existingTest.FkLevelcourse == model.FkLevelcourse))
+            {  
+                //Si hay alguien ya respondio el test, no permite cambiar el Course/Level
+                if (await _context.SyUserAnswers
+                                 .AnyAsync(ua => ua.FkTest == id))
+                {
+                    TempData["ErrorMessage"] = "This test has already been answered by a user. Please delete that record first.";
+                    return RedirectToAction(nameof(IndexTest));
+                }
+                //Verifica que exista la combinacion Course/Level
+                else if (!await _context.CtCourseassignments
+                             .AnyAsync(ca => ca.FkCourse == model.FkCourse
+                                             && ca.FkRequiredCourseLevels == model.FkLevelcourse))
+                {
+                    TempData["ErrorMessage"] = "This Course-Level combination doesn't exist in Courseassignments.";
+                    return RedirectToAction(nameof(IndexTest));
+                }
+                else if (await _context.CtTests
+                             .AnyAsync(t => t.FkCourse == model.FkCourse
+                                             && t.FkLevelcourse == model.FkLevelcourse
+                                             && t.Available == 1))
+                {
+                    TempData["ErrorMessage"] = "This Course-Level combination already has a Test Available, please disable it first.";
+                    return RedirectToAction(nameof(IndexTest));
+                }
+            }
 
 
             if (TempData["ErrorMessage"] != null)
@@ -183,13 +264,6 @@ namespace RH_CM.Controllers
 
             try
             {
-                var existingTest = await _context.CtTests.FindAsync(id);
-                if (existingTest == null)
-                {
-                    TempData["ErrorMessage"] = "Test not found in the database.";
-                    return RedirectToAction(nameof(IndexTest));
-                }
-
                 existingTest.TestName = model.TestName;
                 existingTest.FkCourse = model.FkCourse;
                 existingTest.FkLevelcourse = model.FkLevelcourse;
@@ -414,7 +488,7 @@ namespace RH_CM.Controllers
             .Select(q => new QuestionCreateViewModel
             {
                 QuestionText = q.Question,
-                FkTypeOption = q.FkTypeOption, // ✅ NUEVO
+                FkTypeOption = q.FkTypeOption, 
                 Options = _context.CtOptions
                     .Where(o => o.FkQuestions == q.PkQuestions)
                     .OrderBy(o => o.PkOptions)
@@ -452,6 +526,12 @@ namespace RH_CM.Controllers
                 TempData["ErrorMessage"] = "This test has already been answered by users. Please disable this one, and create a new one.";
                 return RedirectToAction(nameof(EditQuestions), new { id = id });
 
+            }
+            //Nueva validación: cada pregunta debe tener al menos una opción correcta
+            else if (model.Questions.Any(q => q.Options.All(o => o.IsCorrect == false)))
+            {
+                TempData["ErrorMessage"] = "Each question must have at least one correct option.";
+                return RedirectToAction(nameof(EditQuestions), new { id = id });
             }
 
             using var transaction = await _context.Database.BeginTransactionAsync();

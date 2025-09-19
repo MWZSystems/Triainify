@@ -54,6 +54,16 @@
                                         @* <td>@(item.Test.Available == 1 ? "Enabled" : "Disabled")</td> *@
                                         @* <td>@item.Test.Createdate.ToString("dd/MM/yyyy")</td> *@
                                         <td>
+
+                                            <form asp-action="ToggleTest" asp-route-id="@item.Test.PkTest" method="post" style="display:inline;">
+                                                <button type="submit"
+                                                        onclick="return confirm('Are you sure you want to toggle availability of this Test?')"
+                                                        class="btn @(item.Test.Available == 1 ? "btn-success" : "btn-secondary")"
+                                                        title="Toggle availability">
+                                                    <i class="fas @(item.Test.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
+                                                </button>
+                                            </form>
+
                                             <a class="btn btn-warning" asp-action="EditTest" asp-route-id="@item.Test.PkTest">
                                                 <i class="fas fa-edit"></i>
                                             </a>
