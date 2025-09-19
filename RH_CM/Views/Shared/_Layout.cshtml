@@ -3,6 +3,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- 👇 MUY IMPORTANTE para Blazor: fija las rutas a la raíz del sitio -->
+    <base href="~/" />
+
     <title>@ViewData["Title"] - RH</title>
 
     <!-- Estilos base del tema -->
@@ -12,20 +16,29 @@
     <!-- Select2 (global) -->
     <link rel="stylesheet" href="~/assets/dist/css/select2.css" asp-append-version="true" />
 
+    <!-- CSS de BootstrapBlazor (desde NuGet) -->
+@*     <link rel="stylesheet" href="~/_content/BootstrapBlazor/css/bootstrap.blazor.bundle.min.css" /> *@
+
     @RenderSection("head", required: false)
 
     <!-- Paletas/acentos por página -->
     <link rel="stylesheet" href="~/assets/dist/css/bodyclass.css" asp-append-version="true" />
 </head>
 
-    <body class="@((string)ViewData["BodyClass"] ?? "")"
+<body class="@((string)ViewData["BodyClass"] ?? "")"
       data-theme="default" data-layout="fluid"
       data-sidebar-position="left" data-sidebar-behavior="sticky">
 
     <div class="wrapper">
         @* <partial name="_Sidebar" /> *@
         <main class="main">
-            <partial name="_Navbar" />
+            @{
+                var hideNavbar = ViewBag.HideNavbar as bool? ?? false; // o ViewData["HideNavbar"]
+            }
+            @if (!hideNavbar)
+            {
+                <partial name="_Navbar" />
+            }
 
             <main class="content">
                 <div class="container-fluid p-0">
@@ -37,10 +50,16 @@
         </main>
     </div>
 
+    <!-- JS de BootstrapBlazor (desde NuGet) -->
+    @* <script src="~/_content/BootstrapBlazor/js/bootstrap.blazor.bundle.min.js"></script> *@
+
     <!-- JS base -->
     <script src="~/assets/dist/js/app.js" asp-append-version="true"></script>
     <!-- Select2 (global) -->
     <script src="~/assets/dist/js/select2.js" asp-append-version="true"></script>
+
+    <!-- Blazor Server runtime (requerido para componentes interactivos) -->
+    <script src="~/_framework/blazor.server.js"></script>
 
     @RenderSection("Scripts", required: false)
 </body>

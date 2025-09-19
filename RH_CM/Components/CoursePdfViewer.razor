@@ -1,0 +1,113 @@
+﻿@namespace RH_CM.Components
+@using Microsoft.AspNetCore.Components
+
+@inject NavigationManager Nav
+
+@if (string.IsNullOrWhiteSpace(IframeSrc))
+{
+    <div class="alert alert-danger mb-0">
+        Material URL could not be built. Please contact HR.
+    </div>
+}
+else
+{
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-file-pdf text-danger"></i>
+                <div>
+                    <div class="fw-bold mb-0">Course Material</div>
+                    <small class="text-muted">CourseId: @CourseId &nbsp;|&nbsp; LevelId: @LevelId</small>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+                @if (!string.IsNullOrWhiteSpace(ExamUrl))
+                {
+                    <!-- misma ventana -->
+                    <a href="@ExamUrl" class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit"></i> Take Exam
+                    </a>
+                }
+                <button type="button" class="btn btn-outline-secondary btn-sm" @onclick="RefreshIframe">
+                    <i class="fas fa-sync-alt"></i> Reload
+                </button>
+            </div>
+        </div>
+
+        <div class="card-body p-0">
+            <iframe id="pdfFrame"
+                    src="@IframeSrc"
+                    title="Course PDF"
+                    style="width:100%; height:@HeightCss; border:0;"
+                    loading="lazy">
+            </iframe>
+        </div>
+    </div>
+}
+
+@code
+{
+    [Parameter] public int CourseId { get; set; }
+    [Parameter] public int LevelId { get; set; }
+
+    /// <summary>
+    /// Absolute/relative URL to Catalog/StreamPdfCourseMaterialByCourseLevel?courseId=..&levelId=..
+    /// (Se recomienda que OpenPdfCourseMaterialByCourseLevel pase esta URL ya construida)
+    /// </summary>
+    [Parameter] public string? StreamUrl { get; set; }
+
+    /// <summary>Optional: URL to start the exam (e.g., /Trainify/Exam?courseId=..&levelId=..)</summary>
+    [Parameter] public string? ExamUrl { get; set; }
+
+    /// <summary>Viewer height, e.g. "78vh", "calc(100vh - 180px)".</summary>
+    [Parameter] public string HeightCss { get; set; } = "78vh";
+
+    private string IframeSrc { get; set; } = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        // Normaliza StreamUrl y si no viene, la construye hacia StreamPdfCourseMaterialByCourseLevel
+        var url = StreamUrl?.Trim();
+
+        if (!string.IsNullOrWhiteSpace(url))
+        {
+            // Si es relativo, conviértelo a absoluto respecto a BaseUri
+            if (!Uri.TryCreate(url, UriKind.Absolute, out _))
+            {
+                var abs = new Uri(new Uri(Nav.BaseUri), url);
+                IframeSrc = abs.ToString();
+                return;
+            }
+
+            IframeSrc = url!;
+            return;
+        }
+
+        // Fallback: construir a StreamPdfCourseMaterialByCourseLevel
+        var baseUri = Nav.BaseUri.TrimEnd('/');
+        IframeSrc = $"{baseUri}/Catalog/StreamPdfCourseMaterialByCourseLevel?courseId={CourseId}&levelId={LevelId}";
+    }
+
+    private void RefreshIframe()
+    {
+        // Fuerza recarga del iframe agregando/sustituyendo un query param de timestamp
+        var tick = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        var qIndex = IframeSrc.IndexOf('?');
+        string path = qIndex >= 0 ? IframeSrc[..qIndex] : IframeSrc;
+        string query = qIndex >= 0 ? IframeSrc[qIndex..] : string.Empty;
+
+        // quita _ts anterior si existía
+        if (!string.IsNullOrEmpty(query))
+        {
+            var parts = query.TrimStart('?').Split('&', StringSplitOptions.RemoveEmptyEntries);
+            var filtered = parts.Where(p => !p.StartsWith("_ts=", StringComparison.OrdinalIgnoreCase));
+            query = string.Join('&', filtered);
+            if (!string.IsNullOrEmpty(query))
+                query = "?" + query;
+        }
+
+        var sep = string.IsNullOrEmpty(query) ? "?" : "&";
+        IframeSrc = $"{path}{query}{sep}_ts={tick}";
+    }
+}
