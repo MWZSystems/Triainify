@@ -81,6 +81,8 @@ namespace RH_CM.ViewModels
         public int ZipCodesat { get; set; }
         public int? FkSupervisorId { get; set; }
 
+        public string? Ntuser { get; set; } //Agregado para la creacion de usuario en el onboarding.
+
         [ValidateNever]
         public IEnumerable<CtDepartment> Departments { get; set; }
         [ValidateNever]

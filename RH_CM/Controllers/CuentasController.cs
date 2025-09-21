@@ -19,7 +19,11 @@ namespace RH_CM.Controllers
         public readonly UrlEncoder _urlEncoder;
         private readonly ApplicationDbContext _contexto;
 
-        public CuentasController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, UrlEncoder urlEncoder, RoleManager<IdentityRole> roleManager, ApplicationDbContext contexto) //, IEmailSender emailSender
+        public CuentasController(UserManager<IdentityUser> userManager, 
+                                SignInManager<IdentityUser> signInManager, 
+                                UrlEncoder urlEncoder, 
+                                RoleManager<IdentityRole> roleManager, 
+                                ApplicationDbContext contexto) //, IEmailSender emailSender
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -91,7 +95,6 @@ namespace RH_CM.Controllers
             return View(rgViewModel);
         }
 
-        //Registro especial solo para los administrador
         //Registro especial solo para los administrador
         [HttpGet]
         [Authorize(Roles = "ToolCribAdmin, Administrador")]

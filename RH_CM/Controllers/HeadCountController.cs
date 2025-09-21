@@ -1,5 +1,6 @@
 ﻿using ClosedXML.Excel;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +14,17 @@ namespace RH_CM.Controllers
     public class HeadCountController : Controller
     {
         private readonly db_abcd61_rhchdbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
 
-        public HeadCountController(db_abcd61_rhchdbContext context)
+        public HeadCountController(db_abcd61_rhchdbContext context,
+                                    UserManager<IdentityUser> userManager,
+                                SignInManager<IdentityUser> signInManager )
         {
             _context = context;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
@@ -274,7 +282,7 @@ namespace RH_CM.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
-        public IActionResult CreateHeadCount(CreateHeadCountViewModel model)
+        public async Task<IActionResult> CreateHeadCount(CreateHeadCountViewModel model)
         {
             // Helper method to reload view data
             void ReloadViewData()
@@ -321,6 +329,10 @@ namespace RH_CM.Controllers
                 // Validate duplicate ControlNumber
                 if (_context.SyHeadcounts.Any(h => h.ControlNumber == model.ControlNumber))
                     return ReturnWithError("The Control Number already exists.");
+                
+                // Validate duplicate username
+                if (_context.AspNetUsers.Any(u => u.Ntuser == model.Ntuser))
+                    return ReturnWithError("The UserName "+ model.Ntuser  + " already exists.");
 
                 // Create entity
                 var headCount = new SyHeadcount
@@ -359,11 +371,38 @@ namespace RH_CM.Controllers
                     Available = 1
                 };
 
+                //save the heacount creation
                 _context.SyHeadcounts.Add(headCount);
                 _context.SaveChanges();
 
-                TempData["SuccessMessage"] = "Head count created successfully.";
+                //If everythig sucess when creating an inboud, create his user aswell
+                var usuario = new AppUsuario
+                {
+                    UserName = model.Ntuser,
+                    EmployeeNumber = model.ControlNumber.ToString(),
+                    Email = model.Email,
+                    Names = model.Names,
+                    LastName = model.LastName,
+                    Available = 1,
+                    CreateDate = DateTime.Today,
+                    Ntuser = model.Ntuser
+                };
+
+                var resultado = await _userManager.CreateAsync(usuario, "Temp12345!"); //Generic Password for new users.
+
+                if (resultado.Succeeded)
+                {
+                    // Asignar el rol al usuario
+                    await _userManager.AddToRoleAsync(usuario, "Registrado");
+
+                    TempData["SuccessMessage"] = "Head count created successfully.";
+                    return RedirectToAction(nameof(IndexHeadCount));
+                }
+
+                TempData["ErrorMessage"] = "HeadCount Added, but user could not be created.";
                 return RedirectToAction(nameof(IndexHeadCount));
+
+
             }
             catch (Exception ex)
             {

@@ -339,14 +339,7 @@ namespace RH_CM.Service.ExternalEvidence
         public async Task<EditExternalEvidenceDTOs> GetUpdateRecordAsync(int? id)
         {
             List<EditExternalEvidenceDTOs> result = new();
-            //PK evidence
-            //ControlNumber
-            //FullName
-            //Position
-            //Course
-            //Level
-            //Pdf --Edit
-            //Score --Edit
+
 
             string query = $@"  SELECT EV.PK_ExternalEvidence
 		                        ,HC.CONTROL_NUMBER As ControlNumber
@@ -445,13 +438,6 @@ namespace RH_CM.Service.ExternalEvidence
         public async Task<ServiceAnswer> PostDeleteRecordAsync(int? id)
         {
             ServiceAnswer serviceAnswer = new();
-
-            //Es un SP en Cadena.
-
-            //1 El SP debe de Eliminar el registro de External Evidence
-            //2 Eliminar la linea del SY_CourseMovements
-            //3 Si existe un registro anterior en SY_CourseMovements usarlo para actualizar el Coursecompleted > Para que vuelva a cobrar ese curso
-            //si no existe record anterior. Borrarlo de CourseCompleted
 
             string Query = @$"EXECUTE [dbo].[sp_DeleteEvidenceMaterial] {id}";
 
