@@ -112,10 +112,13 @@
             $('#datatables-learning').DataTable({
                 responsive: true,
                 // Columnas: 0=#Assign, 1=#Course, 2=Course, 3=#LevelId, 4=Level, ...
-                order: [[2, 'asc'], [4, 'asc']]
+                order: [[2, 'asc'], [4, 'asc']],
+                columnDefs: [
+                    // Oculta por completo: no visibles y no buscables
+                    { targets: [0, 1, 3], visible: false, searchable: false }
+                ]
             });
 
-            // Notificaciones (Notyf) con comillas seguras
             if ('@TempData["SuccessMessage"]' !== '') {
                 window.notyf?.open?.({
                     type: 'success',
@@ -139,3 +142,4 @@
         });
     </script>
 }
+
