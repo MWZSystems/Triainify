@@ -726,7 +726,6 @@ namespace RH_CM.Controllers
             return View("OpenPdfCourseMaterialByCourseLevel", vm);
         }
 
-
         [Authorize]
         [HttpGet("/Catalog/StreamPdfCourseMaterialByCourseLevel")]
         public async Task<IActionResult> StreamPdfCourseMaterialByCourseLevel(int courseId, int levelId)
