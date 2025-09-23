@@ -1006,6 +1006,8 @@ namespace RH_CM.Data
 
                 entity.Property(e => e.Available).HasColumnName("AVAILABLE");
 
+                entity.Property(e => e.CodeUserAnswers).HasColumnName("CODE_USER_ANSWERS");
+
                 entity.Property(e => e.Createdate)
                     .HasColumnType("datetime")
                     .HasColumnName("CREATEDATE");
@@ -1013,6 +1015,8 @@ namespace RH_CM.Data
                 entity.Property(e => e.Createuser)
                     .HasMaxLength(250)
                     .HasColumnName("CREATEUSER");
+
+                entity.Property(e => e.FkHeadcount).HasColumnName("FK_HEADCOUNT");
 
                 entity.Property(e => e.FkOptionCorrected)
                     .HasMaxLength(50)
@@ -1037,6 +1041,8 @@ namespace RH_CM.Data
 
                 entity.Property(e => e.Available).HasColumnName("AVAILABLE");
 
+                entity.Property(e => e.CodeUserDiagnostic).HasColumnName("CODE_USER_DIAGNOSTIC");
+
                 entity.Property(e => e.Createdate)
                     .HasColumnType("datetime")
                     .HasColumnName("CREATEDATE");
@@ -1044,6 +1050,8 @@ namespace RH_CM.Data
                 entity.Property(e => e.Createuser)
                     .HasMaxLength(250)
                     .HasColumnName("CREATEUSER");
+
+                entity.Property(e => e.FkHeadcount).HasColumnName("FK_HEADCOUNT");
 
                 entity.Property(e => e.FkOptionCorrected)
                     .HasMaxLength(50)
@@ -1057,6 +1065,8 @@ namespace RH_CM.Data
 
                 entity.Property(e => e.FkTest).HasColumnName("FK_TEST");
             });
+
+            modelBuilder.HasSequence<int>("Seq_UserDiagnosticCode");
 
             OnModelCreatingPartial(modelBuilder);
         }

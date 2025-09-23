@@ -5,12 +5,14 @@
     ViewData["Title"] = "Exam Result";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    // 👉 ahora a OpenPdf...
+    var assignmentId = ViewBag.CourseAssignmentId as int? ?? 0;
+
+    // 👉 Incluir courseAssignmentId en las URLs
     var pdfUrl = Url.Action("OpenPdfCourseMaterialByCourseLevel", "Catalog",
-        new { courseId = Model.NextCourseId, levelId = Model.NextLevelId }) ?? "#";
+        new { courseId = Model.NextCourseId, levelId = Model.NextLevelId, courseAssignmentId = assignmentId }) ?? "#";
 
     var retakeUrl = Url.Action("Exam", "Trainify",
-        new { courseId = Model.NextCourseId, levelId = Model.NextLevelId }) ?? "#";
+        new { courseId = Model.NextCourseId, levelId = Model.NextLevelId, courseAssignmentId = assignmentId }) ?? "#";
 
     var backUrl = Url.Action("LearningTrainify", "Trainify") ?? "/";
 
@@ -28,41 +30,71 @@
             }
             @if (Model.NextLevelId > 0)
             {
-                <span class="badge bg-info rounded-pill">Level ID: @Model.NextLevelId</span>
+                <span class="badge bg-info text-dark rounded-pill me-1">Level ID: @Model.NextLevelId</span>
             }
+            <span class="badge bg-warning text-dark rounded-pill">
+                Assignment ID: @(assignmentId > 0 ? assignmentId.ToString() : "—")
+            </span>
         </div>
 
         <div class="text-center mb-3">
             @if (passed)
             {
-                <div class="alert alert-success d-inline-block py-2 px-3 mb-2">
-                    <i class="fas fa-check-circle me-1"></i> Passed
+                <div class="d-inline-block mb-2">
+                    <div class="alert alert-success alert-outline-coloured mb-0" role="alert">
+                        <div class="alert-icon">
+                            <i class="far fa-fw fa-bell"></i>
+                        </div>
+                        <div class="alert-message">
+                            <div class="fw-bold mb-1">
+                                Passed! <span class="text-muted">You reached the minimum score (≥ 80).</span>
+                            </div>
+
+                            <div class="d-flex flex-wrap justify-content-center gap-2">
+                                <span class="badge bg-success">
+                                    <i class="fa fa-check-circle me-1"></i>
+                                    Correct: <strong>@Model.CorrectCount / @Model.TotalQuestions</strong>
+                                </span>
+                                <span class="badge bg-primary">
+                                    <i class="fa fa-percent me-1"></i>
+                                    Score: <strong>@Model.Score</strong>/100
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             }
             else
             {
-                <div class="alert alert-warning d-inline-block py-2 px-3 mb-2">
-                    <i class="fas fa-exclamation-triangle me-1"></i> Not passed (min 80)
+                <div class="d-inline-block mb-2">
+                    <div class="alert alert-danger alert-outline-coloured mb-0" role="alert">
+                        <div class="alert-icon">
+                            <i class="far fa-fw fa-bell"></i>
+                        </div>
+                        <div class="alert-message">
+                            <div class="fw-bold mb-1">
+                                Not passed. <span class="text-muted">Minimum required score is 80.</span>
+                            </div>
+
+                            <div class="d-flex flex-wrap justify-content-center gap-2">
+                                <span class="badge bg-danger text-dark">
+                                    <i class="fa fa-check-circle me-1"></i>
+                                    Correct: <strong>@Model.CorrectCount / @Model.TotalQuestions</strong>
+                                </span>
+                                <span class="badge bg-info text-dark">
+                                    <i class="fa fa-percent me-1"></i>
+                                    Score: <strong>@Model.Score</strong>/100
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             }
-        </div>
-
-        <p class="text-center text-muted">
-            Correct: <strong>@Model.CorrectCount / @Model.TotalQuestions</strong> |
-            Score: <strong>@Model.Score</strong>/100
-        </p>
-
-        <div class="progress mb-3" style="height: 20px;">
-            <div class="progress-bar" role="progressbar"
-                 style="width:@Model.Score%;"
-                 aria-valuenow="@Model.Score" aria-valuemin="0" aria-valuemax="100">
-            </div>
         </div>
 
         <div class="text-center mb-3">
             @if (Model.HasMaterial && Model.NextCourseId > 0 && Model.NextLevelId > 0)
             {
-                <!-- MISMA VENTANA + ÍCONO PDF + OUTLINE ROJO -->
                 <a class="btn btn-outline-danger me-2" href="@pdfUrl">
                     <i class="fas fa-file-pdf"></i> Review Material (PDF)
                 </a>
@@ -83,7 +115,7 @@
             }
             else
             {
-                <a class="btn btn-success ms-2" href="@backUrl">
+                <a class="btn btn.success ms-2" href="@backUrl">
                     <i class="fas fa-check"></i> Back to Learning
                 </a>
             }
@@ -157,7 +189,6 @@
     @await Html.PartialAsync("_ValidationScriptsPartial")
     <script>
         (function () {
-            // Confirmación para reintentar (solo si muestra el botón)
             document.getElementById('btn-retake')?.addEventListener('click', function (e) {
                 const ok = confirm('¿Deseas volver a realizar el examen? Tus respuestas de este intento ya fueron guardadas.');
                 if (!ok) { e.preventDefault(); }

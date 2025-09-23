@@ -12,7 +12,7 @@ namespace RH_CM.Controllers
 {
     public partial class CatalogController
     {
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")] 
         public async Task<IActionResult> Index()
         {
             var lista = new List<CourseCompletedViewModel>();

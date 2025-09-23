@@ -1,5 +1,6 @@
 ﻿@namespace RH_CM.Components
 @using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.WebUtilities
 
 @inject NavigationManager Nav
 
@@ -17,15 +18,21 @@ else
                 <i class="fas fa-file-pdf text-danger"></i>
                 <div>
                     <div class="fw-bold mb-0">Course Material</div>
-                    <small class="text-muted">CourseId: @CourseId &nbsp;|&nbsp; LevelId: @LevelId</small>
+                    <small class="text-muted">
+                        CourseId: @CourseId &nbsp;|&nbsp; LevelId: @LevelId
+                        @if (CourseAssignmentId.HasValue && CourseAssignmentId.Value > 0)
+                        {
+                            <text>&nbsp;|&nbsp; Assignment: @CourseAssignmentId</text>
+                        }
+                    </small>
                 </div>
             </div>
 
             <div class="d-flex align-items-center gap-2">
-                @if (!string.IsNullOrWhiteSpace(ExamUrl))
+                @if (!string.IsNullOrWhiteSpace(EffectiveExamUrl))
                 {
                     <!-- misma ventana -->
-                    <a href="@ExamUrl" class="btn btn-primary btn-sm">
+                    <a href="@EffectiveExamUrl" class="btn btn-primary btn-sm">
                         <i class="fas fa-edit"></i> Take Exam
                     </a>
                 }
@@ -51,25 +58,28 @@ else
     [Parameter] public int CourseId { get; set; }
     [Parameter] public int LevelId { get; set; }
 
+    // 👇 NUEVO: lo aceptamos como parámetro (nullable por si no siempre lo tienes)
+    [Parameter] public int? CourseAssignmentId { get; set; }
+
     /// <summary>
     /// Absolute/relative URL to Catalog/StreamPdfCourseMaterialByCourseLevel?courseId=..&levelId=..
     /// (Se recomienda que OpenPdfCourseMaterialByCourseLevel pase esta URL ya construida)
     /// </summary>
     [Parameter] public string? StreamUrl { get; set; }
 
-    /// <summary>Optional: URL to start the exam (e.g., /Trainify/Exam?courseId=..&levelId=..)</summary>
+    /// <summary>Optional: base URL to start the exam (e.g., "/Trainify/Exam") o ya con querys.</summary>
     [Parameter] public string? ExamUrl { get; set; }
 
     /// <summary>Viewer height, e.g. "78vh", "calc(100vh - 180px)".</summary>
     [Parameter] public string HeightCss { get; set; } = "78vh";
 
     private string IframeSrc { get; set; } = string.Empty;
+    private string? EffectiveExamUrl { get; set; }
 
     protected override void OnParametersSet()
     {
-        // Normaliza StreamUrl y si no viene, la construye hacia StreamPdfCourseMaterialByCourseLevel
+        // ---- PDF ----
         var url = StreamUrl?.Trim();
-
         if (!string.IsNullOrWhiteSpace(url))
         {
             // Si es relativo, conviértelo a absoluto respecto a BaseUri
@@ -77,16 +87,44 @@ else
             {
                 var abs = new Uri(new Uri(Nav.BaseUri), url);
                 IframeSrc = abs.ToString();
-                return;
             }
-
-            IframeSrc = url!;
-            return;
+            else
+            {
+                IframeSrc = url!;
+            }
+        }
+        else
+        {
+            var baseUri = Nav.BaseUri.TrimEnd('/');
+            IframeSrc = $"{baseUri}/Catalog/StreamPdfCourseMaterialByCourseLevel?courseId={CourseId}&levelId={LevelId}";
         }
 
-        // Fallback: construir a StreamPdfCourseMaterialByCourseLevel
-        var baseUri = Nav.BaseUri.TrimEnd('/');
-        IframeSrc = $"{baseUri}/Catalog/StreamPdfCourseMaterialByCourseLevel?courseId={CourseId}&levelId={LevelId}";
+        // ---- Exam URL ----
+        EffectiveExamUrl = BuildExamUrl(ExamUrl);
+    }
+
+    private string? BuildExamUrl(string? raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw))
+            return null;
+
+        // Normaliza a absoluto para manipularlo con UriBuilder si hace falta
+        var baseUri = new Uri(Nav.BaseUri);
+        var abs = Uri.TryCreate(raw, UriKind.Absolute, out var uAbs) ? uAbs : new Uri(baseUri, raw);
+
+        // Asegura que tenga courseId/levelId; si ya vienen, los respeta.
+        var dict = QueryHelpers.ParseQuery(abs.Query)
+                               .ToDictionary(k => k.Key, v => v.Value.ToString());
+
+        if (!dict.ContainsKey("courseId")) dict["courseId"] = CourseId.ToString();
+        if (!dict.ContainsKey("levelId")) dict["levelId"] = LevelId.ToString();
+
+        // 👇 agrega CourseAssignmentId si lo tienes
+        if (CourseAssignmentId.HasValue && CourseAssignmentId.Value > 0)
+            dict["courseAssignmentId"] = CourseAssignmentId.Value.ToString();
+
+        var cleanBase = abs.GetLeftPart(UriPartial.Path);
+        return QueryHelpers.AddQueryString(cleanBase, dict);
     }
 
     private void RefreshIframe()

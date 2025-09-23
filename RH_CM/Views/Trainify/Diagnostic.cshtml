@@ -10,8 +10,8 @@
         <h1 class="h3 mb-3 text-center">@Model.TestName</h1>
         <p class="text-center text-muted">Please answer the following questions.</p>
 
-        @* (Opcional) Muestra contexto de curso/nivel si lo tienes *@
-        @if (Model.NextCourseId > 0 || Model.NextLevelId > 0)
+        @* (Opcional) Muestra contexto de curso/nivel/asignación si lo tienes *@
+        @if (Model.NextCourseId > 0 || Model.NextLevelId > 0 || Model.CourseAssignmentId > 0)
         {
             <div class="text-center">
                 @if (Model.NextCourseId > 0)
@@ -20,7 +20,11 @@
                 }
                 @if (Model.NextLevelId > 0)
                 {
-                    <span class="badge bg-info">Level ID: @Model.NextLevelId</span>
+                    <span class="badge bg-info me-1">Level ID: @Model.NextLevelId</span>
+                }
+                @if (Model.CourseAssignmentId > 0)
+                {
+                    <span class="badge bg-secondary">Assignment ID: @Model.CourseAssignmentId</span>
                 }
             </div>
         }
@@ -40,7 +44,7 @@
                     <input type="hidden" asp-for="FkTest" />
                     <input type="hidden" asp-for="NextCourseId" />
                     <input type="hidden" asp-for="NextLevelId" />
-
+                    <input type="hidden" asp-for="CourseAssignmentId" />   <!-- 👈 preserva el PK entre páginas -->
                     @for (int i = 0; i < Model.Questions.Count; i++)
                     {
                         var q = Model.Questions[i];
@@ -64,7 +68,7 @@
                                 <!-- 👇👇 Campos ocultos que el binder necesita -->
                                 <input type="hidden" name="Questions[@i].FkQuestion" value="@q.FkQuestion" />
                                 <input type="hidden" name="Questions[@i].IsMultiple" value="@(q.IsMultiple.ToString().ToLower())" />
-                                <input type="hidden" name="Questions[@i].QuestionText" value="@q.QuestionText" /> <!-- ✅ NUEVO -->
+                                <input type="hidden" name="Questions[@i].QuestionText" value="@q.QuestionText" /> <!-- ✅ mantiene el texto -->
 
                                 <div class="vstack gap-2">
                                     @for (int j = 0; j < q.Options.Count; j++)

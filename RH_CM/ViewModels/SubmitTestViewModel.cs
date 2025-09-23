@@ -7,6 +7,7 @@
         public List<SubmitQuestionViewModel> Questions { get; set; } = new();
         public int NextCourseId { get; set; }   // para abrir material luego del diagnóstico
         public int NextLevelId { get; set; }
+        public int? CourseAssignmentId { get; set; }   // 👈 NUEVO
     }
 
     public class SubmitQuestionViewModel

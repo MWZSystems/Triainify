@@ -13,8 +13,14 @@
             protocol: Context.Request.Scheme   // <<--- ABSOLUTO
         ) ?? string.Empty);
 
+    // ✅ Incluye CourseAssignmentId para que viaje al examen
     var examUrl = Url.Action("Exam", "Trainify",
-        new { courseId = Model?.CourseId ?? 0, levelId = Model?.LevelId ?? 0 }) ?? "#";
+        new
+        {
+            courseId = Model?.CourseId ?? 0,
+            levelId = Model?.LevelId ?? 0,
+            courseAssignmentId = Model?.CourseAssignmentId ?? 0
+        }) ?? "#";
 }
 
 @if (string.IsNullOrWhiteSpace(streamUrl))
@@ -25,6 +31,14 @@
 }
 else
 {
+    <div class="row mb-2">
+        <div class="col-12 text-center">
+            <span class="badge bg-primary me-1">Course ID: @Model.CourseId</span>
+            <span class="badge bg-info text-dark me-1">Level ID: @Model.LevelId</span>
+            <span class="badge bg-warning text-dark">Assignment ID: @(Model.CourseAssignmentId > 0 ? Model.CourseAssignmentId.ToString() : "—")</span>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-12">
             <div class="border rounded shadow-sm p-2">
@@ -34,6 +48,7 @@ else
                            param-LevelId="Model.LevelId"
                            param-StreamUrl="streamUrl"
                            param-ExamUrl="examUrl"
+                           param-CourseAssignmentId="Model.CourseAssignmentId" @* 👈 pásalo al componente *@
                            param-HeightCss="@("calc(100vh - 180px)")" />
             </div>
         </div>

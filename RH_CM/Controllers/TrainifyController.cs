@@ -20,11 +20,16 @@ namespace RH_CM.Controllers
     {
         private readonly db_abcd61_rhchdbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly string _connString;
 
-        public TrainifyController(db_abcd61_rhchdbContext context, UserManager<IdentityUser> userManager)
+        public TrainifyController(
+            db_abcd61_rhchdbContext context,
+            UserManager<IdentityUser> userManager,
+            IConfiguration configuration)
         {
             _context = context;
             _userManager = userManager;
+            _connString = configuration.GetConnectionString("ConexionSQL"); // 👈 fuerza esta conexión
         }
         // Helper: combo de posiciones
         private async Task<List<SelectListItem>> GetPositionsAsync()
@@ -607,7 +612,7 @@ namespace RH_CM.Controllers
 
         [Authorize]
         [HttpGet("/Catalog/StartCourse")]
-        public async Task<IActionResult> StartCourse([FromQuery] int courseId, [FromQuery] int levelId)
+        public async Task<IActionResult> StartCourse([FromQuery] int courseId, [FromQuery] int levelId, [FromQuery] int? courseAssignmentId)
         {
             if (!await ExistsDiagnosticTestAsync(courseId, levelId))
             {
@@ -626,7 +631,8 @@ namespace RH_CM.Controllers
                 .OrderByDescending(t => t.PkTest)
                 .FirstOrDefaultAsync();
 
-            return RedirectToAction("Diagnostic", "Trainify", new { id = test!.PkTest, courseId, levelId });
+            return RedirectToAction("Diagnostic", "Trainify",
+                new { id = test!.PkTest, courseId, levelId, courseAssignmentId }); // 👈 pasa el PK
         }
 
         [Authorize]
@@ -708,20 +714,21 @@ namespace RH_CM.Controllers
 
         // (ÚNICA ruta para abrir PDF en una vista con navegación/iframe)
         [HttpGet("/Catalog/OpenPdfCourseMaterialByCourseLevel")]
-        public IActionResult OpenPdfCourseMaterialByCourseLevel([FromQuery] int courseId, [FromQuery] int levelId)
+        public IActionResult OpenPdfCourseMaterialByCourseLevel([FromQuery] int courseId, [FromQuery] int levelId, [FromQuery] int? courseAssignmentId)
         {
             var streamAbs = Url.Action(
                 nameof(StreamPdfCourseMaterialByCourseLevel),
                 "Catalog",
                 new { courseId, levelId },
-                protocol: Request.Scheme // <<--- ABSOLUTO (http/https + host)
+                protocol: Request.Scheme
             ) ?? string.Empty;
 
             var vm = new RH_CM.ViewModels.CourseMaterialViewerViewModel
             {
                 CourseId = courseId,
                 LevelId = levelId,
-                StreamUrl = streamAbs
+                StreamUrl = streamAbs,
+                CourseAssignmentId = courseAssignmentId ?? 0     // 👈 NUEVO en tu VM
             };
             return View("OpenPdfCourseMaterialByCourseLevel", vm);
         }
@@ -764,7 +771,7 @@ namespace RH_CM.Controllers
 
         [Authorize(Roles = "Empleado, RHGerente, Administrador")]
         [HttpGet]
-        public async Task<IActionResult> Diagnostic(int id, int? courseId, int? levelId)
+        public async Task<IActionResult> Diagnostic(int id, int? courseId, int? levelId, int? courseAssignmentId)
         {
             var currentUser = User?.Identity?.Name ?? "Anon";
 
@@ -778,24 +785,28 @@ namespace RH_CM.Controllers
             var cId = courseId ?? test.FkCourse;
             var lId = levelId ?? test.FkLevelcourse;
 
-            // ¿ya contestó HOY?
+            // … (tu resolución de FkHeadcount si la necesitas aquí) …
+
+            // ¿ya contestó HOY? (tu lógica actual)
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
             var answeredToday = await _context.SyUserDiagnostics.AsNoTracking()
                 .AnyAsync(d => d.FkTest == test.PkTest
-                               && d.Createuser == currentUser
-                               && EF.Functions.DateDiffDay(d.Createdate, DateTime.Now) == 0);
+                               /* && d.FkHeadcount == hc.PkHeadcount (si lo usas) */
+                               && d.Available == 1
+                               && d.Createdate >= today
+                               && d.Createdate < tomorrow);
 
             if (answeredToday)
             {
-                // Mostrar vista intermedia con botón "Continuar" (abre el PDF)
                 ViewBag.CourseId = cId;
                 ViewBag.LevelId = lId;
-
-                // Por seguridad, validamos material aquí también
+                ViewBag.CourseAssignmentId = courseAssignmentId;          // 👈 también aquí
                 ViewBag.HasMaterial = await ExistsMaterialAsync(cId, lId);
                 return View("DiagnosticAlreadyAnswered");
             }
 
-            // Cargar preguntas
+            // Preguntas…
             var questions = await _context.CtQuestions
                 .Where(q => q.FkTest == test.PkTest && q.Available == 1)
                 .OrderBy(q => q.PkQuestions)
@@ -813,13 +824,12 @@ namespace RH_CM.Controllers
                 TestName = test.TestName,
                 NextCourseId = cId,
                 NextLevelId = lId,
-                Questions = questions.Select(q =>
-                {
+                CourseAssignmentId = courseAssignmentId,                  // 👈 agrega al modelo
+                Questions = questions.Select(q => {
                     var opts = _context.CtOptions
                         .Where(o => o.FkQuestions == q.PkQuestions && o.Available == 1)
                         .OrderBy(o => o.PkOptions)
                         .ToList();
-
                     return new SubmitQuestionViewModel
                     {
                         FkQuestion = q.PkQuestions,
@@ -838,7 +848,7 @@ namespace RH_CM.Controllers
             return View("Diagnostic", model);
         }
 
-        // POST: guarda en dbo.SY_USER_DIAGNOSTIC y redirige al visor del PDF si hay material
+
         [Authorize(Roles = "Empleado, RHGerente, Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -863,15 +873,42 @@ namespace RH_CM.Controllers
             var currentUser = User.Identity?.Name ?? "Anon";
             var now = DateTime.Now;
 
-            // IDs de preguntas del POST
+            // ===== OBTENER FkHeadcount del usuario actual =====
+            var userRow = await _context.AspNetUsers
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.UserName == currentUser);
+
+            if (userRow == null || string.IsNullOrWhiteSpace(userRow.EmployeeNumber))
+            {
+                TempData["ErrorMessage"] = "No se pudo resolver el empleado del usuario actual (EmployeeNumber).";
+                return View("Diagnostic", model);
+            }
+
+            // EmployeeNumber = PkHeadcount (según tu mapeo actual)
+            if (!int.TryParse(userRow.EmployeeNumber.Trim(), out var ControlNumber))
+            {
+                TempData["ErrorMessage"] = "EmployeeNumber no es un número válido.";
+                return View("Diagnostic", model);
+            }
+
+            // Validar existencia del Headcount
+            var hc = await _context.SyHeadcounts
+                .AsNoTracking()
+                .FirstOrDefaultAsync(h => h.ControlNumber == ControlNumber && h.Available == 1);
+
+            if (hc == null)
+            {
+                TempData["ErrorMessage"] = "El empleado (Headcount) asociado al usuario no existe o no está disponible.";
+                return View("Diagnostic", model);
+            }
+
+            // ===== Preparación de mapas de preguntas/opciones =====
             var questionIds = model.Questions.Select(q => q.FkQuestion).Distinct().ToList();
 
-            // Mapa de textos de pregunta (seguridad)
             var questionTextMap = await _context.CtQuestions
                 .Where(qq => questionIds.Contains(qq.PkQuestions))
                 .ToDictionaryAsync(qq => qq.PkQuestions, qq => qq.Question);
 
-            // Mapa de opciones correctas
             var correctMap = await _context.CtOptions
                 .Where(o => questionIds.Contains(o.FkQuestions) && o.Available == 1 && o.Answer == 1)
                 .GroupBy(o => o.FkQuestions)
@@ -892,9 +929,12 @@ namespace RH_CM.Controllers
                 Questions = new List<DiagnosticQuestionResultViewModel>()
             };
 
+            // ===== Inserción con mismo CodeUserDiagnostic para el envío =====
             using var tx = await _context.Database.BeginTransactionAsync();
             try
             {
+                var groupCode = await GetNextDiagnosticGroupCodeAsync(); // sequence
+
                 foreach (var q in model.Questions)
                 {
                     var selectedIds = (q.Options ?? new List<SubmitOptionViewModel>())
@@ -909,10 +949,12 @@ namespace RH_CM.Controllers
 
                     _context.SyUserDiagnostics.Add(new SyUserDiagnostic
                     {
+                        CodeUserDiagnostic = groupCode,
                         FkTest = model.FkTest,
                         FkQuestions = q.FkQuestion,
                         FkOptionSelected = csvSelected,
                         FkOptionCorrected = csvCorrect,
+                        FkHeadcount = hc.PkHeadcount, // PK real de SyHeadcounts
                         Createuser = currentUser,
                         Createdate = now,
                         Available = 1
@@ -961,13 +1003,12 @@ namespace RH_CM.Controllers
                 return View("Diagnostic", model);
             }
 
-            // Score + validación de material
+            // ===== Score + validación de material =====
             resultVm.TotalQuestions = resultVm.Questions.Count;
             resultVm.CorrectCount = resultVm.Questions.Count(x => x.IsCorrect);
             resultVm.Score = (int)Math.Round((double)resultVm.CorrectCount * 100.0 / Math.Max(1, resultVm.TotalQuestions), 0);
             resultVm.HasMaterial = await ExistsMaterialAsync(resultVm.NextCourseId, resultVm.NextLevelId);
 
-            // ✅ Si hay material, redirige al visor de PDF inmediatamente
             if (resultVm.HasMaterial && resultVm.NextCourseId > 0 && resultVm.NextLevelId > 0)
             {
                 TempData["SuccessMessage"] = "Diagnostic submitted. Opening course material...";
@@ -978,15 +1019,26 @@ namespace RH_CM.Controllers
                 );
             }
 
-            // ❗ Si NO hay material, muestra resultados con aviso
             TempData["ErrorMessage"] = "No course material (PDF/URL) linked to this course/level. Please contact HR.";
             return View("DiagnosticResult", resultVm);
         }
 
-        // GET: render exam (mismo fetch que Diagnostic; puedes ajustar si tienes tipo de test)
+        private async Task<int> GetNextDiagnosticGroupCodeAsync()
+        {
+            await using var conn = new SqlConnection(_connString);
+            await conn.OpenAsync();
+
+            await using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT CAST(NEXT VALUE FOR dbo.Seq_UserDiagnosticCode AS INT)";
+            var result = await cmd.ExecuteScalarAsync();
+
+            return Convert.ToInt32(result);
+        }
+
+        // GET: render exam (con courseAssignmentId)
         [Authorize(Roles = "Empleado, RHGerente, Administrador")]
         [HttpGet]
-        public async Task<IActionResult> Exam(int? id, int? courseId, int? levelId)
+        public async Task<IActionResult> Exam(int? id, int? courseId, int? levelId, int? courseAssignmentId)
         {
             CtTest? test = null;
 
@@ -1025,6 +1077,7 @@ namespace RH_CM.Controllers
                 TestName = test.TestName,
                 NextCourseId = courseId ?? test.FkCourse,
                 NextLevelId = levelId ?? test.FkLevelcourse,
+                CourseAssignmentId = courseAssignmentId ?? 0, // 👈 aquí va
                 Questions = questions.Select(q =>
                 {
                     var opts = _context.CtOptions
@@ -1047,11 +1100,11 @@ namespace RH_CM.Controllers
                 }).ToList()
             };
 
-            // Reutiliza la misma vista que Diagnostic o crea "Exam.cshtml" clonando la de Diagnostic
             return View("Exam", model);
         }
 
-        // POST: guarda en SY_USER_ANSWER y controla el loop de aprobación
+
+        // POST: guarda en SY_USER_ANSWERS (preserva courseAssignmentId)
         [Authorize(Roles = "Empleado, RHGerente, Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -1076,15 +1129,40 @@ namespace RH_CM.Controllers
             var currentUser = User.Identity?.Name ?? "Anon";
             var now = DateTime.Now;
 
-            // IDs de preguntas del POST
+            // ===== OBTENER FkHeadcount del usuario actual =====
+            var userRow = await _context.AspNetUsers
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.UserName == currentUser);
+
+            if (userRow == null || string.IsNullOrWhiteSpace(userRow.EmployeeNumber))
+            {
+                TempData["ErrorMessage"] = "No se pudo resolver el empleado del usuario actual (EmployeeNumber).";
+                return View("Exam", model);
+            }
+
+            if (!int.TryParse(userRow.EmployeeNumber.Trim(), out var controlNumber))
+            {
+                TempData["ErrorMessage"] = "EmployeeNumber no es un número válido.";
+                return View("Exam", model);
+            }
+
+            var hc = await _context.SyHeadcounts
+                .AsNoTracking()
+                .FirstOrDefaultAsync(h => h.ControlNumber == controlNumber && h.Available == 1);
+
+            if (hc == null)
+            {
+                TempData["ErrorMessage"] = "El empleado (Headcount) asociado al usuario no existe o no está disponible.";
+                return View("Exam", model);
+            }
+
+            // ===== Mapas de preguntas/opciones =====
             var questionIds = model.Questions.Select(q => q.FkQuestion).Distinct().ToList();
 
-            // Mapa de textos de pregunta (seguridad)
             var questionTextMap = await _context.CtQuestions
                 .Where(qq => questionIds.Contains(qq.PkQuestions))
                 .ToDictionaryAsync(qq => qq.PkQuestions, qq => qq.Question);
 
-            // Mapa de opciones correctas (Ids + Csv) — MISMO patrón que Diagnostic
             var correctMap = await _context.CtOptions
                 .Where(o => questionIds.Contains(o.FkQuestions) && o.Available == 1 && o.Answer == 1)
                 .GroupBy(o => o.FkQuestions)
@@ -1096,7 +1174,6 @@ namespace RH_CM.Controllers
                 })
                 .ToDictionaryAsync(x => x.FkQuestion, x => (Ids: x.Ids, Csv: x.Csv));
 
-            // VM de resultado (puedes reutilizar el mismo DiagnosticResultViewModel)
             var resultVm = new DiagnosticResultViewModel
             {
                 FkTest = model.FkTest,
@@ -1109,6 +1186,8 @@ namespace RH_CM.Controllers
             using var tx = await _context.Database.BeginTransactionAsync();
             try
             {
+                var answersGroupCode = await GetNextUserAnswersGroupCodeAsync();
+
                 foreach (var q in model.Questions)
                 {
                     var selectedIds = (q.Options ?? new List<SubmitOptionViewModel>())
@@ -1121,19 +1200,19 @@ namespace RH_CM.Controllers
                     var correctIds = correctMap.TryGetValue(q.FkQuestion, out var t1) ? t1.Ids : new List<int>();
                     var csvCorrect = correctMap.TryGetValue(q.FkQuestion, out var t2) ? t2.Csv : string.Empty;
 
-                    // 👇 Guardado tipo DIAGNOSTIC pero en SY_USER_ANSWER (modelo que nos mostraste)
                     _context.SyUserAnswers.Add(new SyUserAnswer
                     {
+                        CodeUserAnswers = answersGroupCode,
                         FkTest = model.FkTest,
                         FkQuestions = q.FkQuestion,
                         FkOptionSelected = csvSelected,
                         FkOptionCorrected = csvCorrect,
+                        FkHeadcount = hc.PkHeadcount,
                         Createuser = currentUser,
                         Createdate = now,
                         Available = 1
                     });
 
-                    // Armar detalle por opción para pintar la vista
                     var optionResults = (q.Options ?? new List<SubmitOptionViewModel>())
                         .Select(o => new DiagnosticOptionResultViewModel
                         {
@@ -1177,18 +1256,30 @@ namespace RH_CM.Controllers
                 return View("Exam", model);
             }
 
-            // Calcula score igual
+            // Calcula score y mantén CourseAssignmentId por si la vista lo usa
             resultVm.TotalQuestions = resultVm.Questions.Count;
             resultVm.CorrectCount = resultVm.Questions.Count(x => x.IsCorrect);
             resultVm.Score = (int)Math.Round((double)resultVm.CorrectCount * 100.0 / Math.Max(1, resultVm.TotalQuestions), 0);
             resultVm.HasMaterial = await ExistsMaterialAsync(resultVm.NextCourseId, resultVm.NextLevelId);
 
-            // 👉 Mostrar SIEMPRE la vista de resultados del EXAMEN (no redirigir directo).
-            // Desde esa vista el usuario:
-            //   - Ve calificación
-            //   - Puede abrir el PDF para repasar
-            //   - Puede confirmar "Reintentar" el examen
+            // 👇 si quieres usarlo en la vista ExamResult.cshtml:
+            ViewBag.CourseAssignmentId = model.CourseAssignmentId;
+
             return View("ExamResult", resultVm);
         }
+
+        private async Task<int> GetNextUserAnswersGroupCodeAsync()
+        {
+            await using var conn = new SqlConnection(_connString);
+            await conn.OpenAsync();
+
+            await using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT CAST(NEXT VALUE FOR dbo.Seq_UserAnswersCode AS INT)";
+            var result = await cmd.ExecuteScalarAsync();
+
+            return Convert.ToInt32(result);
+        }
+
+
     }
 }
