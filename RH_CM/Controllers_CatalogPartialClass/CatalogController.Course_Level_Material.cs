@@ -37,28 +37,6 @@ namespace RH_CM.Controllers
                 .ToHashSet(); // eficiente para Contains()
 
 
-            //// Materiales disponibles y NO asignados en CT_COURSE_LEVEL_MATERIAL
-            //var materials = _context.CtCoursematerials
-            //    .AsNoTracking()
-            //    .Where(m => m.Available == 1 && !usedMaterialIds.Contains(m.PkCoursematerial))
-            //    .OrderBy(m => m.NameMaterial)
-            //    .ToList();
-
-
-            //Traerse la entidad completa es un problema porque los PDFs son pesados, se cambia para tener un SELECt unicamente lo que se requiere.
-
-            //var partialData = _context.CtCoursematerials
-            //     .AsNoTracking()
-            //     .Where(m => m.Available == 1)
-            //     .OrderBy(m => m.NameMaterial)
-            //     .Select(m => new
-            //     {
-            //         m.PkCoursematerial,
-            //         m.NameMaterial
-            //     })
-            //     .ToList();
-
-
             var partialData = _context.CtCoursematerials
                     .AsNoTracking()
                     .Where(m => m.Available == 1 && !usedMaterialIds.Contains(m.PkCoursematerial))

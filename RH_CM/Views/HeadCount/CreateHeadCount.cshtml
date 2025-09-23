@@ -181,7 +181,7 @@
 
                     </div>
                     <div class="row">
-                        <!-- Fifth Row -->
+                        <!-- Sixth Row -->
                         <div class="mb-2 col-md-3">
                             <label asp-for="ShiftWork" class="form-label">Shift Work <span class="text-danger">*</span></label>
                             <select asp-for="ShiftWork" class="form-control">
@@ -206,10 +206,14 @@
                         </div>
                         <div class="mb-2 col-md-3">
 
+                            <label asp-for="Ntuser" class="form-label">User Name <span class="text-danger">*</span></label>
+                            <input type="text" asp-for="Ntuser" class="form-control" placeholder="Enter the user name, such as e.soto" />
+                            <span asp-validation-for="Ntuser" class="text-danger"></span>
+                         
                         </div>
                     </div>
                     <div class="row">
-                        <!-- Fifth Row -->
+                        <!-- Seventh Row -->
                         <div class="mb-2 col-md-3">
                             <label asp-for="StarDate" class="form-label">Start Date <span class="text-danger">*</span></label>
                             <input type="date" asp-for="StarDate" class="form-control" placeholder="Select the start date" />

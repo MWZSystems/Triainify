@@ -44,6 +44,7 @@ namespace RH_CM.Controllers
         // ------------------- Ventana A: Selector -------------------
 
         [HttpGet]
+        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
         public async Task<IActionResult> MatrizbyPositionSelectPosition()
         {
             var vm = new SelectPositionViewModel
@@ -54,6 +55,7 @@ namespace RH_CM.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> MatrizbyPositionSelectPosition(SelectPositionViewModel vm)
         {

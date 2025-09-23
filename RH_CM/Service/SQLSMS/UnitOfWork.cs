@@ -153,6 +153,57 @@ namespace RH_CM.Service.SQLSMS
             return (byte[])result;
         }
 
+
+        /// <summary>
+        /// Ejecuta un Stored Procedure y devuelve una lista de objetos del tipo T.
+        /// Las columnas del resultado deben coincidir con los nombres de las propiedades de T.
+        /// </summary>
+        /// <typeparam name="T">Clase destino</typeparam>
+        /// <param name="storedProcedureName">Nombre del Stored Procedure</param>
+        /// <param name="parameters">Diccionario con parámetros</param>
+        /// <returns>Lista de objetos del tipo T</returns>
+        public async Task<List<T>> ExecuteStoredProcedureToListAsync<T>(
+            string storedProcedureName,
+            Dictionary<string, object>? parameters = null) where T : new()
+        {
+            var result = new List<T>();
+
+            using var conn = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand(storedProcedureName, conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            if (parameters != null)
+            {
+                foreach (var param in parameters)
+                {
+                    cmd.Parameters.AddWithValue(param.Key, param.Value ?? DBNull.Value);
+                }
+            }
+
+            await conn.OpenAsync();
+
+            using var reader = await cmd.ExecuteReaderAsync();
+            var props = typeof(T).GetProperties();
+
+            while (await reader.ReadAsync())
+            {
+                var obj = new T();
+
+                foreach (var prop in props)
+                {
+                    if (!reader.HasColumn(prop.Name) || reader[prop.Name] is DBNull)
+                        continue;
+
+                    prop.SetValue(obj, reader[prop.Name]);
+                }
+
+                result.Add(obj);
+            }
+
+            return result;
+        }
+
+
     }
 
 
