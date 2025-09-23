@@ -393,7 +393,7 @@ namespace RH_CM.Controllers
                 if (resultado.Succeeded)
                 {
                     // Asignar el rol al usuario
-                    await _userManager.AddToRoleAsync(usuario, "Registrado");
+                    await _userManager.AddToRoleAsync(usuario, "Empleado");
 
                     TempData["SuccessMessage"] = "Head count created successfully.";
                     return RedirectToAction(nameof(IndexHeadCount));

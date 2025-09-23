@@ -8,78 +8,97 @@
         <i class="hamburger align-self-center"></i>
     </a> *@
     <ul class="navbar-nav">
-        @if (User.Identity.IsAuthenticated && (User.IsInRole("Administrador") || User.IsInRole("RHGerente") || User.IsInRole("RHAdmin") || User.IsInRole("RH")))
-        //|| User.IsInRole("CustomerServiceAdmin") RHAdmin, RH
-        {
-            <li class="nav-item px-2 dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img src="~/assets/dist/img/icons/logocm.jpeg" alt="Logo" style="width: 60px; height: 30px; margin-right: 8px;">
-                    CATALOGS
-                </a>
-                <div class="dropdown-menu dropdown-menu-start dropdown-mega" aria-labelledby="servicesDropdown">
-                    <div class="d-md-flex align-items-start justify-content-start">
-                        <div class="dropdown-mega-list">
-                            <a class="dropdown-item" asp-controller="HeadCount" asp-action="IndexHeadCount"><i class="align-middle fas fa-user-plus"></i> Onboarding</a>
-                            <a class="dropdown-item" asp-controller="HeadCount" asp-action="IndexOFFBoarding"><i class="align-middle fas fa-user-minus"></i> Offboarding</a>
-                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexSupervisor"><i class="align-middle fas fa-users-cog"></i> Supervisor</a>
-                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexDepartment"><i class="align-middle fas fa-store-alt"></i> Department</a>
-                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexPosition"><i class="align-middle fas fa-chess-board"></i> Position</a>
-                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourse"><i class="align-middle fas fa-book"></i> Course</a>
-                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseMaterial"><i class="align-middle fas fa-file-pdf"></i> Course Material</a>
+        @*@if (User.Identity.IsAuthenticated && (User.IsInRole("Administrador") || User.IsInRole("RHGerente") || User.IsInRole("RHAdmin") || User.IsInRole("RH") || User.IsInRole("Registrado")))*@
+        @if (User.Identity.IsAuthenticated)
+        {   
+            //Menu Catalogos
+            @if ((User.IsInRole("Administrador") || User.IsInRole("RHGerente") || User.IsInRole("RHAdmin") || User.IsInRole("RH")))
+            {
+                <li class="nav-item px-2 dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img src="~/assets/dist/img/icons/logocm.jpeg" alt="Logo" style="width: 60px; height: 30px; margin-right: 8px;">
+                        CATALOGS
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-start dropdown-mega" aria-labelledby="servicesDropdown">
+                        <div class="d-md-flex align-items-start justify-content-start">
+                            <div class="dropdown-mega-list">
+                                <a class="dropdown-item" asp-controller="HeadCount" asp-action="IndexHeadCount"><i class="align-middle fas fa-user-plus"></i> Onboarding</a>
+                                <a class="dropdown-item" asp-controller="HeadCount" asp-action="IndexOFFBoarding"><i class="align-middle fas fa-user-minus"></i> Offboarding</a>
+                                <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexSupervisor"><i class="align-middle fas fa-users-cog"></i> Supervisor</a>
+                                <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexDepartment"><i class="align-middle fas fa-store-alt"></i> Department</a>
+                                <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexPosition"><i class="align-middle fas fa-chess-board"></i> Position</a>
+                                <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourse"><i class="align-middle fas fa-book"></i> Course</a>
+                                <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseMaterial"><i class="align-middle fas fa-file-pdf"></i> Course Material</a>
 
-                            <!-- Separador -->
-                            <hr class="dropdown-divider" />
+                                <!-- Separador -->
+                                <hr class="dropdown-divider" />
 
-                            <!-- Submenú Exams -->
-                            <div class="dropdown-mega-sublist">
-                                <h6 class="dropdown-header">Exams</h6>
-                                <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexTest">
-                                    <i class="align-middle fas fa-clipboard-list"></i> Test
-                                </a>
+                                <!-- Submenú Exams -->
+                                <div class="dropdown-mega-sublist">
+                                    <h6 class="dropdown-header">Exams</h6>
+                                    <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexTest">
+                                        <i class="align-middle fas fa-clipboard-list"></i> Test
+                                    </a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            }
+
+            //Menu Assignments
+            @if ((User.IsInRole("Administrador") || User.IsInRole("RHGerente") || User.IsInRole("RHAdmin") || User.IsInRole("RH")))
+            {
+                <li class="nav-item px-2 dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    ASSIGNMENTS
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-start dropdown-mega" aria-labelledby="servicesDropdown">
+                        <div class="d-md-flex align-items-start justify-content-start">
+                            <div class="dropdown-mega-list">
+                                <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseassignments"><i class="align-middle fas fa-outdent"></i> Course assignments</a>
+                                <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseCompleted"><i class="align-middle fas fa-check-circle"></i> Course Completed</a>
+                                <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseLevelMaterial"><i class="align-middle fas fa-file-signature"></i> CourseLevelMaterial</a>
+                                <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexExternalEvidence"><i class="align-middle fas fa-receipt"></i> External Evidence</a>
+
 
                             </div>
                         </div>
                     </div>
-                </div>
-            </li>
-            <li class="nav-item px-2 dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    ASSIGNMENTS
-                </a>
-                <div class="dropdown-menu dropdown-menu-start dropdown-mega" aria-labelledby="servicesDropdown">
-                    <div class="d-md-flex align-items-start justify-content-start">
-                        <div class="dropdown-mega-list">
-                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseassignments"><i class="align-middle fas fa-outdent"></i> Course assignments</a>
-                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseCompleted"><i class="align-middle fas fa-check-circle"></i> Course Completed</a>
-                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseLevelMaterial"><i class="align-middle fas fa-file-signature"></i> CourseLevelMaterial</a>
-                            <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexExternalEvidence"><i class="align-middle fas fa-receipt"></i> External Evidence</a>
+                </li>
+            }
 
-
+            //Menu Reports
+            @if ((User.IsInRole("Administrador") || User.IsInRole("RHGerente") || User.IsInRole("RHAdmin") || User.IsInRole("RH")))
+            {
+                <li class="nav-item px-2 dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        REPORTS
+                        </a>
+                    <div class="dropdown-menu dropdown-menu-start dropdown-mega" aria-labelledby="servicesDropdown">
+                        <div class="d-md-flex align-items-start justify-content-start">
+                            <div class="dropdown-mega-list">
+                                    <a class="dropdown-item" asp-controller="Trainify" asp-action="MatrizbyPositionSelectPosition">
+                                        <i class="align-middle fas fa-clipboard-list"></i> Matriz By Position
+                                    </a>
+                                    <a class="dropdown-item" asp-controller="Reports" asp-action="MatrizbySupervisorSelect">
+                                        <i class="align-middle fas fa-clipboard-list"></i> Matriz by Supervisor
+                                    </a>
+                                    <a class="dropdown-item" asp-controller="Reports" asp-action="MatrizByDeparmentGeneral_RH">
+                                        <i class="align-middle fas fa-clipboard-list"></i> Department RH
+                                    </a>
+                                <a class="dropdown-item" asp-controller="Reports" asp-action="MissingMaterialExamReport">
+                                    <i class="align-middle fas fa-clipboard-list"></i> Material/Exam Missing
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </li>
-         
-            <li class="nav-item px-2 dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                REPORTS
-            </a>
-            <div class="dropdown-menu dropdown-menu-start dropdown-mega" aria-labelledby="servicesDropdown">
-                <div class="d-md-flex align-items-start justify-content-start">
-                    <div class="dropdown-mega-list">
-                            <a class="dropdown-item" asp-controller="Trainify" asp-action="MatrizbyPositionSelectPosition">
-                                <i class="align-middle fas fa-clipboard-list"></i> Matriz By Position
-                            </a>
-                            <a class="dropdown-item" asp-controller="Reports" asp-action="MatrizbySupervisorSelect">
-                                <i class="align-middle fas fa-clipboard-list"></i> Matriz by Supervisor
-                            </a>
-                            <a class="dropdown-item" asp-controller="Reports" asp-action="MatrizByDeparmentGeneral_RH">
-                                <i class="align-middle fas fa-clipboard-list"></i> Department RH
-                            </a>
-                    </div>
-                </div>
-            </div>
-            </li>
+                </li>
+            }
+
+
+            //Menu Trainify -- Esto esta disponible para cualquier usuario
             <li class="nav-item px-2 dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 TRAINIFY

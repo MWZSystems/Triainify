@@ -9,6 +9,8 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using RH_CM.Data;
 using RH_CM.Models;
+using RH_CM.Service.DTOs;
+using RH_CM.Service.SQLSMS;
 using RH_CM.ViewModels;
 using System.Data;
 
@@ -18,11 +20,15 @@ namespace RH_CM.Controllers
     {
         private readonly db_abcd61_rhchdbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly UnitOfWork _unitOfWork;
 
-        public ReportsController(db_abcd61_rhchdbContext context, UserManager<IdentityUser> userManager)
+        public ReportsController(db_abcd61_rhchdbContext context, 
+                                UserManager<IdentityUser> userManager,
+                                UnitOfWork unitOfWork)
         {
             _context = context;
             _userManager = userManager;
+            _unitOfWork = unitOfWork;
         }
 
         // ================= Helper: combo de supervisores =================
@@ -224,5 +230,60 @@ namespace RH_CM.Controllers
         {
             return View();
         }
+
+
+        // GET: ReportsController
+        public async Task <ActionResult> MissingMaterialExamReport()
+        {
+            List<MaterialExamDTOs> result = await _unitOfWork.ExecuteStoredProcedureToListAsync<MaterialExamDTOs>("sp_MissingMaterialExam");
+
+            return View(result);
+        }
+
+        // =============================
+        // EXPORTAR A EXCEL
+        // =============================
+        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        [HttpGet]
+        public async Task<IActionResult> ExportMissingMaterialExamReport()
+        {
+            //Aqui lo tuve que modificar porque usaba los constrains del sql server, al borrar las ligas entre las tablas tuve que armar el query
+            List<MaterialExamDTOs> data = await _unitOfWork.ExecuteStoredProcedureToListAsync<MaterialExamDTOs>("sp_MissingMaterialExam");
+
+            using var wb = new XLWorkbook();
+            var ws = wb.Worksheets.Add("CourseMissing");
+
+            ws.Cell(1, 1).Value = "Course ID";
+            ws.Cell(1, 2).Value = "Course Name";
+            ws.Cell(1, 3).Value = "Level";
+            ws.Cell(1, 4).Value = "Material";
+            ws.Cell(1, 5).Value = "Exam";
+
+            var header = ws.Range("A1:E1");
+            header.Style.Font.Bold = true;
+            header.Style.Alignment.Horizontal = ClosedXML.Excel.XLAlignmentHorizontalValues.Center;
+
+            int row = 2;
+            foreach (var it in data)
+            {
+                ws.Cell(row, 1).Value = it.CourseID;
+                ws.Cell(row, 2).Value = it.CourseName;
+                ws.Cell(row, 3).Value = it.Level;
+                ws.Cell(row, 4).Value = it.Material;
+                ws.Cell(row, 5).Value = it.Exam;
+                row++;
+            }
+
+            ws.Columns().AdjustToContents();
+
+            using var ms = new MemoryStream();
+            wb.SaveAs(ms);
+            return File(
+                ms.ToArray(),
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                $"CourseWOMaterialExam_{DateTime.Now:yyyyMMdd}.xlsx"
+            );
+        }
+
     }
 }
