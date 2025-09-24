@@ -15,6 +15,7 @@
             public int CorrectCount { get; set; }
             public int Score { get; set; } // 0..100
             public List<DiagnosticQuestionResultViewModel> Questions { get; set; } = new();
+            public int CourseAssignmentId { get; internal set; }
         }
 
         public class DiagnosticQuestionResultViewModel

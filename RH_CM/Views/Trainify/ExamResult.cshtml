@@ -189,10 +189,6 @@
     @await Html.PartialAsync("_ValidationScriptsPartial")
     <script>
         (function () {
-            document.getElementById('btn-retake')?.addEventListener('click', function (e) {
-                const ok = confirm('¿Deseas volver a realizar el examen? Tus respuestas de este intento ya fueron guardadas.');
-                if (!ok) { e.preventDefault(); }
-            });
 
             if ('@TempData["SuccessMessage"]' !== '') {
                 window.notyf?.open?.({
@@ -217,3 +213,4 @@
         })();
     </script>
 }
+

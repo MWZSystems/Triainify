@@ -6,9 +6,8 @@ namespace RH_CM.Models
     public partial class SyCoursemovement
     {
         public int PkMovementCourse { get; set; }
-        public int? CodeUserAnswers { get; set; }
+        public int? CodeExam { get; set; }
         public int FkCourseAssignment { get; set; }
-        public int FkCourseCompleted { get; set; }
         public int FkCourseStatus { get; set; }
         public int FkDeliveryMode { get; set; }
         public int FkHeadcount { get; set; }

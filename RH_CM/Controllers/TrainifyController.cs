@@ -848,7 +848,6 @@ namespace RH_CM.Controllers
             return View("Diagnostic", model);
         }
 
-
         [Authorize(Roles = "Empleado, RHGerente, Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -884,17 +883,15 @@ namespace RH_CM.Controllers
                 return View("Diagnostic", model);
             }
 
-            // EmployeeNumber = ControlNumber (per your current mapping)
-            if (!int.TryParse(userRow.EmployeeNumber.Trim(), out var ControlNumber))
+            if (!int.TryParse(userRow.EmployeeNumber.Trim(), out var controlNumber))
             {
                 TempData["ErrorMessage"] = "EmployeeNumber is not a valid number.";
                 return View("Diagnostic", model);
             }
 
-            // Validate Headcount existence
             var hc = await _context.SyHeadcounts
                 .AsNoTracking()
-                .FirstOrDefaultAsync(h => h.ControlNumber == ControlNumber && h.Available == 1);
+                .FirstOrDefaultAsync(h => h.ControlNumber == controlNumber && h.Available == 1);
 
             if (hc == null)
             {
@@ -926,14 +923,16 @@ namespace RH_CM.Controllers
                 TestName = model.TestName,
                 NextCourseId = model.NextCourseId,
                 NextLevelId = model.NextLevelId,
-                Questions = new List<DiagnosticQuestionResultViewModel>()
+                Questions = new List<DiagnosticQuestionResultViewModel>(),
+                // 👇 opcional pero útil para vistas/resultados
+                CourseAssignmentId = model.CourseAssignmentId ?? 0
             };
 
-            // ===== Insert using the same CodeUserDiagnostic for this submission =====
             using var tx = await _context.Database.BeginTransactionAsync();
             try
             {
-                var groupCode = await GetNextDiagnosticGroupCodeAsync(); // sequence
+                // 👇 Pide UN valor de la secuencia y úsalo en TODAS las filas del envío
+                var codeExam = await GetNextDiagnosticCodeExamAsync();
 
                 foreach (var q in model.Questions)
                 {
@@ -949,12 +948,12 @@ namespace RH_CM.Controllers
 
                     _context.SyUserDiagnostics.Add(new SyUserDiagnostic
                     {
-                        CodeUserDiagnostic = groupCode,
+                        CodeExam = codeExam,                // 👈 mismo código para todo el intento
                         FkTest = model.FkTest,
                         FkQuestions = q.FkQuestion,
                         FkOptionSelected = csvSelected,
                         FkOptionCorrected = csvCorrect,
-                        FkHeadcount = hc.PkHeadcount, // real PK from SyHeadcounts
+                        FkHeadcount = hc.PkHeadcount,
                         Createuser = currentUser,
                         Createdate = now,
                         Available = 1
@@ -1015,7 +1014,13 @@ namespace RH_CM.Controllers
                 return RedirectToAction(
                     "OpenPdfCourseMaterialByCourseLevel",
                     "Catalog",
-                    new { courseId = resultVm.NextCourseId, levelId = resultVm.NextLevelId }
+                    new
+                    {
+                        courseId = resultVm.NextCourseId,
+                        levelId = resultVm.NextLevelId,
+                        // 👇 **PRESERVA** el assignment
+                        courseAssignmentId = model.CourseAssignmentId
+                    }
                 );
             }
 
@@ -1023,17 +1028,20 @@ namespace RH_CM.Controllers
             return View("DiagnosticResult", resultVm);
         }
 
-        private async Task<int> GetNextDiagnosticGroupCodeAsync()
+
+        // Nuevo helper: lee UN valor de la secuencia para CODE_EXAM
+        private async Task<int> GetNextDiagnosticCodeExamAsync()
         {
             await using var conn = new SqlConnection(_connString);
             await conn.OpenAsync();
 
             await using var cmd = conn.CreateCommand();
-            cmd.CommandText = "SELECT CAST(NEXT VALUE FOR dbo.Seq_UserDiagnosticCode AS INT)";
+            cmd.CommandText = "SELECT CAST(NEXT VALUE FOR dbo.Seq_UserDiagnostic_CodeExam AS INT)";
             var result = await cmd.ExecuteScalarAsync();
 
             return Convert.ToInt32(result);
         }
+
 
         // GET: render exam (con courseAssignmentId)
         [Authorize(Roles = "Empleado, RHGerente, Administrador")]
@@ -1103,7 +1111,17 @@ namespace RH_CM.Controllers
             return View("Exam", model);
         }
 
-        // POST: save into SY_USER_ANSWERS (preserves courseAssignmentId)
+        // Helper: último CODE_EXAM del diagnóstico para este usuario/test (o 0 si no hay)
+        private async Task<int> GetLastDiagnosticCodeExamAsync(int fkHeadcount, int fkTest)
+        {
+            return await _context.SyUserDiagnostics
+                .AsNoTracking()
+                .Where(d => d.FkHeadcount == fkHeadcount && d.FkTest == fkTest && d.Available == 1)
+                .OrderByDescending(d => d.Createdate)
+                .Select(d => d.CodeExam)
+                .FirstOrDefaultAsync();
+        }
+
         [Authorize(Roles = "Empleado, RHGerente, Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -1128,7 +1146,7 @@ namespace RH_CM.Controllers
             var currentUser = User.Identity?.Name ?? "Anon";
             var now = DateTime.Now;
 
-            // ===== Get FkHeadcount for the current user =====
+            // ===== OBTENER FkHeadcount del usuario actual =====
             var userRow = await _context.AspNetUsers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.UserName == currentUser);
@@ -1155,7 +1173,7 @@ namespace RH_CM.Controllers
                 return View("Exam", model);
             }
 
-            // ===== Question/option maps =====
+            // ===== Mapas de preguntas/opciones =====
             var questionIds = model.Questions.Select(q => q.FkQuestion).Distinct().ToList();
 
             var questionTextMap = await _context.CtQuestions
@@ -1173,6 +1191,7 @@ namespace RH_CM.Controllers
                 })
                 .ToDictionaryAsync(x => x.FkQuestion, x => (Ids: x.Ids, Csv: x.Csv));
 
+            // ===== Construye resultados EN MEMORIA =====
             var resultVm = new DiagnosticResultViewModel
             {
                 FkTest = model.FkTest,
@@ -1182,27 +1201,89 @@ namespace RH_CM.Controllers
                 Questions = new List<DiagnosticQuestionResultViewModel>()
             };
 
+            foreach (var q in model.Questions)
+            {
+                var selectedIds = (q.Options ?? new List<SubmitOptionViewModel>())
+                    .Where(o => o.IsSelected)
+                    .Select(o => o.FkOption)
+                    .OrderBy(id => id)
+                    .ToList();
+
+                var correctIds = correctMap.TryGetValue(q.FkQuestion, out var t1) ? t1.Ids : new List<int>();
+
+                bool questionCorrect =
+                    selectedIds.Count == correctIds.Count &&
+                    !selectedIds.Except(correctIds).Any() &&
+                    !correctIds.Except(selectedIds).Any();
+
+                var optionResults = (q.Options ?? new List<SubmitOptionViewModel>())
+                    .Select(o => new DiagnosticOptionResultViewModel
+                    {
+                        FkOption = o.FkOption,
+                        OptionText = o.OptionText,
+                        IsSelected = selectedIds.Contains(o.FkOption),
+                        IsCorrect = correctIds.Contains(o.FkOption)
+                    })
+                    .OrderBy(o => o.FkOption)
+                    .ToList();
+
+                var safeQuestionText =
+                    !string.IsNullOrWhiteSpace(q.QuestionText)
+                        ? q.QuestionText
+                        : (questionTextMap.TryGetValue(q.FkQuestion, out var qt) ? qt : string.Empty);
+
+                resultVm.Questions.Add(new DiagnosticQuestionResultViewModel
+                {
+                    FkQuestion = q.FkQuestion,
+                    QuestionText = safeQuestionText,
+                    IsMultiple = q.IsMultiple,
+                    SelectedOptionIds = selectedIds,
+                    CorrectOptionIds = correctIds,
+                    IsCorrect = questionCorrect,
+                    Options = optionResults
+                });
+            }
+
+            // ===== Calcula SCORE =====
+            resultVm.TotalQuestions = resultVm.Questions.Count;
+            resultVm.CorrectCount = resultVm.Questions.Count(x => x.IsCorrect);
+            resultVm.Score = (int)Math.Round((double)resultVm.CorrectCount * 100.0 / Math.Max(1, resultVm.TotalQuestions), 0);
+
+            // ===== Si NO pasa (score < 80), NO escribir =====
+            if (resultVm.Score < 80)
+            {
+                resultVm.HasMaterial = await ExistsMaterialAsync(resultVm.NextCourseId, resultVm.NextLevelId);
+                ViewBag.CourseAssignmentId = model.CourseAssignmentId;
+                TempData["ErrorMessage"] = "Minimum score is 80. Results recorded locally only; no course completion stored.";
+                return View("ExamResult", resultVm);
+            }
+
+            // ===== Validación crítica: CourseAssignmentId obligatorio =====
+            if (!model.CourseAssignmentId.HasValue || model.CourseAssignmentId.Value <= 0)
+            {
+                // NO escribir en ninguna tabla si falta el assignment
+                resultVm.HasMaterial = await ExistsMaterialAsync(resultVm.NextCourseId, resultVm.NextLevelId);
+                ViewBag.CourseAssignmentId = model.CourseAssignmentId;
+                TempData["ErrorMessage"] = "Missing course assignment. Please contact your provider or IT support.";
+                return View("ExamResult", resultVm);
+            }
+
+            // ===== Score >= 80 y assignment OK -> escribir en 3 tablas =====
             using var tx = await _context.Database.BeginTransactionAsync();
             try
             {
-                var answersGroupCode = await GetNextUserAnswersGroupCodeAsync();
+                // 1) Reusar CodeExam del diagnóstico
+                var codeExam = await GetLastDiagnosticCodeExamAsync(hc.PkHeadcount, model.FkTest);
 
-                foreach (var q in model.Questions)
+                // 2) SY_USER_ANSWERS (todas las preguntas)
+                foreach (var q in resultVm.Questions)
                 {
-                    var selectedIds = (q.Options ?? new List<SubmitOptionViewModel>())
-                        .Where(o => o.IsSelected)
-                        .Select(o => o.FkOption)
-                        .OrderBy(id => id)
-                        .ToList();
+                    var csvSelected = string.Join(",", q.SelectedOptionIds ?? new List<int>());
+                    var csvCorrect = string.Join(",", q.CorrectOptionIds ?? new List<int>());
 
-                    var csvSelected = string.Join(",", selectedIds);
-                    var correctIds = correctMap.TryGetValue(q.FkQuestion, out var t1) ? t1.Ids : new List<int>();
-                    var csvCorrect = correctMap.TryGetValue(q.FkQuestion, out var t2) ? t2.Csv : string.Empty;
-
-                    // ===== 1) Insert into SY_USER_ANSWERS =====
                     _context.SyUserAnswers.Add(new SyUserAnswer
                     {
-                        CodeUserAnswers = answersGroupCode,
+                        CodeExam = codeExam,
                         FkTest = model.FkTest,
                         FkQuestions = q.FkQuestion,
                         FkOptionSelected = csvSelected,
@@ -1212,54 +1293,38 @@ namespace RH_CM.Controllers
                         Createdate = now,
                         Available = 1
                     });
-
-                    // ===== 2) Insert into SyCousemovement (at the same time) =====
-                    // Assumption: FkCourseCompleted <- number of correct options for the question
-                    _context.SyCoursemovements.Add(new SyCoursemovement
-                    {
-                        FkCourseCompleted = correctIds.Count, // <- if you want a different mapping, tell me
-                        FkCourseStatus = 1,
-                        FkDeliveryMode = 1,
-                        FkHeadcount = hc.PkHeadcount,
-                        CreateUser = currentUser,
-                        CreateDate = now,
-                        LastUpdateUser = currentUser,
-                        LastUpdateDate = now,
-                        Avaialble = 1
-                    });
-
-                    var optionResults = (q.Options ?? new List<SubmitOptionViewModel>())
-                        .Select(o => new DiagnosticOptionResultViewModel
-                        {
-                            FkOption = o.FkOption,
-                            OptionText = o.OptionText,
-                            IsSelected = selectedIds.Contains(o.FkOption),
-                            IsCorrect = correctIds.Contains(o.FkOption)
-                        })
-                        .OrderBy(o => o.FkOption)
-                        .ToList();
-
-                    bool questionCorrect =
-                        selectedIds.Count == correctIds.Count &&
-                        !selectedIds.Except(correctIds).Any() &&
-                        !correctIds.Except(selectedIds).Any();
-
-                    var safeQuestionText =
-                        !string.IsNullOrWhiteSpace(q.QuestionText)
-                            ? q.QuestionText
-                            : (questionTextMap.TryGetValue(q.FkQuestion, out var qt) ? qt : string.Empty);
-
-                    resultVm.Questions.Add(new DiagnosticQuestionResultViewModel
-                    {
-                        FkQuestion = q.FkQuestion,
-                        QuestionText = safeQuestionText,
-                        IsMultiple = q.IsMultiple,
-                        SelectedOptionIds = selectedIds,
-                        CorrectOptionIds = correctIds,
-                        IsCorrect = questionCorrect,
-                        Options = optionResults
-                    });
                 }
+
+                // 3) SY_COURSEMOVEMENT (una sola fila)
+                _context.SyCoursemovements.Add(new SyCoursemovement
+                {
+                    CodeExam = codeExam,
+                    FkCourseAssignment = model.CourseAssignmentId.Value, // ya validado
+                    FkCourseStatus = 1, // TODO: reemplazar por el ID real de "Completado"
+                    FkDeliveryMode = 1, // TODO: reemplazar por el ID real de delivery mode
+                    FkHeadcount = hc.PkHeadcount,
+                    Score = resultVm.Score,
+                    CreateUser = currentUser,
+                    CreateDate = now,
+                    LastUpdateUser = currentUser,
+                    LastUpdateDate = now,
+                    Avaialble = 1
+                });
+
+                // 4) SY_COURSECOMPLETED (una sola fila)
+                _context.SyCoursecompleteds.Add(new SyCoursecompleted
+                {
+                    FkCourseAssignment = model.CourseAssignmentId.Value,
+                    FkCourseStatus = 1, // TODO
+                    FkDeliveryMode = 1, // TODO
+                    FkHeadcount = hc.PkHeadcount,
+                    Score = resultVm.Score,
+                    CreateUser = currentUser,
+                    CreateDate = now,
+                    LastUpdateUser = currentUser,
+                    LastUpdateDate = now,
+                    Avaialble = 1
+                });
 
                 await _context.SaveChangesAsync();
                 await tx.CommitAsync();
@@ -1271,30 +1336,14 @@ namespace RH_CM.Controllers
                 return View("Exam", model);
             }
 
-            // Compute score and keep CourseAssignmentId for the view
-            resultVm.TotalQuestions = resultVm.Questions.Count;
-            resultVm.CorrectCount = resultVm.Questions.Count(x => x.IsCorrect);
-            resultVm.Score = (int)Math.Round((double)resultVm.CorrectCount * 100.0 / Math.Max(1, resultVm.TotalQuestions), 0);
+            // Material disponible para botones en la vista
             resultVm.HasMaterial = await ExistsMaterialAsync(resultVm.NextCourseId, resultVm.NextLevelId);
 
-            // For ExamResult.cshtml
+            // Mantén el assignment para la vista
             ViewBag.CourseAssignmentId = model.CourseAssignmentId;
 
             return View("ExamResult", resultVm);
         }
-
-        private async Task<int> GetNextUserAnswersGroupCodeAsync()
-        {
-            await using var conn = new SqlConnection(_connString);
-            await conn.OpenAsync();
-
-            await using var cmd = conn.CreateCommand();
-            cmd.CommandText = "SELECT CAST(NEXT VALUE FOR dbo.Seq_UserAnswersCode AS INT)";
-            var result = await cmd.ExecuteScalarAsync();
-
-            return Convert.ToInt32(result);
-        }
-
 
     }
 }
