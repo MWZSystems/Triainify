@@ -1,0 +1,59 @@
+﻿@* @{
+    // Intentos para obtener el Assignment ID
+    int assignmentFromVB = ViewBag.CourseAssignmentId as int? ?? 0;
+    int assignmentFromModel = 0;
+
+    // Intenta leer desde Model si existe la propiedad CourseAssignmentId
+    var modelProp = ViewData.Model?.GetType().GetProperty("CourseAssignmentId");
+    if (modelProp != null)
+    {
+        var val = modelProp.GetValue(ViewData.Model);
+        if (val is int i) assignmentFromModel = i;
+        else if (val is int? ni) assignmentFromModel = ni ?? 0;
+    }
+
+    // Intenta leer desde QueryString
+    int assignmentFromQuery = 0;
+    var q = Context?.Request?.Query["courseAssignmentId"].ToString();
+    if (!string.IsNullOrWhiteSpace(q) && int.TryParse(q, out var qid))
+        assignmentFromQuery = qid;
+
+    int assignmentId = assignmentFromVB != 0 ? assignmentFromVB
+                    : assignmentFromModel != 0 ? assignmentFromModel
+                    : assignmentFromQuery;
+
+    var assignmentText = assignmentId > 0 ? assignmentId.ToString() : "—";
+}
+
+<style>
+    .assignment-banner {
+        position: sticky;
+        top: 0;
+        z-index: 1031; /* por encima del contenido común */
+        background: #fffbe6;
+        border-bottom: 1px solid #ffe58f;
+        padding: .35rem .75rem;
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+    }
+
+        .assignment-banner .label {
+            font-weight: 600;
+            color: #7a5d00;
+        }
+
+        .assignment-banner .pill {
+            background: #ffd666;
+            color: #3b2f00;
+            border-radius: 999px;
+            padding: .1rem .6rem;
+            font-weight: 700;
+        }
+</style>
+
+<div class="assignment-banner">
+    <span class="label">Assignment ID:</span>
+    <span class="pill">@assignmentText</span>
+</div>
+ *@

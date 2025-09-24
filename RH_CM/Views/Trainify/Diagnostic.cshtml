@@ -7,8 +7,17 @@
 
 <div class="row">
     <div class="col">
-        <h1 class="h3 mb-3 text-center">@Model.TestName</h1>
-        <p class="text-center text-muted">Please answer the following questions.</p>
+        <h1 class="h3 mb-3 text-center">Diagnostic Exam: @Model.TestName</h1>
+
+        <div class="alert alert-info alert-dismissible" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="alert-message">
+                NOTA: This is a <strong>Diagnostic Exam</strong> designed to gauge the current knowledge of Century Mold personnel.
+                It does not certify completion on its own.
+                To fully meet the training requirement, you must complete
+                <strong>both</strong> the Diagnostic Exam and the <strong>Evaluation Exam</strong>. Please answer the following questions.
+            </div>
+        </div>
 
         @* (Opcional) Muestra contexto de curso/nivel/asignación si lo tienes *@
         @if (Model.NextCourseId > 0 || Model.NextLevelId > 0 || Model.CourseAssignmentId > 0)
@@ -34,9 +43,6 @@
 <div class="row">
     <div class="col-md-10 offset-md-1">
         <div class="card border-primary">
-            <div class="card-header bg-white">
-                <h5 class="card-title mb-0">Diagnostic</h5>
-            </div>
             <div class="card-body">
                 <form asp-action="SubmitDiagnostic" asp-controller="Trainify" method="post">
                     @Html.AntiForgeryToken()
@@ -118,7 +124,7 @@
                     }
 
                     <div class="text-end">
-                        <a asp-action="IndexTest" asp-controller="Catalog" class="btn btn-secondary">
+                        <a asp-action="LearningTrainify" asp-controller="Trainify" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> Cancel
                         </a>
                         <button type="submit" class="btn btn-primary">

@@ -5,9 +5,13 @@
     ViewData["Title"] = "Diagnostic Result";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
+    // AssignmentId desde ViewBag (si no llega, usa 0)
+    var assignmentId = ViewBag.CourseAssignmentId as int? ?? 0;
+
     // URLs para continuar (PDF) y fallback (volver a la lista)
     var pdfUrl = Url.Action("OpenPdfCourseMaterialByCourseLevel", "Catalog",
-        new { courseId = Model.NextCourseId, levelId = Model.NextLevelId }) ?? "#";
+        new { courseId = Model.NextCourseId, levelId = Model.NextLevelId, courseAssignmentId = assignmentId }) ?? "#";
+
     var backUrl = Url.Action("LearningTrainify", "Trainify") ?? "/";
 }
 
@@ -15,6 +19,14 @@
     <div class="col">
         <h1 class="h3 mb-2 text-center">Diagnostic Result: @Model.TestName</h1>
 
+        <!-- Info: no dismissible -->
+        <div class="alert alert-info mb-2" role="alert">
+            <div class="alert-message text-center">
+                Next step: Course Material. If you want to continue with your course process, please click Continue. Scroll down to the button.
+            </div>
+        </div>
+
+        <!-- Badges estilo uniforme (igual que en Exam Result) -->
         <div class="text-center mb-2">
             @if (Model.NextCourseId > 0)
             {
@@ -22,24 +34,40 @@
             }
             @if (Model.NextLevelId > 0)
             {
-                <span class="badge bg-info rounded-pill">Level ID: @Model.NextLevelId</span>
+                <span class="badge bg-info text-dark rounded-pill me-1">Level ID: @Model.NextLevelId</span>
             }
+            <span class="badge bg-warning text-dark rounded-pill">
+                Assignment ID: @(assignmentId > 0 ? assignmentId.ToString() : "—")
+            </span>
         </div>
 
-        <p class="text-center text-muted">
-            Correct: <strong>@Model.CorrectCount / @Model.TotalQuestions</strong> |
-            Score: <strong>@Model.Score</strong>/100
-        </p>
-
-        <div class="progress mb-3" style="height: 20px;">
-            <div class="progress-bar" role="progressbar"
-                 style="width:@Model.Score%;"
-                 aria-valuenow="@Model.Score" aria-valuemin="0" aria-valuemax="100">
+        <!-- Bloque de score con el mismo look & feel -->
+        <div class="text-center mb-3">
+            <div class="d-inline-block mb-2">
+                <div class="alert alert-secondary alert-outline-coloured mb-0" role="alert">
+                    <div class="alert-icon">
+                        <i class="far fa-fw fa-bell"></i>
+                    </div>
+                    <div class="alert-message">
+                        <div class="d-flex flex-wrap justify-content-center gap-2">
+                            <span class="badge bg-success">
+                                <i class="fa fa-check-circle me-1"></i>
+                                Correct: <strong>@Model.CorrectCount / @Model.TotalQuestions</strong>
+                            </span>
+                            <span class="badge bg-primary">
+                                <i class="fa fa-percent me-1"></i>
+                                Score: <strong>@Model.Score</strong>/100
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
 </div>
 
+<!-- Detalle por pregunta -->
 <div class="row">
     <div class="col-md-10 offset-md-1">
         @for (int i = 0; i < Model.Questions.Count; i++)
@@ -48,7 +76,7 @@
 
             <div class="card mb-3 border-0 shadow-sm">
                 <div class="card-body p-0">
-                    <!-- Fondo SOLO en la pregunta (estilo alerts success/danger) -->
+                    <!-- Encabezado con color por correcta/incorrecta -->
                     <div class="alert @(q.IsCorrect ? "alert-success" : "alert-danger") mb-0 rounded-0 rounded-top">
                         <div class="d-flex justify-content-between align-items-center">
                             <strong>@q.QuestionText</strong>
@@ -63,13 +91,12 @@
                         </div>
                     </div>
 
-                    <!-- Opciones SIN fondo; solo iconos e información -->
+                    <!-- Opciones -->
                     <ul class="list-group list-group-flush">
                         @foreach (var opt in (q.Options ?? Enumerable.Empty<RV.DiagnosticOptionResultViewModel>()))
                         {
                             <li class="list-group-item">
                                 <div class="d-flex align-items-start gap-2">
-                                    <!-- Ícono de estado a la izquierda -->
                                     @if (opt.IsSelected && opt.IsCorrect)
                                     {
                                         <i class="fas fa-check text-success mt-1"></i>
@@ -105,65 +132,40 @@
     </div>
 </div>
 
-<!-- Next step: abrir material (PDF) y cerrar esta vista / fallback a lista -->
+<!-- Next step: abrir material (PDF) y fallback a lista -->
 <div class="row">
     <div class="col-md-10 offset-md-1">
         <div class="card border-success">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="fw-bold">Next step: Course Material</div>
-                    <div class="text-muted small">
-                        CourseId: @Model.NextCourseId | LevelId: @Model.NextLevelId
-                    </div>
-                </div>
-
+            <div class="card-body d-flex align-items-center">
                 @if (Model.HasMaterial && Model.NextCourseId > 0 && Model.NextLevelId > 0)
                 {
                     <a id="btn-continue"
-                       class="btn btn-success"
-                       href="@pdfUrl"
-                       target="_blank" rel="noopener">
+                       class="btn btn-success ms-auto"
+                       href="@pdfUrl">
                         <i class="fas fa-arrow-right"></i> Continue
                     </a>
                 }
                 else
                 {
-                    <button class="btn btn-secondary" type="button" disabled title="Material is not available">
-                        <i class="fas fa-ban"></i> Continue
-                    </button>
-                    <span class="text-danger ms-2 small">
-                        Course material is not available. Please contact HR.
-                    </span>
+                    <div class="d-flex align-items-center ms-auto">
+                        <button class="btn btn-secondary" type="button" disabled title="Material is not available">
+                            <i class="fas fa-ban"></i> Continue
+                        </button>
+                        <span class="text-danger ms-2 small">
+                            Course material is not available. Please contact HR.
+                        </span>
+                    </div>
                 }
             </div>
         </div>
     </div>
 </div>
 
+
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
     <script>
         (function () {
-            // Al dar click en Continue: abrir PDF (ya lo hace el href/target) y luego cerrar/redirigir esta pestaña
-            const btn = document.getElementById('btn-continue');
-            if (btn) {
-                btn.addEventListener('click', function () {
-                    setTimeout(function () {
-                        try {
-                            // Algunos navegadores requieren este hack antes de window.close
-                            window.open('', '_self');
-                            window.close();
-                        } catch (e) { /* ignore */ }
-
-                        // Si no se cerró, vuelve a la lista
-                        if (!document.hidden) {
-                            window.location.href = '@backUrl';
-                        }
-                    }, 150);
-                });
-            }
-
-            // Notificaciones (Notyf) seguras
             if ('@TempData["SuccessMessage"]' !== '') {
                 window.notyf?.open?.({
                     type: 'success',

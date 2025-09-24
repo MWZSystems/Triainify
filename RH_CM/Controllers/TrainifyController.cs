@@ -924,14 +924,13 @@ namespace RH_CM.Controllers
                 NextCourseId = model.NextCourseId,
                 NextLevelId = model.NextLevelId,
                 Questions = new List<DiagnosticQuestionResultViewModel>(),
-                // 👇 opcional pero útil para vistas/resultados
                 CourseAssignmentId = model.CourseAssignmentId ?? 0
             };
 
             using var tx = await _context.Database.BeginTransactionAsync();
             try
             {
-                // 👇 Pide UN valor de la secuencia y úsalo en TODAS las filas del envío
+                // 👇 Un solo valor de la secuencia para todo el intento
                 var codeExam = await GetNextDiagnosticCodeExamAsync();
 
                 foreach (var q in model.Questions)
@@ -948,7 +947,7 @@ namespace RH_CM.Controllers
 
                     _context.SyUserDiagnostics.Add(new SyUserDiagnostic
                     {
-                        CodeExam = codeExam,                // 👈 mismo código para todo el intento
+                        CodeExam = codeExam,
                         FkTest = model.FkTest,
                         FkQuestions = q.FkQuestion,
                         FkOptionSelected = csvSelected,
@@ -1008,26 +1007,11 @@ namespace RH_CM.Controllers
             resultVm.Score = (int)Math.Round((double)resultVm.CorrectCount * 100.0 / Math.Max(1, resultVm.TotalQuestions), 0);
             resultVm.HasMaterial = await ExistsMaterialAsync(resultVm.NextCourseId, resultVm.NextLevelId);
 
-            if (resultVm.HasMaterial && resultVm.NextCourseId > 0 && resultVm.NextLevelId > 0)
-            {
-                TempData["SuccessMessage"] = "Diagnostic submitted. Opening course material...";
-                return RedirectToAction(
-                    "OpenPdfCourseMaterialByCourseLevel",
-                    "Catalog",
-                    new
-                    {
-                        courseId = resultVm.NextCourseId,
-                        levelId = resultVm.NextLevelId,
-                        // 👇 **PRESERVA** el assignment
-                        courseAssignmentId = model.CourseAssignmentId
-                    }
-                );
-            }
-
-            TempData["ErrorMessage"] = "No course material (PDF/URL) linked to this course/level. Please contact HR.";
+            // 👉 Entregar SIEMPRE la vista de resultados (no redirigir)
+            ViewBag.CourseAssignmentId = model.CourseAssignmentId; // para que la vista arme URLs con el PK
+            TempData["SuccessMessage"] = "Diagnostic submitted. Review your results below.";
             return View("DiagnosticResult", resultVm);
         }
-
 
         // Nuevo helper: lee UN valor de la secuencia para CODE_EXAM
         private async Task<int> GetNextDiagnosticCodeExamAsync()
