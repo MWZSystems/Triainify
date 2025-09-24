@@ -873,36 +873,36 @@ namespace RH_CM.Controllers
             var currentUser = User.Identity?.Name ?? "Anon";
             var now = DateTime.Now;
 
-            // ===== OBTENER FkHeadcount del usuario actual =====
+            // ===== Get FkHeadcount for the current user =====
             var userRow = await _context.AspNetUsers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.UserName == currentUser);
 
             if (userRow == null || string.IsNullOrWhiteSpace(userRow.EmployeeNumber))
             {
-                TempData["ErrorMessage"] = "No se pudo resolver el empleado del usuario actual (EmployeeNumber).";
+                TempData["ErrorMessage"] = "Unable to resolve the current user’s employee (missing EmployeeNumber).";
                 return View("Diagnostic", model);
             }
 
-            // EmployeeNumber = PkHeadcount (según tu mapeo actual)
+            // EmployeeNumber = ControlNumber (per your current mapping)
             if (!int.TryParse(userRow.EmployeeNumber.Trim(), out var ControlNumber))
             {
-                TempData["ErrorMessage"] = "EmployeeNumber no es un número válido.";
+                TempData["ErrorMessage"] = "EmployeeNumber is not a valid number.";
                 return View("Diagnostic", model);
             }
 
-            // Validar existencia del Headcount
+            // Validate Headcount existence
             var hc = await _context.SyHeadcounts
                 .AsNoTracking()
                 .FirstOrDefaultAsync(h => h.ControlNumber == ControlNumber && h.Available == 1);
 
             if (hc == null)
             {
-                TempData["ErrorMessage"] = "El empleado (Headcount) asociado al usuario no existe o no está disponible.";
+                TempData["ErrorMessage"] = "The employee (Headcount) associated with the current user does not exist or is not available.";
                 return View("Diagnostic", model);
             }
 
-            // ===== Preparación de mapas de preguntas/opciones =====
+            // ===== Prepare question/option maps =====
             var questionIds = model.Questions.Select(q => q.FkQuestion).Distinct().ToList();
 
             var questionTextMap = await _context.CtQuestions
@@ -929,7 +929,7 @@ namespace RH_CM.Controllers
                 Questions = new List<DiagnosticQuestionResultViewModel>()
             };
 
-            // ===== Inserción con mismo CodeUserDiagnostic para el envío =====
+            // ===== Insert using the same CodeUserDiagnostic for this submission =====
             using var tx = await _context.Database.BeginTransactionAsync();
             try
             {
@@ -954,7 +954,7 @@ namespace RH_CM.Controllers
                         FkQuestions = q.FkQuestion,
                         FkOptionSelected = csvSelected,
                         FkOptionCorrected = csvCorrect,
-                        FkHeadcount = hc.PkHeadcount, // PK real de SyHeadcounts
+                        FkHeadcount = hc.PkHeadcount, // real PK from SyHeadcounts
                         Createuser = currentUser,
                         Createdate = now,
                         Available = 1
@@ -1003,7 +1003,7 @@ namespace RH_CM.Controllers
                 return View("Diagnostic", model);
             }
 
-            // ===== Score + validación de material =====
+            // ===== Score + material validation =====
             resultVm.TotalQuestions = resultVm.Questions.Count;
             resultVm.CorrectCount = resultVm.Questions.Count(x => x.IsCorrect);
             resultVm.Score = (int)Math.Round((double)resultVm.CorrectCount * 100.0 / Math.Max(1, resultVm.TotalQuestions), 0);
@@ -1103,8 +1103,7 @@ namespace RH_CM.Controllers
             return View("Exam", model);
         }
 
-
-        // POST: guarda en SY_USER_ANSWERS (preserva courseAssignmentId)
+        // POST: save into SY_USER_ANSWERS (preserves courseAssignmentId)
         [Authorize(Roles = "Empleado, RHGerente, Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -1129,20 +1128,20 @@ namespace RH_CM.Controllers
             var currentUser = User.Identity?.Name ?? "Anon";
             var now = DateTime.Now;
 
-            // ===== OBTENER FkHeadcount del usuario actual =====
+            // ===== Get FkHeadcount for the current user =====
             var userRow = await _context.AspNetUsers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.UserName == currentUser);
 
             if (userRow == null || string.IsNullOrWhiteSpace(userRow.EmployeeNumber))
             {
-                TempData["ErrorMessage"] = "No se pudo resolver el empleado del usuario actual (EmployeeNumber).";
+                TempData["ErrorMessage"] = "Unable to resolve the current user's employee (missing EmployeeNumber).";
                 return View("Exam", model);
             }
 
             if (!int.TryParse(userRow.EmployeeNumber.Trim(), out var controlNumber))
             {
-                TempData["ErrorMessage"] = "EmployeeNumber no es un número válido.";
+                TempData["ErrorMessage"] = "EmployeeNumber is not a valid number.";
                 return View("Exam", model);
             }
 
@@ -1152,11 +1151,11 @@ namespace RH_CM.Controllers
 
             if (hc == null)
             {
-                TempData["ErrorMessage"] = "El empleado (Headcount) asociado al usuario no existe o no está disponible.";
+                TempData["ErrorMessage"] = "The employee (Headcount) associated with the current user does not exist or is not available.";
                 return View("Exam", model);
             }
 
-            // ===== Mapas de preguntas/opciones =====
+            // ===== Question/option maps =====
             var questionIds = model.Questions.Select(q => q.FkQuestion).Distinct().ToList();
 
             var questionTextMap = await _context.CtQuestions
@@ -1200,6 +1199,7 @@ namespace RH_CM.Controllers
                     var correctIds = correctMap.TryGetValue(q.FkQuestion, out var t1) ? t1.Ids : new List<int>();
                     var csvCorrect = correctMap.TryGetValue(q.FkQuestion, out var t2) ? t2.Csv : string.Empty;
 
+                    // ===== 1) Insert into SY_USER_ANSWERS =====
                     _context.SyUserAnswers.Add(new SyUserAnswer
                     {
                         CodeUserAnswers = answersGroupCode,
@@ -1211,6 +1211,21 @@ namespace RH_CM.Controllers
                         Createuser = currentUser,
                         Createdate = now,
                         Available = 1
+                    });
+
+                    // ===== 2) Insert into SyCousemovement (at the same time) =====
+                    // Assumption: FkCourseCompleted <- number of correct options for the question
+                    _context.SyCoursemovements.Add(new SyCoursemovement
+                    {
+                        FkCourseCompleted = correctIds.Count, // <- if you want a different mapping, tell me
+                        FkCourseStatus = 1,
+                        FkDeliveryMode = 1,
+                        FkHeadcount = hc.PkHeadcount,
+                        CreateUser = currentUser,
+                        CreateDate = now,
+                        LastUpdateUser = currentUser,
+                        LastUpdateDate = now,
+                        Avaialble = 1
                     });
 
                     var optionResults = (q.Options ?? new List<SubmitOptionViewModel>())
@@ -1256,13 +1271,13 @@ namespace RH_CM.Controllers
                 return View("Exam", model);
             }
 
-            // Calcula score y mantén CourseAssignmentId por si la vista lo usa
+            // Compute score and keep CourseAssignmentId for the view
             resultVm.TotalQuestions = resultVm.Questions.Count;
             resultVm.CorrectCount = resultVm.Questions.Count(x => x.IsCorrect);
             resultVm.Score = (int)Math.Round((double)resultVm.CorrectCount * 100.0 / Math.Max(1, resultVm.TotalQuestions), 0);
             resultVm.HasMaterial = await ExistsMaterialAsync(resultVm.NextCourseId, resultVm.NextLevelId);
 
-            // 👇 si quieres usarlo en la vista ExamResult.cshtml:
+            // For ExamResult.cshtml
             ViewBag.CourseAssignmentId = model.CourseAssignmentId;
 
             return View("ExamResult", resultVm);

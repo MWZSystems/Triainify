@@ -6,14 +6,17 @@ namespace RH_CM.Models
     public partial class SyCoursemovement
     {
         public int PkMovementCourse { get; set; }
-        public int? FkCourseCompleted { get; set; }
-        public int? FkCourseStatus { get; set; }
-        public int? FkDeliveryMode { get; set; }
-        public int? FkHeadcount { get; set; }
-        public string? CreateUser { get; set; }
-        public DateTime? CreateDate { get; set; }
-        public string? LastUpdateUser { get; set; }
-        public DateTime? LastUpdateDate { get; set; }
-        public int? Avaialble { get; set; }
+        public int? CodeUserAnswers { get; set; }
+        public int FkCourseAssignment { get; set; }
+        public int FkCourseCompleted { get; set; }
+        public int FkCourseStatus { get; set; }
+        public int FkDeliveryMode { get; set; }
+        public int FkHeadcount { get; set; }
+        public int Score { get; set; }
+        public string CreateUser { get; set; } = null!;
+        public DateTime CreateDate { get; set; }
+        public string LastUpdateUser { get; set; } = null!;
+        public DateTime LastUpdateDate { get; set; }
+        public int Avaialble { get; set; }
     }
 }
