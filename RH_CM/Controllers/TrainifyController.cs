@@ -1295,20 +1295,44 @@ namespace RH_CM.Controllers
                     Avaialble = 1
                 });
 
-                // 4) SY_COURSECOMPLETED (una sola fila)
-                _context.SyCoursecompleteds.Add(new SyCoursecompleted
+                // 4) SY_COURSECOMPLETED (upsert por FkCourseAssignment + FkHeadcount)
+                var existingCompleted = await _context.SyCoursecompleteds
+                    .FirstOrDefaultAsync(c =>
+                        c.FkCourseAssignment == model.CourseAssignmentId.Value &&
+                        c.FkHeadcount == hc.PkHeadcount &&
+                        c.Avaialble == 1); // si usas soft-delete/available
+
+                if (existingCompleted != null)
                 {
-                    FkCourseAssignment = model.CourseAssignmentId.Value,
-                    FkCourseStatus = 1, // TODO
-                    FkDeliveryMode = 1, // TODO
-                    FkHeadcount = hc.PkHeadcount,
-                    Score = resultVm.Score,
-                    CreateUser = currentUser,
-                    CreateDate = now,
-                    LastUpdateUser = currentUser,
-                    LastUpdateDate = now,
-                    Avaialble = 1
-                });
+                    // UPDATE
+                    existingCompleted.FkCourseStatus = 1;   // TODO: ID real de "Completado"
+                    existingCompleted.FkDeliveryMode = 1;   // TODO: ID real de delivery mode
+                    existingCompleted.Score = resultVm.Score;
+                    existingCompleted.LastUpdateUser = currentUser;
+                    existingCompleted.LastUpdateDate = now;
+
+                    // Si quieres guardar mejor score histórico, podrías hacer:
+                    // existingCompleted.Score = Math.Max(existingCompleted.Score ?? 0, resultVm.Score);
+
+                    _context.SyCoursecompleteds.Update(existingCompleted);
+                }
+                else
+                {
+                    // INSERT
+                    _context.SyCoursecompleteds.Add(new SyCoursecompleted
+                    {
+                        FkCourseAssignment = model.CourseAssignmentId.Value,
+                        FkCourseStatus = 1,  // TODO
+                        FkDeliveryMode = 1,  // TODO
+                        FkHeadcount = hc.PkHeadcount,
+                        Score = resultVm.Score,
+                        CreateUser = currentUser,
+                        CreateDate = now,
+                        LastUpdateUser = currentUser,
+                        LastUpdateDate = now,
+                        Avaialble = 1
+                    });
+                }
 
                 await _context.SaveChangesAsync();
                 await tx.CommitAsync();
