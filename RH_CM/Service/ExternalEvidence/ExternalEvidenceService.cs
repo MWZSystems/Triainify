@@ -10,15 +10,12 @@ namespace RH_CM.Service.ExternalEvidence
     public class ExternalEvidenceService
     {
         //Variable que vive durante la ejecucion de la clase
-        private readonly db_abcd61_rhchdbContext _context;
         private readonly UnitOfWork _unitOfWork;
                                          
         //Instancia en el constructor
-        public ExternalEvidenceService(db_abcd61_rhchdbContext context,
-                                        UnitOfWork unitOfWork)
+        public ExternalEvidenceService(UnitOfWork unitOfWork)
         {
             //Inyeccion de dependencia
-            _context = context;
             _unitOfWork = unitOfWork;
         }
 
@@ -89,7 +86,12 @@ namespace RH_CM.Service.ExternalEvidence
 
             DTOs.Course = await _unitOfWork.QuerySingleColumnAsync<string>(query2);
 
-            DTOs.Level = new List<string> { "Introducción", "Básico", "Intermedio", "Avanzado" };
+
+
+            string query3 = @"SELECT DESCRIPCTION_LEVEL
+                                FROM [dbo].[CT_LEVELCOURSE] ";
+
+            DTOs.Level = await _unitOfWork.QuerySingleColumnAsync<string>(query3);
 
             return DTOs;
         }
@@ -376,16 +378,18 @@ namespace RH_CM.Service.ExternalEvidence
             int? PK_ExternalEvidence = DTOs.PK_ExternalEvidence;
             byte[] fileBinary = null;
             string fileNamePDF = null;
-            decimal? Score = DTOs.Score == 0 ? (decimal?)null : DTOs.Score;
+            //decimal? Score = DTOs.Score == 0 ? (decimal?)null : DTOs.Score;
+            string? userName = DTOs.UserName;
+
 
             fileBinary = new byte[1]; // un byte con valor 0
 
-            if (Score == null && file == null)
-            {
-                serviceAnswer.MessageType = "ErrorMessage";
-                serviceAnswer.Message = "No data was provided for update";
-                return serviceAnswer;
-            }
+            //if (Score == null && file == null)
+            //{
+            //    serviceAnswer.MessageType = "ErrorMessage";
+            //    serviceAnswer.Message = "No data was provided for update";
+            //    return serviceAnswer;
+            //}
 
             if (file != null)
             {
@@ -413,9 +417,10 @@ namespace RH_CM.Service.ExternalEvidence
             var parameters = new Dictionary<string, object>
                 {
                     { "@pPK_ExternalEvidence", PK_ExternalEvidence },
-                    { "@pScore", Score },
+                    //{ "@pScore", Score },
                     { "@pFile", fileBinary },
-                    { "@pFileName", fileNamePDF }
+                    { "@pFileName", fileNamePDF },
+                    { "@pUserName", userName }
                 };
 
 

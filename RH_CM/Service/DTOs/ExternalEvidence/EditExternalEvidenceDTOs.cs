@@ -12,5 +12,6 @@ namespace RH_CM.Service.DTOs
         public string? Level { get; set; }
         public byte[]? EvidenceFile { get; set; }
         public decimal Score { get; set; }
+        public string? UserName { get; set; }
     }
 }
