@@ -224,7 +224,7 @@ namespace RH_CM.Service.ExternalEvidence
                     { "@pEvidenceFileName", evidenceFileName }
                 };
 
-                string result = await _unitOfWork.ExecuteStoredProcedureScalarAsync("dbo.sp_PostCreateEvidenceMaterial", parameters);
+                string result = await _unitOfWork.ExecuteStoredProcedureScalarAsync("[dbo].[sp_ExternalEvidence_Create_Post]", parameters);
 
                 if (result != "Completed")
                 {
@@ -424,7 +424,7 @@ namespace RH_CM.Service.ExternalEvidence
                 };
 
 
-            string result = await _unitOfWork.ExecuteStoredProcedureScalarAsync("dbo.sp_PostEditExternalEvidence", parameters);
+            string result = await _unitOfWork.ExecuteStoredProcedureScalarAsync("[dbo].[sp_ExternalEvidence_Edit_Post]", parameters);
 
             if (result != "Completed")
             {
