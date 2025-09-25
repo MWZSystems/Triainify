@@ -6,7 +6,7 @@ namespace RH_CM.Models
     public partial class SyUserDiagnostic
     {
         public int PkUserDiagnostic { get; set; }
-        public int CodeUserDiagnostic { get; set; }
+        public int CodeExam { get; set; }
         public int FkTest { get; set; }
         public int FkQuestions { get; set; }
         public string FkOptionSelected { get; set; } = null!;

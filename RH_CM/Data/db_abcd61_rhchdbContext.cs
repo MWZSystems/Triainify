@@ -49,6 +49,8 @@ namespace RH_CM.Data
         public virtual DbSet<SyHeadcount> SyHeadcounts { get; set; } = null!;
         public virtual DbSet<SyUserAnswer> SyUserAnswers { get; set; } = null!;
         public virtual DbSet<SyUserDiagnostic> SyUserDiagnostics { get; set; } = null!;
+        public virtual DbSet<VwUserAnswersResume> VwUserAnswersResumes { get; set; } = null!;
+        public virtual DbSet<VwUserDiagnosticResume> VwUserDiagnosticResumes { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -801,11 +803,13 @@ namespace RH_CM.Data
 
                 entity.Property(e => e.PkMovementCourse).HasColumnName("PK_MovementCourse");
 
+                entity.Property(e => e.CodeExam).HasColumnName("CODE_EXAM");
+
                 entity.Property(e => e.CreateDate).HasColumnType("datetime");
 
                 entity.Property(e => e.CreateUser).HasMaxLength(50);
 
-                entity.Property(e => e.FkCourseCompleted).HasColumnName("FK_CourseCompleted");
+                entity.Property(e => e.FkCourseAssignment).HasColumnName("FK_CourseAssignment");
 
                 entity.Property(e => e.FkCourseStatus).HasColumnName("FK_CourseStatus");
 
@@ -1006,7 +1010,7 @@ namespace RH_CM.Data
 
                 entity.Property(e => e.Available).HasColumnName("AVAILABLE");
 
-                entity.Property(e => e.CodeUserAnswers).HasColumnName("CODE_USER_ANSWERS");
+                entity.Property(e => e.CodeExam).HasColumnName("CODE_EXAM");
 
                 entity.Property(e => e.Createdate)
                     .HasColumnType("datetime")
@@ -1041,7 +1045,9 @@ namespace RH_CM.Data
 
                 entity.Property(e => e.Available).HasColumnName("AVAILABLE");
 
-                entity.Property(e => e.CodeUserDiagnostic).HasColumnName("CODE_USER_DIAGNOSTIC");
+                entity.Property(e => e.CodeExam)
+                    .HasColumnName("CODE_EXAM")
+                    .HasDefaultValueSql("(NEXT VALUE FOR [dbo].[Seq_UserDiagnostic_CodeExam])");
 
                 entity.Property(e => e.Createdate)
                     .HasColumnType("datetime")
@@ -1066,7 +1072,29 @@ namespace RH_CM.Data
                 entity.Property(e => e.FkTest).HasColumnName("FK_TEST");
             });
 
-            modelBuilder.HasSequence<int>("Seq_UserDiagnosticCode");
+            modelBuilder.Entity<VwUserAnswersResume>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vw_UserAnswersResume");
+
+                entity.Property(e => e.CodeUserAnswers).HasColumnName("CODE_USER_ANSWERS");
+
+                entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<VwUserDiagnosticResume>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vw_UserDiagnosticResume");
+
+                entity.Property(e => e.CodeUserDiagnostic).HasColumnName("CODE_USER_DIAGNOSTIC");
+
+                entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
+            });
+
+            modelBuilder.HasSequence("Seq_UserDiagnostic_CodeExam").HasMin(1);
 
             OnModelCreatingPartial(modelBuilder);
         }

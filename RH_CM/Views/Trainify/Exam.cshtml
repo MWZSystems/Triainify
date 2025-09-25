@@ -1,5 +1,6 @@
 ﻿@model RH_CM.ViewModels.SubmitTestViewModel
 @{
+    ViewBag.HideNavbar = true;
     ViewData["Title"] = "Answer Exam";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -32,20 +33,19 @@
                 <h5 class="card-title mb-0">Exam</h5>
             </div>
             <div class="card-body">
-                <form asp-action="SubmitExam" asp-controller="Trainify" method="post">
+                <form id="examForm" asp-action="SubmitExam" asp-controller="Trainify" method="post" novalidate>
                     @Html.AntiForgeryToken()
 
                     <input type="hidden" asp-for="FkTest" />
                     <input type="hidden" asp-for="NextCourseId" />
                     <input type="hidden" asp-for="NextLevelId" />
-                    <!-- 🔴 MUY IMPORTANTE: mantener courseAssignmentId -->
                     <input type="hidden" asp-for="CourseAssignmentId" />
 
                     @for (int i = 0; i < Model.Questions.Count; i++)
                     {
                         var q = Model.Questions[i];
                         var groupName = $"q{i}_single";
-                        <div class="card mb-3 shadow-sm">
+                        <div class="card mb-3 shadow-sm question-card" data-q="@i">
                             <div class="card-body">
                                 <h5 class="mb-3">
                                     Q@(i + 1). @q.QuestionText
@@ -79,18 +79,30 @@
 
                                             @if (q.IsMultiple)
                                             {
-                                                <input class="form-check-input me-2 opt-checkbox" type="checkbox"
-                                                       data-q="@i" data-j="@j" id="chk_q@(i)_o@(j)" />
+                                                <input class="form-check-input me-2 opt-checkbox"
+                                                       type="checkbox"
+                                                       data-q="@i"
+                                                       data-j="@j"
+                                                       id="chk_q@(i)_o@(j)" />
                                                 <label class="form-check-label w-100" for="chk_q@(i)_o@(j)">@o.OptionText</label>
                                             }
                                             else
                                             {
-                                                <input class="form-check-input me-2 opt-radio" type="radio" name="@groupName"
-                                                       data-q="@i" data-j="@j" id="rad_q@(i)_o@(j)" />
+                                                <input class="form-check-input me-2 opt-radio"
+                                                       type="radio"
+                                                       name="@groupName"
+                                                       data-q="@i"
+                                                       data-j="@j"
+                                                       id="rad_q@(i)_o@(j)" />
                                                 <label class="form-check-label w-100" for="rad_q@(i)_o@(j)">@o.OptionText</label>
                                             }
                                         </div>
                                     }
+                                </div>
+
+                                <!-- Feedback por pregunta -->
+                                <div class="invalid-feedback d-block mt-2" style="display:none;">
+                                    Please select at least one option for this question.
                                 </div>
                             </div>
                         </div>
@@ -100,7 +112,7 @@
                         <a asp-action="LearningTrainify" asp-controller="Trainify" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> Cancel
                         </a>
-                        <button type="submit" class="btn btn-primary">
+                        <button id="btnSubmit" type="submit" class="btn btn-primary">
                             <i class="fas fa-paper-plane"></i> Submit
                         </button>
                     </div>
@@ -113,22 +125,95 @@
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
     <script>
+        // Mantiene sincronía de hidden IsSelected (tu lógica existente)
         document.addEventListener('change', function (e) {
-          if (e.target && e.target.classList.contains('opt-checkbox')) {
-            const q = e.target.getAttribute('data-q');
-            const j = e.target.getAttribute('data-j');
-            const hidden = document.getElementById(`isSel_${q}_${j}`);
-            if (hidden) hidden.value = e.target.checked ? "true" : "false";
-          }
+            if (e.target && e.target.classList.contains('opt-checkbox')) {
+                const q = e.target.getAttribute('data-q');
+                const j = e.target.getAttribute('data-j');
+                const hidden = document.getElementById(`isSel_${q}_${j}`);
+                if (hidden) hidden.value = e.target.checked ? "true" : "false";
+            }
         });
         document.addEventListener('change', function (e) {
-          if (e.target && e.target.classList.contains('opt-radio')) {
-            const q = e.target.getAttribute('data-q');
-            const j = e.target.getAttribute('data-j');
-            document.querySelectorAll(`input.is-sel[data-q="${q}"]`).forEach(h => h.value = "false");
-            const hidden = document.getElementById(`isSel_${q}_${j}`);
-            if (hidden) hidden.value = "true";
-          }
+            if (e.target && e.target.classList.contains('opt-radio')) {
+                const q = e.target.getAttribute('data-q');
+                const j = e.target.getAttribute('data-j');
+                document.querySelectorAll(`input.is-sel[data-q="${q}"]`).forEach(h => h.value = "false");
+                const hidden = document.getElementById(`isSel_${q}_${j}`);
+                if (hidden) hidden.value = "true";
+            }
         });
+
+        // ===== Validación: cada pregunta debe tener al menos una selección =====
+        (function () {
+            const form = document.getElementById('examForm');
+            const submitBtn = document.getElementById('btnSubmit');
+
+            function isQuestionAnswered(qIndex) {
+                // radios del grupo
+                const radioChecked = document.querySelector(`input.opt-radio[name="q${qIndex}_single"]:checked`);
+                if (radioChecked) return true;
+                // checkboxes con data-q
+                const anyCheckboxChecked = document.querySelector(`input.opt-checkbox[data-q="${qIndex}"]:checked`);
+                if (anyCheckboxChecked) return true;
+                return false;
+            }
+
+            function clearQuestionError(card) {
+                card.classList.remove('border-danger');
+                const fb = card.querySelector('.invalid-feedback');
+                if (fb) fb.style.display = 'none';
+            }
+
+            function setQuestionError(card) {
+                card.classList.add('border-danger');
+                const fb = card.querySelector('.invalid-feedback');
+                if (fb) fb.style.display = 'block';
+            }
+
+            // Al cambiar una opción, limpiar el error de esa pregunta si ya quedó respondida
+            document.addEventListener('change', function (e) {
+                const card = e.target.closest('.question-card');
+                if (!card) return;
+                const qIndex = card.getAttribute('data-q');
+                if (isQuestionAnswered(qIndex)) {
+                    clearQuestionError(card);
+                }
+            });
+
+            form.addEventListener('submit', function (e) {
+                // Recorre todas las preguntas
+                const cards = Array.from(document.querySelectorAll('.question-card'));
+                let firstInvalid = null;
+
+                cards.forEach(card => {
+                    const qIndex = card.getAttribute('data-q');
+                    if (!isQuestionAnswered(qIndex)) {
+                        setQuestionError(card);
+                        if (!firstInvalid) firstInvalid = card;
+                    } else {
+                        clearQuestionError(card);
+                    }
+                });
+
+                if (firstInvalid) {
+                    e.preventDefault();
+                    // Scroll y foco amable
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    const firstInput = firstInvalid.querySelector('input.opt-radio, input.opt-checkbox');
+                    if (firstInput) setTimeout(() => firstInput.focus(), 250);
+
+                    // Opcional: toast/alert general
+                    window.notyf?.open?.({
+                        type: 'error',
+                        message: 'Please answer every question before submitting.',
+                        ripple: true,
+                        dismissible: true,
+                        position: { x: 'center', y: 'top' },
+                        duration: 4000
+                    });
+                }
+            });
+        })();
     </script>
 }
