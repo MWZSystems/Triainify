@@ -143,14 +143,14 @@
                         var roles = await UserManager.GetRolesAsync(user);
                         <a class="dropdown-item">Role: @roles.FirstOrDefault()</a>
                     }
-                    
-                    @if (User.Identity.IsAuthenticated && (User.IsInRole("Administrador"))) //|| User.IsInRole("ToolCribAdmin")
+                    @* Users MEnu *@
+                    @if (User.Identity.IsAuthenticated && (User.IsInRole("Administrador"))) 
                     {
                         <a class="dropdown-item" asp-controller="Usuarios" asp-action="Index">Users</a>
                         <a class="dropdown-item" asp-controller="Cuentas" asp-action="RegistroAdministrador">Register New User</a>
                         <a class="dropdown-item" asp-controller="Roles" asp-action="Index">Roles</a>
                         <a class="dropdown-item" asp-controller="Permissions" asp-action="Index">Permissions</a>
-                        <a class="dropdown-item" asp-controller="Cuentas" asp-action="ResetPassword">Reset password</a>
+                        <a class="dropdown-item" asp-controller="Cuentas" asp-action="ResetPassword">Reset Password</a>
                     }
 
                     <form id="logoutForm" method="post" class="form-inline" asp-controller="Cuentas" asp-action="SalirAplicacion">

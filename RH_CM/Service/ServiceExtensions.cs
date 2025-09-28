@@ -12,7 +12,8 @@ public static class ServiceExtensions
         services.AddScoped<UnitOfWork>();
         services.AddTransient<UserTestEvidenceService>();
         services.AddTransient<PermissionsService>();
-        services.AddScoped<AcessGroupsService>();
+        services.AddSingleton<AcessGroupsService>();
+
         // etc...
     }
 }
