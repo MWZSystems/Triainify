@@ -43,6 +43,9 @@
                         <div class="p-3 fw-bold rounded fs-3">
                             Level: @Model.Level
                         </div>
+                        <div class="p-3 fw-bold rounded fs-3">
+                            Score: @Model.Score
+                        </div>
                     </div>
                 @* <h5 class="card-title mb-0">Matrix - @first?.UserName</h5> *@
             </div>
@@ -60,7 +63,7 @@
                     <!-- Hidden PK -->
                     <input type="hidden" asp-for="PK_ExternalEvidence" />
 
-                    <!-- SCORE -->
+@*                     <!-- SCORE -->
                     <div class="mb-3">
                         <label class="form-label fw-bold">Score <span class="text-danger">*</span></label>
                         <input type="number"
@@ -72,7 +75,7 @@
                                placeholder="0.00 - 100.00"
                                 />
                         <small class="form-text text-muted">Allowed range: 0.00 – 100.00 | Current Score: @Model.Score</small>
-                    </div>
+                    </div> *@
 
                     <!-- Upload only one File -->
                     <div class="mb-3 col-md-12">

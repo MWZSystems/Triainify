@@ -1,0 +1,81 @@
+﻿@model List<RH_CM.Service.DTOs.Permissions.PermissionsIndexDTOs>
+
+@{
+    ViewData["Title"] = "Select Permissions Group";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">SELECT GROUP</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Choose Group</h5>
+                <h6 class="card-subtitle text-muted">Select a group to review the roles.</h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="GroupDetail" method="get">
+                    <div class="mb-3 col-md-8">
+                        <label for="SelectedGroup" class="form-label">
+                            Group <span class="text-danger">*</span>
+                        </label>
+                        <select id="SelectedGroup" name="SelectedGroup" class="form-control select2"
+                                data-placeholder="-- Select Group --">
+                            <option></option>
+                            @foreach (var item in Model)
+                            {
+                                <option value="@item.Group">@item.Group</option>
+                            }
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Continue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        $(document).ready(function () {
+            // Inicializa Select2
+            $(".select2").select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                width: '100%'
+            });
+
+            // Mostrar mensajes de éxito
+            if ('@TempData["SuccessMessage"]' !== '') {
+                window.notyf.open({
+                    type: 'success',
+                    message: '@TempData["SuccessMessage"]',
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+
+            // Mostrar mensajes de error
+            if ('@TempData["ErrorMessage"]' !== '') {
+                window.notyf.open({
+                    type: 'error',
+                    message: '@TempData["ErrorMessage"]',
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+        });
+    </script>
+}

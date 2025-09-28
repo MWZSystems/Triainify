@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using RH_CM.Service.DTOs;
 
 namespace RH_CM.Controllers
@@ -71,8 +70,6 @@ namespace RH_CM.Controllers
             return RedirectToAction(nameof(IndexExternalEvidence));
         }
 
-
-
         [HttpGet]
         [Authorize(Roles = "Administrador, RHGerente")]
         public async Task<IActionResult> EditEvidenceMaterial(int? id)
@@ -81,18 +78,17 @@ namespace RH_CM.Controllers
             return View(getResult);
         }
 
-
-
         [HttpPost]
         [Authorize(Roles = "Administrador, RHGerente")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditEvidenceMaterial(EditExternalEvidenceDTOs DTOs, IFormFile? uploadedFile)
         {
+            DTOs.UserName = User.Identity?.Name ?? "Unknown";
+
             ServiceAnswer serviceAnswer = await _externalEvidenceService.PostUpdateRecordAsync(DTOs, uploadedFile);
             TempData[serviceAnswer.MessageType] = serviceAnswer.Message;
             return RedirectToAction(nameof(IndexExternalEvidence));
         }
-
 
         [HttpPost]
         [Authorize(Roles = "Administrador")]
@@ -103,8 +99,5 @@ namespace RH_CM.Controllers
             TempData[serviceAnswer.MessageType] = serviceAnswer.Message;
             return RedirectToAction(nameof(IndexExternalEvidence));
         }
-
-
-
     }
 }

@@ -1,0 +1,170 @@
+﻿@model RH_CM.Service.DTOs.UserTestEvidence.FullExamDTOs
+
+@{
+    ViewData["Title"] = "Exam Result";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    bool passed = Model.Score >= 80;
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-2 text-center">Exam Result: @Model.TestName</h1>
+
+        <div class="text-center mb-3 fs-4">
+            @if (passed)
+            {
+                <div class="d-inline-block mb-2">
+                    <div class="alert alert-success alert-outline-coloured mb-0" role="alert">
+                        <div class="alert-icon">
+                            <i class="far fa-fw fa-bell"></i>
+                        </div>
+                        <div class="alert-message">
+                            <div class="fw-bold mb-1">
+                                Passed! <span class="text-muted">The user has a score (≥ 80).</span>
+                            </div>
+
+                            <div class="d-flex flex-wrap justify-content-center gap-2">
+                                <span class="badge bg-success">
+                                    <i class="fa fa-check-circle me-1"></i>
+                                    Correct: <strong>@Model.CorrectCount / @Model.TotalQuestions</strong>
+                                </span>
+                                <span class="badge bg-primary">
+                                    <i class="fa fa-percent me-1"></i>
+                                    Score: <strong>@Model.Score</strong>/100
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="d-inline-block mb-2">
+                    <div class="alert alert-danger alert-outline-coloured mb-0" role="alert">
+                        <div class="alert-icon">
+                            <i class="far fa-fw fa-bell"></i>
+                        </div>
+                        <div class="alert-message">
+                            <div class="fw-bold mb-1">
+                                Not passed. <span class="text-muted">Minimum required score is 80.</span>
+                            </div>
+
+                            <div class="d-flex flex-wrap justify-content-center gap-2">
+                                <span class="badge bg-danger text-dark">
+                                    <i class="fa fa-check-circle me-1"></i>
+                                    Correct: <strong>@Model.CorrectCount / @Model.TotalQuestions</strong>
+                                </span>
+                                <span class="badge bg-info text-dark">
+                                    <i class="fa fa-percent me-1"></i>
+                                    Score: <strong>@Model.Score</strong>/100
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        @for (int i = 0; i < Model.Questions.Count; i++)
+        {
+            var q = Model.Questions[i];
+
+            <div class="card mb-3 border-0 shadow-sm">
+                <div class="card-body p-0">
+                    <div class="alert @(q.IsCorrect ? "alert-success" : "alert-danger") mb-0 rounded-0 rounded-top">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <strong>@q.QuestionText</strong>
+                            @if (q.IsCorrect)
+                            {
+                                <span class="badge rounded-pill bg-success">Correct</span>
+                            }
+                            else
+                            {
+                                <span class="badge rounded-pill bg-danger">Incorrect</span>
+                            }
+                        </div>
+                    </div>
+
+                    <ul class="list-group list-group-flush">
+                        @foreach (var opt in q.Options)
+                        {
+                            <li class="list-group-item">
+                                <div class="d-flex align-items-start gap-2">
+                                    @if (opt.IsSelected && opt.IsCorrect)
+                                    {
+                                        <i class="fas fa-check text-success mt-1"></i>
+                                        //Marcala bien
+                                    }
+                                    else if (opt.IsSelected && !opt.IsCorrect)
+                                    {
+                                        <i class="fas fa-times text-danger mt-1"></i>
+                                        // Ponle tacha
+                                    }
+                                    else if (!opt.IsSelected && opt.IsCorrect)  //
+                                    {
+                                        <i class="fas fa-check text-primary mt-1"></i>
+                                        //
+                                    }
+                                    else
+                                    {
+                                        <i class="far fa-circle text-muted mt-1"></i>
+                                    }
+
+                                    <div class="flex-grow-1">
+                                        <span>@opt.OptionText</span>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+
+                    <div class="px-3 py-2 small text-muted border-top">
+                        <span class="me-3"><strong>Selected IDs:</strong> @string.Join(", ", q.SelectedOptionIds ?? new List<int>())</span>
+                        <span><strong>Correct IDs:</strong> @string.Join(", ", q.CorrectOptionIds ?? new List<int>())</span>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <button class="btn btn-danger fs-3"
+                style="position: fixed; bottom: 50px; right: 20px; z-index: 1000;"
+                onclick="window.close();">
+            <i class="fas fa-arrow-left me-1"></i> Go Back
+        </button>
+
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        (function () {
+
+            if ('@TempData["SuccessMessage"]' !== '') {
+                window.notyf?.open?.({
+                    type: 'success',
+                    message: '@TempData["SuccessMessage"]',
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+            if ('@TempData["ErrorMessage"]' !== '') {
+                window.notyf?.open?.({
+                    type: 'error',
+                    message: '@TempData["ErrorMessage"]',
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+        })();
+    </script>
+}
+
