@@ -45,10 +45,10 @@ namespace RH_CM.Controllers
             }
 
             //Para la creación de los roles
-            if (!await _roleManager.RoleExistsAsync("Registrado"))
+            if (!await _roleManager.RoleExistsAsync("Empleado"))
             {
                 //Creación de rol usuario Registrado
-                await _roleManager.CreateAsync(new IdentityRole("Registrado"));
+                await _roleManager.CreateAsync(new IdentityRole("Empleado"));
             }
 
             RegistroViewModel registroVM = new RegistroViewModel();
@@ -81,7 +81,7 @@ namespace RH_CM.Controllers
                 {
                     //await _emailSender.SendEmailAsync(usuario.Email, "Registro exitoso", "Tu registro ha sido realizado correctamente");
                     // Asignar el rol al usuario
-                    await _userManager.AddToRoleAsync(usuario, "Registrado");
+                    await _userManager.AddToRoleAsync(usuario, "Empleado");
 
                     // Auto login
                     await _signInManager.SignInAsync(usuario, isPersistent: false);
@@ -128,12 +128,12 @@ namespace RH_CM.Controllers
                 {
                     //await _emailSender.SendEmailAsync(usuario.Email, "Registro exitoso", "Tu registro ha sido realizado correctamente");
                     // Asignar el rol al usuario
-                    await _userManager.AddToRoleAsync(usuario, "Registrado");
+                    await _userManager.AddToRoleAsync(usuario, "Empleado");
 
                     // Auto login
                     await _signInManager.SignInAsync(usuario, isPersistent: false);
 
-                    TempData["SuccessMessage"] = "Usuario registrado correctamente";
+                    TempData["SuccessMessage"] = "Usuario Empleado correctamente";
                     return RedirectToAction("Index", "Home");
                 }
 

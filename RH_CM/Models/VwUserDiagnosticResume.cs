@@ -5,8 +5,8 @@ namespace RH_CM.Models
 {
     public partial class VwUserDiagnosticResume
     {
-        public int CodeUserDiagnostic { get; set; }
+        public int CodeExam { get; set; }
         public double? Score { get; set; }
-        public DateTime? FechaCreacion { get; set; }
+        public DateTime? ExamDate { get; set; }
     }
 }

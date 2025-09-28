@@ -1078,9 +1078,9 @@ namespace RH_CM.Data
 
                 entity.ToView("vw_UserAnswersResume");
 
-                entity.Property(e => e.CodeUserAnswers).HasColumnName("CODE_USER_ANSWERS");
+                entity.Property(e => e.CodeExam).HasColumnName("CODE_EXAM");
 
-                entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
+                entity.Property(e => e.ExamDate).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<VwUserDiagnosticResume>(entity =>
@@ -1089,9 +1089,9 @@ namespace RH_CM.Data
 
                 entity.ToView("vw_UserDiagnosticResume");
 
-                entity.Property(e => e.CodeUserDiagnostic).HasColumnName("CODE_USER_DIAGNOSTIC");
+                entity.Property(e => e.CodeExam).HasColumnName("CODE_EXAM");
 
-                entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
+                entity.Property(e => e.ExamDate).HasColumnType("datetime");
             });
 
             modelBuilder.HasSequence("Seq_UserDiagnostic_CodeExam").HasMin(1);

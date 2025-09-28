@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using Microsoft.EntityFrameworkCore;
 using RH_CM.Data;
 using RH_CM.Service.DTOs;
 using RH_CM.Service.SQLSMS;
@@ -11,12 +12,14 @@ namespace RH_CM.Service.ExternalEvidence
     {
         //Variable que vive durante la ejecucion de la clase
         private readonly UnitOfWork _unitOfWork;
+        private readonly db_abcd61_rhchdbContext _context;
                                          
         //Instancia en el constructor
-        public ExternalEvidenceService(UnitOfWork unitOfWork)
+        public ExternalEvidenceService(UnitOfWork unitOfWork, db_abcd61_rhchdbContext context)
         {
             //Inyeccion de dependencia
             _unitOfWork = unitOfWork;
+            _context = context;
         }
 
         /// <summary>
@@ -28,19 +31,17 @@ namespace RH_CM.Service.ExternalEvidence
             //Gets data for preliminary Crud Table
 
             string sql = @"
-                              SELECT EE.PK_ExternalEvidence AS ID
+                                SELECT EE.PK_ExternalEvidence AS ID
                                 ,HC.NAMES + ' ' + HC.LAST_NAME + ' ' + HC.SECOND_NAME AS FullName
                                 ,C.CourseName
                                 ,LC.DESCRIPCTION_LEVEL AS LevelName
                                 ,EE.Score
                                 ,EE.CreateDate
                                 ,CASE WHEN EE.Available = 1 THEN 'Enabled' ELSE 'Disabled' END AS [Status]
-
-                          FROM [dbo].[SY_EXTERNALEVIDENCE] EE
+                            FROM [dbo].[SY_EXTERNALEVIDENCE] EE
                             LEFT JOIN [dbo].[SY_COURSEMOVEMENTS] CM ON EE.FK_MovementCourse = CM.PK_MovementCourse
-                            LEFT JOIN [dbo].[SY_COURSECOMPLETED] CC ON CC.PK_CourseCompleted = CM.FK_CourseCompleted
-                            LEFT JOIN dbo.SY_HEADCOUNT HC ON HC.PK_HEADCOUNT = CC.FK_Headcount
-                            LEFT JOIN dbo.CT_COURSEASSIGNMENTS CA ON CA.PK_CourseAssignment = CC.FK_CourseAssignment
+                            LEFT JOIN dbo.SY_HEADCOUNT HC ON HC.PK_HEADCOUNT = CM.FK_Headcount
+                            LEFT JOIN dbo.CT_COURSEASSIGNMENTS CA ON CA.PK_CourseAssignment = CM.FK_CourseAssignment
                             LEFT JOIN dbo.CT_COURSE C ON C.PK_Course = CA.FK_Course
                             LEFT JOIN dbo.CT_LEVELCOURSE LC ON LC.PK_LEVELCOURSE = CA.FK_RequiredCourseLevels";
 
@@ -343,24 +344,23 @@ namespace RH_CM.Service.ExternalEvidence
             List<EditExternalEvidenceDTOs> result = new();
 
 
-            string query = $@"  SELECT EV.PK_ExternalEvidence
-		                        ,HC.CONTROL_NUMBER As ControlNumber
-		                        ,HC.NAMES + ' ' + HC.LAST_NAME + ' ' + HC.SECOND_NAME AS FullName
-		                        ,PO.NAME_POSITION As NamePosition
-		                        ,CO.CourseName
-		                        ,LC.DESCRIPCTION_LEVEL AS [Level]
-		                        ,EV.EvidenceFile
-		                        ,EV.Score
+            string query = $@"   SELECT EV.PK_ExternalEvidence
+		                                ,HC.CONTROL_NUMBER As ControlNumber
+		                                ,HC.NAMES + ' ' + HC.LAST_NAME + ' ' + HC.SECOND_NAME AS FullName
+		                                ,PO.NAME_POSITION As NamePosition
+		                                ,CO.CourseName
+		                                ,LC.DESCRIPCTION_LEVEL AS [Level]
+		                                ,EV.EvidenceFile
+		                                ,EV.Score
 
-                          FROM [dbo].[SY_EXTERNALEVIDENCE] EV
-		                        LEFT JOIN dbo.SY_COURSEMOVEMENTS CM ON EV.FK_MovementCourse = CM.PK_MovementCourse
-		                        LEFT JOIN dbo.SY_COURSECOMPLETED CC ON CC.PK_CourseCompleted = CM.FK_CourseCompleted
-		                        LEFT JOIN dbo.SY_HEADCOUNT HC ON CM.FK_Headcount = HC.PK_HEADCOUNT
-		                        LEFT JOIN dbo.CT_POSITION PO ON PO.PK_POSITION = HC.FK_POSITION
-		                        LEFT JOIN dbo.CT_COURSEASSIGNMENTS CA ON Ca.PK_CourseAssignment = CC.FK_CourseAssignment
-		                        LEFT JOIN dbo.CT_COURSE CO ON CO.PK_Course = CA.FK_Course
-		                        LEFT JOIN [dbo].[CT_LEVELCOURSE] LC ON LC.PK_LEVELCOURSE = CA.FK_RequiredCourseLevels
-	                        WHERE EV.PK_ExternalEvidence = {id}";
+                                    FROM [dbo].[SY_EXTERNALEVIDENCE] EV
+		                                LEFT JOIN dbo.SY_COURSEMOVEMENTS CM ON EV.FK_MovementCourse = CM.PK_MovementCourse
+		                                LEFT JOIN dbo.SY_HEADCOUNT HC ON CM.FK_Headcount = HC.PK_HEADCOUNT
+		                                LEFT JOIN dbo.CT_POSITION PO ON PO.PK_POSITION = HC.FK_POSITION
+		                                LEFT JOIN dbo.CT_COURSEASSIGNMENTS CA ON Ca.PK_CourseAssignment = CM.FK_CourseAssignment
+		                                LEFT JOIN dbo.CT_COURSE CO ON CO.PK_Course = CA.FK_Course
+		                                LEFT JOIN [dbo].[CT_LEVELCOURSE] LC ON LC.PK_LEVELCOURSE = CA.FK_RequiredCourseLevels
+	                                WHERE EV.PK_ExternalEvidence = {id}";
 
             result = await _unitOfWork.QueryListAsync<EditExternalEvidenceDTOs>(query);
 
@@ -444,7 +444,7 @@ namespace RH_CM.Service.ExternalEvidence
         {
             ServiceAnswer serviceAnswer = new();
 
-            string Query = @$"EXECUTE [dbo].[sp_DeleteEvidenceMaterial] {id}";
+            string Query = @$"EXECUTE [dbo].[sp_ExternalEvidence_Delete_Post] {id}";
 
             string answer = await _unitOfWork.QuerySingleScalarAsync(Query);
 

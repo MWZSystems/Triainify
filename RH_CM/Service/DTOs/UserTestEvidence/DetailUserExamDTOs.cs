@@ -9,6 +9,7 @@
         public string? FinalExamScore { get; set; }
         public string? CompletedDate { get; set; }
         public string? ExamsID { get; set; }
+        public int? PkCourseMovement { get; set; }
         
     }
 }

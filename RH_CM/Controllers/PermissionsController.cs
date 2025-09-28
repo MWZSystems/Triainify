@@ -1,0 +1,60 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using RH_CM.Service.DTOs;
+using RH_CM.Service.DTOs.Permissions;
+using RH_CM.Service.Permissions;
+using System.Threading.Tasks;
+
+namespace RH_CM.Controllers
+{
+    public class PermissionsController : Controller
+    {
+        private readonly PermissionsService _permissionsService;
+
+        public PermissionsController(PermissionsService permissionsService)
+        {
+            _permissionsService = permissionsService;
+        }
+
+
+        public async Task<ActionResult> Index()
+        {
+            List<PermissionsIndexDTOs> groups = await _permissionsService.GetIndexAsync();
+            return View(groups);
+        }
+
+
+        public async Task<ActionResult> GroupDetail(string SelectedGroup)
+        {
+            PermissionsDetailDTOs detailDTOs = await _permissionsService.GetGroupDetailAsync(SelectedGroup);
+
+            return View(detailDTOs);
+        }
+
+
+        //AddRole
+        [HttpPost]
+        public async Task<ActionResult> AddRoleToGroup(int GroupId, string RoleId)
+        {
+            ServiceAnswerPermissionsAdd answer = await _permissionsService.PostAddRoleToGroup(GroupId, RoleId);
+
+            TempData[answer.MessageType] = answer.Message;
+
+            return RedirectToAction(nameof(GroupDetail), new { SelectedGroup = answer.GroupKey });
+        }
+
+
+
+        public async Task<ActionResult> DeleteRoleFromGroup(int GroupId, string RoleId)
+        {
+
+            ServiceAnswerPermissionsAdd answer = await _permissionsService.PostDeleteRoleFromGroup(GroupId, RoleId);
+
+            TempData[answer.MessageType] = answer.Message;
+
+            return RedirectToAction(nameof(GroupDetail), new { SelectedGroup = answer.GroupKey });
+        }
+
+
+    }
+}
