@@ -226,13 +226,6 @@ namespace RH_CM.Controllers
         }
 
         // GET: ReportsController
-        public ActionResult MatrizByDeparmentGeneral_RH()
-        {
-            return View();
-        }
-
-
-        // GET: ReportsController
         public async Task <ActionResult> MissingMaterialExamReport()
         {
             List<MaterialExamDTOs> result = await _unitOfWork.ExecuteStoredProcedureToListAsync<MaterialExamDTOs>("sp_MissingMaterialExam");
@@ -283,6 +276,12 @@ namespace RH_CM.Controllers
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 $"CourseWOMaterialExam_{DateTime.Now:yyyyMMdd}.xlsx"
             );
+        }
+
+        // GET: ReportsController
+        public ActionResult MatrizByDeparmentGeneral_RH()
+        {
+            return View();
         }
 
     }
