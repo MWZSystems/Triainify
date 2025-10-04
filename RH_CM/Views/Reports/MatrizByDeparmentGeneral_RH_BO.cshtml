@@ -1,0 +1,617 @@
+﻿@{
+	ViewData["Title"] = "HP REPORT";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+
+	// BodyClass para diferenciar esta pantalla (cian)
+	// ViewData["BodyClass"] = "page-headcounts";
+}
+
+<div class="row">
+	<div class="col">
+		<h1 class="h3 mb-3 text-center title-accent">
+			<i class="align-middle fas fa-chart-pie"></i> @ViewData["Title"]
+		</h1>
+	</div>
+	@* <div class="col-auto">
+		<!-- Botón AZUL (sin cambios) -->
+		<a class="btn btn-facebook" asp-action="CreateHeadCount">
+			<i class="align-middle fas fa-plus-square"></i> CREATE NEW ONBOARDING
+		</a>
+	</div> *@
+</div>
+
+<div class="row mb-2 mb-xl-3">
+
+	<div class="col-auto ms-auto text-end mt-n1">
+
+		<div class="dropdown me-2 d-inline-block">
+			<a class="btn btn-light bg-white shadow-sm dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-display="static">
+				<i class="align-middle mt-n1" data-feather="calendar"></i> Filter
+			</a>
+
+			<div class="dropdown-menu dropdown-menu-end">
+				<h6 class="dropdown-header">Select...</h6>
+				<a class="dropdown-item" href="#">AMBIENTAL</a>
+				<a class="dropdown-item" href="#">CALIDAD</a>
+				<a class="dropdown-item" href="#">SEGURIDAD</a>
+				<a class="dropdown-item" href="#">OTROS</a>
+			</div>
+		</div>
+
+		<button class="btn btn-primary shadow-sm">
+			<i class="align-middle" data-feather="refresh-cw">&nbsp;</i>
+		</button>
+	</div>
+</div>
+
+<div class="row">
+	
+	<div class="col-12 col-lg-5 col-xl-4 d-flex">
+		<div class="card flex-fill w-100">
+			<div class="card-header">
+				<h5 class="card-title mb-0">General Course status</h5>
+			</div>
+			<div class="card-body d-flex">
+				<div class="align-self-center w-100">
+					<div class="py-3">
+						<div class="chart chart-xs">
+							<canvas id="chartjs-dashboard-pie"></canvas>
+						</div>
+					</div>
+
+					<table class="table mb-0">
+						<thead>
+							<tr>
+								<th>Status</th>
+								<th class="text-end">Courses</th>
+								<th class="text-end">Completion</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><i class="fas fa-square-full" style="color:#198754"></i> Completed</td>
+								<td class="text-end">78</td>
+								<td class="text-end text-success">+90%</td>
+							</tr>
+							<tr>
+								<td><i class="fas fa-square-full" style="color:#dc3545"></i> Pending</td>
+								<td class="text-end">31</td>
+								<td class="text-end text-danger">-10%</td>
+							</tr>
+						</tbody>
+					</table>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-12 col-lg-4 d-flex">
+		<div class="card flex-fill w-100">
+			<div class="card-header">
+				<h5 class="card-title mb-0">Course Completed by Department</h5>
+			</div>
+			<table class="table table-striped my-0">
+				<thead>
+					<tr>
+						<th>Department</th>
+						<th class="text-end">Completed</th>
+						<th class="d-none d-xl-table-cell w-75">% Completed</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Aduanas y Compras</td>
+						<td class="text-end">5</td>
+						<td class="d-none d-xl-table-cell">
+							<div class="progress">
+								<div class="progress-bar bg-success" role="progressbar" style="width: 56%;" aria-valuenow="56" aria-valuemin="0" aria-valuemax="100">56%</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>Calidad</td>
+						<td class="text-end">7</td>
+						<td class="d-none d-xl-table-cell">
+							<div class="progress">
+								<div class="progress-bar bg-success" role="progressbar" style="width: 78%;" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100">78%</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>Finanzas</td>
+						<td class="text-end">6</td>
+						<td class="d-none d-xl-table-cell">
+							<div class="progress">
+								<div class="progress-bar bg-success" role="progressbar" style="width: 67%;" aria-valuenow="67" aria-valuemin="0" aria-valuemax="100">67%</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>Ingeniería</td>
+						<td class="text-end">8</td>
+						<td class="d-none d-xl-table-cell">
+							<div class="progress">
+								<div class="progress-bar bg-success" role="progressbar" style="width: 89%;" aria-valuenow="89" aria-valuemin="0" aria-valuemax="100">89%</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>Mantenimiento</td>
+						<td class="text-end">4</td>
+						<td class="d-none d-xl-table-cell">
+							<div class="progress">
+								<div class="progress-bar bg-success" role="progressbar" style="width: 44%;" aria-valuenow="44" aria-valuemin="0" aria-valuemax="100">44%</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>Manufactura</td>
+						<td class="text-end">9</td>
+						<td class="d-none d-xl-table-cell">
+							<div class="progress">
+								<div class="progress-bar bg-success" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">100%</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>Materiales</td>
+						<td class="text-end">6</td>
+						<td class="d-none d-xl-table-cell">
+							<div class="progress">
+								<div class="progress-bar bg-success" role="progressbar" style="width: 67%;" aria-valuenow="67" aria-valuemin="0" aria-valuemax="100">67%</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>Moldes</td>
+						<td class="text-end">3</td>
+						<td class="d-none d-xl-table-cell">
+							<div class="progress">
+								<div class="progress-bar bg-success" role="progressbar" style="width: 33%;" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100">33%</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>Operaciones</td>
+						<td class="text-end">5</td>
+						<td class="d-none d-xl-table-cell">
+							<div class="progress">
+								<div class="progress-bar bg-success" role="progressbar" style="width: 56%;" aria-valuenow="56" aria-valuemin="0" aria-valuemax="100">56%</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>Procesos</td>
+						<td class="text-end">4</td>
+						<td class="d-none d-xl-table-cell">
+							<div class="progress">
+								<div class="progress-bar bg-success" role="progressbar" style="width: 44%;" aria-valuenow="44" aria-valuemin="0" aria-valuemax="100">44%</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>Recursos Humanos</td>
+						<td class="text-end">7</td>
+						<td class="d-none d-xl-table-cell">
+							<div class="progress">
+								<div class="progress-bar bg-success" role="progressbar" style="width: 78%;" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100">78%</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>Sistemas</td>
+						<td class="text-end">6</td>
+						<td class="d-none d-xl-table-cell">
+							<div class="progress">
+								<div class="progress-bar bg-success" role="progressbar" style="width: 67%;" aria-valuenow="67" aria-valuemin="0" aria-valuemax="100">67%</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>Ventas y Cotizaciones</td>
+						<td class="text-end">8</td>
+						<td class="d-none d-xl-table-cell">
+							<div class="progress">
+								<div class="progress-bar bg-success" role="progressbar" style="width: 89%;" aria-valuenow="89" aria-valuemin="0" aria-valuemax="100">89%</div>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+		</div>
+	</div>
+
+</div>
+
+<div class="row">
+
+	<div class="col-12 col-lg-4 d-flex">
+		<div class="card flex-fill">
+			<div class="card-header">
+				<div class="card-actions float-end">
+					<div class="dropdown position-relative">
+						<a href="#" data-bs-toggle="dropdown" data-bs-display="static">
+							<i class="align-middle" data-feather="more-horizontal"></i>
+						</a>
+
+						<div class="dropdown-menu dropdown-menu-end">
+							<a class="dropdown-item" href="#">Action</a>
+							<a class="dropdown-item" href="#">Another action</a>
+							<a class="dropdown-item" href="#">Something else here</a>
+						</div>
+					</div>
+				</div>
+				<h5 class="card-title mb-0">Pending</h5>
+			</div>
+			<div class="card-body">
+				<div class="chart">
+					<canvas id="chartjs-dashboard-radar"></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="col-12 col-lg-7 col-xl-8 d-flex">
+		<div class="card flex-fill">
+			<div class="card-header">
+				<div class="card-actions float-end">
+					<div class="dropdown position-relative">
+						<a href="#" data-bs-toggle="dropdown" data-bs-display="static">
+							<i class="align-middle" data-feather="more-horizontal"></i>
+						</a>
+
+						<div class="dropdown-menu dropdown-menu-end">
+							<a class="dropdown-item" href="#">Action</a>
+							<a class="dropdown-item" href="#">Another action</a>
+							<a class="dropdown-item" href="#">Something else here</a>
+						</div>
+					</div>
+				</div>
+				<h5 class="card-title mb-0">Course general status - CM</h5>
+			</div>
+			<table id="datatables-responsive" class="table table-striped my-0">
+				<thead>
+					<tr>
+						<th>Department</th>
+						<th class="text-center"><span class="badge bg-success">Completed</span></th>
+						<th class="text-center"><span class="badge bg-danger">Pending</span></th>
+						<th class="text-center"><span class="badge bg-warning text-dark">Expiring Soon</span></th>
+						<th class="text-center"><span class="badge bg-primary">Permanent</span></th>
+						<th class="text-center"><span class="badge bg-dark">Scheduled</span></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Aduanas y Compras</td>
+						<td class="text-center">5</td>
+						<td class="text-center">2</td>
+						<td class="text-center">1</td>
+						<td class="text-center">3</td>
+						<td class="text-center">4</td>
+					</tr>
+					<tr>
+						<td>Calidad</td>
+						<td class="text-center">7</td>
+						<td class="text-center">3</td>
+						<td class="text-center">2</td>
+						<td class="text-center">1</td>
+						<td class="text-center">2</td>
+					</tr>
+					<tr>
+						<td>Finanzas</td>
+						<td class="text-center">6</td>
+						<td class="text-center">4</td>
+						<td class="text-center">1</td>
+						<td class="text-center">0</td>
+						<td class="text-center">3</td>
+					</tr>
+					<tr>
+						<td>Ingeniería</td>
+						<td class="text-center">8</td>
+						<td class="text-center">1</td>
+						<td class="text-center">3</td>
+						<td class="text-center">2</td>
+						<td class="text-center">1</td>
+					</tr>
+					<tr>
+						<td>Mantenimiento</td>
+						<td class="text-center">4</td>
+						<td class="text-center">2</td>
+						<td class="text-center">2</td>
+						<td class="text-center">1</td>
+						<td class="text-center">2</td>
+					</tr>
+					<tr>
+						<td>Manufactura</td>
+						<td class="text-center">9</td>
+						<td class="text-center">1</td>
+						<td class="text-center">0</td>
+						<td class="text-center">2</td>
+						<td class="text-center">1</td>
+					</tr>
+					<tr>
+						<td>Materiales</td>
+						<td class="text-center">6</td>
+						<td class="text-center">3</td>
+						<td class="text-center">1</td>
+						<td class="text-center">2</td>
+						<td class="text-center">2</td>
+					</tr>
+					<tr>
+						<td>Moldes</td>
+						<td class="text-center">3</td>
+						<td class="text-center">2</td>
+						<td class="text-center">2</td>
+						<td class="text-center">0</td>
+						<td class="text-center">1</td>
+					</tr>
+					<tr>
+						<td>Operaciones</td>
+						<td class="text-center">5</td>
+						<td class="text-center">3</td>
+						<td class="text-center">1</td>
+						<td class="text-center">2</td>
+						<td class="text-center">2</td>
+					</tr>
+					<tr>
+						<td>Procesos</td>
+						<td class="text-center">4</td>
+						<td class="text-center">4</td>
+						<td class="text-center">2</td>
+						<td class="text-center">1</td>
+						<td class="text-center">2</td>
+					</tr>
+					<tr>
+						<td>Recursos Humanos</td>
+						<td class="text-center">7</td>
+						<td class="text-center">1</td>
+						<td class="text-center">1</td>
+						<td class="text-center">3</td>
+						<td class="text-center">1</td>
+					</tr>
+					<tr>
+						<td>Sistemas</td>
+						<td class="text-center">6</td>
+						<td class="text-center">2</td>
+						<td class="text-center">0</td>
+						<td class="text-center">2</td>
+						<td class="text-center">2</td>
+					</tr>
+					<tr>
+						<td>Ventas y Cotizaciones</td>
+						<td class="text-center">8</td>
+						<td class="text-center">2</td>
+						<td class="text-center">1</td>
+						<td class="text-center">2</td>
+						<td class="text-center">1</td>
+					</tr>
+				</tbody>
+			</table>
+
+		</div>
+	</div>
+</div>
+
+<script>
+	document.addEventListener("DOMContentLoaded", function() {
+		// Bar chart
+		new Chart(document.getElementById("chartjs-dashboard-bar-devices"), {
+			type: "bar",
+				data: {
+		labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+		datasets: [
+			{
+				label: "Goals Met",
+				backgroundColor: "rgba(40, 167, 69, 0.7)", // Verde
+				borderColor: "rgba(40, 167, 69, 1)",
+				hoverBackgroundColor: "rgba(40, 167, 69, 0.9)",
+				hoverBorderColor: "rgba(40, 167, 69, 1)",
+				data: [75, 82, 69, 88, 70, 90, 76, 85, 92, 78, 80, 87],
+				barPercentage: .5,
+				categoryPercentage: .5
+			},
+			{
+				label: "Goals Not Met",
+				backgroundColor: "rgba(220, 53, 69, 0.7)", // Rojo
+				borderColor: "rgba(220, 53, 69, 1)",
+				hoverBackgroundColor: "rgba(220, 53, 69, 0.9)",
+				hoverBorderColor: "rgba(220, 53, 69, 1)",
+				data: [25, 18, 31, 12, 30, 10, 24, 15, 8, 22, 20, 13],
+				barPercentage: .5,
+				categoryPercentage: .5
+			}
+		]
+	},
+	options: {
+		maintainAspectRatio: false,
+		cornerRadius: 15,
+		legend: {
+			display: true,
+			labels: {
+				boxWidth: 20
+			}
+		},
+		scales: {
+			yAxes: [{
+				gridLines: {
+					display: false
+				},
+				ticks: {
+					beginAtZero: true,
+					max: 100,
+					stepSize: 20,
+					callback: function(value) {
+						return value + "%";
+					}
+				},
+				stacked: true
+			}],
+			xAxes: [{
+				gridLines: {
+					color: "transparent"
+				},
+				stacked: true
+			}]
+		},
+		tooltips: {
+			callbacks: {
+				label: function(tooltipItem, data) {
+					const dataset = data.datasets[tooltipItem.datasetIndex];
+					return dataset.label + ": " + tooltipItem.yLabel + "%";
+				}
+			}
+		}
+	}
+
+		});
+	});
+</script>
+
+<script>
+	document.addEventListener("DOMContentLoaded", function() {
+		new Chart(document.getElementById("chartjs-dashboard-pie"), {
+			type: "pie",
+			data: {
+				labels: ["Completed", "Pending", "Expiring Soon", "Permanent", "Scheduled"],
+				datasets: [{
+					data: [78, 31, 17, 21, 24],
+					backgroundColor: [
+						"#198754", // Completed (bg-success)
+						"#dc3545", // Pending (bg-danger)
+						"#ffc107", // Expiring Soon (bg-warning)
+						"#0d6efd", // Permanent (bg-primary)
+						"#212529"  // Scheduled (bg-dark)
+					],
+					borderWidth: 5,
+					borderColor: "#ffffff"
+				}]
+			},
+			options: {
+				responsive: !window.MSInputMethodContext,
+				maintainAspectRatio: false,
+				cutoutPercentage: 70,
+				legend: {
+					display: true,
+					position: "bottom"
+				},
+				tooltips: {
+					callbacks: {
+						label: function(tooltipItem, data) {
+							const dataset = data.datasets[tooltipItem.datasetIndex];
+							const label = data.labels[tooltipItem.index];
+							const value = dataset.data[tooltipItem.index];
+							return label + ": " + value;
+						}
+					}
+				}
+			}
+		});
+	});
+</script>
+
+<script>
+	document.addEventListener("DOMContentLoaded", function() {
+		// Radar chart
+		new Chart(document.getElementById("chartjs-dashboard-radar"), {
+			type: "radar",
+			data: {
+				labels: [
+					"Aduanas y Compras",
+					"Calidad",
+					"Finanzas",
+					"Ingeniería",
+					"Mantenimiento",
+					"Manufactura",
+					"Materiales",
+					"Moldes",
+					"Operaciones",
+					"Procesos",
+					"Recursos Humanos",
+					"Sistemas",
+					"Ventas y Cotizaciones"
+				],
+				datasets: [{
+					label: "Pending Courses",
+					backgroundColor: "rgba(220, 53, 69, 0.2)",   // rojo claro translúcido
+					borderColor: "rgba(220, 53, 69, 1)",          // rojo intenso
+					pointBackgroundColor: "rgba(220, 53, 69, 1)", // puntos rojos
+					pointBorderColor: "#fff",
+					pointHoverBackgroundColor: "#fff",
+					pointHoverBorderColor: "rgba(220, 53, 69, 1)",
+					data: [
+						2, // Aduanas y Compras
+						3, // Calidad
+						4, // Finanzas
+						1, // Ingeniería
+						2, // Mantenimiento
+						1, // Manufactura
+						3, // Materiales
+						2, // Moldes
+						3, // Operaciones
+						4, // Procesos
+						1, // Recursos Humanos
+						2, // Sistemas
+						2  // Ventas y Cotizaciones
+					]
+				}]
+			},
+			options: {
+				maintainAspectRatio: false,
+				legend: {
+					display: true
+				},
+				title: {
+					display: false,
+					text: "Pending Courses by Department"
+				},
+				scale: {
+					ticks: {
+						beginAtZero: true,
+						precision:0
+					}
+				}
+			}
+		});
+	});
+</script>
+<script>
+	$(document).ready(function () {
+		// Inicializar DataTable con traducción al español y sin orden automático
+		$('#datatables-responsive').DataTable({
+			responsive: true,
+			order: []
+		});
+
+		// Mostrar mensajes de éxito
+		if ('@TempData["SuccessMessage"]' !== '') {
+			window.notyf.open({
+				type: 'success',
+				message: '@TempData["SuccessMessage"]',
+				ripple: true,
+				dismissible: true,
+				position: {
+					x: 'center',
+					y: 'top'
+				},
+				duration: 5000
+			});
+		}
+
+		// Mostrar mensajes de error
+		if ('@TempData["ErrorMessage"]' !== '') {
+			window.notyf.open({
+				type: 'error',
+				message: '@TempData["ErrorMessage"]',
+				ripple: true,
+				dismissible: true,
+				position: {
+					x: 'center',
+					y: 'top'
+				},
+				duration: 5000
+			});
+		}
+	});
+</script>
