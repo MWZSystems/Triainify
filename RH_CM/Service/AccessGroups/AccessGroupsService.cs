@@ -1,55 +1,17 @@
 ﻿using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Identity;
+using RH_CM.Service.DTOs;
 using RH_CM.Service.SQLSMS;
+using System.Reflection;
 using System.Security.Claims;
 
 namespace RH_CM.Service.AccessGroups
 {
-    public class AcessGroupsService
+    public class AccessGroupsService
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UnitOfWork _unitOfWork;
-
-        //Menus to Show.
-        public bool ShowCatalogsMenu { get; set; }
-        public bool ShowAssignmentsMenu { get; set; }
-        public bool ShowReportsMenu { get; set; }
-        public bool ShowTrainifyMenu { get; set; }
-
-        //Views to Show:
-
-        public bool Onboarding {  get; set; }
-        public bool Offboarding { get; set; }
-        public bool Supervisor { get; set; }
-        public bool Department { get; set; }
-        public bool Position { get; set; }
-        public bool Course { get; set; }
-        public bool CourseMaterial { get; set; }
-
-
-        public bool CourseAssignments { get; set; }
-        public bool CourseCompleted { get; set; }
-        public bool CourseLevelMaterial { get; set; }
-        public bool ExternalEvidence { get; set; }
-
-
-        public bool MatrixByPosition { get; set; }
-        public bool MatrixBySupervisor { get; set; }
-        public bool HRReport { get; set; }
-        public bool MaterialExamMissing { get; set; }
-        public bool EvidenceByUser { get; set; }
-
-
-        public bool MatrixByEmployee { get; set; }
-        public bool Learning { get; set; }
-
-
-        public bool Users { get; set; }
-        public bool RegisterNewUser { get; set; }
-        public bool Roles { get; set; }
-        public bool Permissions { get; set; }
-        public bool ResetPassword { get; set; }
 
         /*
         Lista de menus
@@ -89,7 +51,7 @@ namespace RH_CM.Service.AccessGroups
 
         */
 
-        public AcessGroupsService(UserManager<IdentityUser> userManager,
+        public AccessGroupsService(UserManager<IdentityUser> userManager,
                                     IHttpContextAccessor httpContextAccessor,
                                     UnitOfWork unitOfWork)
         {
@@ -114,16 +76,50 @@ namespace RH_CM.Service.AccessGroups
 
 
 
-        private async Task GetMenusToShow()
+        public async Task<GroupsAccessDTOs> GetMenusToShow()
         {
             var user = await GetCurrentUserAsync();
             var roles = await _userManager.GetRolesAsync(user);
 
-           List<> 
+            var parameters = new Dictionary<string, object>
+            {
+                { "@pRoleName", roles[0] }
+            };
 
-           // return true;
-           
+            List<GroupsAccessDTOs> result = await _unitOfWork.ExecuteStoredProcedureToListAsync<GroupsAccessDTOs>("[sp_AcessGroupService_GetAccess]", parameters);
+
+            GroupsAccessDTOs groupsAccess = result[0];
+
+            if (groupsAccess.OnBoarding == true ||
+                groupsAccess.Offboarding == true ||
+                groupsAccess.Supervisor == true ||
+                groupsAccess.Department == true ||
+                groupsAccess.Position == true ||
+                groupsAccess.Course == true ||
+                groupsAccess.CourseMaterial == true ||
+                groupsAccess.Test == true)
+            {
+                groupsAccess.ShowCatalogsMenu = true;
+            }
+
+            if (groupsAccess.CourseAssignments == true ||
+                groupsAccess.CourseCompleted == true ||
+                groupsAccess.CourseLevelMaterial == true ||
+                groupsAccess.ExternalEvidence == true)
+            {
+                groupsAccess.ShowAssignmentsMenu = true;
+            }
+
+            if (groupsAccess.MatrixByPosition == true ||
+               groupsAccess.MatrixBySupervisor == true ||
+               groupsAccess.HRReport == true ||
+               groupsAccess.MaterialExamMissing == true ||
+               groupsAccess.EvidenceByUser == true)
+            {
+                groupsAccess.ShowReportsMenu = true;
+            }
+
+            return groupsAccess;
         }
-
     }
 }

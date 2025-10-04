@@ -1,5 +1,6 @@
 ﻿using BootstrapBlazor.Components;
 using DocumentFormat.OpenXml.Office2010.Excel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RH_CM.Data;
@@ -22,6 +23,7 @@ namespace RH_CM.Controllers
         }
 
         // GET: UserTestEvidenceController
+        [Authorize(Policy = "ViewAccess")]
         public async Task<ActionResult> Index()
         {
             List<UserDTOs> users = await _userTestEvidenceService.GetIndexAsync();
@@ -29,26 +31,27 @@ namespace RH_CM.Controllers
         }
 
         // GET: UserTestEvidenceController/Details/5
+        [Authorize(Policy = "ViewAccess")]
         public async Task<ActionResult> DetailUser(string id)
         {
             DetailDTOs detailDTOs = await _userTestEvidenceService.GetDetailUserAsync(id);
             return View(detailDTOs);
         }
-
+        [Authorize(Policy = "ViewAccess")]
         public async Task<ActionResult> DiagnosticExamReview(int id)
         {
             FullExamDTOs fullExam = await _userTestEvidenceService.GetDiagnosticExamAsync(id);
 
             return View(fullExam);
         }
-
+        [Authorize(Policy = "ViewAccess")]
         public async Task<ActionResult> ExamReview(int id)
         {
             FullExamDTOs fullExam = await _userTestEvidenceService.GetExamAsync(id);
 
             return View(fullExam);
         }
-
+        [Authorize(Policy = "ViewAccess")]
         public async Task<ActionResult> EvidenceReview(int id)
         {
 
@@ -65,6 +68,7 @@ namespace RH_CM.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<ActionResult> DeleteExams(int id)
         {
 
@@ -75,7 +79,7 @@ namespace RH_CM.Controllers
 
         }
 
-
+        [Authorize(Policy = "ViewAccess")]
         public async Task<ActionResult> ExportEvidencesByUser(int id)
         {
 

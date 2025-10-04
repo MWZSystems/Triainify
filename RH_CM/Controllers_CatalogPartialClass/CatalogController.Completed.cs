@@ -12,7 +12,8 @@ namespace RH_CM.Controllers
 {
     public partial class CatalogController
     {
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")] 
+
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> Index()
         {
             var lista = new List<CourseCompletedViewModel>();
@@ -56,7 +57,8 @@ namespace RH_CM.Controllers
             return View(lista);
         }
 
-        [Authorize(Roles = "Administrador")]
+
+        [Authorize(Policy = "ViewAccess")]
         public IActionResult IndexCourseCompleted()
         {
             var rows = new List<CourseCompletedSummaryItemViewModel>();
@@ -90,7 +92,8 @@ namespace RH_CM.Controllers
             return View(rows);
         }
 
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+
+        [Authorize(Policy = "ViewAccess")]
         [HttpGet]
         public async Task<IActionResult> ExportCourseCompletedToExcel()
         {
@@ -270,7 +273,7 @@ namespace RH_CM.Controllers
                 .ToList();
         }
 
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         public IActionResult CreateCourseCompletedBulk(int? fkCourse, int? fkLevel)
         {
             int selectedFkCourse = fkCourse ?? 0;
@@ -286,7 +289,7 @@ namespace RH_CM.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> CreateCourseCompletedBulk(
             int FkCourse,
             int FkRequiredCourseLevels,
@@ -381,7 +384,7 @@ namespace RH_CM.Controllers
         }
 
         // GET: DeleteCourseCompletedBulk  (LISTA con EF/LINQ — SIN SP)
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         public IActionResult DeleteCourseCompletedBulk(int? fkCourse, int? fkLevel)
         {
             int selectedFkCourse = fkCourse ?? 0;
@@ -469,7 +472,7 @@ namespace RH_CM.Controllers
 
         // POST: DeleteCourseCompletedBulk (BORRADO con SP + TVP, igual que ya tenías)
         [HttpPost]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteCourseCompletedBulk(
             [FromForm] int[] SelectedCourseCompletedIds,
@@ -528,7 +531,7 @@ namespace RH_CM.Controllers
         // POST: SyCoursecompleted/Toggle/5
         [HttpPost]
         [Route("ToggleCourseCompleted")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleCourseCompleted(int id)
         {
@@ -548,7 +551,7 @@ namespace RH_CM.Controllers
         // POST: SyCoursecompleted/Delete/5
         [HttpPost]
         [Route("DeleteCourseCompleted")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCourseCompleted(int id)
         {

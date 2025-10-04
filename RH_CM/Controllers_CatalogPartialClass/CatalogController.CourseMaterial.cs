@@ -8,7 +8,8 @@ namespace RH_CM.Controllers
     public partial class CatalogController
     {
         // GET: CtCoursematerial
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        //[Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        [Authorize(Policy = "ViewAccess")] 
         public IActionResult IndexCourseMaterial()
         {
             var materials = _context.CtCoursematerials
@@ -33,7 +34,7 @@ namespace RH_CM.Controllers
 
         // GET: CtCoursematerial/Create
         [HttpGet]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         public IActionResult CreateCourseMaterial(string type)
         {
             var model = new CtCoursematerial();
@@ -45,7 +46,7 @@ namespace RH_CM.Controllers
 
         //Crear Material PDF
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreatePDFMaterial(List<IFormFile> uploadedFiles)
         {
@@ -106,7 +107,7 @@ namespace RH_CM.Controllers
 
         //Crear Material PDF
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateVideoMaterial(string filePath)
         {
@@ -171,7 +172,7 @@ namespace RH_CM.Controllers
 
 
         // GET: CtCoursematerial/Edit/5
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         [HttpGet]
         public async Task<IActionResult> EditCourseMaterial(int? id)
         {
@@ -185,7 +186,7 @@ namespace RH_CM.Controllers
 
 
         // GET: CtCoursematerial/Edit/5
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         [HttpGet]
         public async Task<IActionResult> EditPDFMaterial(int? id)
         {
@@ -200,7 +201,7 @@ namespace RH_CM.Controllers
 
         // POST: CtCoursematerial/Edit/5
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditPDFMaterial(/*int id,*/ CtCoursematerial model, IFormFile? uploadedFile)
         {
@@ -252,7 +253,7 @@ namespace RH_CM.Controllers
 
         // POST: CtCoursematerial/Edit/5
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditVIDEOMaterial(/*int id,**/ CtCoursematerial model, string filePath)
         {
@@ -307,7 +308,7 @@ namespace RH_CM.Controllers
 
         // POST: CtCoursematerial/Edit/5
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditCourseMaterial(int id, CtCoursematerial model, IFormFile? uploadedFile)
         {
@@ -355,7 +356,7 @@ namespace RH_CM.Controllers
 
         // POST: CtCoursematerial/Toggle/5
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleCourseMaterial(int id)
         {
@@ -379,7 +380,7 @@ namespace RH_CM.Controllers
 
         // POST: CtCoursematerial/Delete/5
         [HttpPost]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCourseMaterial(int id)
         {

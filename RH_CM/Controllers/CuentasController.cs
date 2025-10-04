@@ -9,7 +9,7 @@ using RH_CM.Data;
 
 namespace RH_CM.Controllers
 {
-    [Authorize(Roles = "Administrador")]
+
     public class CuentasController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
@@ -97,14 +97,14 @@ namespace RH_CM.Controllers
 
         //Registro especial solo para los administrador
         [HttpGet]
-        [Authorize(Roles = "ToolCribAdmin, Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> RegistroAdministrador()
         {
             return View();
         }
 
         [HttpPost]
-        [Authorize(Roles = "ToolCribAdmin, Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegistroAdministrador(RegistroAdminViewModel rgViewModel)
         {
@@ -156,7 +156,6 @@ namespace RH_CM.Controllers
 
         //Método mostrar fomulario de acceso
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult Acceso()
         {
             return View();
@@ -201,14 +200,14 @@ namespace RH_CM.Controllers
 
         //Funcionalidad para recuperar contraseña
         [HttpGet]
-        [Authorize(Roles = "ToolCribAdmin, Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         public IActionResult ResetPassword()
         {
             return View();
         }
 
         [HttpPost]
-        [Authorize(Roles = "ToolCribAdmin, Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(RecuperaPasswordViewModel rpViewModel)
         {

@@ -20,6 +20,7 @@ namespace RH_CM.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "ViewAccess")]
         public IActionResult Index()
         {
             var roles = _contexto.Roles.ToList();
@@ -27,6 +28,7 @@ namespace RH_CM.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "ViewAccess")]
         public IActionResult Crear()
         {
             return View();
@@ -34,6 +36,7 @@ namespace RH_CM.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> Crear(IdentityRole rol)
         {
             if (await _roleManager.RoleExistsAsync(rol.Name))
@@ -49,6 +52,7 @@ namespace RH_CM.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "ViewAccess")]
         public IActionResult Editar(string id)
         {
             if (String.IsNullOrEmpty(id))
@@ -66,6 +70,7 @@ namespace RH_CM.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> Editar(IdentityRole rol)
         {
             if (await _roleManager.RoleExistsAsync(rol.Name))
@@ -90,6 +95,7 @@ namespace RH_CM.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> Borrar(string id)
         {
             var rolBD = _contexto.Roles.FirstOrDefault(r => r.Id == id);

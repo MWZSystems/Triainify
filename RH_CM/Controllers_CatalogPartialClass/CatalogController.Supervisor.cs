@@ -9,7 +9,8 @@ namespace RH_CM.Controllers
     public partial class CatalogController
     {
 
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> IndexSupervisor()
         {
             var supervisors = _context.CtSupervisors
@@ -40,7 +41,7 @@ namespace RH_CM.Controllers
         }
 
         // GET: CtSupervisor/Create
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         public IActionResult CreateSupervisor()
         {
             ViewBag.Headcount = _context.SyHeadcounts.Where(d => d.Available == 1).ToList();
@@ -53,7 +54,7 @@ namespace RH_CM.Controllers
 
         // POST: CtSupervisor/Create
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")] 
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateSupervisor(CtSupervisor ctSupervisor)
         {
@@ -91,7 +92,7 @@ namespace RH_CM.Controllers
         }
 
         // GET: CtSupervisor/Edit/5
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")] 
         public async Task<IActionResult> EditSupervisor(int? id)
         {
             if (id == null)
@@ -111,7 +112,7 @@ namespace RH_CM.Controllers
 
         // POST: CtSupervisor/Edit/5
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")] 
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditSupervisor(int id, CtSupervisor ctSupervisor)
         {
@@ -165,7 +166,7 @@ namespace RH_CM.Controllers
 
         // POST: /Catalog/ToggleSupervisor/5
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")] 
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleSupervisor(int id)
         {
@@ -207,7 +208,7 @@ namespace RH_CM.Controllers
 
         // POST: /Catalog/DeleteSupervisor/5
         [HttpPost]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteSupervisor(int id)
         {

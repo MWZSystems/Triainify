@@ -13,7 +13,7 @@ namespace RH_CM.Controllers
     {
 
         // GET: CtTest/IndexTest
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> IndexTest()
         {
             var tests = await _context.CtTests
@@ -36,7 +36,7 @@ namespace RH_CM.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteTest(int id)
         {
@@ -98,7 +98,7 @@ namespace RH_CM.Controllers
         }
 
         //GET
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> EditTest(int? id)
         {
             if (id == null)
@@ -134,7 +134,7 @@ namespace RH_CM.Controllers
 
         // POST: CtTest/Toggle
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleTest(int id)
         {
@@ -181,12 +181,9 @@ namespace RH_CM.Controllers
         }
 
 
-
-
-
-            [HttpPost]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> EditTest(int id, CtTest model)
         {
             if (id != model.PkTest)
@@ -312,7 +309,7 @@ namespace RH_CM.Controllers
 
 
         // GET: Catalog/CreateQuestions
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> CreateQuestions()
         {
             var vm = new TestCreateViewModel();
@@ -335,7 +332,7 @@ namespace RH_CM.Controllers
 
         // POST: Catalog/CreateQuestions
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateQuestions(TestCreateViewModel model)
         {
@@ -473,7 +470,7 @@ namespace RH_CM.Controllers
         }
 
         //GET
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> EditQuestions(int id)
         {
             var test = await _context.CtTests.FirstOrDefaultAsync(t => t.PkTest == id);
@@ -515,7 +512,7 @@ namespace RH_CM.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> EditQuestions(int id, TestCreateViewModel model)
         {
 

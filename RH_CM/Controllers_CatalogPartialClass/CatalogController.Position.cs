@@ -9,7 +9,8 @@ namespace RH_CM.Controllers
     public partial class CatalogController
     {
         // GET: CtPosition
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        //[Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        [Authorize(Policy = "ViewAccess")] 
         public async Task<IActionResult> IndexPosition()
         {
             var positions = await _context.CtPositions.ToListAsync();
@@ -17,7 +18,7 @@ namespace RH_CM.Controllers
         }
 
         // GET: CtPosition/Create
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         public IActionResult CreatePosition()
         {
             return View();
@@ -25,7 +26,7 @@ namespace RH_CM.Controllers
 
         // POST: CtPosition/Create
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreatePosition(CtPosition ctPosition)
         {
@@ -73,7 +74,7 @@ namespace RH_CM.Controllers
         }
 
         // GET: CtPosition/Edit/5
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> EditPosition(int? id)
         {
             if (id == null)
@@ -92,7 +93,7 @@ namespace RH_CM.Controllers
 
         // POST: CtPosition/Edit/5
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditPosition(int id, CtPosition ctPosition)
         {
@@ -155,7 +156,7 @@ namespace RH_CM.Controllers
         // POST: /Catalog/TogglePosition/5
         [HttpPost]
         [Route("TogglePosition")]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> TogglePosition(int id)
         {
@@ -174,7 +175,7 @@ namespace RH_CM.Controllers
         // POST: /Catalog/DeletePosition/5
         [HttpPost]
         [Route("DeletePosition")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmedPosition(int id)
         {

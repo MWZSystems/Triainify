@@ -8,7 +8,7 @@ namespace RH_CM.Controllers
     public partial class CatalogController
     {
         // GET: CtCourse
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        [Authorize(Policy = "ViewAccess")] //OnBoardingView
         public async Task<IActionResult> IndexCourse()
         {
             var courses = await _context.CtCourses.ToListAsync();
@@ -16,14 +16,14 @@ namespace RH_CM.Controllers
         }
 
         // GET: CtCourse/Create
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        [Authorize(Policy = "ViewAccess")]
         public IActionResult CreateCourse()
         {
             return View();
         }
 
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        [Authorize(Policy = "ViewAccess")] 
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateCourse(CtCourse ctCourse)
         {
@@ -98,7 +98,7 @@ namespace RH_CM.Controllers
         }
 
         // GET: CtCourse/Edit/5
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> EditCourse(int? id)
         {
             if (id == null)
@@ -116,7 +116,7 @@ namespace RH_CM.Controllers
 
         // POST: CtCourse/Edit/5
         [HttpPost]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")] 
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditCourse(int id, CtCourse ctCourse)
         {
@@ -220,7 +220,7 @@ namespace RH_CM.Controllers
         // POST: /CtCourse/ToggleCourse/5
         [HttpPost]
         [Route("ToggleCourse")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")] 
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleCourse(int id)
         {
@@ -237,7 +237,7 @@ namespace RH_CM.Controllers
         // POST: /CtCourse/DeleteCourse/5
         [HttpPost]
         [Route("DeleteCourse")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")] 
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCourse(int id)
         {

@@ -8,7 +8,8 @@ namespace RH_CM.Controllers
 {
     public partial class CatalogController
     {
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        //[Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        [Authorize(Policy = "ViewAccess")] //OnBoardingView
         public async Task<IActionResult> IndexDepartment()
         {
             var departments = await _context.CtDepartments.ToListAsync();
@@ -18,7 +19,7 @@ namespace RH_CM.Controllers
         public IActionResult CreateDepartment() => View();
 
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateDepartment(CtDepartment ctDepartment)
         {
@@ -49,7 +50,7 @@ namespace RH_CM.Controllers
             }
         }
 
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> EditDepartment(int? id)
         {
             if (id == null) return NotFound();
@@ -59,7 +60,7 @@ namespace RH_CM.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditDepartment(int id, CtDepartment ctDepartment)
         {
@@ -96,7 +97,7 @@ namespace RH_CM.Controllers
 
         [HttpPost]
         [Route("ToggleDepartment")]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleDepartment(int id)
         {
@@ -113,7 +114,7 @@ namespace RH_CM.Controllers
         // POST: /CtDepartment/DeleteDepartment/5
         [HttpPost]
         [Route("DeleteDepartment")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteDepartment(int id)
         {
