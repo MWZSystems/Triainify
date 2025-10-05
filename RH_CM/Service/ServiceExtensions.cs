@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using RH_CM.Service.AccessGroups;
 using RH_CM.Service.ExternalEvidence;
+using RH_CM.Service.OcupationKey;
 using RH_CM.Service.Permissions;
 using RH_CM.Service.Requirements;
 using RH_CM.Service.SQLSMS;
@@ -18,6 +19,7 @@ public static class ServiceExtensions
         services.AddScoped<IAccessService, AccessService>();
         services.AddScoped<IAuthorizationHandler, ViewAccessHandler>();
         services.AddHttpContextAccessor(); // necesario si usas IHttpContextAccessor
+        services.AddTransient<OcupationKeyService>();
         // etc...
     }
 }

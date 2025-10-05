@@ -1,0 +1,107 @@
+﻿@model RH_CM.Service.DTOs.OcupationKey.OcupationsList
+
+@{
+    ViewData["Title"] = "Edit Ocupation Code";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["BodyClass"] = "page-matrix-position";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center title-accent">
+            <i></i> @ViewData["Title"]
+        </h1>
+    </div>
+   @*  <div class="col-auto">
+        <a asp-action="Index" asp-controller="Permissions" class="btn btn-secondary">
+            <i class="fas fa-rotate-left"></i> CHANGE GROUP
+        </a>
+    </div> *@
+</div>
+
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">ID: @Model.Id     Position: @Model.PositionName     Ocupation Code: @Model.OcupationCode</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="EditOcupationCode" method="post">
+                    @Html.HiddenFor(m => m.Id)
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="row">
+                        <!-- Ocupation Code -->
+                        <div class="mb-3 col-md-6">
+                            <label asp-for="OcupationCode" class="form-label">
+                                Position <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="OcupationCode"
+                                   type="number"
+                                   class="form-control"
+                                   min="1"
+                                   value="@Model.OcupationCode"
+                                   placeholder="Enter New Code" />
+                            <span asp-validation-for="OcupationCode" class="text-danger"></span>
+                        </div>
+
+                    </div>
+
+                    <!-- Submit and Cancel Buttons -->
+                    <div class="row">
+                        <div class="col-12 text-end">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Update
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        $(function () {
+            const tbl = document.getElementById('datatables-responsive');
+            if (tbl) {
+                $('#datatables-responsive').DataTable({
+                    responsive: true,
+                    order: [],
+                    pageLength: 50,
+                    lengthMenu: [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]]
+                });
+            }
+
+            // Solo success y error
+            if ("@TempData["SuccessMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+            if ("@TempData["ErrorMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+        });
+    </script>
+}

@@ -113,6 +113,10 @@
                                 {
                                     <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexExternalEvidence"><i class="align-middle fas fa-receipt"></i> External Evidence</a>
                                 }
+                                @if (accesos.AlwaysShow)
+                                {
+                                    <a class="dropdown-item" asp-controller="OcupationKey" asp-action="Index"><i class="align-middle fas fa-briefcase"></i> Ocupation Code</a>
+                                }
 
                             </div>
                         </div>

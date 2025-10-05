@@ -112,7 +112,7 @@ namespace RH_CM.Service.SQLSMS
         /// <param name="storedProcedureName">Nombre del SP</param>
         /// <param name="parameters">Diccionario con nombre de parámetro y valor</param>
         /// <returns>Valor scalar devuelto por el SP (por ejemplo, 'completed')</returns>
-        public async Task<string> ExecuteStoredProcedureScalarAsync(string storedProcedureName, Dictionary<string, object> parameters)
+        public async Task<string> ExecuteStoredProcedureScalarAsync(string storedProcedureName, Dictionary<string, object>? parameters = null)
         {
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand(storedProcedureName, conn);
