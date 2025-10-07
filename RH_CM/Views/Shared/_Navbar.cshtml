@@ -65,6 +65,10 @@
                                 {
                                     <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseMaterial"><i class="align-middle fas fa-file-pdf"></i> Course Material</a>
                                 }
+                                @if (accesos.AlwaysShow)
+                                {
+                                    <a class="dropdown-item" asp-controller="ThematicArea" asp-action="Index"><i class="align-middle fas fa-warehouse"></i> Thematic Areas</a>
+                                }
 
                                 @if (accesos.Test)
                                 {
@@ -116,6 +120,10 @@
                                 @if (accesos.AlwaysShow)
                                 {
                                     <a class="dropdown-item" asp-controller="OcupationKey" asp-action="Index"><i class="align-middle fas fa-briefcase"></i> Ocupation Code</a>
+                                }
+                                @if (accesos.AlwaysShow)
+                                {
+                                    <a class="dropdown-item" asp-controller="ThematicCourse" asp-action="Index"><i class="align-middle fas fa-map"></i> Thematic - Course</a>
                                 }
 
                             </div>

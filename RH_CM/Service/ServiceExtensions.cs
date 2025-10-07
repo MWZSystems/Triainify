@@ -5,6 +5,8 @@ using RH_CM.Service.OcupationKey;
 using RH_CM.Service.Permissions;
 using RH_CM.Service.Requirements;
 using RH_CM.Service.SQLSMS;
+using RH_CM.Service.ThematicArea;
+using RH_CM.Service.ThematicCourse;
 using RH_CM.Service.UserTestEvidence;
 
 public static class ServiceExtensions
@@ -18,8 +20,10 @@ public static class ServiceExtensions
         services.AddScoped<AccessGroupsService>();
         services.AddScoped<IAccessService, AccessService>();
         services.AddScoped<IAuthorizationHandler, ViewAccessHandler>();
-        services.AddHttpContextAccessor(); // necesario si usas IHttpContextAccessor
+        services.AddHttpContextAccessor(); 
         services.AddTransient<OcupationKeyService>();
+        services.AddTransient<ThematicAreaService>();
+        services.AddTransient<ThematicCourseService>();
         // etc...
     }
 }

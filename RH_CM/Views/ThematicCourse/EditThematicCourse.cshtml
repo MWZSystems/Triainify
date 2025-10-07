@@ -1,0 +1,120 @@
+﻿@model RH_CM.Service.DTOs.ThematicCourseDTOs
+
+@{
+    ViewData["Title"] = "Edit Thematic Course";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["BodyClass"] = "page-matrix-position";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center title-accent">
+            <i></i> @ViewData["Title"]
+        </h1>
+    </div>
+    @*  <div class="col-auto">
+        <a asp-action="Index" asp-controller="Permissions" class="btn btn-secondary">
+            <i class="fas fa-rotate-left"></i> CHANGE GROUP
+        </a>
+    </div> *@
+</div>
+
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
+                    <strong>ID:</strong> @Model.ThematicCourses.First().Id &nbsp;&nbsp;
+                    <strong>Thematic Area:</strong> @Model.ThematicCourses.First().ThematicCode - @Model.ThematicCourses.First().ThematicName &nbsp;&nbsp;
+                    <strong>Course:</strong> @Model.ThematicCourses.First().CourseName
+                </h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="EditThematicCourse" method="post">
+                    @Html.HiddenFor(m => m.ThematicCourses.First().Id)
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="row mb-3">
+                        <!-- Select Thematic -->
+                        <div class="col-md-6">
+                            <label for="ThematicArea" class="form-label">Select Thematic Area</label>
+                            <select id="ThematicArea" name="ThematicArea" class="form-select" required>
+                                <option value="">-- Choose Thematic Area --</option>
+                                @foreach (var ThematicArea in Model.Thematics)
+                                {
+                                    <option value="@ThematicArea.Thematics">@ThematicArea.Thematics</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Enter Occupation Code -->
+                        <div class="col-md-6">
+                            <label for="Course" class="form-label">Select Course</label>
+                            <select id="Course" name="Course" class="form-select" required>
+                                <option value="">-- Choose Course --</option>
+                                @foreach (var Course in Model.Courses)
+                                {
+                                    <option value="@Course.Courses">@Course.Courses</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Submit and Cancel Buttons -->
+                    <div class="row">
+                        <div class="col-12 text-end">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Update
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        $(function () {
+            const tbl = document.getElementById('datatables-responsive');
+            if (tbl) {
+                $('#datatables-responsive').DataTable({
+                    responsive: true,
+                    order: [],
+                    pageLength: 50,
+                    lengthMenu: [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]]
+                });
+            }
+
+            // Solo success y error
+            if ("@TempData["SuccessMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+            if ("@TempData["ErrorMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+        });
+    </script>
+}

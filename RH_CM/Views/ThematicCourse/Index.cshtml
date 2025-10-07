@@ -1,7 +1,7 @@
-﻿@model RH_CM.Service.DTOs.OcupationKey.OcupationDTOs
+﻿@model RH_CM.Service.DTOs.ThematicCourseDTOs
 
 @{
-    ViewData["Title"] = "Ocupation Codes";
+    ViewData["Title"] = "Thematic Course Assignment";
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["BodyClass"] = "page-matrix-position";
 }
@@ -9,7 +9,7 @@
 <div class="row">
     <div class="col">
         <h1 class="h3 mb-3 text-center title-accent">
-            <i class="fas fa-briefcase"></i> @ViewData["Title"]
+            <i class="fas fa-map"></i> @ViewData["Title"]
         </h1>
     </div>
     @* <div class="col-auto">
@@ -34,8 +34,8 @@
         </div> *@
         <div class="card-body">
             <div class="d-flex justify-content-end mb-3">
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addOcupationCode">
-                    <i class="fas fa-plus"></i> Add Role
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addThematicCourse">
+                    <i class="fas fa-plus"></i> Add Thematic - Course
                 </button>
             </div>
             @if (Model != null)
@@ -44,28 +44,30 @@
                     <thead class="table-primary">
                         <tr>
                             <th>ID</th>
-                            <th>Position Name</th>
-                            <th>Ocupation Code</th>
+                            <th>Thematic Name</th>
+                            <th>Thematic Code</th>
+                            <th>Course</th>
                             <th>Actions</th>
 
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var detail in Model.OcupationsLists)
+                        @foreach (var detail in Model.ThematicCourses)
                         {
                             <tr>
                                 <td>@detail.Id</td>
-                                <td>@detail.PositionName</td>
-                                <td>@detail.OcupationCode</td>
+                                <td>@detail.ThematicName</td>
+                                <td>@detail.ThematicCode</td>
+                                <td>@detail.CourseName</td>
 
                                 <td>
-                                    <form asp-action="EditOcupationCode" asp-route-Id="@detail.Id" method="get" class="d-inline">
+                                    <form asp-action="EditThematicCourse" asp-route-Id="@detail.Id" method="get" class="d-inline">
                                         <button type="submit" class="btn btn-warning">
                                             <i class="align-middle fas fa-edit"></i>
                                         </button>
                                     </form>
 
-                                    <form asp-action="DeleteOcupationcode" asp-route-Id="@detail.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this Ocupation Code?');">
+                                    <form asp-action="DeleteThematicCourse" asp-route-Id="@detail.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this Thematic Course link?');">
                                         <button type="submit" class="btn btn-danger">
                                             <i class="align-middle fas fa-window-close"></i>
                                         </button>
@@ -87,35 +89,40 @@
 
 
 
-<div class="modal fade" id="addOcupationCode" tabindex="-1" aria-labelledby="addOcupationCodeLabel" aria-hidden="true">
+<div class="modal fade" id="addThematicCourse" tabindex="-1" aria-labelledby="addThematicCourseLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form asp-action="AddOcupationCode" asp-controller="OcupationKey" method="post">
+            <form asp-action="AddThematicCourse" asp-controller="ThematicCourse" method="post">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addOcupationCodeLabel">Add Ocupation Code</h5>
+                    <h5 class="modal-title" id="addThematicCourseLabel">Add Thematic Course</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     @* <input type="hidden" name="GroupId" value="@Model.GroupId" /> *@
 
                     <div class="row mb-3">
-                        <!-- Select Position -->
+                        <!-- Select Thematic -->
                         <div class="col-md-6">
-                            <label for="Position" class="form-label">Select Position</label>
-                            <select id="Position" name="Position" class="form-select" required>
-                                <option value="">-- Choose Position --</option>
-                                @foreach (var position in Model.PositionsList)
+                            <label for="ThematicArea" class="form-label">Select Thematic Area</label>
+                            <select id="ThematicArea" name="ThematicArea" class="form-select" required>
+                                <option value="">-- Choose Thematic Area --</option>
+                                @foreach (var ThematicArea in Model.Thematics)
                                 {
-                                    <option value="@position.Position">@position.Position</option>
+                                    <option value="@ThematicArea.Thematics">@ThematicArea.Thematics</option>
                                 }
                             </select>
                         </div>
 
                         <!-- Enter Occupation Code -->
                         <div class="col-md-6">
-                            <label for="OcupationCode" class="form-label">Enter Occupation Code</label>
-                            <input type="number" id="OcupationCode" name="OcupationCode"
-                                   class="form-control" min="1" required placeholder="Enter code" />
+                            <label for="Course" class="form-label">Select Course</label>
+                            <select id="Course" name="Course" class="form-select" required>
+                                <option value="">-- Choose Course --</option>
+                                @foreach (var Course in Model.Courses)
+                                {
+                                    <option value="@Course.Courses">@Course.Courses</option>
+                                }
+                            </select>
                         </div>
                     </div>
                 </div>
