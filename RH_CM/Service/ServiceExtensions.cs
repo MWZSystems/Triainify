@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using RH_CM.Service.AccessGroups;
+using RH_CM.Service.DC3Service;
 using RH_CM.Service.ExternalEvidence;
 using RH_CM.Service.OcupationKey;
 using RH_CM.Service.Permissions;
@@ -24,6 +25,7 @@ public static class ServiceExtensions
         services.AddTransient<OcupationKeyService>();
         services.AddTransient<ThematicAreaService>();
         services.AddTransient<ThematicCourseService>();
+        services.AddTransient<DC3Service>();
         // etc...
     }
 }

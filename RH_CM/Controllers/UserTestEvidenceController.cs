@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RH_CM.Data;
+using RH_CM.Service.DC3Service;
 using RH_CM.Service.DTOs;
 using RH_CM.Service.DTOs.UserTestEvidence;
 using RH_CM.Service.ExternalEvidence;
@@ -15,11 +16,14 @@ namespace RH_CM.Controllers
     {
         private readonly UserTestEvidenceService _userTestEvidenceService;
         private readonly db_abcd61_rhchdbContext _context;
+        private readonly DC3Service _dC3Service;
         public UserTestEvidenceController(UserTestEvidenceService userTestEvidenceService,
-                                            db_abcd61_rhchdbContext context)
+                                            db_abcd61_rhchdbContext context,
+                                            DC3Service dC3Service)
         {
             _userTestEvidenceService = userTestEvidenceService;
             _context = context;
+            _dC3Service = dC3Service;
         }
 
         // GET: UserTestEvidenceController
@@ -98,6 +102,24 @@ namespace RH_CM.Controllers
 
         }
 
+        //DC3PdfDownload
+        public async Task<ActionResult> DC3PdfDownload(int ControlNumber, string Course, string CompletedDate, string bywho)
+        {
+
+            ExcelExportDTOs answerFile = await _dC3Service.GetDC3File(ControlNumber, Course, CompletedDate, bywho);
+
+            string fullName = answerFile.FullName;
+            string controlNumbr = answerFile.ControlNumber.ToString();
+
+
+            //string fechaActual = DateTime.Now.ToString("yyyyMMdd");
+            return File(
+                    answerFile.File,
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    $"{controlNumbr}-{fullName}-DC3-Completed.pdf"
+            );
+
+        }
 
     }
 }
