@@ -109,13 +109,12 @@ namespace RH_CM.Controllers
             ExcelExportDTOs answerFile = await _dC3Service.GetDC3File(ControlNumber, Course, CompletedDate, bywho);
 
             string fullName = answerFile.FullName;
-            string controlNumbr = answerFile.ControlNumber.ToString();
+            string controlNumbr = ControlNumber.ToString();
 
 
-            //string fechaActual = DateTime.Now.ToString("yyyyMMdd");
             return File(
                     answerFile.File,
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    "application/pdf",
                     $"{controlNumbr}-{fullName}-DC3-Completed.pdf"
             );
 

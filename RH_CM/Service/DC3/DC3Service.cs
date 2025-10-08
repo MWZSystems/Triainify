@@ -1,6 +1,8 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using iTextSharp.text.pdf;
+using RH_CM.Service.DTOs;
 using RH_CM.Service.DTOs.DC3;
 using RH_CM.Service.DTOs.OcupationKey;
 using RH_CM.Service.DTOs.UserTestEvidence;
@@ -23,9 +25,13 @@ namespace RH_CM.Service.DC3Service
         {
             ExcelExportDTOs excelExport = new();
 
-            string month = "Noviembre";
-            int day = 12;
-            int year = 2025;
+
+            string[]? date = CompletedDate.Split(' ');
+
+
+            string month = date[0];
+            int day = int.Parse(date[1]);
+            int year = int.Parse(date[2]);
 
 
 
@@ -40,9 +46,11 @@ namespace RH_CM.Service.DC3Service
 
             DC3DTOs dC3DTOs = answer[0];
 
-            string templatePath = Path.Combine(AppContext.BaseDirectory, "Resources", "TemplateDC3.pdf");
+            string templatePath = System.IO.Path.Combine(AppContext.BaseDirectory, "Resources", "TemplateDC3.pdf");
 
-            using (var templateStream = new FileStream(templatePath, FileMode.Open, FileAccess.Read))
+            byte[] fileBytes;
+
+            using (var templateStream = new FileStream(templatePath, FileMode.Open, FileAccess.Read, FileShare.Read))
             using (var outputStream = new MemoryStream())
             {
                 var reader = new PdfReader(templateStream);
@@ -73,13 +81,17 @@ namespace RH_CM.Service.DC3Service
                 stamper.Close();
                 reader.Close();
 
-                excelExport.File = outputStream.ToArray();
-                excelExport.FullName = dC3DTOs.FullName +"-"+ dC3DTOs.CourseName+ "DC3";
-
-
-
-                return excelExport;
+                fileBytes = outputStream.ToArray();
             }
+
+
+            excelExport.File = fileBytes;
+            excelExport.FullName = $"{dC3DTOs.FullName}-{dC3DTOs.CourseName}-DC3";
+
+
+
+            return excelExport;
+
         }
 
 
