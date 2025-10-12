@@ -97,7 +97,8 @@ namespace RH_CM.Service.AccessGroups
                 groupsAccess.Position == true ||
                 groupsAccess.Course == true ||
                 groupsAccess.CourseMaterial == true ||
-                groupsAccess.Test == true)
+                groupsAccess.Test == true ||
+                groupsAccess.ThematicArea == true)
             {
                 groupsAccess.ShowCatalogsMenu = true;
             }
@@ -105,7 +106,10 @@ namespace RH_CM.Service.AccessGroups
             if (groupsAccess.CourseAssignments == true ||
                 groupsAccess.CourseCompleted == true ||
                 groupsAccess.CourseLevelMaterial == true ||
-                groupsAccess.ExternalEvidence == true)
+                groupsAccess.ExternalEvidence == true ||
+                groupsAccess.OcupationCode == true ||
+                groupsAccess.ThematicCourse == true
+                )
             {
                 groupsAccess.ShowAssignmentsMenu = true;
             }

@@ -7,5 +7,6 @@
         public int ThematicCode { get; set; }
 
         public string? UserName { get; set; }
+        public int Available { get; set; }
     }
 }

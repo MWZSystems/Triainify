@@ -60,6 +60,15 @@ namespace RH_CM.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ToggleThematicArea(int id)
+        {
+            ServiceAnswer serviceAnswer = await _thematicAreaService.PostToggleThematicAreaAsync(id);
+
+            TempData[serviceAnswer.MessageType] = serviceAnswer.Message;
+
+            return RedirectToAction("Index");
+        }
 
         [HttpPost]
         public async Task<IActionResult> DeleteThematicArea(int id)

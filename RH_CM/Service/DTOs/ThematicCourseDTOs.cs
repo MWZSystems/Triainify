@@ -15,6 +15,7 @@
         public int FkThematicArea { get; set; }
         public string? ThematicName { get; set; }
         public int ThematicCode { get; set; }
+        public int Available {  get; set; }
 
     }
 

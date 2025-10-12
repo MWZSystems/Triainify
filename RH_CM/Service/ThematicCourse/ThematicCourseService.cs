@@ -75,6 +75,7 @@ namespace RH_CM.Service.ThematicCourse
             return thematicCourseDTOs;
         }
 
+        
         public async Task<ServiceAnswer> PostEditThematicCourseAsync(int id, string ThematicArea,string Course, string UserName)
         {
 
@@ -108,7 +109,33 @@ namespace RH_CM.Service.ThematicCourse
         }
 
 
+        //PostToggleThematicCourseAsync
+        public async Task<ServiceAnswer> PostToggleThematicCourseAsync(int id)
+        {
 
+            ServiceAnswer serviceAnswer = new();
+
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@pPK_ThematicCourse", id }
+            };
+
+            string answer = await _unitOfWork.ExecuteStoredProcedureScalarAsync("[sp_ThematicCourse_ToggleRecord_Post]", parameters);
+
+            if (answer == "Completed")
+            {
+                serviceAnswer.MessageType = ServiceAnswer.MessageType_Success;
+                serviceAnswer.Message = "Record Successfully Toggled!";
+            }
+            else
+            {
+                serviceAnswer.MessageType = ServiceAnswer.MessageType_Error;
+                serviceAnswer.Message = answer;
+            }
+
+            return serviceAnswer;
+        }
 
         public async Task<ServiceAnswer> PostDeleteThematicCourseAsync(int id)
         {

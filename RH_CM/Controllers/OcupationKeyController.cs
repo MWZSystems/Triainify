@@ -57,6 +57,15 @@ namespace RH_CM.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ToggleOcupationcode(int id)
+        {
+            ServiceAnswer serviceAnswer = await _ocupationKeyService.PostToggleOcupationCodeAsync(id);
+
+            TempData[serviceAnswer.MessageType] = serviceAnswer.Message;
+
+            return RedirectToAction("Index");
+        }
 
         [HttpPost]
         public async Task<IActionResult> DeleteOcupationcode(int id)

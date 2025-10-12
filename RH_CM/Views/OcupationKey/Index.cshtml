@@ -59,6 +59,12 @@
                                 <td>@detail.OcupationCode</td>
 
                                 <td>
+                                    <form asp-action="ToggleOcupationCode" asp-route-id="@detail.Id" method="post" class="d-inline" onsubmit=" return confirm('Are you sure you want to toggle availability?')">
+                                        <button type="submit" class="btn @(detail.Available == 1 ? "btn-success" : "btn-secondary")" title="Toggle availability">
+                                            <i class="align-middle fas @(detail.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
+                                            </button>
+                                        </form>
+
                                     <form asp-action="EditOcupationCode" asp-route-Id="@detail.Id" method="get" class="d-inline">
                                         <button type="submit" class="btn btn-warning">
                                             <i class="align-middle fas fa-edit"></i>
@@ -86,7 +92,6 @@
 </div>
 
 
-
 <div class="modal fade" id="addOcupationCode" tabindex="-1" aria-labelledby="addOcupationCodeLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -100,6 +105,7 @@
 
                     <div class="row mb-3">
                         <!-- Select Position -->
+
                         <div class="col-md-6">
                             <label for="Position" class="form-label">Select Position</label>
                             <select id="Position" name="Position" class="form-select" required>
@@ -109,6 +115,15 @@
                                     <option value="@position.Position">@position.Position</option>
                                 }
                             </select>
+                            <script>
+                                $(document).ready(function () {
+                                    $('#Position').select2({
+                                        placeholder: "-- Choose Position --",
+                                        allowClear: true,
+                                        width: '100%'
+                                    });
+                                });
+                            </script>
                         </div>
 
                         <!-- Enter Occupation Code -->
@@ -166,6 +181,17 @@
                     duration: 5000
                 });
             }
+
+
+            $('#addOcupationCode').on('shown.bs.modal', function () {
+                $('#Position').select2({
+                    placeholder: "-- Choose Position --",
+                    allowClear: true,
+                    width: '100%',
+                    dropdownParent: $('#addOcupationCode') //
+                });
+            });
+
         });
     </script>
 }

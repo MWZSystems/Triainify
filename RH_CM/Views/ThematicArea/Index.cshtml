@@ -59,6 +59,12 @@
                                 <td>@detail.ThematicCode</td>
 
                                 <td>
+                                    <form asp-action="ToggleThematicArea" asp-route-id="@detail.Id" method="post" class="d-inline" onsubmit=" return confirm('Are you sure you want to toggle availability?')">
+                                        <button type="submit" class="btn @(detail.Available == 1 ? "btn-success" : "btn-secondary")" title="Toggle availability">
+                                            <i class="align-middle fas @(detail.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
+                                        </button>
+                                    </form>
+
                                     <form asp-action="EditThematicArea" asp-route-Id="@detail.Id" method="get" class="d-inline">
                                         <button type="submit" class="btn btn-warning">
                                             <i class="align-middle fas fa-edit"></i>

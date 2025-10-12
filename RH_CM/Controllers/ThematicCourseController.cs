@@ -58,6 +58,16 @@ namespace RH_CM.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ToggleThematicCourse(int id)
+        {
+            ServiceAnswer serviceAnswer = await _thematicCourseService.PostToggleThematicCourseAsync(id);
+
+            TempData[serviceAnswer.MessageType] = serviceAnswer.Message;
+
+            return RedirectToAction("Index");
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> DeleteThematicCourse(int id)

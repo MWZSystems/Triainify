@@ -26,6 +26,9 @@
         public bool Resetpassword { get; set; }
 
         public bool Test { get; set; }
+        public bool OcupationCode { get; set; }
+        public bool ThematicArea { get; set; }
+        public bool ThematicCourse { get; set; }
 
         public bool ShowCatalogsMenu { get; set; } = false;
         public bool ShowAssignmentsMenu { get; set; } = false;

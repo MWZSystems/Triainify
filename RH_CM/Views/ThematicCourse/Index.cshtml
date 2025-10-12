@@ -61,6 +61,12 @@
                                 <td>@detail.CourseName</td>
 
                                 <td>
+                                    <form asp-action="ToggleThematicCourse" asp-route-id="@detail.Id" method="post" class="d-inline" onsubmit=" return confirm('Are you sure you want to toggle availability?')">
+                                        <button type="submit" class="btn @(detail.Available == 1 ? "btn-success" : "btn-secondary")" title="Toggle availability">
+                                            <i class="align-middle fas @(detail.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
+                                        </button>
+                                    </form>
+
                                     <form asp-action="EditThematicCourse" asp-route-Id="@detail.Id" method="get" class="d-inline">
                                         <button type="submit" class="btn btn-warning">
                                             <i class="align-middle fas fa-edit"></i>
@@ -173,6 +179,22 @@
                     duration: 5000
                 });
             }
+
+            $('#addThematicCourse').on('shown.bs.modal', function () {
+                $('#ThematicArea').select2({
+                    placeholder: "-- Select Thematic Area --",
+                    allowClear: true,
+                    width: '100%',
+                    dropdownParent: $('#addThematicCourse') //
+                });
+
+                 $('#Course').select2({
+                    placeholder: "-- Choose Course --",
+                    allowClear: true,
+                    width: '100%',
+                    dropdownParent: $('#addThematicCourse') //
+                });
+            });
         });
     </script>
 }

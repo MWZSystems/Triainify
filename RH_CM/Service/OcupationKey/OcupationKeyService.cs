@@ -109,7 +109,33 @@ namespace RH_CM.Service.OcupationKey
 
 
 
-        
+        public async Task<ServiceAnswer> PostToggleOcupationCodeAsync(int id)
+        {
+
+            ServiceAnswer serviceAnswer = new();
+
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@pPK_OcupationCode", id }
+            };
+
+            string answer = await _unitOfWork.ExecuteStoredProcedureScalarAsync("[sp_OcupationKey_ToggleRecord_Post]", parameters);
+
+            if (answer == "Completed")
+            {
+                serviceAnswer.MessageType = ServiceAnswer.MessageType_Success;
+                serviceAnswer.Message = "Record Successfully Toggled!";
+            }
+            else
+            {
+                serviceAnswer.MessageType = ServiceAnswer.MessageType_Error;
+                serviceAnswer.Message = answer;
+            }
+
+            return serviceAnswer;
+        }
+
         public async Task<ServiceAnswer> PostDeleteOcupationCodeAsync(int id)
         {
 

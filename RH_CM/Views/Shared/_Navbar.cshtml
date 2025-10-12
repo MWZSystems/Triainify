@@ -65,7 +65,7 @@
                                 {
                                     <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseMaterial"><i class="align-middle fas fa-file-pdf"></i> Course Material</a>
                                 }
-                                @if (accesos.AlwaysShow)
+                                @if (accesos.ThematicArea)
                                 {
                                     <a class="dropdown-item" asp-controller="ThematicArea" asp-action="Index"><i class="align-middle fas fa-warehouse"></i> Thematic Areas</a>
                                 }
@@ -117,11 +117,11 @@
                                 {
                                     <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexExternalEvidence"><i class="align-middle fas fa-receipt"></i> External Evidence</a>
                                 }
-                                @if (accesos.AlwaysShow)
+                                @if (accesos.OcupationCode)
                                 {
                                     <a class="dropdown-item" asp-controller="OcupationKey" asp-action="Index"><i class="align-middle fas fa-briefcase"></i> Ocupation Code</a>
                                 }
-                                @if (accesos.AlwaysShow)
+                                @if (accesos.ThematicCourse)
                                 {
                                     <a class="dropdown-item" asp-controller="ThematicCourse" asp-action="Index"><i class="align-middle fas fa-map"></i> Thematic - Course</a>
                                 }

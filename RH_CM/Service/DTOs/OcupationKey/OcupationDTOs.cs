@@ -20,6 +20,7 @@ namespace RH_CM.Service.DTOs.OcupationKey
         public int FkPosition { get; set; }
         public string? PositionName { get; set; }
         public int OcupationCode { get; set; }
+        public int Available {  get; set; }
     }
 
 }

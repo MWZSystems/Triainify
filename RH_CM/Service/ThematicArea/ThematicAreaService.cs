@@ -100,6 +100,32 @@ namespace RH_CM.Service.ThematicArea
 
 
 
+        public async Task<ServiceAnswer> PostToggleThematicAreaAsync(int id)
+        {
+
+            ServiceAnswer serviceAnswer = new();
+
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@pPK_ThematicArea", id }
+            };
+
+            string answer = await _unitOfWork.ExecuteStoredProcedureScalarAsync("[sp_ThematicArea_ToggleRecord_Post]", parameters);
+
+            if (answer == "Completed")
+            {
+                serviceAnswer.MessageType = ServiceAnswer.MessageType_Success;
+                serviceAnswer.Message = "Record Successfully Toggled!";
+            }
+            else
+            {
+                serviceAnswer.MessageType = ServiceAnswer.MessageType_Error;
+                serviceAnswer.Message = answer;
+            }
+
+            return serviceAnswer;
+        }
 
         public async Task<ServiceAnswer> PostDeleteThematicAreaAsync(int id)
         {
