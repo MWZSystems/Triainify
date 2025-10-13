@@ -264,9 +264,9 @@ namespace RH_CM.Controllers
             [FromForm] int[] SelectedLevels,      // <-- NUEVO
             [FromForm] int FkDeliveryMode,
             //[FromForm] bool Requiered
-            [FromForm] string Requiered)
+            [FromForm] bool Requiered)
         {
-             bool required = Requiered == "true";
+            bool required = Requiered;  // ya viene correcto
 
             // Validaciones básicas
             if (SelectedPositions == null || SelectedPositions.Length == 0)
@@ -361,59 +361,45 @@ namespace RH_CM.Controllers
         [HttpPost]
         [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
-        public IActionResult EditCourseAssignment(int id, CtCourseassignment courseAssignment)
+        public IActionResult EditCourseAssignment(int id, CtCourseassignment form)
         {
-            if (id != courseAssignment.PkCourseAssignment) return NotFound();
+            if (id != form.PkCourseAssignment) return NotFound();
 
-            // Validar campos vacíos
-            if (courseAssignment.FkPosition <= 0)
-            {
-                TempData["ErrorMessage"] = "Position is required. Please select a valid position.";
-                LoadCourseAssignmentViewBags();
-                return RedirectToAction(nameof(EditCourseAssignment), new { id });
-            }
+            // Validaciones de negocio (tus mismas)
+            if (form.FkPosition <= 0) { TempData["ErrorMessage"] = "Position is required."; return RedirectToAction(nameof(EditCourseAssignment), new { id }); }
+            if (form.FkCourse <= 0) { TempData["ErrorMessage"] = "Course is required."; return RedirectToAction(nameof(EditCourseAssignment), new { id }); }
+            if (form.FkRequiredCourseLevels <= 0) { TempData["ErrorMessage"] = "Required Course Level is required."; return RedirectToAction(nameof(EditCourseAssignment), new { id }); }
 
-            if (courseAssignment.FkCourse <= 0)
-            {
-                TempData["ErrorMessage"] = "Course is required. Please select a valid course.";
-                LoadCourseAssignmentViewBags();
-                return RedirectToAction(nameof(EditCourseAssignment), new { id });
-            }
-
-            if (courseAssignment.FkRequiredCourseLevels <= 0)
-            {
-                TempData["ErrorMessage"] = "Required Course Level is required. Please select a valid level.";
-                LoadCourseAssignmentViewBags();
-                return RedirectToAction(nameof(EditCourseAssignment), new { id });
-            }
-
-            // Validar duplicados
             bool exists = _context.CtCourseassignments.Any(ca =>
-                ca.FkPosition == courseAssignment.FkPosition &&
-                ca.FkCourse == courseAssignment.FkCourse &&
-                ca.FkRequiredCourseLevels == courseAssignment.FkRequiredCourseLevels &&
-                ca.PkCourseAssignment != id); // Excluir el registro actual
+                ca.FkPosition == form.FkPosition &&
+                ca.FkCourse == form.FkCourse &&
+                ca.FkRequiredCourseLevels == form.FkRequiredCourseLevels &&
+                ca.PkCourseAssignment != id);
 
             if (exists)
             {
-                TempData["ErrorMessage"] = "The combination of Position, Course, and Required Course Level already exists.";
-                LoadCourseAssignmentViewBags();
+                TempData["ErrorMessage"] = "The combination already exists.";
                 return RedirectToAction(nameof(EditCourseAssignment), new { id });
             }
 
-            // Actualizar si todo está correcto
-            courseAssignment.CreateUser = User.Identity.Name ?? "Unknown";
-            courseAssignment.CreateDate = DateTime.Now;
-            courseAssignment.LastUpdateUser = User.Identity.Name ?? "Unknown";
-            courseAssignment.LastUpdateDate = DateTime.Now;
+            var entity = _context.CtCourseassignments.Find(id);
+            if (entity == null) return NotFound();
 
-            _context.CtCourseassignments.Update(courseAssignment);
+            // === Solo actualizar campos editables ===
+            entity.FkPosition = form.FkPosition;
+            entity.FkCourse = form.FkCourse;
+            entity.FkRequiredCourseLevels = form.FkRequiredCourseLevels;
+            entity.FkDeliveryMode = form.FkDeliveryMode;
+            entity.Requiered = form.Requiered;
+            entity.LastUpdateUser = User.Identity?.Name ?? "Unknown";
+            entity.LastUpdateDate = DateTime.Now;
+
             _context.SaveChanges();
 
             TempData["SuccessMessage"] = "Course assignment updated successfully.";
-            LoadCourseAssignmentViewBags();
-            return RedirectToAction(nameof(EditCourseAssignment));
+            return RedirectToAction(nameof(EditCourseAssignment), new { id });  // pasa el id!
         }
+
 
 
         // POST: CourseAssignments/Delete/5

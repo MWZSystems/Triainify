@@ -1,13 +1,32 @@
-﻿@{
-    ViewData["Title"] = "HP REPORT";
+﻿@model RH_CM.ViewModels.CompletedByDepartmentPageViewModel
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Completed by Department";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Datos para JS (labels y % completado por depto)
+    var labels = Model.Rows.Select(r => r.Department).ToList();
+    var percCompleted = Model.Rows.Select(r => Math.Round(r.PercentCompleted, 2)).ToList();
+
+    var labelsJson = JsonSerializer.Serialize(labels);
+    var percCompletedJson = JsonSerializer.Serialize(percCompleted);
+
+    var overallCompleted = Math.Round(Model.OverallCompletedPct, 2);
+    var overallPending = Math.Round(Model.OverallPendingPct, 2);
+
+    string currentMS = (ViewBag.ManagementSystem as string) ?? "";
+    string msBadge = string.IsNullOrWhiteSpace(currentMS) ? "All" : currentMS.ToUpperInvariant();
 }
 
 <div class="row">
     <div class="col">
-        <h1 class="h3 mb-3 text-center title-accent">
+        <h1 class="h3 mb-1 text-center title-accent">
             <i class="align-middle fas fa-chart-pie"></i> @ViewData["Title"]
         </h1>
+        <p class="text-center text-muted">
+            Filter: <span class="badge bg-info">@msBadge</span>
+        </p>
     </div>
 </div>
 
@@ -15,25 +34,26 @@
     <div class="col-auto ms-auto text-end mt-n1">
         <div class="dropdown me-2 d-inline-block">
             <a class="btn btn-light bg-white shadow-sm dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-display="static">
-                <i class="align-middle mt-n1" data-feather="calendar"></i> Filter
+                <i class="align-middle mt-n1" data-feather="filter"></i> Filter by Management System
             </a>
             <div class="dropdown-menu dropdown-menu-end">
                 <h6 class="dropdown-header">Select...</h6>
-                <a class="dropdown-item" href="#">AMBIENTAL</a>
-                <a class="dropdown-item" href="#">CALIDAD</a>
-                <a class="dropdown-item" href="#">SEGURIDAD</a>
-                <a class="dropdown-item" href="#">OTROS</a>
+                <a class="dropdown-item" href="@Url.Action("MatrizByDeparmentGeneral_RH", "Reports", new { managementSystem = (string?)null })">All</a>
+                <a class="dropdown-item" href="@Url.Action("MatrizByDeparmentGeneral_RH", "Reports", new { managementSystem = "AMBIENTAL" })">AMBIENTAL</a>
+                <a class="dropdown-item" href="@Url.Action("MatrizByDeparmentGeneral_RH", "Reports", new { managementSystem = "CALIDAD" })">CALIDAD</a>
+                <a class="dropdown-item" href="@Url.Action("MatrizByDeparmentGeneral_RH", "Reports", new { managementSystem = "SEGURIDAD" })">SEGURIDAD</a>
+                <a class="dropdown-item" href="@Url.Action("MatrizByDeparmentGeneral_RH", "Reports", new { managementSystem = "OTROS" })">OTROS</a>
             </div>
         </div>
-        <button class="btn btn-primary shadow-sm">
+        <a class="btn btn-primary shadow-sm" href="@Url.Action("MatrizByDeparmentGeneral_RH", "Reports", new { managementSystem = currentMS })" title="Refresh">
             <i class="align-middle" data-feather="refresh-cw">&nbsp;</i>
-        </button>
+        </a>
     </div>
 </div>
 
 <div class="row">
 
-    <!-- Donut: Completed vs Pending -->
+    <!-- Donut: Completed vs Pending (dinámico) -->
     <div class="col-12 col-lg-5 col-xl-4 d-flex">
         <div class="card flex-fill w-100">
             <div class="card-header">
@@ -57,11 +77,11 @@
                         <tbody>
                             <tr>
                                 <td><i class="fas fa-square-full" style="color:#198754"></i> Completed</td>
-                                <td class="text-end text-success">99.20%</td>
+                                <td class="text-end text-success">@overallCompleted.ToString("N2")%</td>
                             </tr>
                             <tr>
                                 <td><i class="fas fa-square-full" style="color:#dc3545"></i> Pending</td>
-                                <td class="text-end text-danger">0.80%</td>
+                                <td class="text-end text-danger">@overallPending.ToString("N2")%</td>
                             </tr>
                         </tbody>
                     </table>
@@ -71,79 +91,51 @@
         </div>
     </div>
 
-    <!-- Tabla: pendientes por departamento -->
+    <!-- Tabla: COMPLETADO por departamento -->
     <div class="col-12 col-lg-4 d-flex">
         <div class="card flex-fill w-100">
             <div class="card-header">
-                <h5 class="card-title mb-0">Pending by Department</h5>
+                <h5 class="card-title mb-0">Completed by Department</h5>
             </div>
-            <table class="table table-striped my-0">
+            <table id="datatables-responsive" class="table table-striped my-0">
                 <thead>
                     <tr>
                         <th>Department</th>
-                        <th class="text-end">Pending</th>
-                        <th class="d-none d-xl-table-cell w-75">% Pending</th>
+                        <th class="text-end">Completed</th>
+                        <th class="d-none d-xl-table-cell w-75">% Completed</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Calidad</td>
-                        <td class="text-end">18</td>
-                        <td class="d-none d-xl-table-cell">
-                            <div class="progress">
-                                <div class="progress-bar bg-danger" role="progressbar" style="width: 42.86%;" aria-valuenow="42.86" aria-valuemin="0" aria-valuemax="100">42.86%</div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Sistemas</td>
-                        <td class="text-end">13</td>
-                        <td class="d-none d-xl-table-cell">
-                            <div class="progress">
-                                <div class="progress-bar bg-danger" role="progressbar" style="width: 30.95%;" aria-valuenow="30.95" aria-valuemin="0" aria-valuemax="100">30.95%</div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Recursos Humanos</td>
-                        <td class="text-end">9</td>
-                        <td class="d-none d-xl-table-cell">
-                            <div class="progress">
-                                <div class="progress-bar bg-danger" role="progressbar" style="width: 21.43%;" aria-valuenow="21.43" aria-valuemin="0" aria-valuemax="100">21.43%</div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Materiales</td>
-                        <td class="text-end">2</td>
-                        <td class="d-none d-xl-table-cell">
-                            <div class="progress">
-                                <div class="progress-bar bg-danger" role="progressbar" style="width: 4.76%;" aria-valuenow="4.76" aria-valuemin="0" aria-valuemax="100">4.76%</div>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <!-- Resto con 0% -->
-                    <tr><td>Moldes</td><td class="text-end">0</td><td class="d-none d-xl-table-cell"><div class="progress"><div class="progress-bar bg-secondary" style="width:0%;">0%</div></div></td></tr>
-                    <tr><td>Operaciones</td><td class="text-end">0</td><td class="d-none d-xl-table-cell"><div class="progress"><div class="progress-bar bg-secondary" style="width:0%;">0%</div></div></td></tr>
-                    <tr><td>Procesos</td><td class="text-end">0</td><td class="d-none d-xl-table-cell"><div class="progress"><div class="progress-bar bg-secondary" style="width:0%;">0%</div></div></td></tr>
-                    <tr><td>Finanzas</td><td class="text-end">0</td><td class="d-none d-xl-table-cell"><div class="progress"><div class="progress-bar bg-secondary" style="width:0%;">0%</div></div></td></tr>
-                    <tr><td>Ingeniería</td><td class="text-end">0</td><td class="d-none d-xl-table-cell"><div class="progress"><div class="progress-bar bg-secondary" style="width:0%;">0%</div></div></td></tr>
-                    <tr><td>Mantenimiento</td><td class="text-end">0</td><td class="d-none d-xl-table-cell"><div class="progress"><div class="progress-bar bg-secondary" style="width:0%;">0%</div></div></td></tr>
-                    <tr><td>Manufactura</td><td class="text-end">0</td><td class="d-none d-xl-table-cell"><div class="progress"><div class="progress-bar bg-secondary" style="width:0%;">0%</div></div></td></tr>
-                    <tr><td>Aduanas y compras</td><td class="text-end">0</td><td class="d-none d-xl-table-cell"><div class="progress"><div class="progress-bar bg-secondary" style="width:0%;">0%</div></div></td></tr>
-                    <tr><td>Ventas y cotizaciones</td><td class="text-end">0</td><td class="d-none d-xl-table-cell"><div class="progress"><div class="progress-bar bg-secondary" style="width:0%;">0%</div></div></td></tr>
-                    <tr><td>Departamento</td><td class="text-end">0</td><td class="d-none d-xl-table-cell"><div class="progress"><div class="progress-bar bg-secondary" style="width:0%;">0%</div></div></td></tr>
+                    @foreach (var r in Model.Rows.OrderByDescending(x => x.PercentCompleted).ThenBy(x => x.Department))
+                    {
+                        var width = Math.Clamp((double)r.PercentCompleted, 0, 100);
+                        <tr>
+                            <td>@r.Department</td>
+                            <td class="text-end">@r.TotalCompleted</td>
+                            <td class="d-none d-xl-table-cell">
+                                <div class="progress">
+                                    <div class="progress-bar bg-success"
+                                         role="progressbar"
+                                         style="width: @width.ToString("N2", System.Globalization.CultureInfo.InvariantCulture)%;"
+                                         aria-valuenow="@r.PercentCompleted.ToString("N2")"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                        @r.PercentCompleted.ToString("N2")%
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- Radar: % Pending por departamento (lado de la tabla) -->
+    <!-- Radar: % COMPLETED por departamento -->
     <div class="col-12 col-lg-3 d-flex">
         <div class="card flex-fill w-100">
             <div class="card-header">
-                <h5 class="card-title mb-0">Pending % (Radar)</h5>
+                <h5 class="card-title mb-0">Completed % (Radar)</h5>
             </div>
             <div class="card-body">
                 <div class="chart">
@@ -155,12 +147,11 @@
 
 </div>
 
-<!-- ==== Scripts de gráficos (solo front, sin BD) ==== -->
+<!-- ==== Scripts de gráficos (dinámicos) ==== -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // Solo dos datos: Completed vs Pending (estáticos)
-        const completed = 99.20;
-        const pending = 0.80;
+        const completed = @overallCompleted.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        const pending   = @overallPending.ToString(System.Globalization.CultureInfo.InvariantCulture);
 
         new Chart(document.getElementById("chartjs-dashboard-pie"), {
             type: "pie",
@@ -176,7 +167,7 @@
             options: {
                 responsive: !window.MSInputMethodContext,
                 maintainAspectRatio: false,
-                cutoutPercentage: 70, // dona
+                cutoutPercentage: 70,
                 legend: { display: true, position: "bottom" },
                 tooltips: {
                     callbacks: {
@@ -193,54 +184,23 @@
 </script>
 
 <script>
-    // Radar chart con los mismos % de la tabla "Pending by Department"
     document.addEventListener("DOMContentLoaded", function() {
-        const labels = [
-            "Aduanas y Compras",
-            "Calidad",
-            "Finanzas",
-            "Ingeniería",
-            "Mantenimiento",
-            "Manufactura",
-            "Materiales",
-            "Moldes",
-            "Operaciones",
-            "Procesos",
-            "Recursos Humanos",
-            "Sistemas",
-            "Ventas y Cotizaciones"
-        ];
-
-        // % de pendientes por departamento (mismo orden que la tabla)
-        const pendingPercents = [
-            0.00,   // Aduanas y Compras
-            42.86,  // Calidad
-            0.00,   // Finanzas
-            0.00,   // Ingeniería
-            0.00,   // Mantenimiento
-            0.00,   // Manufactura
-            4.76,   // Materiales
-            0.00,   // Moldes
-            0.00,   // Operaciones
-            0.00,   // Procesos
-            21.43,  // Recursos Humanos
-            30.95,  // Sistemas
-            0.00    // Ventas y Cotizaciones
-        ];
+        const labels = @Html.Raw(labelsJson);
+        const completedPercents = @Html.Raw(percCompletedJson);
 
         new Chart(document.getElementById("chartjs-dashboard-radar"), {
             type: "radar",
             data: {
                 labels: labels,
                 datasets: [{
-                    label: "% Pending by Department",
-                    backgroundColor: "rgba(220, 53, 69, 0.2)",   // rojo claro translúcido
-                    borderColor: "rgba(220, 53, 69, 1)",          // rojo intenso
-                    pointBackgroundColor: "rgba(220, 53, 69, 1)", // puntos rojos
+                    label: "% Completed by Department",
+                    backgroundColor: "rgba(25, 135, 84, 0.2)",
+                    borderColor: "rgba(25, 135, 84, 1)",
+                    pointBackgroundColor: "rgba(25, 135, 84, 1)",
                     pointBorderColor: "#fff",
                     pointHoverBackgroundColor: "#fff",
-                    pointHoverBorderColor: "rgba(220, 53, 69, 1)",
-                    data: pendingPercents
+                    pointHoverBorderColor: "rgba(25, 135, 84, 1)",
+                    data: completedPercents
                 }]
             },
             options: {
@@ -250,7 +210,7 @@
                 scale: {
                     ticks: {
                         beginAtZero: true,
-                        max: 50,          // escala cómoda para tus % actuales
+                        max: 100,
                         stepSize: 10,
                         callback: function(v){ return v + "%"; },
                         showLabelBackdrop: false
@@ -261,7 +221,7 @@
                         label: function(tooltipItem, data) {
                             const label = data.labels[tooltipItem.index];
                             const value = data.datasets[0].data[tooltipItem.index];
-                            return label + ": " + value + "%";
+                            return label + ": " + Number(value).toFixed(2) + "%";
                         }
                     }
                 }
@@ -270,7 +230,6 @@
     });
 </script>
 
-<!-- (Opcional) DataTables / Notyfs si los usas -->
 <script>
     $(document).ready(function () {
         $('#datatables-responsive').DataTable?.({
