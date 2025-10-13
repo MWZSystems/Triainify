@@ -400,8 +400,6 @@ namespace RH_CM.Controllers
             return RedirectToAction(nameof(EditCourseAssignment), new { id });  // pasa el id!
         }
 
-
-
         // POST: CourseAssignments/Delete/5
         [HttpPost]
         [Authorize(Policy = "ViewAccess")]
