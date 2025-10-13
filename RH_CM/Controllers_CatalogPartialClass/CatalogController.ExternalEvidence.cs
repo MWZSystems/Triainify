@@ -7,7 +7,7 @@ namespace RH_CM.Controllers
     public partial class CatalogController
     {
         [HttpGet]
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> IndexExternalEvidence()
         {
             List<ExternalEvidenceDTOs> result = await _externalEvidenceService.GetIndexAsync();
@@ -15,7 +15,7 @@ namespace RH_CM.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> CreateExternalEvidence()
         {
             CreateExternalEvidenceDTOs result = await _externalEvidenceService.GetCreateExternalEvidenceAsync();
@@ -23,7 +23,7 @@ namespace RH_CM.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> CreateExternalEvidence(CreateExternalEvidenceInputDTOs model)
         {
             model.UserName = User.Identity?.Name ?? "Unknown";
@@ -47,6 +47,7 @@ namespace RH_CM.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> ViewEvidenceMaterial(int id)
         {
             ServiceAnswerAndFeedbackDTOs serviceAnswerAndFeedbackDTOs = await _externalEvidenceService.GetEvidenceMaterialAsync(id,0);
@@ -61,7 +62,7 @@ namespace RH_CM.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleEvidenceMaterial(int id)
         {
@@ -71,7 +72,7 @@ namespace RH_CM.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> EditEvidenceMaterial(int? id)
         {
             EditExternalEvidenceDTOs getResult = await _externalEvidenceService.GetUpdateRecordAsync(id);
@@ -79,7 +80,7 @@ namespace RH_CM.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditEvidenceMaterial(EditExternalEvidenceDTOs DTOs, IFormFile? uploadedFile)
         {
@@ -91,7 +92,7 @@ namespace RH_CM.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteEvidenceMaterial(int id)
         {

@@ -3,7 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using RH_CM.Data;
 using RH_CM.Service.ExternalEvidence;
 using RH_CM.Service.SQLSMS;
-using BootstrapBlazor.Components; // ✅ nuevo: BootstrapBlazor
+using BootstrapBlazor.Components;
+using RH_CM.Service.AccessGroups; // ✅ nuevo: BootstrapBlazor
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +48,17 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+builder.Services.AddHttpContextAccessor();
+
+
+//Autorizacion por Controller.
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ViewAccess", policy =>
+        policy.Requirements.Add(new ViewAccessRequirement()));
+});
+
 
 var app = builder.Build();
 

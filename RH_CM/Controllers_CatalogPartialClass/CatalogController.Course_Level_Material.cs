@@ -65,7 +65,7 @@ namespace RH_CM.Controllers
         // =============================
         // INDEX
         // =============================
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        [Authorize(Policy = "ViewAccess")] //OnBoardingView
         public IActionResult IndexCourseLevelMaterial()
         {
             //Aqui lo tuve que modificar porque usaba los constrains del sql server, al borrar las ligas entre las tablas tuve que armar el query
@@ -105,7 +105,7 @@ namespace RH_CM.Controllers
         // =============================
         // EXPORTAR A EXCEL
         // =============================
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        [Authorize(Policy = "ViewAccess")]
         [HttpGet]
         public async Task<IActionResult> ExportCourseLevelMaterialToExcel()
         {
@@ -183,7 +183,7 @@ namespace RH_CM.Controllers
         // =============================
         // CREATE (GET)
         // =============================
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        [Authorize(Policy = "ViewAccess")]
         [HttpGet]
         public IActionResult CreateCourseLevelMaterial()
         {
@@ -194,7 +194,7 @@ namespace RH_CM.Controllers
         // =============================
         // CREATE (POST)
         // =============================
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        [Authorize(Policy = "ViewAccess")] 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateCourseLevelMaterial(CtCourseLevelMaterial model)
@@ -256,7 +256,7 @@ namespace RH_CM.Controllers
         // =============================
         // EDIT (GET)
         // =============================
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        [Authorize(Policy = "ViewAccess")] 
         [HttpGet]
         public IActionResult EditCourseLevelMaterial(int id)
         {
@@ -270,7 +270,7 @@ namespace RH_CM.Controllers
         // =============================
         // EDIT (POST)
         // =============================
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        [Authorize(Policy = "ViewAccess")] 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult EditCourseLevelMaterial(int id, CtCourseLevelMaterial model)
@@ -317,7 +317,7 @@ namespace RH_CM.Controllers
         // =============================
         // DELETE (POST)
         // =============================
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        [Authorize(Policy = "ViewAccess")] 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteCourseLevelMaterial(int id)
@@ -339,7 +339,7 @@ namespace RH_CM.Controllers
         // =============================
         // TOGGLE AVAILABLE (POST)
         // =============================
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        [Authorize(Policy = "ViewAccess")] 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult ToggleCourseLevelMaterial(int id)

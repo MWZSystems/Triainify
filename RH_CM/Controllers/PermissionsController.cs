@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RH_CM.Service.DTOs;
 using RH_CM.Service.DTOs.Permissions;
@@ -16,14 +17,14 @@ namespace RH_CM.Controllers
             _permissionsService = permissionsService;
         }
 
-
+        [Authorize(Policy = "ViewAccess")]
         public async Task<ActionResult> Index()
         {
             List<PermissionsIndexDTOs> groups = await _permissionsService.GetIndexAsync();
             return View(groups);
         }
 
-
+        [Authorize(Policy = "ViewAccess")]
         public async Task<ActionResult> GroupDetail(string SelectedGroup)
         {
             PermissionsDetailDTOs detailDTOs = await _permissionsService.GetGroupDetailAsync(SelectedGroup);
@@ -34,6 +35,7 @@ namespace RH_CM.Controllers
 
         //AddRole
         [HttpPost]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<ActionResult> AddRoleToGroup(int GroupId, string RoleId)
         {
             ServiceAnswerPermissionsAdd answer = await _permissionsService.PostAddRoleToGroup(GroupId, RoleId);
@@ -44,7 +46,7 @@ namespace RH_CM.Controllers
         }
 
 
-
+        [Authorize(Policy = "ViewAccess")]
         public async Task<ActionResult> DeleteRoleFromGroup(int GroupId, string RoleId)
         {
 

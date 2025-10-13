@@ -27,7 +27,8 @@ namespace RH_CM.Controllers
             _signInManager = signInManager;
         }
 
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        // [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> Index()
         {
             var departments = await _context.CtDepartments.ToListAsync();
@@ -171,7 +172,8 @@ namespace RH_CM.Controllers
             }
         }
 
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        //[Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> HeadCountUnavailable()
         {
             var departments = await _context.CtDepartments.ToListAsync();
@@ -198,7 +200,8 @@ namespace RH_CM.Controllers
         }
 
         // GET: SyHeadCounts
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        //[Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        [Authorize(Policy = "ViewAccess")] //OnBoardingView
         public async Task<IActionResult> IndexHeadCount()
         {
             var departments = await _context.CtDepartments.ToListAsync();
@@ -219,7 +222,8 @@ namespace RH_CM.Controllers
         }
 
         // GET: SyHeadCounts
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        //[Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        [Authorize(Policy = "ViewAccess")] //OnBoardingView
         public async Task<IActionResult> IndexOFFBoarding()
         {
             var departments = await _context.CtDepartments.ToListAsync();
@@ -273,7 +277,8 @@ namespace RH_CM.Controllers
         }
 
         // GET: HeadCount/Create
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        //[Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        [Authorize(Policy = "ViewAccess")]
         public IActionResult CreateHeadCount()
         {
             var model = InitializeCreateHeadCount();
@@ -281,7 +286,8 @@ namespace RH_CM.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        //[Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> CreateHeadCount(CreateHeadCountViewModel model)
         {
             // Helper method to reload view data
@@ -413,7 +419,8 @@ namespace RH_CM.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        //[Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        [Authorize(Policy = "ViewAccess")]
         public IActionResult EditHeadCount(int id)
         {
             var headCount = _context.SyHeadcounts.Find(id);
@@ -474,7 +481,8 @@ namespace RH_CM.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        //[Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditHeadCount(EditHeadCountViewModel viewModel)
         {
@@ -578,7 +586,8 @@ namespace RH_CM.Controllers
 
         // POST: SyHeadCounts/Delete/5
         [HttpPost, ActionName("DeleteHeadCount")]
-        [Authorize(Roles = "Administrador, RHGerente")]
+        //[Authorize(Roles = "Administrador, RHGerente")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteHeadCountConfirmed(int id)
         {
@@ -600,7 +609,8 @@ namespace RH_CM.Controllers
 
         // POST: SyHeadCounts/ToggleAvailability/5
         [HttpPost, ActionName("ToggleAvailabilityHeadCount")]
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        //[Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleAvailabilityConfirmedHeadCount(int id)
         {

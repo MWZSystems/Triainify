@@ -49,7 +49,7 @@ namespace RH_CM.Controllers
         // ------------------- Ventana A: Selector -------------------
 
         [HttpGet]
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> MatrizbyPositionSelectPosition()
         {
             var vm = new SelectPositionViewModel
@@ -60,7 +60,7 @@ namespace RH_CM.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> MatrizbyPositionSelectPosition(SelectPositionViewModel vm)
         {
@@ -209,6 +209,7 @@ namespace RH_CM.Controllers
         }
 
         // GET: IndexCourseCompleted
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> IndexCourseCompleted()
         {
             var query =
@@ -339,6 +340,7 @@ namespace RH_CM.Controllers
 
         // POST: DeleteCourseCompleted/5
         [HttpPost, ActionName("DeleteCourseCompleted"), ValidateAntiForgeryToken]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> DeleteCourseCompletedConfirmed(int id)
         {
             var entity = await _context.SyCoursecompleteds.FindAsync(id);
@@ -769,7 +771,7 @@ namespace RH_CM.Controllers
             return RedirectToAction("LearningTrainify", "Trainify");
         }
 
-        [Authorize(Roles = "Empleado, RHGerente, Administrador")]
+
         [HttpGet]
         public async Task<IActionResult> Diagnostic(int id, int? courseId, int? levelId, int? courseAssignmentId)
         {
@@ -848,7 +850,6 @@ namespace RH_CM.Controllers
             return View("Diagnostic", model);
         }
 
-        [Authorize(Roles = "Empleado, RHGerente, Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SubmitDiagnostic(SubmitTestViewModel model)
@@ -1028,7 +1029,6 @@ namespace RH_CM.Controllers
 
 
         // GET: render exam (con courseAssignmentId)
-        [Authorize(Roles = "Empleado, RHGerente, Administrador")]
         [HttpGet]
         public async Task<IActionResult> Exam(int? id, int? courseId, int? levelId, int? courseAssignmentId)
         {
@@ -1106,7 +1106,7 @@ namespace RH_CM.Controllers
                 .FirstOrDefaultAsync();
         }
 
-        [Authorize(Roles = "Empleado, RHGerente, Administrador")]
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SubmitExam(SubmitTestViewModel model)

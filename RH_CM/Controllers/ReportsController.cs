@@ -71,6 +71,7 @@ namespace RH_CM.Controllers
 
         // ------------------- Ventana A: Selector -------------------
         [HttpGet]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> MatrizbySupervisorSelect()
         {
             var vm = new SelectSupervisorViewModel
@@ -82,6 +83,7 @@ namespace RH_CM.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> MatrizbySupervisorSelect(SelectSupervisorViewModel vm)
         {
             if (!vm.SelectedSupervisorId.HasValue || vm.SelectedSupervisorId.Value <= 0)
@@ -95,7 +97,7 @@ namespace RH_CM.Controllers
         }
 
         // ------------------- Ventana B: Matriz (SOLO muestra) -------------------
-        [Authorize]
+        [Authorize(Policy = "ViewAccess")]
         [HttpGet]
         public async Task<IActionResult> MatrizbySupervisor(int supervisorId)
         {
@@ -168,7 +170,7 @@ namespace RH_CM.Controllers
         // =============== AJUSTE: abrir Matriz por EMPLEADO por UserName ===============
         // Antes: tomaba siempre el usuario logueado.
         // Ahora: si viene userName en la ruta, se usa; si no, se usa el actual.
-        [Authorize]
+        [Authorize(Policy = "ViewAccess")]
         [HttpGet]
         public async Task<IActionResult> MatrizbyEmployee(string? userName)
         {
@@ -237,7 +239,7 @@ namespace RH_CM.Controllers
         // =============================
         // EXPORTAR A EXCEL
         // =============================
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        [Authorize(Policy = "ViewAccess")]
         [HttpGet]
         public async Task<IActionResult> ExportMissingMaterialExamReport()
         {

@@ -11,7 +11,8 @@ namespace RH_CM.Controllers
 {
     public partial class CatalogController
     {
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+
+        [Authorize(Policy = "ViewAccess")]
         public IActionResult IndexCourseassignments()
         {
             var courseAssignments = _context.CtCourseassignments
@@ -45,7 +46,7 @@ namespace RH_CM.Controllers
             return View(courseAssignments);
         }
 
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        [Authorize(Policy = "ViewAccess")]
         [HttpGet]
         public async Task<IActionResult> ExportCourseAssignmentsToExcel()
         {
@@ -185,7 +186,7 @@ namespace RH_CM.Controllers
         }
 
         // GET: CourseAssignments/Create
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         public IActionResult CreateCourseAssignment()
         {
             LoadCourseAssignmentViewBags();
@@ -193,7 +194,7 @@ namespace RH_CM.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public IActionResult CreateCourseAssignment(CtCourseassignment courseAssignment)
         {
@@ -247,7 +248,7 @@ namespace RH_CM.Controllers
         }
 
         // GET: CourseAssignments/CreateBulk
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         public IActionResult CreateCourseAssignmentBulk()
         {
             LoadCourseAssignmentViewBags();
@@ -255,7 +256,7 @@ namespace RH_CM.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public IActionResult CreateCourseAssignmentBulk(
             [FromForm] int[] SelectedPositions,
@@ -346,7 +347,7 @@ namespace RH_CM.Controllers
 
 
         // GET: CourseAssignments/Edit/5
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         public IActionResult EditCourseAssignment(int id)
         {
             var courseAssignment = _context.CtCourseassignments.Find(id);
@@ -358,7 +359,7 @@ namespace RH_CM.Controllers
 
         // POST: CourseAssignments/Edit/5
         [HttpPost]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public IActionResult EditCourseAssignment(int id, CtCourseassignment form)
         {
@@ -403,7 +404,7 @@ namespace RH_CM.Controllers
 
         // POST: CourseAssignments/Delete/5
         [HttpPost]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteCourseAssignment(int id)
         {
@@ -424,7 +425,7 @@ namespace RH_CM.Controllers
         // POST: /CtCourseassignment/ToggleCourseAssignment/5
         [HttpPost]
         [Route("ToggleCourseAssignment")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleCourseAssignment(int id)
         {
@@ -449,7 +450,7 @@ namespace RH_CM.Controllers
         }
 
         // GET: /CourseAssignments
-        [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
+        [Authorize(Policy = "ViewAccess")]
         public IActionResult IndexDeleteCourseassignments()
         {
             var model = _context.CtCourseassignments
@@ -489,7 +490,7 @@ namespace RH_CM.Controllers
 
 
         [HttpPost]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteCourseAssignmentsBulk([FromForm] int[] selectedIds)
         {

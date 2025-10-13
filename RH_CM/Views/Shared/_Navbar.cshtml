@@ -2,6 +2,19 @@
 
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
+@* @inject RH_CM.Service.AccessGroups.AccessGroupsService _accessGroups *@
+
+@inject IHttpContextAccessor HttpContextAccessor
+@using Newtonsoft.Json
+@using RH_CM.Service.DTOs
+@{
+    GroupsAccessDTOs accesos = null;
+    var accesosJson = HttpContextAccessor.HttpContext.Session.GetString("Accesos");
+    if (!string.IsNullOrEmpty(accesosJson))
+    {
+        accesos = JsonConvert.DeserializeObject<GroupsAccessDTOs>(accesosJson);
+    }
+}
 
 <nav class="navbar navbar-expand navbar-light navbar-bg">
     @* <a class="sidebar-toggle">
@@ -12,7 +25,9 @@
         @if (User.Identity.IsAuthenticated)
         {   
             //Menu Catalogos
-            @if ((User.IsInRole("Administrador") || User.IsInRole("RHGerente") || User.IsInRole("RHAdmin") || User.IsInRole("RH")))
+            //@if ((User.IsInRole("Administrador") || User.IsInRole("RHGerente") || User.IsInRole("RHAdmin") || User.IsInRole("RH")))
+
+            @if (accesos.ShowCatalogsMenu) //Nuevo metodo que lee el Group Role
             {
                 <li class="nav-item px-2 dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -22,25 +37,54 @@
                     <div class="dropdown-menu dropdown-menu-start dropdown-mega" aria-labelledby="servicesDropdown">
                         <div class="d-md-flex align-items-start justify-content-start">
                             <div class="dropdown-mega-list">
-                                <a class="dropdown-item" asp-controller="HeadCount" asp-action="IndexHeadCount"><i class="align-middle fas fa-user-plus"></i> Onboarding</a>
-                                <a class="dropdown-item" asp-controller="HeadCount" asp-action="IndexOFFBoarding"><i class="align-middle fas fa-user-minus"></i> Offboarding</a>
-                                <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexSupervisor"><i class="align-middle fas fa-users-cog"></i> Supervisor</a>
-                                <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexDepartment"><i class="align-middle fas fa-store-alt"></i> Department</a>
-                                <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexPosition"><i class="align-middle fas fa-chess-board"></i> Position</a>
-                                <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourse"><i class="align-middle fas fa-book"></i> Course</a>
-                                <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseMaterial"><i class="align-middle fas fa-file-pdf"></i> Course Material</a>
+                                @if (accesos.OnBoarding)
+                                {
+                                    <a class="dropdown-item" asp-controller="HeadCount" asp-action="IndexHeadCount"><i class="align-middle fas fa-user-plus"></i> Onboarding</a>
+                                }
+                                @if (accesos.Offboarding)
+                                {
+                                    <a class="dropdown-item" asp-controller="HeadCount" asp-action="IndexOFFBoarding"><i class="align-middle fas fa-user-minus"></i> Offboarding</a>
+                                }
+                                @if (accesos.Supervisor)
+                                {
+                                    <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexSupervisor"><i class="align-middle fas fa-users-cog"></i> Supervisor</a>
+                                }
+                                @if (accesos.Department)
+                                {
+                                    <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexDepartment"><i class="align-middle fas fa-store-alt"></i> Department</a>
+                                }
+                                @if (accesos.Position)
+                                {
+                                    <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexPosition"><i class="align-middle fas fa-chess-board"></i> Position</a>
+                                }
+                                @if (accesos.Course)
+                                {
+                                    <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourse"><i class="align-middle fas fa-book"></i> Course</a>
+                                }
+                                @if (accesos.CourseMaterial)
+                                {
+                                    <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseMaterial"><i class="align-middle fas fa-file-pdf"></i> Course Material</a>
+                                }
+                                @if (accesos.ThematicArea)
+                                {
+                                    <a class="dropdown-item" asp-controller="ThematicArea" asp-action="Index"><i class="align-middle fas fa-warehouse"></i> Thematic Areas</a>
+                                }
 
-                                <!-- Separador -->
-                                <hr class="dropdown-divider" />
+                                @if (accesos.Test)
+                                {
+                                    <!-- Separador -->
+                                    <hr class="dropdown-divider" />
 
-                                <!-- Submenú Exams -->
-                                <div class="dropdown-mega-sublist">
-                                    <h6 class="dropdown-header">Exams</h6>
-                                    <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexTest">
-                                        <i class="align-middle fas fa-clipboard-list"></i> Test
-                                    </a>
+                                    <!-- Submenú Exams -->
+                                    <div class="dropdown-mega-sublist">
+                                        <h6 class="dropdown-header">Exams</h6>
+                                        <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexTest">
+                                            <i class="align-middle fas fa-clipboard-list"></i> Test
+                                        </a>
 
-                                </div>
+                                    </div>
+
+                                }
                             </div>
                         </div>
                     </div>
@@ -48,7 +92,7 @@
             }
 
             //Menu Assignments
-            @if ((User.IsInRole("Administrador") || User.IsInRole("RHGerente") || User.IsInRole("RHAdmin") || User.IsInRole("RH")))
+            @if (accesos.ShowAssignmentsMenu)//((User.IsInRole("Administrador") || User.IsInRole("RHGerente") || User.IsInRole("RHAdmin") || User.IsInRole("RH")))
             {
                 <li class="nav-item px-2 dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -57,11 +101,30 @@
                     <div class="dropdown-menu dropdown-menu-start dropdown-mega" aria-labelledby="servicesDropdown">
                         <div class="d-md-flex align-items-start justify-content-start">
                             <div class="dropdown-mega-list">
-                                <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseassignments"><i class="align-middle fas fa-outdent"></i> Course Assignments</a>
-                                <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseCompleted"><i class="align-middle fas fa-check-circle"></i> Course Completed</a>
-                                <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseLevelMaterial"><i class="align-middle fas fa-file-signature"></i> CourseLevelMaterial</a>
-                                <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexExternalEvidence"><i class="align-middle fas fa-receipt"></i> External Evidence</a>
-
+                                @if (accesos.CourseAssignments)
+                                {
+                                    <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseassignments"><i class="align-middle fas fa-outdent"></i> Course Assignments</a>
+                                }
+                                @if (accesos.CourseCompleted)
+                                {
+                                    <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseCompleted"><i class="align-middle fas fa-check-circle"></i> Course Completed</a>
+                                }
+                                @if (accesos.CourseLevelMaterial)
+                                {
+                                    <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexCourseLevelMaterial"><i class="align-middle fas fa-file-signature"></i> CourseLevelMaterial</a>
+                                }
+                                @if (accesos.ExternalEvidence)
+                                {
+                                    <a class="dropdown-item" asp-controller="Catalog" asp-action="IndexExternalEvidence"><i class="align-middle fas fa-receipt"></i> External Evidence</a>
+                                }
+                                @if (accesos.OcupationCode)
+                                {
+                                    <a class="dropdown-item" asp-controller="OcupationKey" asp-action="Index"><i class="align-middle fas fa-briefcase"></i> Ocupation Code</a>
+                                }
+                                @if (accesos.ThematicCourse)
+                                {
+                                    <a class="dropdown-item" asp-controller="ThematicCourse" asp-action="Index"><i class="align-middle fas fa-map"></i> Thematic - Course</a>
+                                }
 
                             </div>
                         </div>
@@ -70,7 +133,7 @@
             }
 
             //Menu Reports
-            @if ((User.IsInRole("Administrador") || User.IsInRole("RHGerente") || User.IsInRole("RHAdmin") || User.IsInRole("RH")))
+            @if (accesos.ShowReportsMenu)//((User.IsInRole("Administrador") || User.IsInRole("RHGerente") || User.IsInRole("RHAdmin") || User.IsInRole("RH")))
             {
                 <li class="nav-item px-2 dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -79,21 +142,37 @@
                     <div class="dropdown-menu dropdown-menu-start dropdown-mega" aria-labelledby="servicesDropdown">
                         <div class="d-md-flex align-items-start justify-content-start">
                             <div class="dropdown-mega-list">
+
+                                @if (accesos.MatrixByPosition)
+                                {
                                     <a class="dropdown-item" asp-controller="Trainify" asp-action="MatrizbyPositionSelectPosition">
-                                    <i class="align-middle fas fa-list-check"></i> Matrix By Position
+                                        <i class="align-middle fas fa-list-check"></i> Matrix By Position
                                     </a>
+                                }
+                                @if (accesos.MatrixBySupervisor)
+                                {
                                     <a class="dropdown-item" asp-controller="Reports" asp-action="MatrizbySupervisorSelect">
                                     <i class="align-middle fas fa-user-tie"></i> Matrix By Supervisor
                                     </a>
+                                }
+                                @if (accesos.HRReport)
+                                {
                                     <a class="dropdown-item" asp-controller="Reports" asp-action="MatrizByDeparmentGeneral_RH">
                                         <i class="align-middle fas fa-chart-pie"></i> Completed by Department
                                     </a>
+                                }
+                                @if (accesos.MaterialExamMissing)
+                                {
                                     <a class="dropdown-item" asp-controller="Reports" asp-action="MissingMaterialExamReport">
                                     <i class="align-middle fas fa-balance-scale"></i> Material/Exam Missing
                                     </a>
+                                }
+                                @if (accesos.EvidenceByUser)
+                                {
                                     <a class="dropdown-item" asp-controller="UserTestEvidence" asp-action="Index">
                                         <i class="align-middle fas fa-file-archive"></i> Evidence By User 
                                     </a>
+                                }
                             </div>
                         </div>
                     </div>
@@ -143,14 +222,29 @@
                         var roles = await UserManager.GetRolesAsync(user);
                         <a class="dropdown-item">Role: @roles.FirstOrDefault()</a>
                     }
-                    
-                    @if (User.Identity.IsAuthenticated && (User.IsInRole("Administrador"))) //|| User.IsInRole("ToolCribAdmin")
+                    @* Users MEnu *@
+                    @if (User.Identity.IsAuthenticated) 
                     {
-                        <a class="dropdown-item" asp-controller="Usuarios" asp-action="Index">Users</a>
-                        <a class="dropdown-item" asp-controller="Cuentas" asp-action="RegistroAdministrador">Register New User</a>
-                        <a class="dropdown-item" asp-controller="Roles" asp-action="Index">Roles</a>
-                        <a class="dropdown-item" asp-controller="Permissions" asp-action="Index">Permissions</a>
-                        <a class="dropdown-item" asp-controller="Cuentas" asp-action="ResetPassword">Reset password</a>
+                        @if (accesos.Users)
+                        {
+                            <a class="dropdown-item" asp-controller="Usuarios" asp-action="Index">Users</a>
+                        }
+                        @if (accesos.RegisterNewUser)
+                        {
+                            <a class="dropdown-item" asp-controller="Cuentas" asp-action="RegistroAdministrador">Register New User</a>
+                        }
+                        @if (accesos.Roles)
+                        {
+                            <a class="dropdown-item" asp-controller="Roles" asp-action="Index">Roles</a>
+                        }
+                        @if (accesos.Permissions)
+                        {
+                            <a class="dropdown-item" asp-controller="Permissions" asp-action="Index">Permissions</a>
+                        }
+                        @if (accesos.Resetpassword)
+                        {
+                            <a class="dropdown-item" asp-controller="Cuentas" asp-action="ResetPassword">Reset Password</a>
+                        }
                     }
 
                     <form id="logoutForm" method="post" class="form-inline" asp-controller="Cuentas" asp-action="SalirAplicacion">
