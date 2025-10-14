@@ -172,7 +172,7 @@ namespace RH_CM.Controllers
         // Ahora: si viene userName en la ruta, se usa; si no, se usa el actual.
         [Authorize(Policy = "ViewAccess")]
         [HttpGet]
-        public async Task<IActionResult> MatrizbyEmployee(string? userName)
+        public async Task<IActionResult> MatrizbyEmployeeFromSupervisor(string? userName)
         {
             var effectiveUser = string.IsNullOrWhiteSpace(userName)
                 ? User?.Identity?.Name

@@ -64,8 +64,8 @@
                                         @if (!string.IsNullOrWhiteSpace(r.UserName))
                                         {
                                             <a class="btn btn-info btn-sm"
-                                               asp-action="MatrizbyEmployee"
-                                               asp-controller="Trainify"
+                                               asp-action="MatrizbyEmployeeFromSupervisor"
+                                               asp-controller="Reports"
                                                asp-route-userName="@r.UserName"
                                                target="_blank"
                                                title="Open employee matrix">
