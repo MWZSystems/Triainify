@@ -714,26 +714,62 @@ namespace RH_CM.Controllers
             return View(result);
         }
 
-        // (ÚNICA ruta para abrir PDF en una vista con navegación/iframe)
+        // (ÚNICA ruta para abrir material en vista con navegación/tutorial/iframe)
         [HttpGet("/Catalog/OpenPdfCourseMaterialByCourseLevel")]
-        public IActionResult OpenPdfCourseMaterialByCourseLevel([FromQuery] int courseId, [FromQuery] int levelId, [FromQuery] int? courseAssignmentId)
+        public async Task<IActionResult> OpenPdfCourseMaterialByCourseLevel(
+            [FromQuery] int courseId, [FromQuery] int levelId, [FromQuery] int? courseAssignmentId)
         {
-            var streamAbs = Url.Action(
-                nameof(StreamPdfCourseMaterialByCourseLevel),
-                "Catalog",
-                new { courseId, levelId },
-                protocol: Request.Scheme
-            ) ?? string.Empty;
+            // 1) Busca el link a material
+            var link = await _context.CtCourseLevelMaterials
+                .AsNoTracking()
+                .Where(x => x.Available == 1 && x.FkCourse == courseId && x.FkLevelCourse == levelId)
+                .OrderByDescending(x => x.PkCourseLevelMaterial)
+                .FirstOrDefaultAsync();
 
+            if (link == null)
+            {
+                TempData["ErrorMessage"] = "No course material is linked to this course/level. Please contact HR.";
+                return RedirectToAction("LearningTrainify", "Trainify");
+            }
+
+            // 2) Material
+            var material = await _context.CtCoursematerials
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.PkCoursematerial == link.FkCourseMaterial && (m.Available ?? 0) == 1);
+
+            if (material == null)
+            {
+                TempData["ErrorMessage"] = "Course material not found or unavailable. Please contact HR.";
+                return RedirectToAction("LearningTrainify", "Trainify");
+            }
+
+            var type = (material.MaterialType ?? "").Trim().ToUpperInvariant(); // "PDF" | "VIDEO"
+
+            // 3) Construye VM
             var vm = new RH_CM.ViewModels.CourseMaterialViewerViewModel
             {
                 CourseId = courseId,
                 LevelId = levelId,
-                StreamUrl = streamAbs,
-                CourseAssignmentId = courseAssignmentId ?? 0     // 👈 NUEVO en tu VM
+                CourseAssignmentId = courseAssignmentId ?? 0,
+                MaterialType = material.MaterialType,     // guarda como viene (PDF/VIDEO)
+                UrlPath = material.UrlPath               // lo mostraremos si es VIDEO
             };
+
+            // Si es PDF, arma la StreamUrl (mantén tu flujo actual)
+            if (string.Equals(type, "PDF", StringComparison.OrdinalIgnoreCase))
+            {
+                vm.StreamUrl = Url.Action(
+                    nameof(StreamPdfCourseMaterialByCourseLevel),
+                    "Catalog",
+                    new { courseId, levelId },
+                    protocol: Request.Scheme
+                ) ?? string.Empty;
+            }
+            // Si es VIDEO no se arma StreamUrl; la vista mostrará el tutorial con UrlPath
+
             return View("OpenPdfCourseMaterialByCourseLevel", vm);
         }
+
 
         [Authorize]
         [HttpGet("/Catalog/StreamPdfCourseMaterialByCourseLevel")]

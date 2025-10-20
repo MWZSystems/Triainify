@@ -4,16 +4,19 @@
     ViewData["Title"] = "OpenPdfCourseMaterialByCourseLevel";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    string streamUrl = !string.IsNullOrWhiteSpace(Model?.StreamUrl)
-        ? Model.StreamUrl!.Trim()
-        : (Url.Action(
-            "StreamPdfCourseMaterialByCourseLevel",
-            "Catalog",
-            new { courseId = Model?.CourseId ?? 0, levelId = Model?.LevelId ?? 0 },
-            protocol: Context.Request.Scheme   // <<--- ABSOLUTO
-        ) ?? string.Empty);
+    var isPdf = string.Equals(Model?.MaterialType, "PDF", StringComparison.OrdinalIgnoreCase);
+    var isVideo = string.Equals(Model?.MaterialType, "VIDEO", StringComparison.OrdinalIgnoreCase);
 
-    // ✅ Incluye CourseAssignmentId para que viaje al examen
+    string streamUrl = isPdf && !string.IsNullOrWhiteSpace(Model?.StreamUrl)
+        ? Model.StreamUrl!.Trim()
+        : (isPdf
+            ? (Url.Action(
+                "StreamPdfCourseMaterialByCourseLevel",
+                "Catalog",
+                new { courseId = Model?.CourseId ?? 0, levelId = Model?.LevelId ?? 0 },
+                protocol: Context.Request.Scheme) ?? string.Empty)
+            : string.Empty);
+
     var examUrl = Url.Action("Exam", "Trainify",
         new
         {
@@ -23,41 +26,186 @@
         }) ?? "#";
 }
 
-@if (string.IsNullOrWhiteSpace(streamUrl))
-{
-    <div class="alert alert-warning">
-        No se pudo construir la URL del material. Contacta a RH.
+<div class="row mb-2">
+    <div class="col-12 text-center">
+        <span class="badge bg-primary me-1">
+            <i class="align-middle fas fa-book me-1"></i> Course ID: @Model.CourseId
+        </span>
+        <span class="badge bg-info text-dark me-1">
+            <i class="align-middle fas fa-layer-group me-1"></i> Level ID: @Model.LevelId
+        </span>
+        <span class="badge bg-secondary me-1">
+            <i class="align-middle fas fa-tag me-1"></i> @((Model.MaterialType ?? "—").ToUpperInvariant())
+        </span>
+        <span class="badge bg-warning text-dark">
+            <i class="align-middle fas fa-id-badge me-1"></i> Assignment ID: @(Model.CourseAssignmentId > 0 ? Model.CourseAssignmentId.ToString() : "—")
+        </span>
     </div>
-}
-else
+</div>
+
+@if (isPdf)
 {
-    <div class="row mb-2">
-        <div class="col-12 text-center">
-            <span class="badge bg-primary me-1">Course ID: @Model.CourseId</span>
-            <span class="badge bg-info text-dark me-1">Level ID: @Model.LevelId</span>
-            <span class="badge bg-warning text-dark">Assignment ID: @(Model.CourseAssignmentId > 0 ? Model.CourseAssignmentId.ToString() : "—")</span>
+    if (string.IsNullOrWhiteSpace(streamUrl))
+    {
+        <div class="alert alert-warning">
+            <i class="align-middle fas fa-exclamation-triangle me-2"></i>
+            No se pudo construir la URL del material PDF. Contacta a RH.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="border rounded shadow-sm p-2">
+                    <component type="typeof(RH_CM.Components.CoursePdfViewer)"
+                               render-mode="ServerPrerendered"
+                               param-CourseId="Model.CourseId"
+                               param-LevelId="Model.LevelId"
+                               param-StreamUrl="streamUrl"
+                               param-ExamUrl="examUrl"
+                               param-CourseAssignmentId="Model.CourseAssignmentId"
+                               param-HeightCss="@("calc(100vh - 180px)")" />
+                </div>
+            </div>
+        </div>
+    }
+}
+else if (isVideo)
+{
+    <div class="row">
+        <div class="col-12">
+            <div class="border rounded shadow-sm p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fas fa-film fa-lg text-primary me-2"></i>
+                    <h5 class="m-0">Tutorial para abrir el material (VIDEO)</h5>
+                </div>
+
+                @if (string.IsNullOrWhiteSpace(Model?.UrlPath))
+                {
+                    <div class="alert alert-warning">
+                        <i class="align-middle fas fa-exclamation-triangle me-2"></i>
+                        No se encontró la ruta del material (<code>UrlPath</code>). Contacta a RH.
+                    </div>
+                }
+                else
+                {
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <ol class="mb-3">
+                                <li class="mb-2">
+                                    <i class="align-middle fas fa-link text-success me-2"></i>
+                                    <strong>Selecciona y copia</strong> la siguiente ruta:
+                                    <button class="btn btn-outline-dark" type="button" onclick="selectUrlPath()">
+                                        <i class="align-middle fas fa-i-cursor me-1"></i> Seleccionar ruta
+                                    </button>
+                                </li>
+                            </ol>
+
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">
+                                    <i class="align-middle fas fa-folder-open"></i>
+                                </span>
+                                <input id="matUrlPath" class="form-control" readonly value="@Model.UrlPath" onclick="selectUrlPath()" />
+                                <button id="btnCopyPath" class="btn btn-outline-primary" type="button" onclick="copyMatUrlPath()">
+                                    <i class="align-middle fas fa-clipboard me-1"></i> Copiar
+                                </button>
+                            </div>
+
+                            <ol start="2" class="mb-3">
+                                <li class="mb-2">
+                                    <i class="align-middle me-2 fab fa-fw fa-windows"></i>Abre el <strong>Explorador de archivos</strong> de Windows (<kbd>Win</kbd> + <kbd>E</kbd>).
+                                </li>
+                                <li class="mb-2">
+                                    <i class="align-middle fas fa-paste me-2"></i>Pega la ruta en la <strong>barra de direcciones</strong> y presiona <kbd>Enter</kbd>.
+                                </li>
+                                <li class="mb-2">
+                                    <i class="align-middle fas fa-play-circle me-2"></i>Haz doble clic en el archivo <strong>.exe</strong> para ejecutar el material.
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info d-flex align-items-start">
+                        <i class="align-middle fas fa-shield-alt me-2 mt-1"></i>
+                        <div>
+                            <strong>Consejo de seguridad:</strong> si Windows muestra SmartScreen,
+                            pulsa <em>Más información</em> &rarr; <em>Ejecutar de todas formas</em> (si confías en el origen).
+                        </div>
+                    </div>
+
+                    <div class="accordion mt-3" id="helpAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    <i class="align-middle fas fa-tools me-2"></i> ¿Problemas para abrir la ruta?
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#helpAccordion">
+                                <div class="accordion-body">
+                                    <ul class="mb-0">
+                                        <li class="mb-1"><i class="fas fa-network-wired me-2"></i> Verifica conexión a la red/VPN si la ruta es <code>\\servidor\...</code>.</li>
+                                        <li class="mb-1"><i class="fas fa-user-shield me-2"></i> Solicita permisos de lectura sobre la carpeta si es necesario.</li>
+                                        <li class="mb-1"><i class="fas fa-folder me-2"></i> Confirma que el archivo <strong>.exe</strong> existe en la ruta indicada.</li>
+                                        <li class="mb-1"><i class="fas fa-sitemap me-2"></i> Si la ruta es local del servidor, pide a IT una ruta UNC compartida.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 d-flex gap-2">
+                        <a class="btn btn-outline-secondary" href="@examUrl">
+                            <i class="align-middle fas fa-check-circle me-1"></i> Ir al examen
+                        </a>
+
+                    </div>
+                }
+            </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="border rounded shadow-sm p-2">
-                <component type="typeof(RH_CM.Components.CoursePdfViewer)"
-                           render-mode="ServerPrerendered"
-                           param-CourseId="Model.CourseId"
-                           param-LevelId="Model.LevelId"
-                           param-StreamUrl="streamUrl"
-                           param-ExamUrl="examUrl"
-                           param-CourseAssignmentId="Model.CourseAssignmentId" @* 👈 pásalo al componente *@
-                           param-HeightCss="@("calc(100vh - 180px)")" />
-            </div>
-        </div>
+    <script>
+        function selectUrlPath() {
+            const el = document.getElementById('matUrlPath');
+            el.focus();
+            el.select();
+            el.setSelectionRange(0, el.value.length);
+        }
+
+        function copyMatUrlPath() {
+            const el = document.getElementById('matUrlPath');
+            selectUrlPath();
+            const ok = document.execCommand('copy');
+            const btn = document.getElementById('btnCopyPath');
+            if (ok) {
+                window.notyf?.open?.({
+                    type: 'success',
+                    message: 'Ruta copiada al portapapeles.',
+                    duration: 2500
+                });
+                const old = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check me-1"></i> Copiado';
+                setTimeout(() => btn.innerHTML = old, 1800);
+            } else {
+                window.notyf?.open?.({
+                    type: 'error',
+                    message: 'No se pudo copiar. Selecciona la ruta y presiona Ctrl+C.',
+                    duration: 3500
+                });
+            }
+        }
+    </script>
+}
+else
+{
+    <div class="alert alert-warning">
+        <i class="align-middle fas fa-question-circle me-2"></i>
+        Tipo de material no soportado: <strong>@(Model?.MaterialType ?? "—")</strong>. Contacta a RH.
     </div>
 }
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
-
     <script>
         (function () {
             if ('@TempData["SuccessMessage"]' !== '') {
