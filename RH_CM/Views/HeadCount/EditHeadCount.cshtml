@@ -27,15 +27,16 @@
                             <span asp-validation-for="Names" class="text-danger"></span>
                         </div>
                         <div class="mb-2 col-md-3">
-                            <label asp-for="SecondName" class="form-label">Second Name</label>
-                            <input type="text" asp-for="SecondName" class="form-control" placeholder="Enter your second name" />
-                            <span asp-validation-for="SecondName" class="text-danger"></span>
-                        </div>
-                        <div class="mb-2 col-md-3">
                             <label asp-for="LastName" class="form-label">Last Name</label>
                             <input type="text" asp-for="LastName" class="form-control" placeholder="Enter your last name" />
                             <span asp-validation-for="LastName" class="text-danger"></span>
                         </div>
+                        <div class="mb-2 col-md-3">
+                            <label asp-for="SecondName" class="form-label">Second Last Name</label>
+                            <input type="text" asp-for="SecondName" class="form-control" placeholder="Enter your second last name" />
+                            <span asp-validation-for="SecondName" class="text-danger"></span>
+                        </div>
+                        
                         <div class="mb-2 col-md-3">
                             <label asp-for="Birthdate" class="form-label">Birthdate <span class="text-danger">*</span></label>
                             <input type="date" asp-for="Birthdate" class="form-control" placeholder="Select your birthdate" />
