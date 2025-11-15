@@ -67,7 +67,11 @@ namespace RH_CM.Controllers
             // Obtener los datos necesarios para el archivo Excel
             var departments = await _context.CtDepartments.ToListAsync();
             var positions = await _context.CtPositions.ToListAsync();
-            var syHeadCounts = await _context.SyHeadcounts.ToListAsync();
+            //var syHeadCounts = await _context.SyHeadcounts.ToListAsync();
+            var syHeadCounts = await _context.SyHeadcounts
+                                .Where(h => h.Available == 1)
+                                .ToListAsync();
+            var supervisors = await _context.CtSupervisors.ToListAsync();
 
             // Calcular edades
             var headCountAges = syHeadCounts.ToDictionary(
@@ -91,9 +95,9 @@ namespace RH_CM.Controllers
                 headerRow.Cell(7).Value = "Start Date";
                 headerRow.Cell(8).Value = "Department";
                 headerRow.Cell(9).Value = "Position";
-                //headerRow.Cell(10).Value = "Supervisor";
+                headerRow.Cell(10).Value = "Supervisor";
                 headerRow.Cell(11).Value = "Birthdate";
-                headerRow.Cell(12).Value = "Age"; // Edad calculada
+                headerRow.Cell(12).Value = "Age"; 
                 headerRow.Cell(13).Value = "Curp";
                 headerRow.Cell(14).Value = "RFC";
                 headerRow.Cell(15).Value = "Social Security";
@@ -128,9 +132,20 @@ namespace RH_CM.Controllers
                     worksheet.Cell(row, 7).Value = item.StarDate.ToShortDateString();
                     worksheet.Cell(row, 8).Value = departments.FirstOrDefault(d => d.PkDepartment == item.FkDepartment)?.NameDeparment;
                     worksheet.Cell(row, 9).Value = positions.FirstOrDefault(p => p.PkPosition == item.FkPosition)?.NamePosition;
-                    //worksheet.Cell(row, 10).Value = item.Supervisor != 0
-                    //    ? $"{syHeadCounts.FirstOrDefault(p => p.PkHeadcount == item.Supervisor)?.Names} {syHeadCounts.FirstOrDefault(p => p.PkHeadcount == item.Supervisor)?.LastName} {syHeadCounts.FirstOrDefault(p => p.PkHeadcount == item.Supervisor)?.SecondName}"
-                    //    : "Sin Asignar";
+                    //worksheet.Cell(row, 10).Value = item.FkSupervisorId != 0
+                    //    ? $"{syHeadCounts.FirstOrDefault(p => p.FkSupervisorId == item.FkSupervisorId)?.Names} {syHeadCounts.FirstOrDefault(p => p.PkHeadcount == item)?.LastName} {syHeadCounts.FirstOrDefault(p => p.PkHeadcount == item.Supervisor)?.SecondName}"
+                    //    : "Not Aissgned";
+                    worksheet.Cell(row, 10).Value = item.FkSupervisorId != null
+                                                        ? syHeadCounts
+                                                            .FirstOrDefault(h =>
+                                                                h.PkHeadcount ==
+                                                                supervisors
+                                                                    .FirstOrDefault(s => s.PkSupervisorId == item.FkSupervisorId)
+                                                                    ?.FkHeadcount
+                                                            ) is var sup && sup != null
+                                                                ? $"{sup.Names} {sup.LastName} {sup.SecondName}"
+                                                                : ""
+                                                        : "";
                     worksheet.Cell(row, 11).Value = item.Birthdate.ToShortDateString();
                     worksheet.Cell(row, 12).Value = headCountAges.GetValueOrDefault(item.PkHeadcount, 0);
                     worksheet.Cell(row, 13).Value = item.Curp;

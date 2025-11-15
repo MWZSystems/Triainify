@@ -102,6 +102,25 @@ namespace RH_CM.Controllers
 
         }
 
+
+        [Authorize(Policy = "ViewAccess")]
+        public async Task<ActionResult> ExportMassiveEvidencesByUser()
+        {
+
+            ExcelExportDTOs answerFile = await _userTestEvidenceService.ExportExcelAsync();
+
+
+
+            string fechaActual = DateTime.Now.ToString("yyyyMMdd");
+            return File(
+                    answerFile.File,
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    $"Massive-User-ExamEvidences-{fechaActual}.xlsx"
+            );
+
+        }
+
+
         //DC3PdfDownload
         public async Task<ActionResult> DC3PdfDownload(int ControlNumber, string Course, string CompletedDate, string bywho)
         {
@@ -115,7 +134,7 @@ namespace RH_CM.Controllers
             return File(
                     answerFile.File,
                     "application/pdf",
-                    $"{controlNumbr}-{fullName}-DC3-Completed.pdf"
+                    $"{controlNumbr}-{fullName}-Completed.pdf"
             );
 
         }

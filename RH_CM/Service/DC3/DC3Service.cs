@@ -64,8 +64,8 @@ namespace RH_CM.Service.DC3Service
                 formFields.SetField("txtPosition", dC3DTOs.PositionName);
                 formFields.SetField("txtThematicID", dC3DTOs.ThematicCode);
                 formFields.SetField("txtCourse", dC3DTOs.CourseName);
-                formFields.SetField("txtDescription1", $"Impartido el {day} de {month} de {year}, dentro del area tematica de ");
-                formFields.SetField("txtDescription2", dC3DTOs.ThematicName);
+                formFields.SetField("txtDescription1", $"Impartido el {day} de {month} del {year}, con una duracion de 00 hora(s) ");
+                //formFields.SetField("txtDescription2", dC3DTOs.ThematicName);
 
                 if (action == "Admin")
                 {

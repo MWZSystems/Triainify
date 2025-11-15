@@ -80,6 +80,18 @@
                                            title="View Diagnostic">
                                             <i class="fas fa-eye"></i>
                                         </a>
+
+                                        <a class="btn btn-warning"
+                                           asp-action="DC3PdfDownload"
+                                           asp-route-ControlNumber="@Model.ControlNumber"
+                                           asp-route-Course="@detail.Course"
+                                           asp-route-CompletedDate="@detail.CompletedDate"
+                                           asp-route-bywho="Admin"
+                                           target="_blank"
+                                           title="DC3">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+
                                     }
                                     else
                                     {

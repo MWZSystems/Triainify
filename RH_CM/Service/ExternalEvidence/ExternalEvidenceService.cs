@@ -109,7 +109,16 @@ namespace RH_CM.Service.ExternalEvidence
             int courseID = int.Parse(splitCourse[0]);
             string courseName = splitCourse[1];
             string userName = DTOs.UserName;
-            int level = ReturnLevelID(DTOs.SelectedLevel); //Returns the ID in the description
+            
+            
+            
+            //int level = ReturnLevelID(DTOs.SelectedLevel); //Returns the ID in the description
+
+            string query = $"SELECT [PK_LEVELCOURSE] FROM [CT_LEVELCOURSE] WHERE [DESCRIPCTION_LEVEL] = '{DTOs.SelectedLevel}' ";
+
+            int level = int.Parse(await _unitOfWork.QuerySingleScalarAsync(query));
+
+
             byte[] fileBytes;
             int controlNumber;
             string positionName;

@@ -21,8 +21,6 @@ namespace RH_CM.Controllers
                                 UserManager<IdentityUser> userManager,
                                 IHttpContextAccessor httpContextAccessor)
         {
-
-
             _logger = logger;
             _accessGroupService = accessGroupsService;
             _userManager = userManager;
@@ -34,7 +32,6 @@ namespace RH_CM.Controllers
             // Borra la sesion de las cookies anteriores
             HttpContext.Session.Remove("Accesos");
 
-
             // Esta parte guarda los accesos que tiene este usuario para el NavBar los este leyendo de ahi. y no tener que estar refrescandolos.
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("Accesos")))
             {
@@ -42,9 +39,6 @@ namespace RH_CM.Controllers
 
                 HttpContext.Session.SetString("Accesos", JsonConvert.SerializeObject(accesos));
             }
-
-            
-
             return View();
         }
 
