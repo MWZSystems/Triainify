@@ -66,12 +66,25 @@
                                 <td>@detail.Level</td>
                                 <td>@detail.Delivery</td>
                                 <td>@detail.DiagnosticScore</td>
-                                <td>@detail.FinalExamScore</td>
+
+                                @* <td>@detail.FinalExamScore</td> *@
+                                <td>
+                                    @(detail.Delivery?.Contains("extern", StringComparison.OrdinalIgnoreCase) == true
+                                                                ? "NA"
+                                                                : detail.FinalExamScore)
+                                </td>
                                 <td>@detail.CompletedDate</td>
-                                <td>@detail.ExamsID</td>
+
+                                @* <td>@detail.ExamsID</td> *@
+                                <td>
+                                    @(detail.Delivery?.Contains("extern", StringComparison.OrdinalIgnoreCase) == true
+                                                                ? "NA"
+                                                                : detail.ExamsID)
+                                </td>
 
                                 <td>
-                                    @if (@detail.FinalExamScore == "NA")
+                                    @* @if (@detail.FinalExamScore == "NA") *@
+                                    @if (detail.Delivery?.Contains("extern", StringComparison.OrdinalIgnoreCase) == true)
                                     {
                                         <a class="btn btn-info"
                                            asp-action="EvidenceReview"
