@@ -1,37 +1,69 @@
 ﻿@model Microsoft.AspNetCore.Identity.IdentityRole
 
 @{
-    ViewData["Title"] = "Editar rol";
+    ViewData["Title"] = "Edit Role";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="card">
-    <div class="card-body">
-        <h3 class="card-title text-center">Editar Rol</h3>
+<div class="row justify-content-center mt-3">
+    <div class="col-12 col-md-10 col-lg-8">
 
-        <form asp-controller="Roles" asp-action="Editar" method="post">
+        <div class="card border shadow-sm">
 
-            <input type="hidden" asp-for="Id" />
+            <!-- Header claro con icono -->
+            <div class="card-header bg-light border-bottom">
+                <h3 class="card-title mb-0 fw-bold text-dark">
+                    <i class="fas fa-user-shield me-2 text-secondary"></i>
+                    EDIT ROLE
+                </h3>
+                <small class="text-muted">
+                    Modify the name of the selected role.
+                </small>
+            </div>
 
-            <div class="text-danger" asp-validation-summary="All"></div>
-            <div class="row mt-4">
-                <div class="col-sm-6 offset-3">
+            <div class="card-body">
 
-                    <div class="mb-3">
-                        <label asp-for="Name" class="col-md-2"></label>
-                        <input asp-for="Name" class="form-control" placeholder="Ingresa el nombre del rol" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
-                    </div>
+                <form asp-controller="Roles" asp-action="Editar" method="post">
 
+                    <input type="hidden" asp-for="Id" />
 
-                    <div class="row">
-                        <div class="col-sm-10 offset-2">
-                            <button type="submit" class="btn btn-success w-75 btn-lg">Editar Rol <i class="bi bi-arrow-right-circle-fill"></i></button>
+                    @* Mostrar errores solo si los hay *@
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div asp-validation-summary="All"
+                             class="alert alert-danger py-2 mb-3"
+                             role="alert"></div>
+                    }
+
+                    <div class="row mt-3">
+                        <div class="col-sm-8 offset-sm-2">
+
+                            <div class="mb-3">
+                                <label asp-for="Name" class="form-label fw-semibold">Role Name</label>
+                                <input asp-for="Name"
+                                       class="form-control"
+                                       placeholder="Enter the role name" />
+                                <span asp-validation-for="Name"
+                                      class="text-danger small"></span>
+                            </div>
+
+                            <div class="d-flex justify-content-end mt-4">
+                                <button type="submit"
+                                        class="btn btn-success px-4">
+                                    <i class="fas fa-save me-1"></i>
+                                    Save Changes
+                                </button>
+                            </div>
+
                         </div>
                     </div>
-                </div>
+
+                </form>
+
             </div>
-        </form>
+
+        </div>
+
     </div>
 </div>
 
@@ -40,5 +72,3 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
-
-

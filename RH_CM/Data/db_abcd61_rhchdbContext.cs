@@ -32,15 +32,18 @@ namespace RH_CM.Data
         public virtual DbSet<CtDeliverymode> CtDeliverymodes { get; set; } = null!;
         public virtual DbSet<CtDepartment> CtDepartments { get; set; } = null!;
         public virtual DbSet<CtLevelcourse> CtLevelcourses { get; set; } = null!;
+        public virtual DbSet<CtOcupationcode> CtOcupationcodes { get; set; } = null!;
         public virtual DbSet<CtOption> CtOptions { get; set; } = null!;
         public virtual DbSet<CtOptiontype> CtOptiontypes { get; set; } = null!;
+        public virtual DbSet<CtPermission> CtPermissions { get; set; } = null!;
+        public virtual DbSet<CtPermissionsgroup> CtPermissionsgroups { get; set; } = null!;
         public virtual DbSet<CtPosition> CtPositions { get; set; } = null!;
         public virtual DbSet<CtQuestion> CtQuestions { get; set; } = null!;
         public virtual DbSet<CtResult> CtResults { get; set; } = null!;
         public virtual DbSet<CtSupervisor> CtSupervisors { get; set; } = null!;
         public virtual DbSet<CtTest> CtTests { get; set; } = null!;
-        public virtual DbSet<CtTestConsolidado> CtTestConsolidados { get; set; } = null!;
-        public virtual DbSet<CtTestConsolidado2> CtTestConsolidado2s { get; set; } = null!;
+        public virtual DbSet<CtThematicarea> CtThematicareas { get; set; } = null!;
+        public virtual DbSet<CtThematiccourse> CtThematiccourses { get; set; } = null!;
         public virtual DbSet<CtVideomaterial> CtVideomaterials { get; set; } = null!;
         public virtual DbSet<SyCoursecompleted> SyCoursecompleteds { get; set; } = null!;
         public virtual DbSet<SyCoursemovement> SyCoursemovements { get; set; } = null!;
@@ -56,8 +59,12 @@ namespace RH_CM.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=SQL1004.site4now.net,1433;Database=db_abcd61_rhchdb;User Id=db_abcd61_rhchdb_admin;Password=WebMindzz1*;");
+                var configuration = new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json")
+                    .Build();
+
+                optionsBuilder.UseSqlServer(configuration.GetConnectionString("ConexionSQL"));
             }
         }
 
@@ -422,6 +429,39 @@ namespace RH_CM.Data
                     .HasColumnName("LASTUPDATEUSER");
             });
 
+            modelBuilder.Entity<CtOcupationcode>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("CT_OCUPATIONCODE");
+
+                entity.Property(e => e.Available).HasColumnName("AVAILABLE");
+
+                entity.Property(e => e.Createdate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CREATEDATE");
+
+                entity.Property(e => e.Createuser)
+                    .HasMaxLength(50)
+                    .HasColumnName("CREATEUSER");
+
+                entity.Property(e => e.FkPosition).HasColumnName("FK_POSITION");
+
+                entity.Property(e => e.Lastupdatedate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("LASTUPDATEDATE");
+
+                entity.Property(e => e.Lastupdateuser)
+                    .HasMaxLength(50)
+                    .HasColumnName("LASTUPDATEUSER");
+
+                entity.Property(e => e.Ocupationcode).HasColumnName("OCUPATIONCODE");
+
+                entity.Property(e => e.PkOcupationcode)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("PK_OCUPATIONCODE");
+            });
+
             modelBuilder.Entity<CtOption>(entity =>
             {
                 entity.HasKey(e => e.PkOptions)
@@ -485,6 +525,42 @@ namespace RH_CM.Data
                 entity.Property(e => e.Lastupdateuser)
                     .HasMaxLength(50)
                     .HasColumnName("LASTUPDATEUSER");
+            });
+
+            modelBuilder.Entity<CtPermission>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("CT_PERMISSION");
+
+                entity.Property(e => e.FkPermissionGroup).HasColumnName("FK_PermissionGroup");
+
+                entity.Property(e => e.FkRoleId)
+                    .HasMaxLength(450)
+                    .HasColumnName("FK_RoleId");
+
+                entity.Property(e => e.PkPermission)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("PK_Permission");
+            });
+
+            modelBuilder.Entity<CtPermissionsgroup>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("CT_PERMISSIONSGROUPS");
+
+                entity.Property(e => e.ControllerName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.GroupName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PkPermissionGroup)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("PK_PermissionGroup");
             });
 
             modelBuilder.Entity<CtPosition>(entity =>
@@ -663,70 +739,72 @@ namespace RH_CM.Data
                     .HasColumnName("TEST_NAME");
             });
 
-            modelBuilder.Entity<CtTestConsolidado>(entity =>
+            modelBuilder.Entity<CtThematicarea>(entity =>
             {
                 entity.HasNoKey();
 
-                entity.ToTable("CT_TEST_CONSOLIDADO");
-
-                entity.Property(e => e.Answer).HasColumnName("ANSWER");
+                entity.ToTable("CT_THEMATICAREA");
 
                 entity.Property(e => e.Available).HasColumnName("AVAILABLE");
 
-                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+                entity.Property(e => e.Createdate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CREATEDATE");
 
-                entity.Property(e => e.CreateUser).HasMaxLength(50);
+                entity.Property(e => e.Createuser)
+                    .HasMaxLength(50)
+                    .HasColumnName("CREATEUSER");
 
-                entity.Property(e => e.FkCourse).HasColumnName("FK_Course");
+                entity.Property(e => e.Lastupdatedate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("LASTUPDATEDATE");
 
-                entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
+                entity.Property(e => e.Lastupdateuser)
+                    .HasMaxLength(50)
+                    .HasColumnName("LASTUPDATEUSER");
 
-                entity.Property(e => e.LastUpdateUser).HasMaxLength(100);
+                entity.Property(e => e.PkThematicarea)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("PK_THEMATICAREA");
 
-                entity.Property(e => e.Level).HasColumnName("LEVEL");
+                entity.Property(e => e.ThematicCode).HasColumnName("THEMATIC_CODE");
 
-                entity.Property(e => e.Options).HasColumnName("OPTIONS");
-
-                entity.Property(e => e.Question).HasColumnName("QUESTION");
-
-                entity.Property(e => e.QuestionNumber).HasColumnName("QUESTION_NUMBER");
-
-                entity.Property(e => e.TestName)
-                    .HasMaxLength(100)
-                    .HasColumnName("TEST_NAME");
+                entity.Property(e => e.ThematicName)
+                    .HasMaxLength(250)
+                    .HasColumnName("THEMATIC_NAME");
             });
 
-            modelBuilder.Entity<CtTestConsolidado2>(entity =>
+            modelBuilder.Entity<CtThematiccourse>(entity =>
             {
                 entity.HasNoKey();
 
-                entity.ToTable("CT_TEST_CONSOLIDADO2");
-
-                entity.Property(e => e.Answer).HasColumnName("ANSWER");
+                entity.ToTable("CT_THEMATICCOURSE");
 
                 entity.Property(e => e.Available).HasColumnName("AVAILABLE");
 
-                entity.Property(e => e.CreateDate).HasColumnType("datetime");
+                entity.Property(e => e.Createdate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("CREATEDATE");
 
-                entity.Property(e => e.CreateUser).HasMaxLength(50);
+                entity.Property(e => e.Createuser)
+                    .HasMaxLength(50)
+                    .HasColumnName("CREATEUSER");
 
-                entity.Property(e => e.FkCourse).HasColumnName("FK_Course");
+                entity.Property(e => e.FkCourse).HasColumnName("FK_COURSE");
 
-                entity.Property(e => e.LastUpdateDate).HasColumnType("datetime");
+                entity.Property(e => e.FkThematicarea).HasColumnName("FK_THEMATICAREA");
 
-                entity.Property(e => e.LastUpdateUser).HasMaxLength(100);
+                entity.Property(e => e.Lastupdatedate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("LASTUPDATEDATE");
 
-                entity.Property(e => e.Level).HasColumnName("LEVEL");
+                entity.Property(e => e.Lastupdateuser)
+                    .HasMaxLength(50)
+                    .HasColumnName("LASTUPDATEUSER");
 
-                entity.Property(e => e.Options).HasColumnName("OPTIONS");
-
-                entity.Property(e => e.Question).HasColumnName("QUESTION");
-
-                entity.Property(e => e.QuestionNumber).HasColumnName("QUESTION_NUMBER");
-
-                entity.Property(e => e.TestName)
-                    .HasMaxLength(100)
-                    .HasColumnName("TEST_NAME");
+                entity.Property(e => e.PkThematiccourse)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("PK_THEMATICCOURSE");
             });
 
             modelBuilder.Entity<CtVideomaterial>(entity =>

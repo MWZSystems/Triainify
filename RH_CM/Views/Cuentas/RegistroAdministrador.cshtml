@@ -1,136 +1,173 @@
 ﻿@model RH_CM.ViewModels.RegistroAdminViewModel
 
 @{
-    ViewData["Title"] = "Registro de usuario";
+    ViewData["Title"] = "Add User";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="row">
-    <div class="card border">
-        <div class="card-header">
-            <h3 class="card-title"><strong>ADD USER</strong></h3>
+<div class="row justify-content-center mt-3">
+    <div class="col-12 col-md-10 col-lg-8">
+
+        <div class="card border shadow-sm">
+
+            <!-- Header claro con el icono -->
+            <div class="card-header bg-light border-bottom">
+                <h3 class="card-title mb-0 fw-bold text-dark">
+                    <i class="fas fa-user-plus me-2 text-secondary"></i>
+                    ADD USER
+                </h3>
+                <small class="text-muted">
+                    Complete the form to register a new administrator.
+                </small>
+            </div>
+
+            <div class="card-body">
+                <form asp-controller="Cuentas" asp-action="RegistroAdministrador" method="post" autocomplete="off">
+
+                    @* Mostrar errores solo si los hay *@
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div asp-validation-summary="All"
+                             class="alert alert-danger py-2 mb-3"
+                             role="alert"></div>
+                    }
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="Ntuser" class="form-label fw-semibold">NT Username</label>
+                            <input asp-for="Ntuser" class="form-control" placeholder="Enter NT Username" />
+                            <span asp-validation-for="Ntuser" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EmployeeNumber" class="form-label fw-semibold">Employee Number</label>
+                            <input asp-for="EmployeeNumber" class="form-control" placeholder="Employee Number" />
+                            <span asp-validation-for="EmployeeNumber" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Names" class="form-label fw-semibold">First Name(s)</label>
+                            <input asp-for="Names" class="form-control text-uppercase" placeholder="First Name(s)" />
+                            <span asp-validation-for="Names" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="LastName" class="form-label fw-semibold">Last Name(s)</label>
+                            <input asp-for="LastName" class="form-control text-uppercase" placeholder="Last Name(s)" />
+                            <span asp-validation-for="LastName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label fw-semibold">Email</label>
+                            <input asp-for="Email" type="email" class="form-control" placeholder="example@company.com" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Password" class="form-label fw-semibold">Password</label>
+                            <input asp-for="Password" type="password" class="form-control" placeholder="Enter password" />
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="ConfirmPassword" class="form-label fw-semibold">Confirm Password</label>
+                            <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm password" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                        </div>
+
+                        @* Campo de rol permanece comentado igual que antes *@
+                        @*
+                        <div class="col-md-6">
+                            <label asp-for="IdRol" class="form-label fw-semibold">Role</label>
+                            <select asp-for="IdRol" asp-items="@Model.ListaRoles" class="form-control select2">
+                                <option disabled selected>-- Select Role --</option>
+                            </select>
+                            <span asp-validation-for="IdRol" class="text-danger small"></span>
+                        </div>
+                        *@
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-end gap-2">
+                            <a href="@Url.Action("Index", "Usuarios")"
+                               class="btn btn-outline-secondary closeBtn">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success px-4">
+                                Register
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
         </div>
-        <div class="card-body">
-            <form asp-controller="Cuentas" asp-action="RegistroAdministrador" method="post">
-                <div class="row">
-                    <div class="text-danger" asp-validation-summary="All"></div>
 
-                    <div class="mb-3 col-md-6">
-                        <label asp-for="Ntuser" class="form-label"></label>
-                        <input asp-for="Ntuser" class="form-control" placeholder="Ingresa tu nombre" />
-                        <span asp-validation-for="Ntuser" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3 col-md-6">
-                        <label asp-for="EmployeeNumber" class="form-label"></label>
-                        <input asp-for="EmployeeNumber" type="text" class="form-control" placeholder="Numero Empleado">
-                        <span asp-validation-for="EmployeeNumber" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3 col-md-6">
-                        <label asp-for="Names" class="form-label"></label>
-                        <input asp-for="Names" type="text" class="form-control" placeholder="Nombre(s)" oninput="this.value = this.value.toUpperCase()">
-                        <span asp-validation-for="Names" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3 col-md-6">
-                        <label asp-for="LastName" class="form-label"></label>
-                        <input asp-for="LastName" type="text" class="form-control" placeholder="Apellidos" oninput="this.value = this.value.toUpperCase()">
-                        <span asp-validation-for="LastName" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3 col-md-6">
-                        <label asp-for="Email" class="form-label"></label>
-                        <input asp-for="Email" class="form-control" placeholder="Ingresa tu email" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3 col-md-6">
-                        <label asp-for="Password" class="form-label"></label>
-                        <input asp-for="Password" class="form-control" placeholder="Ingresa la contraseña" />
-                        <span asp-validation-for="Password" class="text-danger"></span>
-                    </div>
-
-                    <div class="mb-3 col-md-6">
-                        <label asp-for="ConfirmPassword" class="form-label"></label>
-                        <input asp-for="ConfirmPassword" class="form-control" placeholder="Ingresa la confirmación de contraseña" />
-                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                    </div>
-                    @*
-                    <div class="mb-3 col-md-6">
-                    <label asp-for="IdRol"></label>
-                    <select asp-for="IdRol" asp-items="@Model.ListaRoles" class="form-control">
-                    <option disabled selected>--Seleccionar Rol--</option>
-                    </select>
-                    <span asp-validation-for="IdRol" class="text-danger"></span>
-                    </div> *@
-                </div>
-                <div class="row">
-                    <div class="col-sm-10 offset-2">
-                        <button type="submit" class="btn btn-success w-75 btn-lg">Registrarse</button>
-                    </div>
-                </div>
-            </form>
-        </div>
     </div>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
 
-        // Ensure input fields only allow uppercase letters
-        document.querySelectorAll('input[asp-for="Names"], input[asp-for="LastName"]').forEach(function (element) {
-            element.addEventListener('input', function () {
-                this.value = this.value.toUpperCase();
+            // Ensure input fields only allow uppercase letters
+            document.querySelectorAll('input[asp-for="Names"], input[asp-for="LastName"]').forEach(function (element) {
+                element.addEventListener('input', function () {
+                    this.value = this.value.toUpperCase();
+                });
+            });
+
+            // Mostrar mensaje de éxito en el modal
+            if ("@TempData["SuccessMessage"]" !== "") {
+                window.notyf.open({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: {
+                        x: 'center',
+                        y: 'top'
+                    },
+                    duration: 5000
+                });
+            }
+
+            // Mostrar mensaje de error en el modal
+            if ("@TempData["ErrorMessage"]" !== "") {
+                window.notyf.open({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: {
+                        x: 'center',
+                        y: 'top'
+                    },
+                    duration: 5000
+                });
+            }
+
+            // Inicializar Select2
+            $('.select2').select2({
+                theme: 'bootstrap4',
+                placeholder: 'Search for a location',
+                allowClear: true
+            });
+
+            function confirmClose() {
+                return confirm("Do you want to exit? Unsaved changes will be lost");
+            }
+
+            document.querySelectorAll(".closeBtn").forEach(function (btn) {
+                btn.addEventListener("click", function (e) {
+                    if (confirmClose()) {
+                        window.location.href = this.getAttribute("data-redirect-url");
+                    }
+                });
             });
         });
-
-        // Mostrar mensaje de éxito en el modal
-        if ("@TempData["SuccessMessage"]" !== "") {
-            window.notyf.open({
-                type: 'success',
-                message: "@TempData["SuccessMessage"]",
-                ripple: true,
-                dismissible: true,
-                position: {
-                    x: 'center',
-                    y: 'top'
-                },
-                duration: 5000
-            });
-        }
-
-        // Mostrar mensaje de error en el modal
-        if ("@TempData["ErrorMessage"]" !== "") {
-            window.notyf.open({
-                type: 'error',
-                message: "@TempData["ErrorMessage"]",
-                ripple: true,
-                dismissible: true,
-                position: {
-                    x: 'center',
-                    y: 'top'
-                },
-                duration: 5000
-            });
-        }
-
-        // Inicializar Select2
-        $('.select2').select2({
-            theme: 'bootstrap4',
-            placeholder: 'Search for a location',
-            allowClear: true
-        });
-
-        function confirmClose() {
-            return confirm("¿Desea salir? Los cambios no guardados se perderán");
-        }
-
-        document.querySelectorAll(".closeBtn").forEach(function (btn) {
-            btn.addEventListener("click", function (e) {
-                if (confirmClose()) {
-                    window.location.href = this.getAttribute("data-redirect-url");
-                }
-            });
-        });
-    });
-</script>
+    </script>
+}

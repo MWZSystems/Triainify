@@ -4,11 +4,12 @@
     ViewData["Title"] = "Employee Matrix";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    var first = Model?.FirstOrDefault();
+    // Evita null reference si Model llega nulo (no cambia el resultado si hay datos)
+    var data = Model ?? Enumerable.Empty<RH_CM.ViewModels.MatrizByEmployeeViewModel>();
 
-    // Construir el mapa nivel -> descripción (tomado del SP)
-    // Si algún nivel no trae DESCRIPCTION_LEVEL, caemos a "Level {n}"
-    var levelMap = Model
+    var first = data.FirstOrDefault();
+
+    var levelMap = data
         .GroupBy(m => m.FK_RequiredCourseLevels)
         .Select(g => new
         {
@@ -19,10 +20,8 @@
         .OrderBy(x => x.Level)
         .ToList();
 
-    // Lista ordenada de niveles (para iterar columnas)
     var levels = levelMap.Select(x => x.Level).ToList();
 
-    // Mapeo de badge por estado
     Func<string, string> badgeClass = (statusRaw) =>
     {
         var s = (statusRaw ?? "").Trim().ToUpperInvariant();
@@ -33,12 +32,11 @@
             "EXPIRING SOON" => "bg-warning",
             "PENDING" => "bg-danger",
             "COMPLETED" => "bg-success",
-            _ => "bg-secondary" // NO REQUIRED u otro
+            _ => "bg-secondary"
         };
     };
 
-    // Agrupar cursos => celdas por nivel; si falta una fila para un nivel => NO REQUIRED
-    var courseGroups = Model
+    var courseGroups = data
         .GroupBy(x => new { x.FK_Course, x.CourseName })
         .OrderBy(g => g.Key.CourseName)
         .Select(g => new
@@ -53,14 +51,13 @@
                     return new { Level = l, Status = "NO REQUIRED", Class = "bg-secondary" };
                 }
 
-                var status = (cell.CourseStatus ?? "").Trim();  // COMPLETED | PERMANENTLY | SCHEDULED | EXPIRING SOON | PENDING
+                var status = (cell.CourseStatus ?? "").Trim();
                 var cls = badgeClass(status);
                 return new { Level = l, Status = status, Class = cls };
             }).ToList()
         })
         .ToList();
 
-    // Resumen para chart (contar todas las celdas, incluyendo NO REQUIRED)
     var allCells = courseGroups.SelectMany(c => c.Cells).ToList();
     int cntScheduled = allCells.Count(s => s.Status.Equals("SCHEDULED", StringComparison.OrdinalIgnoreCase));
     int cntPermanently = allCells.Count(s => s.Status.Equals("PERMANENTLY", StringComparison.OrdinalIgnoreCase));
@@ -73,37 +70,68 @@
 <div class="row">
     <div class="col-xl-12">
         <div class="row">
+
             <!-- MATRIX -->
             <div class="col-xl-8">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header bg-light border-bottom">
+
                         @if (first != null)
                         {
-                            <div class="mb-3 text-center d-flex flex-wrap justify-content-center gap-3">
-                                <div class="p-3 fw-bold rounded fs-3">
-                                    Control #: @first.CONTROL_NUMBER
-                                </div>
-                                <div class="p-3 fw-bold rounded fs-3">
-                                    Full name: @first.NAMES @first.LAST_NAME @first.SECOND_NAME
-                                </div>
-                                <div class="p-3 fw-bold rounded fs-3">
-                                    Position: @first.NAME_POSITION_ENGLISH
-                                </div>
-                                <div class="p-3 fw-bold rounded fs-3">
-                                    Courses: @courseGroups.Count
+                            <div class="d-flex flex-column align-items-center text-center py-2">
+
+                                <h4 class="fw-bold text-dark mb-1">
+                                    <i class="fas fa-id-card-alt me-2 text-secondary"></i>
+                                    EMPLOYEE SUMMARY
+                                </h4>
+
+                                <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
+
+                                    <!-- Control Number -->
+                                    <div class="px-3 py-2 border rounded bg-white shadow-sm text-start">
+                                        <div class="text-muted fs-6">Control #</div>
+                                        <div class="fw-bold fs-4">@first.CONTROL_NUMBER</div>
+                                    </div>
+
+                                    <!-- Full Name -->
+                                    <div class="px-3 py-2 border rounded bg-white shadow-sm text-start">
+                                        <div class="text-muted fs-6">Full Name</div>
+                                        <div class="fw-bold fs-4">
+                                            @first.NAMES @first.LAST_NAME @first.SECOND_NAME
+                                        </div>
+                                    </div>
+
+                                    <!-- Position -->
+                                    <div class="px-3 py-2 border rounded bg-white shadow-sm text-start">
+                                        <div class="text-muted fs-6">Position</div>
+                                        <div class="fw-bold fs-4">@first.NAME_POSITION_ENGLISH</div>
+                                    </div>
+
+                                    <!-- Courses -->
+                                    <div class="px-3 py-2 border rounded bg-white shadow-sm text-center">
+                                        <div class="text-muted fs-6">Courses Required</div>
+
+                                        <div class="fw-bold fs-3 mt-3 d-flex justify-content-center">
+                                            <div class="bg-primary text-white d-flex align-items-center justify-content-center"
+                                                 style="width: 90px; height: 60px; font-size: 1.7rem; border-radius: 10px;">
+                                                @courseGroups.Count
+                                            </div>
+                                        </div>
+                                    </div>
+
+
                                 </div>
                             </div>
                         }
-                        @* <h5 class="card-title mb-0">Matrix - @first?.UserName</h5> *@
                     </div>
+
                     <div class="card-body">
-                        @if (Model != null && Model.Any())
+                        @if (data.Any())
                         {
                             <table id="datatables-responsive" class="table table-striped">
                                 <thead class="table-primary">
                                     <tr>
                                         <th>Course</th>
-                                        @* Encabezados con la DESCRIPCTION_LEVEL *@
                                         @foreach (var lm in levelMap)
                                         {
                                             <th>@lm.Name</th>
@@ -115,9 +143,15 @@
                                     {
                                         <tr>
                                             <td>@c.CourseName</td>
+
                                             @foreach (var cell in c.Cells)
                                             {
-                                                <td><span class="badge @cell.Class">@cell.Status</span></td>
+                                                <td>
+                                                    @if (!cell.Status.Equals("SCHEDULED", StringComparison.OrdinalIgnoreCase))
+                                                    {
+                                                        <span class="badge @cell.Class">@cell.Status</span>
+                                                    }
+                                                </td>
                                             }
                                         </tr>
                                     }
@@ -134,6 +168,7 @@
 
             <!-- SUMMARY + CHART -->
             <div class="col-xl-4">
+
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Course Summary</h5>
@@ -152,7 +187,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr><td><i class="fas fa-square-full text-primary"></i> SCHEDULED</td><td class="text-end">@cntScheduled</td></tr>
+                                @* SCHEDULED HIDDEN *@
                                 <tr><td><i class="fas fa-square-full text-dark"></i> PERMANENTLY</td><td class="text-end">@cntPermanently</td></tr>
                                 <tr><td><i class="fas fa-square-full" style="color:#ffc107;"></i> EXPIRING SOON</td><td class="text-end">@cntExpiringSoon</td></tr>
                                 <tr><td><i class="fas fa-square-full text-danger"></i> PENDING</td><td class="text-end">@cntPending</td></tr>
@@ -163,7 +198,6 @@
                     </div>
                 </div>
 
-                <!-- STATUS LEGEND (ahora SÍ dentro de la misma columna) -->
                 <div class="card mt-3">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Status Legend</h5>
@@ -193,10 +227,7 @@
                                     <td><span class="badge bg-dark">PERMANENTLY</span></td>
                                     <td>The course has permanent validity.</td>
                                 </tr>
-                                <tr>
-                                    <td><span class="badge bg-primary">SCHEDULED</span></td>
-                                    <td>The course is pending but already scheduled.</td>
-                                </tr>
+                                @* SCHEDULED REMOVED *@
                                 <tr>
                                     <td><span class="badge bg-secondary">NO REQUIRED</span></td>
                                     <td>The course is not required for this level.</td>
@@ -205,11 +236,8 @@
                         </table>
                     </div>
                 </div>
-                <!-- /STATUS LEGEND -->
+
             </div>
-            <!-- /SUMMARY -->
-
-
         </div>
     </div>
 </div>
@@ -233,11 +261,10 @@
             new Chart(ctx, {
                 type: "pie",
                 data: {
-                    // NO 'NO REQUIRED' en el gráfico
-                    labels: ["SCHEDULED", "PERMANENTLY", "EXPIRING SOON", "PENDING", "COMPLETED"],
+                    labels: ["PERMANENTLY", "EXPIRING SOON", "PENDING", "COMPLETED"],
                     datasets: [{
-                        data: [@cntScheduled, @cntPermanently, @cntExpiringSoon, @cntPending, @cntCompleted],
-                        backgroundColor:["#0d6efd","#000000","#ffc107","#dc3545","#198754"],
+                        data: [@cntPermanently, @cntExpiringSoon, @cntPending, @cntCompleted],
+                        backgroundColor:["#000000","#ffc107","#dc3545","#198754"],
                         borderWidth:5,
                         borderColor:"#ffffff"
                     }]

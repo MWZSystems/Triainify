@@ -48,6 +48,11 @@
                                 <tr>
                                     <th>Material Name</th>
                                     <th>Material Type</th>
+
+                                    <!-- ✅ NUEVAS COLUMNAS -->
+                                    <th>Course</th>
+                                    <th>Level</th>
+
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -57,6 +62,11 @@
                                     <tr>
                                         <td>@item.MaterialName</td>
                                         <td>@item.MaterialType</td>
+
+                                        <!-- ✅ NUEVOS CAMPOS -->
+                                        <td>@item.CourseName</td>
+                                        <td>@item.LevelName</td>
+
                                         <td>
                                             <div class="text-center d-flex gap-1">
                                                 @* Mostrar solo si el tipo NO es VIDEO *@
@@ -87,7 +97,7 @@
                                                 </form>
 
                                                 <a class="btn btn-warning"
-                                                   asp-action="EditCourseMaterial"
+                                                   asp-action="EditPDFMaterial"
                                                    asp-route-id="@item.PkCoursematerial"
                                                    asp-route-materialType="@item.MaterialType"
                                                    title="Edit">
