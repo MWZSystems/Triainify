@@ -1,31 +1,64 @@
 ﻿@model RH_CM.ViewModels.ClaimsUsuarioViewModel
 
 @{
-    ViewData["Title"] = "Acceso de usuario";
+    ViewData["Title"] = "User Claims Access";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <form method="post">
-    <input type="hidden" asp-for="@Model.IdUsuario" />
-    <div class="card">
-        <div class="card-header">
-            <h3>Asignar permisos (Claims) al usuario</h3>
-        </div>
-        <div class="card-body">
-            @for (int i = 0; i < Model.Claims.Count; i++)
-            {
-                <div class="m-3 form-check">
-                    <input type="hidden" asp-for="@Model.Claims[i].TipoClaim" />
-                    <input asp-for="@Model.Claims[i].Seleccionado" class="form-check-input" />
-                    <label class="form-check-label" asp-for="@Model.Claims[i].Seleccionado">
-                        @Model.Claims[i].TipoClaim
-                    </label>
+    <input type="hidden" asp-for="IdUsuario" />
+
+    <div class="row justify-content-center mt-3">
+        <div class="col-12 col-md-10 col-lg-8">
+
+            <div class="card border shadow-sm">
+
+                <!-- Header con icono e inglés -->
+                <div class="card-header bg-light border-bottom">
+                    <h3 class="card-title mb-0 fw-bold text-dark">
+                        <i class="fas fa-user-lock me-2 text-secondary"></i>
+                        ASSIGN USER CLAIMS
+                    </h3>
+                    <small class="text-muted">
+                        Select the permissions you want to grant to this user.
+                    </small>
                 </div>
-            }
-            <div class="text-danger" asp-validation-summary="All"></div>
-        </div>
-        <div class="card-footer">
-            <button type="submit" class="btn btn-success w-50">ASIGNAR PERMISOS</button>
+
+                <div class="card-body">
+
+                    @for (int i = 0; i < Model.Claims.Count; i++)
+                    {
+                        <div class="m-2 form-check">
+                            <input type="hidden" asp-for="Claims[i].TipoClaim" />
+
+                            <input asp-for="Claims[i].Seleccionado"
+                                   class="form-check-input" />
+
+                            <label class="form-check-label fw-semibold"
+                                   asp-for="Claims[i].Seleccionado">
+                                @Model.Claims[i].TipoClaim
+                            </label>
+                        </div>
+                    }
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger py-2 mt-3"
+                             asp-validation-summary="All">
+                        </div>
+                    }
+
+                </div>
+
+                <div class="card-footer d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="fas fa-check-circle me-1"></i>
+                        Save Claims
+                    </button>
+                </div>
+
+            </div>
+
         </div>
     </div>
 </form>

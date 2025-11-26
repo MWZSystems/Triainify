@@ -43,9 +43,9 @@
                                 <tr>
                                     <th>@Html.DisplayNameFor(m => m.First().UserName)</th>
                                     @* <th>@Html.DisplayNameFor(m => m.First().Email)</th> *@
-                                    <th>Nombre completo</th>
+                                    <th>Full Name</th>
                                     <th>@Html.DisplayNameFor(m => m.First().Rol)</th>
-                                    <th>Acciones</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -60,31 +60,31 @@
                                             <div class="text-center">
                                                 <form asp-controller="Usuarios" asp-action="Borrar" asp-route-idUsuario="@item.Id" method="post" style="display:inline;">
                                                     <a class="btn btn-warning" asp-controller="Usuarios" asp-action="Editar" asp-route-id="@item.Id">
-                                                        <i class="fas fa-edit"></i> Editar
+                                                        <i class="fas fa-edit"></i> @* Editar *@
                                                     </a>
 
                                                     <!-- Asignar claims -->
                                                     <a class="btn btn-success" asp-controller="Usuarios" asp-action="AdministrarClaimsUsuario" asp-route-idUsuario="@item.Id" style="cursor:pointer;">
-                                                        <i class="fas fa-user-shield"></i> Permisos/Claims
+                                                        <i class="fas fa-user-shield"></i> @* Permisos/Claims *@
                                                     </a>
 
                                                     @if (item.LockoutEnd == null || item.LockoutEnd < DateTime.Now)
                                                     {
                                                         <!-- Bloquear -->
-                                                        <button asp-controller="Usuarios" asp-action="BloquearDesbloquear" asp-route-idUsuario="@item.Id" class="btn btn-outline-light" style="cursor:pointer">
-                                                            <i class="fas fa-user-lock"></i> <strong>Bloquear</strong>
+                                                        <button asp-controller="Usuarios" asp-action="BloquearDesbloquear" asp-route-idUsuario="@item.Id" class="btn btn-light">
+                                                            <i class="fas fa-user-lock"></i> @* <strong>Bloquear</strong> *@
                                                         </button>
                                                     }
                                                     else
                                                     {
                                                         <!-- Desbloquear -->
-                                                        <button asp-controller="Usuarios" asp-action="BloquearDesbloquear" asp-route-idUsuario="@item.Id" class="btn btn-warning" style="cursor:pointer">
-                                                            <i class="fas fa-unlock"></i> <strong>Desbloquear</strong>
+                                                        <button asp-controller="Usuarios" asp-action="BloquearDesbloquear" asp-route-idUsuario="@item.Id" class="btn btn-warning">
+                                                            <i class="fas fa-unlock"></i> @* <strong>Desbloquear</strong> *@
                                                         </button>
                                                     }
 
                                                     <button type="submit" onclick="return confirm('¿Está seguro de querer borrar este registro?')" class="btn btn-danger">
-                                                        <i class="align-middle fas fa-trash-alt"></i> Borrar
+                                                        <i class="align-middle fas fa-trash-alt"></i> @* Borrar *@
                                                     </button>
                                                 </form>
                                             </div>
@@ -111,33 +111,16 @@
 
     <script>
         $(document).ready(function () {
+
             // Ocultar tabla y mostrar loader
             $('#tableContainer').hide();
             $('#loader').show();
 
-            // Inicializar DataTable con traducción al español y sin orden automático
+            // Inicializar DataTable SIN language y sin orden automático
             $('#datatables-responsive').DataTable({
                 responsive: true,
-                order: [], // sin orden automático, respeta el orden del servidor
-                language: {
-                    "decimal": "",
-                    "emptyTable": "No hay información",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
-                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
-                    "thousands": ",",
-                    "lengthMenu": "Mostrar _MENU_ Entradas",
-                    "loadingRecords": "Cargando...",
-                    "processing": "Procesando...",
-                    "search": "Buscar:",
-                    "zeroRecords": "Sin resultados encontrados",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    }
-                },
+                order: [], // respeta el orden del servidor
+
                 initComplete: function () {
                     $('#loader').fadeOut(200, function () {
                         $('#tableContainer').fadeIn(200);
@@ -145,7 +128,7 @@
                 }
             });
 
-            // Notificaciones (acepta tanto Correcto/Error como SuccessMessage/ErrorMessage)
+            // Notificaciones (Success y Error)
             var ok = "@(TempData["Correcto"] ?? TempData["SuccessMessage"])";
             var err = "@(TempData["Error"] ?? TempData["ErrorMessage"])";
 
@@ -170,6 +153,8 @@
                     duration: 5000
                 });
             }
+
         });
     </script>
 }
+

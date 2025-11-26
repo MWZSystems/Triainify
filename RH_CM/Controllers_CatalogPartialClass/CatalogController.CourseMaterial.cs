@@ -7,16 +7,50 @@ namespace RH_CM.Controllers
 {
     public partial class CatalogController
     {
+
+        // ==========================================================
+        // HELPERS PARA COMBOS (Course y Level)
+        // ==========================================================
+        private void LoadCourseAndLevelViewBags()
+        {
+            ViewBag.Courses = _context.CtCourses
+                .AsNoTracking()
+                .Where(c => c.Available == 1)
+                .OrderBy(c => c.CourseName)
+                .ToList();
+
+            ViewBag.LevelCourses = _context.CtLevelcourses
+                .AsNoTracking()
+                .Where(l => l.Available == 1)
+                .OrderBy(l => l.PkLevelcourse)
+                .ToList();
+        }
+
         // GET: CtCoursematerial
         //[Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
-        [Authorize(Policy = "ViewAccess")] 
+        [Authorize(Policy = "ViewAccess")]
         public IActionResult IndexCourseMaterial()
         {
-            var materials = _context.CtCoursematerials
-                .AsNoTracking()
-                //.Where(m => m.Available == 1)
-                .OrderBy(m => m.NameMaterial)
-                .Select(m => new
+            var materials = (
+                from m in _context.CtCoursematerials.AsNoTracking()
+
+                    // LEFT JOIN a CourseLevelMaterial
+                join clm in _context.CtCourseLevelMaterials.AsNoTracking()
+                    on m.PkCoursematerial equals clm.FkCourseMaterial into clmJoin
+                from clm in clmJoin.DefaultIfEmpty()
+
+                    // LEFT JOIN a Courses
+                join c in _context.CtCourses.AsNoTracking()
+                    on clm.FkCourse equals c.PkCourse into courseJoin
+                from c in courseJoin.DefaultIfEmpty()
+
+                    // LEFT JOIN a LevelCourses
+                join lvl in _context.CtLevelcourses.AsNoTracking()
+                    on clm.FkLevelCourse equals lvl.PkLevelcourse into lvlJoin
+                from lvl in lvlJoin.DefaultIfEmpty()
+
+                orderby m.NameMaterial
+                select new
                 {
                     m.PkCoursematerial,
                     MaterialName = m.NameMaterial,
@@ -25,36 +59,89 @@ namespace RH_CM.Controllers
                     m.CreateUser,
                     m.CreateDate,
                     m.LastUpdateUser,
-                    m.LastUpdateDate
-                })
-                .ToList();
+                    m.LastUpdateDate,
+
+                    // 🔽 Nuevos campos solicitados
+                    CourseName = c != null ? c.CourseName : "Not Assigned",
+                    LevelName = lvl != null ? lvl.DescripctionLevel : "Not Assigned"
+                }
+            ).ToList();
 
             return View(materials);
         }
 
-        // GET: CtCoursematerial/Create
+
         [HttpGet]
         [Authorize(Policy = "ViewAccess")]
         public IActionResult CreateCourseMaterial(string type)
         {
-            var model = new CtCoursematerial();
+            LoadCourseAndLevelViewBags();  // <-- combos para asignar
             ViewBag.Type = type;
-
-            return View(model);
+            return View(new CtCoursematerial());
         }
 
-
-        //Crear Material PDF
         [HttpPost]
         [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreatePDFMaterial(List<IFormFile> uploadedFiles)
+        public async Task<IActionResult> CreatePDFMaterial(
+            List<IFormFile> uploadedFiles,
+            int fkCourse,
+            int fkLevelCourse
+        )
         {
             if (uploadedFiles == null || !uploadedFiles.Any())
             {
                 TempData["ErrorMessage"] = "You must upload at least one PDF file.";
                 return RedirectToAction(nameof(CreateCourseMaterial), new { type = "PDF" });
             }
+
+            // ============================
+            // ✅ REGLA: SOLO 1 PDF POR CURSO
+            // ============================
+            if (fkCourse > 0)
+            {
+                // 1) Si intenta subir más de 1 PDF al mismo curso en un solo post
+                if (uploadedFiles.Count > 1)
+                {
+                    TempData["ErrorMessage"] = "Only one PDF can be assigned per course. Please upload a single PDF.";
+                    return RedirectToAction(nameof(CreateCourseMaterial), new { type = "PDF" });
+                }
+
+                // 2) Si el curso ya tiene un PDF asignado previamente
+                bool courseAlreadyHasPdf = await (
+                    from clm in _context.CtCourseLevelMaterials.AsNoTracking()
+                    join cm in _context.CtCoursematerials.AsNoTracking()
+                        on clm.FkCourseMaterial equals cm.PkCoursematerial
+                    where clm.FkCourse == fkCourse
+                          && clm.Available == 1
+                          && cm.Available == 1
+                          && cm.MaterialType == "PDF"
+                    select clm.PkCourseLevelMaterial
+                ).AnyAsync();
+
+                if (courseAlreadyHasPdf)
+                {
+                    TempData["ErrorMessage"] = "This course already has a PDF assigned. Only one PDF is allowed per course.";
+                    return RedirectToAction(nameof(CreateCourseMaterial), new { type = "PDF" });
+                }
+            }
+
+            // ======================================================
+            // Validar que Course-Level exista en Courseassignments
+            // ======================================================
+            if (fkCourse > 0 && fkLevelCourse > 0)
+            {
+                bool comboExists = await _context.CtCourseassignments
+                    .AnyAsync(ca => ca.FkCourse == fkCourse && ca.FkRequiredCourseLevels == fkLevelCourse);
+
+                if (!comboExists)
+                {
+                    TempData["ErrorMessage"] = "This Course-Level combination doesn't exist in Courseassignments.";
+                    return RedirectToAction(nameof(CreateCourseMaterial), new { type = "PDF" });
+                }
+            }
+
+            var createdMaterials = new List<CtCoursematerial>();
 
             foreach (var uploadedFile in uploadedFiles)
             {
@@ -68,8 +155,7 @@ namespace RH_CM.Controllers
                     return RedirectToAction(nameof(CreateCourseMaterial), new { type = "PDF" });
                 }
 
-                // Verificar si ya existe un material con ese nombre (opcional)
-                var existsName = await _context.CtCoursematerials
+                bool existsName = await _context.CtCoursematerials
                     .AsNoTracking()
                     .AnyAsync(m => m.NameMaterial == fileName && m.Available == 1);
 
@@ -79,13 +165,12 @@ namespace RH_CM.Controllers
                     return RedirectToAction(nameof(CreateCourseMaterial), new { type = "PDF" });
                 }
 
-                // Guardar archivo
                 using var ms = new MemoryStream();
                 await uploadedFile.CopyToAsync(ms);
 
                 var material = new CtCoursematerial
                 {
-                    NameMaterial = fileName,   // nombre del archivo con extensión
+                    NameMaterial = fileName,
                     MaterialType = "PDF",
                     File = ms.ToArray(),
                     CreateUser = User.Identity?.Name ?? "Unknown",
@@ -96,14 +181,47 @@ namespace RH_CM.Controllers
                 };
 
                 _context.Add(material);
+                createdMaterials.Add(material);
             }
 
+            // Guardar para obtener PKs
             await _context.SaveChangesAsync();
+
+            // ✅ ASIGNAR AUTOMÁTICO (si seleccionaron Course y Level)
+            if (fkCourse > 0 && fkLevelCourse > 0)
+            {
+                foreach (var mat in createdMaterials)
+                {
+                    bool alreadyLinked = await _context.CtCourseLevelMaterials.AnyAsync(x =>
+                        x.FkCourse == fkCourse &&
+                        x.FkLevelCourse == fkLevelCourse &&
+                        x.FkCourseMaterial == mat.PkCoursematerial
+                    );
+
+                    if (!alreadyLinked)
+                    {
+                        var link = new CtCourseLevelMaterial
+                        {
+                            FkCourse = fkCourse,
+                            FkLevelCourse = fkLevelCourse,
+                            FkCourseMaterial = mat.PkCoursematerial,
+                            CreateUser = User.Identity?.Name ?? "Unknown",
+                            CreateDate = DateTime.Now,
+                            LastUpdateUser = User.Identity?.Name ?? "Unknown",
+                            LastUpdateDate = DateTime.Now,
+                            Available = 1
+                        };
+
+                        _context.Add(link);
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+            }
 
             TempData["SuccessMessage"] = "Materials uploaded successfully.";
             return RedirectToAction(nameof(IndexCourseMaterial));
         }
-
 
         //Crear Material PDF
         [HttpPost]
@@ -170,22 +288,9 @@ namespace RH_CM.Controllers
             return RedirectToAction(nameof(IndexCourseMaterial));
         }
 
-
-        // GET: CtCoursematerial/Edit/5
-        [Authorize(Policy = "ViewAccess")]
-        [HttpGet]
-        public async Task<IActionResult> EditCourseMaterial(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var material = await _context.CtCoursematerials.FindAsync(id);
-            if (material == null) return NotFound();
-
-            return View(material); // ya no cargamos ViewBags
-        }
-
-
-        // GET: CtCoursematerial/Edit/5
+        // ==========================
+        // GET: EditPDFMaterial  
+        // ==========================
         [Authorize(Policy = "ViewAccess")]
         [HttpGet]
         public async Task<IActionResult> EditPDFMaterial(int? id)
@@ -195,61 +300,100 @@ namespace RH_CM.Controllers
             var material = await _context.CtCoursematerials.FindAsync(id);
             if (material == null) return NotFound();
 
-            return View(material); // ya no cargamos ViewBags
+            LoadCourseAndLevelViewBags();
+
+            var link = await _context.CtCourseLevelMaterials
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.FkCourseMaterial == id && x.Available == 1);
+
+            ViewBag.SelectedCourseId = link?.FkCourse ?? 0;
+            ViewBag.SelectedLevelId = link?.FkLevelCourse ?? 0;
+
+            return View(material);
         }
 
 
-        // POST: CtCoursematerial/Edit/5
+        // ==========================
+        // POST: EditPDFMaterial  (ÚNICO POST)
+        // ==========================
         [HttpPost]
         [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditPDFMaterial(/*int id,*/ CtCoursematerial model, IFormFile? uploadedFile)
+        public async Task<IActionResult> EditPDFMaterial(
+            CtCoursematerial model,
+            IFormFile? uploadedFile,
+            int fkCourse,
+            int fkLevelCourse
+        )
         {
-            //if (id != model.PkCoursematerial) return NotFound();
-
             int id = model.PkCoursematerial;
-
-
-            if (uploadedFile == null || uploadedFile.Length == 0)
-            {
-                TempData["ErrorMessage"] = "Choose a File.";
-                return RedirectToAction(nameof(EditCourseMaterial), new { id });
-            }
-
 
             var existing = await _context.CtCoursematerials.FindAsync(id);
             if (existing == null) return NotFound();
 
-            var fileName = uploadedFile.FileName?.ToLowerInvariant() ?? "";
-
-            // Actualizar campos editables
-            existing.NameMaterial = fileName;
-            existing.LastUpdateUser = User.Identity?.Name ?? "Unknown";
-            existing.LastUpdateDate = DateTime.Now;
-
-
-            // Si subió nuevo archivo (PDF)
+            // ==============================
+            // VALIDAR Y ACTUALIZAR PDF
+            // ==============================
             if (uploadedFile != null && uploadedFile.Length > 0)
             {
-                //var fileName = uploadedFile.FileName?.ToLowerInvariant() ?? "";
+                var fileName = uploadedFile.FileName?.ToLowerInvariant() ?? "";
+
                 if (!fileName.EndsWith(".pdf"))
                 {
                     TempData["ErrorMessage"] = "Only PDF files are allowed (.pdf).";
-                    return RedirectToAction(nameof(EditCourseMaterial), new { id });
+                    return RedirectToAction(nameof(EditPDFMaterial), new { id });
                 }
 
                 using var ms = new MemoryStream();
                 await uploadedFile.CopyToAsync(ms);
+
                 existing.File = ms.ToArray();
+                existing.NameMaterial = fileName;
             }
+
+            existing.LastUpdateUser = User.Identity?.Name ?? "Unknown";
+            existing.LastUpdateDate = DateTime.Now;
 
             _context.Update(existing);
             await _context.SaveChangesAsync();
 
+            // ======================================================
+            // VALIDACIONES DE CURSO (aunque no se pueda cambiar)
+            // ======================================================
+            if (fkCourse > 0 && fkLevelCourse > 0)
+            {
+                bool validCombo = await _context.CtCourseassignments
+                    .AnyAsync(ca => ca.FkCourse == fkCourse &&
+                                    ca.FkRequiredCourseLevels == fkLevelCourse);
+
+                if (!validCombo)
+                {
+                    TempData["ErrorMessage"] = "This Course-Level combination doesn't exist in Courseassignments.";
+                    return RedirectToAction(nameof(EditPDFMaterial), new { id });
+                }
+
+                bool courseHasOtherPdf = await (
+                    from clm in _context.CtCourseLevelMaterials.AsNoTracking()
+                    join cm in _context.CtCoursematerials.AsNoTracking()
+                        on clm.FkCourseMaterial equals cm.PkCoursematerial
+                    where clm.FkCourse == fkCourse
+                          && clm.Available == 1
+                          && cm.Available == 1
+                          && cm.MaterialType == "PDF"
+                          && cm.PkCoursematerial != id
+                    select clm
+                ).AnyAsync();
+
+                if (courseHasOtherPdf)
+                {
+                    TempData["ErrorMessage"] = "This course already has a PDF assigned. Only one PDF is allowed per course.";
+                    return RedirectToAction(nameof(EditPDFMaterial), new { id });
+                }
+            }
+
             TempData["SuccessMessage"] = "Material updated successfully.";
             return RedirectToAction(nameof(IndexCourseMaterial));
         }
-
 
         // POST: CtCoursematerial/Edit/5
         [HttpPost]
@@ -351,9 +495,6 @@ namespace RH_CM.Controllers
             return RedirectToAction(nameof(IndexCourseMaterial));
         }
 
-
-
-
         // POST: CtCoursematerial/Toggle/5
         [HttpPost]
         [Authorize(Policy = "ViewAccess")]
@@ -384,27 +525,45 @@ namespace RH_CM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCourseMaterial(int id)
         {
+            // 1) Buscar todos los vínculos Course–Level–Material de ese material
+            var links = await _context.CtCourseLevelMaterials
+                .Where(x => x.FkCourseMaterial == id)
+                .ToListAsync();
 
-            var validation = await _context.CtCourseLevelMaterials
-            .FirstOrDefaultAsync(x => x.FkCourseMaterial == id);
-
-            if (validation != null)
+            // 2) Buscar el material
+            var material = await _context.CtCoursematerials.FindAsync(id);
+            if (material == null)
             {
-                TempData["ErrorMessage"] = "This material is linked to a Course-Level";
+                TempData["ErrorMessage"] = "Material not found.";
                 return RedirectToAction(nameof(IndexCourseMaterial));
             }
 
-
-            var material = await _context.CtCoursematerials.FindAsync(id);
-            if (material != null)
+            // 3) Borrar en ambas tablas dentro de una transacción
+            await using var tx = await _context.Database.BeginTransactionAsync();
+            try
             {
+                if (links.Any())
+                {
+                    _context.CtCourseLevelMaterials.RemoveRange(links);
+                    await _context.SaveChangesAsync();
+                }
 
                 _context.CtCoursematerials.Remove(material);
                 await _context.SaveChangesAsync();
+
+                await tx.CommitAsync();
+
+                TempData["SuccessMessage"] = "Material and its assignments were deleted successfully.";
+                return RedirectToAction(nameof(IndexCourseMaterial));
             }
-            TempData["SuccessMessage"] = "Material has been deleted Successfully";
-            return RedirectToAction(nameof(IndexCourseMaterial));
+            catch (Exception ex)
+            {
+                await tx.RollbackAsync();
+                TempData["ErrorMessage"] = $"Error deleting material: {ex.Message}";
+                return RedirectToAction(nameof(IndexCourseMaterial));
+            }
         }
+
 
         // GET: CtCoursematerial/Download/5
         public async Task<IActionResult> DownloadCourseMaterial(int id)

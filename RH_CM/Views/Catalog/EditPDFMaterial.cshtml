@@ -1,0 +1,191 @@
+﻿@model RH_CM.Models.CtCoursematerial
+
+@{
+    ViewData["Title"] = "Edit Course Material";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var courses = (IEnumerable<RH_CM.Models.CtCourse>)(ViewBag.Courses ?? Enumerable.Empty<RH_CM.Models.CtCourse>());
+    var levels = (IEnumerable<RH_CM.Models.CtLevelcourse>)(ViewBag.LevelCourses ?? Enumerable.Empty<RH_CM.Models.CtLevelcourse>());
+
+    int selectedCourseId = (int)(ViewBag.SelectedCourseId ?? 0);
+    int selectedLevelId = (int)(ViewBag.SelectedLevelId ?? 0);
+}
+
+@* Si el material a editar es PDF muestra una vista, si es VIDEO muestra otra *@
+@if (Model.MaterialType == "PDF")
+{
+    <div class="row">
+        <div class="col">
+            <h1 class="h3 mb-3 text-center">EDIT PDF MATERIAL - ID: @Model.PkCoursematerial</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Edit Material Details</h5>
+                    <h6 class="card-subtitle text-muted">
+                        Update the fields below. Fields marked with an asterisk (*) are required.
+                    </h6>
+                </div>
+
+                <div class="card-body">
+                    <form asp-action="EditPDFMaterial" method="post" enctype="multipart/form-data">
+                        @Html.HiddenFor(m => m.PkCoursematerial)
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        @* ✅ Hidden para enviar valores aunque los selects estén disabled *@
+                        <input type="hidden" name="fkCourse" value="@selectedCourseId" />
+                        <input type="hidden" name="fkLevelCourse" value="@selectedLevelId" />
+
+                        <div class="row">
+
+                            <!-- Course (solo lectura) -->
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label">Course</label>
+                                <select class="form-control select2"
+                                        disabled
+                                        asp-items="@(new SelectList(courses,
+                                                                                            nameof(RH_CM.Models.CtCourse.PkCourse),
+                                                                                            nameof(RH_CM.Models.CtCourse.CourseName),
+                                                                                            selectedCourseId))">
+                                <option value="0">-- Select Course --</option>
+                            </select>
+                            <small class="form-text text-muted">Course cannot be changed.</small>
+                        </div>
+
+                            <!-- Level (solo lectura) -->
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label">Level</label>
+                                <select class="form-control select2"
+                                        disabled
+                                        asp-items="@(new SelectList(levels,
+                                                                                        nameof(RH_CM.Models.CtLevelcourse.PkLevelcourse),
+                                                                                        nameof(RH_CM.Models.CtLevelcourse.DescripctionLevel),
+                                                                                        selectedLevelId))">
+                                <option value="0">-- Select Level --</option>
+                            </select>
+                            <small class="form-text text-muted">Level cannot be changed.</small>
+                        </div>
+
+                            <!-- Upload New File (optional) -->
+                            <div class="mb-3 col-md-12">
+                                <label class="form-label">Upload New File (PDF)</label>
+                                <input type="file" name="uploadedFile" class="form-control" accept=".pdf" />
+                                <small class="form-text text-muted">Leave empty to keep the current file.</small>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="row mt-3">
+                            <div class="col-12 text-end">
+                                <a asp-action="IndexCourseMaterial" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Update
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col">
+            <h1 class="h3 mb-3 text-center">EDIT VIDEO MATERIAL - ID: @Model.PkCoursematerial</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Edit Video Material Details</h5>
+                    <h6 class="card-subtitle text-muted">
+                        Update the fields below. Fields marked with an asterisk (*) are required.
+                    </h6>
+                </div>
+
+                <div class="card-body">
+                    <form asp-action="EditVIDEOMaterial" method="post" enctype="multipart/form-data">
+                        @Html.HiddenFor(m => m.PkCoursematerial)
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="row">
+                            <div class="mb-3 col-md-12">
+                                <label class="form-label">
+                                    Enter the full file path
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" name="filePath" class="form-control"
+                                       placeholder="C:\Videos\curso1.mp4" required />
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="row mt-3">
+                            <div class="col-12 text-end">
+                                <a asp-action="IndexCourseMaterial" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Update
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        $(function () {
+
+            // Notificaciones (igual al original)
+            if ("@TempData["SuccessMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+
+            if ("@TempData["ErrorMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+
+            // Select2 como en tu create
+            $(".select2").select2({
+                theme: 'bootstrap4',
+                placeholder: 'Select an option',
+                allowClear: true
+            });
+
+        });
+    </script>
+}

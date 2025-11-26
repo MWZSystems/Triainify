@@ -1,23 +1,23 @@
 ﻿@model RH_CM.Models.CtCoursematerial
-@{
-    var type = ViewBag.Type as string;
-}
 
 @{
+    var type = ViewBag.Type as string;
+
+    var courses = (IEnumerable<RH_CM.Models.CtCourse>)(ViewBag.Courses ?? Enumerable.Empty<RH_CM.Models.CtCourse>());
+    var levels = (IEnumerable<RH_CM.Models.CtLevelcourse>)(ViewBag.LevelCourses ?? Enumerable.Empty<RH_CM.Models.CtLevelcourse>());
+
     ViewData["Title"] = "Create Course Material";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @if (type == "PDF")
 {
-    @* This one for the PDFS *@
+    <!-- ======================= PDF ======================= -->
     <div class="row">
         <div class="col">
             <h1 class="h3 mb-3 text-center">CREATE PDF MATERIAL</h1>
         </div>
     </div>
-
-
 
     <div class="row">
         <div class="col-md-8 offset-md-2">
@@ -28,9 +28,29 @@
                         Upload one or more PDF files. The PDF Name will be the Material Name!
                     </h6>
                 </div>
+
                 <div class="card-body">
                     <form asp-action="CreatePDFMaterial" method="post" enctype="multipart/form-data">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <!-- OPTIONAL ASSIGNMENT -->
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label">Course (optional)</label>
+                                <select name="fkCourse" class="form-control select2"
+                                        asp-items="@(new SelectList(courses, "PkCourse", "CourseName"))">
+                                    <option value="0">-- Select Course --</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label">Level (optional)</label>
+                                <select name="fkLevelCourse" class="form-control select2"
+                                        asp-items="@(new SelectList(levels, "PkLevelcourse", "DescripctionLevel"))">
+                                    <option value="0">-- Select Level --</option>
+                                </select>
+                            </div>
+                        </div>
 
                         <!-- Upload Multiple Files -->
                         <div class="mb-3 col-md-12">
@@ -53,13 +73,14 @@
                         </div>
                     </form>
                 </div>
+
             </div>
         </div>
     </div>
 }
 else
 {
-    @* This one for Videos *@
+    <!-- ======================= VIDEO ======================= -->
     <div class="row">
         <div class="col">
             <h1 class="h3 mb-3 text-center">CREATE VIDEO MATERIAL</h1>
@@ -72,19 +93,41 @@ else
                 <div class="card-header">
                     <h5 class="card-title">New Video Material Details</h5>
                     <h6 class="card-subtitle text-muted">
-                        Please paste the full video Path, include the Extension (.exe, .wma, etc.)
+                        Please paste the full video Path, include the Extension (.exe, .mp4, etc.)
                     </h6>
                 </div>
+
                 <div class="card-body">
                     <form asp-action="CreateVideoMaterial" method="post" enctype="multipart/form-data">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+                        <!-- OPTIONAL ASSIGNMENT -->
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label">Course (optional)</label>
+                                <select name="fkCourse" class="form-control select2"
+                                        asp-items="@(new SelectList(courses, "PkCourse", "CourseName"))">
+                                    <option value="0">-- Select Course --</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3 col-md-6">
+                                <label class="form-label">Level (optional)</label>
+                                <select name="fkLevelCourse" class="form-control select2"
+                                        asp-items="@(new SelectList(levels, "PkLevelcourse", "DescripctionLevel"))">
+                                    <option value="0">-- Select Level --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Path -->
                         <div class="mb-3 col-md-12">
                             <label class="form-label">
                                 Enter the full file path
                                 <span class="text-danger">*</span>
                             </label>
-                            <input type="text" name="filePath" class="form-control" placeholder="C:\Videos\curso1.mp4" required />
+                            <input type="text" name="filePath" class="form-control"
+                                   placeholder="C:\Videos\curso1.mp4" required />
                         </div>
 
                         <!-- Buttons -->
@@ -100,21 +143,19 @@ else
                         </div>
                     </form>
                 </div>
+
             </div>
         </div>
     </div>
 }
-
-
-
-
-
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
 
     <script>
         $(function () {
+
+            // Notificaciones
             if ("@TempData["SuccessMessage"]" !== "") {
                 window.notyf?.open?.({
                     type: 'success',
@@ -135,6 +176,14 @@ else
                     duration: 5000
                 });
             }
+
+            // Select2
+            $(".select2").select2({
+                theme: 'bootstrap4',
+                placeholder: 'Select an option',
+                allowClear: true
+            });
+
         });
     </script>
 }
