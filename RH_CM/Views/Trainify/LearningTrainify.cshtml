@@ -4,7 +4,7 @@
 @inject UserManager<IdentityUser> UserManager
 
 @{
-    ViewData["Title"] = "Next required courses to do";
+    ViewData["Title"] = "learning";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var first = Model?.FirstOrDefault();
@@ -12,7 +12,7 @@
                      ?? new List<IGrouping<string, RH_CM.ViewModels.LearningCourseToDoViewModel>>();
 }
 
-<div class="row">
+<div class="row mb-3">
     <div class="col">
         <h1 class="h3 mb-3 text-center">
             <i class="align-middle fas fa-graduation-cap"></i> @ViewData["Title"]
@@ -24,24 +24,96 @@
     <div class="col-sm-12">
         <div class="card">
 
-            <div class="card-header">
+            <div class="card-header bg-light border-bottom">
                 @if (first != null)
                 {
-                    <div class="mb-3 text-center d-flex flex-wrap justify-content-center gap-3">
-                        <div class="p-3 fw-bold rounded fs-3">
-                            Control #: @first.CONTROL_NUMBER
-                        </div>
-                        <div class="p-3 fw-bold rounded fs-3">
-                            Full name: @first.FullName
-                        </div>
-                        <div class="p-3 fw-bold rounded fs-3">
-                            Position: @first.NAME_POSITION_ENGLISH
-                        </div>
-                        <div class="p-3 fw-bold rounded fs-3">
-                            Courses: @courseGroups.Count
+                    <div class="d-flex flex-column align-items-center text-center py-2">
+
+                        <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
+
+                            <!-- Control Number -->
+                            <div class="px-3 py-2 border rounded bg-white shadow-sm text-start">
+                                <div class="text-muted fs-6">Control #</div>
+                                <div class="fw-bold fs-4">@first.CONTROL_NUMBER</div>
+                            </div>
+
+                            <!-- Full Name -->
+                            <div class="px-3 py-2 border rounded bg-white shadow-sm text-start">
+                                <div class="text-muted fs-6">Full Name</div>
+                                <div class="fw-bold fs-4">@first.FullName</div>
+                            </div>
+
+                            <!-- Position -->
+                            <div class="px-3 py-2 border rounded bg-white shadow-sm text-start">
+                                <div class="text-muted fs-6">Position</div>
+                                <div class="fw-bold fs-4">@first.NAME_POSITION_ENGLISH</div>
+                            </div>
+
+                            <!-- Courses Required -->
+                            <div class="px-3 py-2 border rounded bg-white shadow-sm text-center">
+                                <div class="text-muted fs-6">Courses Required</div>
+                                <div class="fw-bold fs-3 mt-2 d-flex justify-content-center">
+                                    <div class="bg-primary text-white d-flex align-items-center justify-content-center"
+                                         style="width: 90px; height: 60px; font-size: 1.7rem; border-radius: 10px;">
+                                        @courseGroups.Count
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 }
+            </div>
+
+            <!-- Toggle button for learning info (just under the header) -->
+            <div class="px-3 pt-2 d-flex justify-content-end">
+                <button class="btn btn-outline-info btn-sm"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#learningInfoAlerts"
+                        aria-expanded="false"
+                        aria-controls="learningInfoAlerts">
+                    <i class="fas fa-info-circle"></i> Learning information
+                </button>
+            </div>
+
+            <!-- Outline alerts with description of main fields and actions -->
+            <div class="collapse mb-3" id="learningInfoAlerts">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Learning</h5>
+                        <h6 class="card-subtitle text-muted">
+                            Description of employee information and available actions.
+                        </h6>
+                    </div>
+                    <div class="card-body">
+
+                        <!-- Courses Required -->
+                        <div class="alert alert-success alert-outline alert-dismissible mb-3" role="alert">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <div class="alert-icon">
+                                <i class="fas fa-list-alt"></i>
+                            </div>
+                            <div class="alert-message">
+                                <strong>Courses Required:</strong>
+                                Total number of courses assigned or required for the employee based on their position and level.
+                            </div>
+                        </div>
+
+                        <!-- Start button -->
+                        <div class="alert alert-primary alert-outline alert-dismissible mb-0" role="alert">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <div class="alert-icon">
+                                <i class="fas fa-play"></i>
+                            </div>
+                            <div class="alert-message">
+                                <strong>Start:</strong>
+                                Opens the selected course in a new browser tab using the assigned level and course assignment information.
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
             </div>
 
             <div class="card-body">
@@ -54,7 +126,7 @@
                                 <th># Assign.</th>
                                 <th># Course</th>
                                 <th>Course</th>
-                                <th># LevelId</th>   @* 👈 nuevo: FK_RequiredCourseLevels *@
+                                <th># LevelId</th>
                                 <th>Level</th>
                                 <th>Delivery</th>
                                 <th>Validity (days)</th>
@@ -70,22 +142,22 @@
                                     <td>@item.PK_CourseAssignment</td>
                                     <td>@item.FK_Course</td>
                                     <td>@item.CourseName</td>
-                                    <td>@item.FK_RequiredCourseLevels</td> @* 👈 nuevo *@
+                                    <td>@item.FK_RequiredCourseLevels</td>
                                     <td>@item.CourseLevel</td>
                                     <td>@item.DeliveryMode</td>
                                     <td>@(item.CourseValidityDays?.ToString() ?? "—")</td>
                                     <td>@item.CourseStatus</td>
                                     <td>@(item.LastUpdateDate?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
                                     <td>
-                                        <div class="text-center d-flex gap-1">
-                                            <!-- Iniciar: abre en nueva pestaña → StartCourse(courseId, levelId) -->
+                                        <div class="text-center d-flex gap-1 justify-content-center">
+                                            <!-- Start: opens new tab -->
                                             <a class="btn btn-primary"
                                                asp-controller="Catalog"
                                                asp-action="StartCourse"
                                                asp-route-courseId="@item.FK_Course"
                                                asp-route-levelId="@item.FK_RequiredCourseLevels"
                                                asp-route-courseAssignmentId="@item.PK_CourseAssignment"
-                                               title="Start"
+                                               title="Start course"
                                                target="_blank" rel="noopener">
                                                 <i class="fas fa-play"></i>
                                             </a>
@@ -112,10 +184,10 @@
         $(document).ready(function () {
             $('#datatables-learning').DataTable({
                 responsive: true,
-                // Columnas: 0=#Assign, 1=#Course, 2=Course, 3=#LevelId, 4=Level, ...
+                // Columns: 0=#Assign, 1=#Course, 2=Course, 3=#LevelId, 4=Level, ...
                 order: [[2, 'asc'], [4, 'asc']],
                 columnDefs: [
-                    // Oculta por completo: no visibles y no buscables
+                    // Hide completely: not visible and not searchable
                     { targets: [0, 1, 3], visible: false, searchable: false }
                 ]
             });
@@ -143,4 +215,3 @@
         });
     </script>
 }
-

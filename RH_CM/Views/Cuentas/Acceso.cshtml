@@ -1,113 +1,130 @@
 ﻿@model RH_CM.ViewModels.AccesoViewModel
+@inject IConfiguration Configuration
 
 @{
-	Layout = null;
+    Layout = null;
 }
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="description" content="Responsive Bootstrap 5 Admin &amp; Dashboard Template">
-	<meta name="author" content="Bootlab">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-	<title>RH</title>
-	<!-- Remove this after purchasing -->
-	<link rel="stylesheet" href="~/Assets/dist/css/light.css" asp-append-version="true" />
-	<link rel="shortcut icon" href="assets/favicon.ico">
-	<!-- Custom Styles for Background Image -->
-	<style>
-		body {
-			/* background-image: url('~/Assets/dist/img/icons/almacensc512.png'); */ /* Replace with your image path */
+    <title>Trainify Login</title>
 
-			background-image: url('assets/WallpaperBackground.jpeg');
-			background-size: cover;
-			background-position: center;
-			background-repeat: no-repeat;
-			background-attachment: fixed; /* Optional: makes background image fixed while scrolling */
-		}
+    <link rel="stylesheet" href="~/Assets/dist/css/light.css" asp-append-version="true" />
+    <link rel="shortcut icon" href="assets/favicon.ico">
 
-		.main {
-			background: rgba(255, 255, 255, 0.8); /* Adds a white background with some transparency */
-			border-radius: 15px; /* Rounds the corners */
-			box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Adds a shadow effect */
-			padding: 20px;
-		}
-	</style>
+    <style>
+        body {
+            background-image: url('assets/WallpaperBackground.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
 
+        .login-wrapper {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
+            box-shadow: 0 0 18px rgba(0, 0, 0, 0.4);
+            padding: 30px 20px;
+        }
+    </style>
 </head>
 
-<body data-theme="default" data-layout="fluid" data-sidebar-position="left" data-sidebar-behavior="sticky">
-	<div class="main d-flex justify-content-center w-100">
-		<main class="content d-flex p-0" >
-			<div class="container d-flex flex-column">
-				<div class="row h-100">
-					<div class="col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100">
-						<div class="d-table-cell align-middle">
+<body class="d-flex align-items-center justify-content-center min-vh-100">
 
-							<div class="text-center mt-4">
-								<h1 class="h2">Welcome Trainify System</h1>
-								<p class="lead">
-									Sign in to your account to continue
-								</p>
-							</div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-sm-10 col-md-8 col-lg-5">
 
-							<div class="card">
-								<div class="card-body">
-									<div class="m-sm-4">
-										<div class="text-center">
-											<img src="~/assets/dist/img/avatars/user.png" alt="Login" class="img-fluid rounded-circle" />
-										</div>
-										<form asp-controller="Cuentas" asp-action="Acceso" method="post">
+                <div class="login-wrapper">
 
-											<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-											<div class="mb-3">
-												<label asp-for="UserName" class="form-label"></label>
-												<input asp-for="UserName" class="form-control form-control-lg" type="text" name="Username" placeholder="Enter your Username" />
-												<span asp-validation-for="UserName" class="text-danger"></span>
-											</div>
-											<div class="mb-3">
-												<label asp-for="Password" class="form-label"></label>
-												<input asp-for="Password" class="form-control form-control-lg" type="password" name="Password" placeholder="Enter your password" />
-												<span asp-validation-for="Password" class="text-danger"></span>
-											</div>
-											@* <div>
-												<div class="form-check align-items-center">
-													<input class="form-check-input" type="checkbox" name="Remember Me" asp-for="RememberMe" />
-													<label class="form-check-label text-small" asp-for="RememberMe">Remember Me</label>
+                    <!-- Header -->
+                    <div class="text-center mb-4">
+                        <h1 class="h3 fw-bold mb-1">
+                            <i class="fas fa-graduation-cap text-primary me-2"></i>
+                            Trainify
+                        </h1>
+                        <p class="text-muted mb-0">Sign in to your account to continue</p>
+                    </div>
 
-												</div>
-											</div> *@
+                    <!-- Card -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
 
+                            <div class="text-center mb-3">
+                                <img src="~/assets/dist/img/avatars/user.png"
+                                     alt="Login"
+                                     class="img-fluid rounded-circle"
+                                     style="width: 80px; height: 80px; object-fit: cover;" />
+                            </div>
 
-											@* <div class="row">
-												<div class="mb-3 text-center">
-													<p><a asp-controller="Cuentas" asp-action="Registro" class="text-decoration-none text-end">Register new user</a></p>
-												</div>
-											</div> *@
-											<div class="text-center mt-3">
-												<button class="btn btn-lg btn-primary">Login</button>
-											</div>
-										</form>
-									</div>
-								</div>
-							</div>
+                            <form asp-controller="Cuentas" asp-action="Acceso" method="post">
 
-						</div>
-					</div>
-				</div>
-			</div>
-		</main>
-	</div>
+                                <div asp-validation-summary="ModelOnly" class="text-danger small mb-2"></div>
 
-	<script src="~/assets/dist/js/app.js"></script>
+                                <!-- Username -->
+                                <div class="mb-3">
+                                    <label asp-for="UserName" class="form-label fw-semibold"></label>
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-user"></i>
+                                        </span>
+                                        <input asp-for="UserName"
+                                               class="form-control"
+                                               placeholder="Enter your username" />
+                                    </div>
+                                    <span asp-validation-for="UserName" class="text-danger small"></span>
+                                </div>
 
+                                <!-- Password -->
+                                <div class="mb-3">
+                                    <label asp-for="Password" class="form-label fw-semibold"></label>
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-lock"></i>
+                                        </span>
+                                        <input asp-for="Password"
+                                               type="password"
+                                               class="form-control"
+                                               placeholder="Enter your password" />
+                                    </div>
+                                    <span asp-validation-for="Password" class="text-danger small"></span>
+                                </div>
+
+                                <!-- Button -->
+                                <div class="d-grid mt-3">
+                                    <button class="btn btn-primary btn-lg">
+                                        <i class="fas fa-sign-in-alt me-1"></i>
+                                        Login
+                                    </button>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+
+                    <!-- Version -->
+                    <div class="text-center text-muted small mt-3">
+                        <i class="fas fa-code-branch me-1"></i>
+                        Version @Configuration["AppSettings:ApplicationVersion"]
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="~/assets/dist/js/app.js"></script>
 </body>
-
 </html>
 
 @section Scripts {
-	<partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial" />
 }

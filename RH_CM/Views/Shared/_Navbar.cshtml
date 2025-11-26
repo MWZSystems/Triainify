@@ -277,7 +277,7 @@
                         <div class="dropdown-mega-list">
 
                             <a class="dropdown-item" asp-controller="Trainify" asp-action="MatrizbyEmployee">
-                                <i class="align-middle fas fa-clipboard-list"></i> Matrix by Employee
+                                <i class="align-middle fas fa-id-card-alt"></i> Matrix by Employee
                             </a>
 
                             <a class="dropdown-item" asp-controller="Trainify" asp-action="LearningTrainify">
@@ -321,15 +321,15 @@
                         @if (accesos.Users)
                         {
                             <a class="dropdown-item" asp-controller="Usuarios" asp-action="Index">
-                                <i class="fas fa-users"></i> Users
+                                <i class="align-middle fas fa-users-cog"></i> Users
                             </a>
                         }
-                        @if (accesos.RegisterNewUser)
+                        @* @if (accesos.RegisterNewUser)
                         {
                             <a class="dropdown-item" asp-controller="Cuentas" asp-action="RegistroAdministrador">
-                                <i class="fas fa-user-plus"></i> Register New User
+                                <i class="fas fa-user-plus"></i> Create User
                             </a>
-                        }
+                        } *@
                         @if (accesos.Roles)
                         {
                             <a class="dropdown-item" asp-controller="Roles" asp-action="Index">

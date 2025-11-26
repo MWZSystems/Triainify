@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<RH_CM.ViewModels.MatrizByEmployeeViewModel>
 
 @{
-    ViewData["Title"] = "Employee Matrix";
+    ViewData["Title"] = "Matrix by Employee";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     // Evita null reference si Model llega nulo (no cambia el resultado si hay datos)
@@ -65,6 +65,9 @@
     int cntPending = allCells.Count(s => s.Status.Equals("PENDING", StringComparison.OrdinalIgnoreCase));
     int cntCompleted = allCells.Count(s => s.Status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase));
     int cntNoRequired = allCells.Count(s => s.Status.Equals("NO REQUIRED", StringComparison.OrdinalIgnoreCase));
+
+    // PERMANENTLY + COMPLETED juntos en la gráfica
+    int cntPermanentCompleted = cntPermanently + cntCompleted;
 }
 
 <div class="row">
@@ -82,7 +85,7 @@
 
                                 <h4 class="fw-bold text-dark mb-1">
                                     <i class="fas fa-id-card-alt me-2 text-secondary"></i>
-                                    EMPLOYEE SUMMARY
+                                    MATRIX BY EMPLOYEE
                                 </h4>
 
                                 <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
@@ -118,7 +121,6 @@
                                             </div>
                                         </div>
                                     </div>
-
 
                                 </div>
                             </div>
@@ -166,9 +168,10 @@
                 </div>
             </div>
 
-            <!-- SUMMARY + CHART -->
+            <!-- SUMMARY + CHART + LEGEND -->
             <div class="col-xl-4">
 
+                <!-- COURSE SUMMARY -->
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Course Summary</h5>
@@ -188,56 +191,112 @@
                             </thead>
                             <tbody>
                                 @* SCHEDULED HIDDEN *@
-                                <tr><td><i class="fas fa-square-full text-dark"></i> PERMANENTLY</td><td class="text-end">@cntPermanently</td></tr>
-                                <tr><td><i class="fas fa-square-full" style="color:#ffc107;"></i> EXPIRING SOON</td><td class="text-end">@cntExpiringSoon</td></tr>
-                                <tr><td><i class="fas fa-square-full text-danger"></i> PENDING</td><td class="text-end">@cntPending</td></tr>
-                                <tr><td><i class="fas fa-square-full text-success"></i> COMPLETED</td><td class="text-end">@cntCompleted</td></tr>
-                                <tr><td><i class="fas fa-square-full text-secondary"></i> NO REQUIRED</td><td class="text-end">@cntNoRequired</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="card mt-3">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Status Legend</h5>
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-sm my-2">
-                            <thead>
                                 <tr>
-                                    <th>Status</th>
-                                    <th>Description</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><span class="badge bg-success">COMPLETED</span></td>
-                                    <td>Course completed.</td>
+                                    <td>
+                                        <i class="fas fa-square-full text-success"></i> PERMANENTLY / COMPLETED
+                                    </td>
+                                    <td class="text-end">@cntPermanentCompleted</td>
                                 </tr>
                                 <tr>
-                                    <td><span class="badge bg-danger">PENDING</span></td>
-                                    <td>Course overdue or still pending.</td>
+                                    <td>
+                                        <i class="fas fa-square-full" style="color:#ffc107;"></i> EXPIRING SOON
+                                    </td>
+                                    <td class="text-end">@cntExpiringSoon</td>
                                 </tr>
                                 <tr>
-                                    <td><span class="badge bg-warning">EXPIRING SOON</span></td>
-                                    <td>Course validity is about to expire.</td>
+                                    <td>
+                                        <i class="fas fa-square-full text-danger"></i> PENDING
+                                    </td>
+                                    <td class="text-end">@cntPending</td>
                                 </tr>
                                 <tr>
-                                    <td><span class="badge bg-dark">PERMANENTLY</span></td>
-                                    <td>The course has permanent validity.</td>
-                                </tr>
-                                @* SCHEDULED REMOVED *@
-                                <tr>
-                                    <td><span class="badge bg-secondary">NO REQUIRED</span></td>
-                                    <td>The course is not required for this level.</td>
+                                    <td>
+                                        <i class="fas fa-square-full text-secondary"></i> NO REQUIRED
+                                    </td>
+                                    <td class="text-end">@cntNoRequired</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-            </div>
+                <!-- Toggle button for Status Legend -->
+                <div class="d-flex justify-content-end mt-3 mb-1">
+                    <button class="btn btn-outline-info btn-sm"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#statusLegendAlerts"
+                            aria-expanded="false"
+                            aria-controls="statusLegendAlerts">
+                        <i class="fas fa-info-circle"></i> Status legend
+                    </button>
+                </div>
+
+                <!-- Status Legend as collapsible Outline alerts -->
+                <div class="collapse mb-3" id="statusLegendAlerts">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Status legend</h5>
+                            <h6 class="card-subtitle text-muted">
+                                Description of course status colors and how they are grouped in the summary chart.
+                            </h6>
+                        </div>
+                        <div class="card-body">
+
+                            <!-- PERMANENTLY / COMPLETED -->
+                            <div class="alert alert-success alert-outline alert-dismissible mb-3" role="alert">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                <div class="alert-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="alert-message">
+                                    <strong>PERMANENTLY / COMPLETED:</strong>
+                                    Both <strong>PERMANENTLY</strong> and <strong>COMPLETED</strong> are shown together in green.
+                                    They indicate that the course requirement is fully satisfied and does not require further action.
+                                </div>
+                            </div>
+
+                            <!-- PENDING -->
+                            <div class="alert alert-danger alert-outline alert-dismissible mb-3" role="alert">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                <div class="alert-icon">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="alert-message">
+                                    <strong>PENDING:</strong>
+                                    The course is overdue or has not been completed yet. Immediate attention is required.
+                                </div>
+                            </div>
+
+                            <!-- EXPIRING SOON -->
+                            <div class="alert alert-warning alert-outline alert-dismissible mb-3" role="alert">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                <div class="alert-icon">
+                                    <i class="fas fa-hourglass-half"></i>
+                                </div>
+                                <div class="alert-message">
+                                    <strong>EXPIRING SOON:</strong>
+                                    The course validity is about to expire. A renewal or retraining will be needed soon.
+                                </div>
+                            </div>
+
+                            <!-- NO REQUIRED -->
+                            <div class="alert alert-secondary alert-outline alert-dismissible mb-0" role="alert">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                <div class="alert-icon">
+                                    <i class="fas fa-minus-circle"></i>
+                                </div>
+                                <div class="alert-message">
+                                    <strong>NO REQUIRED:</strong>
+                                    The course is not required for this specific level or position.
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- /col-xl-4 -->
         </div>
     </div>
 </div>
@@ -261,19 +320,19 @@
             new Chart(ctx, {
                 type: "pie",
                 data: {
-                    labels: ["PERMANENTLY", "EXPIRING SOON", "PENDING", "COMPLETED"],
+                    labels: ["PERMANENTLY / COMPLETED", "EXPIRING SOON", "PENDING"],
                     datasets: [{
-                        data: [@cntPermanently, @cntExpiringSoon, @cntPending, @cntCompleted],
-                        backgroundColor:["#000000","#ffc107","#dc3545","#198754"],
-                        borderWidth:5,
-                        borderColor:"#ffffff"
+                        data: [@cntPermanentCompleted, @cntExpiringSoon, @cntPending],
+                        backgroundColor: ["#198754", "#ffc107", "#dc3545"],
+                        borderWidth: 5,
+                        borderColor: "#ffffff"
                     }]
                 },
-                options:{
-                    responsive:true,
-                    maintainAspectRatio:false,
-                    cutout:"70%",
-                    plugins:{ legend:{ display:false } }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: "70%",
+                    plugins: { legend: { display: false } }
                 }
             });
         });

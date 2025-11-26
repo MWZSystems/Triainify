@@ -78,28 +78,44 @@ namespace RH_CM.Controllers
         [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> Editar(IdentityRole rol)
         {
-            if (await _roleManager.RoleExistsAsync(rol.Name!))
+            if (rol == null || string.IsNullOrWhiteSpace(rol.Id))
             {
-                // Mensaje original: "El rol ya existe"
+                TempData["Error"] = "Invalid request.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Get existing role from DB
+            var rolBD = await _roleManager.FindByIdAsync(rol.Id);
+            if (rolBD == null)
+            {
+                TempData["Error"] = "The role does not exist";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // If the name is being changed, check if the new name is already in use
+            if (!string.Equals(rolBD.Name, rol.Name, StringComparison.OrdinalIgnoreCase)
+                && await _roleManager.RoleExistsAsync(rol.Name!))
+            {
                 TempData["Error"] = "The role already exists";
                 return RedirectToAction(nameof(Index));
             }
 
-            //Se crea el rol
-            var rolBD = _contexto.Roles.FirstOrDefault(r => r.Id == rol.Id);
-            if (rolBD == null)
+            rolBD.Name = rol.Name;
+            rolBD.NormalizedName = rol.Name!.ToUpperInvariant();
+
+            var result = await _roleManager.UpdateAsync(rolBD);
+
+            if (!result.Succeeded)
             {
+                var errors = string.Join(" | ", result.Errors.Select(e => e.Description));
+                TempData["Error"] = $"Error updating role: {errors}";
                 return RedirectToAction(nameof(Index));
             }
 
-            rolBD.Name = rol.Name;
-            rolBD.NormalizedName = rol.Name!.ToUpper();
-            var resultado = await _roleManager.UpdateAsync(rolBD);
-
-            // Mensaje original: "Rol editado correctamente"
             TempData["Correcto"] = "Role edited successfully";
             return RedirectToAction(nameof(Index));
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]

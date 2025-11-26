@@ -431,5 +431,40 @@ namespace RH_CM.Controllers
             TempData["Correcto"] = "Cambios realizados correctamente";
             return RedirectToAction(nameof(Index));
         }
+
+        // Toggle Available (0 / 1)
+        [HttpPost]
+        [Authorize(Roles = "Administrador")]
+        [ValidateAntiForgeryToken]
+        public IActionResult ToggleAvailable(string idUsuario)
+        {
+            if (string.IsNullOrWhiteSpace(idUsuario))
+            {
+                TempData["Error"] = "Invalid request: user id is required.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var usuarioBD = _contexto.AppUsuario.FirstOrDefault(u => u.Id == idUsuario);
+            if (usuarioBD == null)
+            {
+                return NotFound();
+            }
+
+            // Si es 1 -> pasa a 0, si es 0 (o cualquier otro) -> pasa a 1
+            usuarioBD.Available = (usuarioBD.Available == 1) ? 0 : 1;
+
+            _contexto.SaveChanges();
+
+            if (usuarioBD.Available == 1)
+            {
+                TempData["Correcto"] = "User marked as available.";
+            }
+            else
+            {
+                TempData["Correcto"] = "User marked as unavailable.";
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

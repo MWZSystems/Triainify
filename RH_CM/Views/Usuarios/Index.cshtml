@@ -9,16 +9,112 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="row">
+<div class="row mb-3">
     <div class="col">
         <h1 class="h3 mb-3 text-center">
             <i class="align-middle fas fa-users-cog"></i> @ViewData["Title"]
         </h1>
     </div>
-    <div class="col-auto">
-        <a class="btn btn-facebook" asp-controller="Usuarios" asp-action="Crear">
+
+    <div class="col-auto d-flex align-items-center gap-2">
+
+        <!-- Create new user -->
+        <a class="btn btn-facebook"
+           asp-controller="Usuarios"
+           asp-action="Crear">
             <i class="align-middle fas fa-user-plus"></i> CREATE NEW USER
         </a>
+
+        <!-- Toggle button to show/hide actions information -->
+        <button class="btn btn-outline-info btn-sm"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#infoAlerts"
+                aria-expanded="false"
+                aria-controls="infoAlerts">
+            <i class="fas fa-info-circle"></i> Actions information
+        </button>
+
+    </div>
+</div>
+
+
+<!-- Outline alerts with description of each action (without delete) -->
+<div class="collapse mb-3" id="infoAlerts">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Buttons</h5>
+            <h6 class="card-subtitle text-muted">Description of main actions.</h6>
+        </div>
+        <div class="card-body">
+
+            <!-- Create User -->
+            <div class="alert alert-primary alert-outline alert-dismissible mb-3" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="alert-icon">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <div class="alert-message">
+                    <strong>Create new user:</strong> Opens the form to register a new user in the system.
+                </div>
+            </div>
+
+            <!-- Edit User -->
+            <div class="alert alert-warning alert-outline alert-dismissible mb-3" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="alert-icon">
+                    <i class="fas fa-edit"></i>
+                </div>
+                <div class="alert-message">
+                    <strong>Edit user:</strong> Allows updating the information of the selected user.
+                </div>
+            </div>
+
+            <!-- Claims / Permissions -->
+            <div class="alert alert-success alert-outline alert-dismissible mb-3" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="alert-icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="alert-message">
+                    <strong>Manage permissions / claims:</strong> Assigns or updates user permissions to access different modules.
+                </div>
+            </div>
+
+            <!-- Lock User -->
+            <div class="alert alert-secondary alert-outline alert-dismissible mb-3" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="alert-icon">
+                    <i class="fas fa-user-lock"></i>
+                </div>
+                <div class="alert-message">
+                    <strong>Lock user:</strong> Temporarily prevents the user from logging into the system.
+                </div>
+            </div>
+
+            <!-- Unlock User -->
+            <div class="alert alert-warning alert-outline alert-dismissible mb-3" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="alert-icon">
+                    <i class="fas fa-unlock"></i>
+                </div>
+                <div class="alert-message">
+                    <strong>Unlock user:</strong> Restores the user’s ability to log into the system.
+                </div>
+            </div>
+
+            <!-- Toggle Available -->
+            <div class="alert alert-info alert-outline alert-dismissible mb-3" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <div class="alert-icon">
+                    <i class="fas fa-toggle-on"></i>
+                </div>
+                <div class="alert-message">
+                    <strong>Toggle available:</strong> Marks the user as available or unavailable in the system.
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
 
@@ -29,7 +125,7 @@
     </div>
 </div>
 
-<!-- Tabla envuelta en contenedor oculto -->
+<!-- Table wrapped in hidden container -->
 <div id="tableContainer" style="display:none;">
     <div class="row">
         <div class="col-sm-12">
@@ -59,33 +155,79 @@
                                         <td>
                                             <div class="text-center">
                                                 <form asp-controller="Usuarios" asp-action="Borrar" asp-route-idUsuario="@item.Id" method="post" style="display:inline;">
-                                                    <a class="btn btn-warning" asp-controller="Usuarios" asp-action="Editar" asp-route-id="@item.Id">
-                                                        <i class="fas fa-edit"></i> @* Editar *@
+
+                                                    <!-- Edit user -->
+                                                    <a class="btn btn-warning"
+                                                       asp-controller="Usuarios"
+                                                       asp-action="Editar"
+                                                       asp-route-id="@item.Id"
+                                                       title="Edit user">
+                                                        <i class="fas fa-edit"></i>
                                                     </a>
 
-                                                    <!-- Asignar claims -->
-                                                    <a class="btn btn-success" asp-controller="Usuarios" asp-action="AdministrarClaimsUsuario" asp-route-idUsuario="@item.Id" style="cursor:pointer;">
-                                                        <i class="fas fa-user-shield"></i> @* Permisos/Claims *@
+                                                    <!-- Assign claims -->
+                                                    <a class="btn btn-success"
+                                                       asp-controller="Usuarios"
+                                                       asp-action="AdministrarClaimsUsuario"
+                                                       asp-route-idUsuario="@item.Id"
+                                                       style="cursor:pointer;"
+                                                       title="Manage permissions / claims">
+                                                        <i class="fas fa-user-shield"></i>
                                                     </a>
 
+                                                    <!-- Lock / Unlock -->
                                                     @if (item.LockoutEnd == null || item.LockoutEnd < DateTime.Now)
                                                     {
-                                                        <!-- Bloquear -->
-                                                        <button asp-controller="Usuarios" asp-action="BloquearDesbloquear" asp-route-idUsuario="@item.Id" class="btn btn-light">
-                                                            <i class="fas fa-user-lock"></i> @* <strong>Bloquear</strong> *@
+                                                        <!-- Lock -->
+                                                        <button asp-controller="Usuarios"
+                                                                asp-action="BloquearDesbloquear"
+                                                                asp-route-idUsuario="@item.Id"
+                                                                class="btn btn-light"
+                                                                title="Lock user">
+                                                            <i class="fas fa-user-lock"></i>
                                                         </button>
                                                     }
                                                     else
                                                     {
-                                                        <!-- Desbloquear -->
-                                                        <button asp-controller="Usuarios" asp-action="BloquearDesbloquear" asp-route-idUsuario="@item.Id" class="btn btn-warning">
-                                                            <i class="fas fa-unlock"></i> @* <strong>Desbloquear</strong> *@
+                                                        <!-- Unlock -->
+                                                        <button asp-controller="Usuarios"
+                                                                asp-action="BloquearDesbloquear"
+                                                                asp-route-idUsuario="@item.Id"
+                                                                class="btn btn-warning"
+                                                                title="Unlock user">
+                                                            <i class="fas fa-unlock"></i>
                                                         </button>
                                                     }
 
-                                                    <button type="submit" onclick="return confirm('¿Está seguro de querer borrar este registro?')" class="btn btn-danger">
-                                                        <i class="align-middle fas fa-trash-alt"></i> @* Borrar *@
+                                                    <!-- Toggle Available -->
+                                                    @if (item.Available == 1)
+                                                    {
+                                                        <button asp-controller="Usuarios"
+                                                                asp-action="ToggleAvailable"
+                                                                asp-route-idUsuario="@item.Id"
+                                                                class="btn btn-outline-success"
+                                                                title="Mark as unavailable">
+                                                            <i class="fas fa-toggle-on"></i>
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button asp-controller="Usuarios"
+                                                                asp-action="ToggleAvailable"
+                                                                asp-route-idUsuario="@item.Id"
+                                                                class="btn btn-outline-secondary"
+                                                                title="Mark as available">
+                                                            <i class="fas fa-toggle-off"></i>
+                                                        </button>
+                                                    }
+
+                                                    @* Delete button hidden as requested
+                                                    <button type="submit"
+                                                            onclick="return confirm('Are you sure you want to delete this record?')"
+                                                            class="btn btn-danger">
+                                                        <i class="align-middle fas fa-trash-alt"></i>
                                                     </button>
+                                                    *@
                                                 </form>
                                             </div>
                                         </td>
@@ -97,7 +239,7 @@
                     }
                     else
                     {
-                        <p>No hay registros</p>
+                        <p>No records available.</p>
                     }
 
                 </div>
@@ -112,14 +254,14 @@
     <script>
         $(document).ready(function () {
 
-            // Ocultar tabla y mostrar loader
+            // Hide table and show loader
             $('#tableContainer').hide();
             $('#loader').show();
 
-            // Inicializar DataTable SIN language y sin orden automático
+            // Initialize DataTable WITHOUT language and without automatic ordering
             $('#datatables-responsive').DataTable({
                 responsive: true,
-                order: [], // respeta el orden del servidor
+                order: [], // keeps server order
 
                 initComplete: function () {
                     $('#loader').fadeOut(200, function () {
@@ -128,7 +270,7 @@
                 }
             });
 
-            // Notificaciones (Success y Error)
+            // Notifications (Success and Error)
             var ok = "@(TempData["Correcto"] ?? TempData["SuccessMessage"])";
             var err = "@(TempData["Error"] ?? TempData["ErrorMessage"])";
 
@@ -157,4 +299,3 @@
         });
     </script>
 }
-
