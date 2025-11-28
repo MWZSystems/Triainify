@@ -4,11 +4,13 @@
     ViewData["Title"] = "Employee Matrix";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    var first = Model?.FirstOrDefault();
+    // Evita null reference si Model llega nulo
+    var data = Model ?? Enumerable.Empty<RH_CM.ViewModels.MatrizByEmployeeViewModel>();
+
+    var first = data.FirstOrDefault();
 
     // Construir el mapa nivel -> descripción (tomado del SP)
-    // Si algún nivel no trae DESCRIPCTION_LEVEL, caemos a "Level {n}"
-    var levelMap = Model
+    var levelMap = data
         .GroupBy(m => m.FK_RequiredCourseLevels)
         .Select(g => new
         {
@@ -38,7 +40,7 @@
     };
 
     // Agrupar cursos => celdas por nivel; si falta una fila para un nivel => NO REQUIRED
-    var courseGroups = Model
+    var courseGroups = data
         .GroupBy(x => new { x.FK_Course, x.CourseName })
         .OrderBy(g => g.Key.CourseName)
         .Select(g => new
@@ -68,42 +70,75 @@
     int cntPending = allCells.Count(s => s.Status.Equals("PENDING", StringComparison.OrdinalIgnoreCase));
     int cntCompleted = allCells.Count(s => s.Status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase));
     int cntNoRequired = allCells.Count(s => s.Status.Equals("NO REQUIRED", StringComparison.OrdinalIgnoreCase));
+
+    // PERMANENTLY + COMPLETED juntos en la gráfica
+    int cntPermanentCompleted = cntPermanently + cntCompleted;
 }
 
 <div class="row">
     <div class="col-xl-12">
         <div class="row">
+
             <!-- MATRIX -->
             <div class="col-xl-8">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header bg-light border-bottom">
+
                         @if (first != null)
                         {
-                            <div class="mb-3 text-center d-flex flex-wrap justify-content-center gap-3">
-                                <div class="p-3 fw-bold rounded fs-3">
-                                    Control #: @first.CONTROL_NUMBER
-                                </div>
-                                <div class="p-3 fw-bold rounded fs-3">
-                                    Full name: @first.NAMES @first.LAST_NAME @first.SECOND_NAME
-                                </div>
-                                <div class="p-3 fw-bold rounded fs-3">
-                                    Position: @first.NAME_POSITION_ENGLISH
-                                </div>
-                                <div class="p-3 fw-bold rounded fs-3">
-                                    Courses: @courseGroups.Count
+                            <div class="d-flex flex-column align-items-center text-center py-2">
+
+                                <h4 class="fw-bold text-dark mb-1">
+                                    <i class="fas fa-id-card-alt me-2 text-secondary"></i>
+                                    MATRIX BY EMPLOYEE
+                                </h4>
+
+                                <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
+
+                                    <!-- Control Number -->
+                                    <div class="px-3 py-2 border rounded bg-white shadow-sm text-start">
+                                        <div class="text-muted fs-6">Control #</div>
+                                        <div class="fw-bold fs-4">@first.CONTROL_NUMBER</div>
+                                    </div>
+
+                                    <!-- Full Name -->
+                                    <div class="px-3 py-2 border rounded bg-white shadow-sm text-start">
+                                        <div class="text-muted fs-6">Full Name</div>
+                                        <div class="fw-bold fs-4">
+                                            @first.NAMES @first.LAST_NAME @first.SECOND_NAME
+                                        </div>
+                                    </div>
+
+                                    <!-- Position -->
+                                    <div class="px-3 py-2 border rounded bg-white shadow-sm text-start">
+                                        <div class="text-muted fs-6">Position</div>
+                                        <div class="fw-bold fs-4">@first.NAME_POSITION_ENGLISH</div>
+                                    </div>
+
+                                    <!-- Courses -->
+                                    <div class="px-3 py-2 border rounded bg-white shadow-sm text-center">
+                                        <div class="text-muted fs-6">Courses Required</div>
+
+                                        <div class="fw-bold fs-3 mt-3 d-flex justify-content-center">
+                                            <div class="bg-primary text-white d-flex align-items-center justify-content-center"
+                                                 style="width: 90px; height: 60px; font-size: 1.7rem; border-radius: 10px;">
+                                                @courseGroups.Count
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         }
-                        @* <h5 class="card-title mb-0">Matrix - @first?.UserName</h5> *@
                     </div>
+
                     <div class="card-body">
-                        @if (Model != null && Model.Any())
+                        @if (data.Any())
                         {
                             <table id="datatables-responsive" class="table table-striped">
                                 <thead class="table-primary">
                                     <tr>
                                         <th>Course</th>
-                                        @* Encabezados con la DESCRIPCTION_LEVEL *@
                                         @foreach (var lm in levelMap)
                                         {
                                             <th>@lm.Name</th>
@@ -115,9 +150,16 @@
                                     {
                                         <tr>
                                             <td>@c.CourseName</td>
+
                                             @foreach (var cell in c.Cells)
                                             {
-                                                <td><span class="badge @cell.Class">@cell.Status</span></td>
+                                                <td>
+                                                    @* Igual que en el primer view: NO mostramos SCHEDULED *@
+                                                    @if (!cell.Status.Equals("SCHEDULED", StringComparison.OrdinalIgnoreCase))
+                                                    {
+                                                        <span class="badge @cell.Class">@cell.Status</span>
+                                                    }
+                                                </td>
                                             }
                                         </tr>
                                     }
@@ -132,8 +174,10 @@
                 </div>
             </div>
 
-            <!-- SUMMARY + CHART -->
+            <!-- SUMMARY + CHART + LEGEND -->
             <div class="col-xl-4">
+
+                <!-- COURSE SUMMARY -->
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Course Summary</h5>
@@ -152,64 +196,113 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr><td><i class="fas fa-square-full text-primary"></i> SCHEDULED</td><td class="text-end">@cntScheduled</td></tr>
-                                <tr><td><i class="fas fa-square-full text-dark"></i> PERMANENTLY</td><td class="text-end">@cntPermanently</td></tr>
-                                <tr><td><i class="fas fa-square-full" style="color:#ffc107;"></i> EXPIRING SOON</td><td class="text-end">@cntExpiringSoon</td></tr>
-                                <tr><td><i class="fas fa-square-full text-danger"></i> PENDING</td><td class="text-end">@cntPending</td></tr>
-                                <tr><td><i class="fas fa-square-full text-success"></i> COMPLETED</td><td class="text-end">@cntCompleted</td></tr>
-                                <tr><td><i class="fas fa-square-full text-secondary"></i> NO REQUIRED</td><td class="text-end">@cntNoRequired</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- STATUS LEGEND (ahora SÍ dentro de la misma columna) -->
-                <div class="card mt-3">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Status Legend</h5>
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-sm my-2">
-                            <thead>
+                                @* SCHEDULED se oculta del resumen y gráfica *@
                                 <tr>
-                                    <th>Status</th>
-                                    <th>Description</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><span class="badge bg-success">COMPLETED</span></td>
-                                    <td>Course completed.</td>
+                                    <td>
+                                        <i class="fas fa-square-full text-success"></i> PERMANENTLY / COMPLETED
+                                    </td>
+                                    <td class="text-end">@cntPermanentCompleted</td>
                                 </tr>
                                 <tr>
-                                    <td><span class="badge bg-danger">PENDING</span></td>
-                                    <td>Course overdue or still pending.</td>
+                                    <td>
+                                        <i class="fas fa-square-full" style="color:#ffc107;"></i> EXPIRING SOON
+                                    </td>
+                                    <td class="text-end">@cntExpiringSoon</td>
                                 </tr>
                                 <tr>
-                                    <td><span class="badge bg-warning">EXPIRING SOON</span></td>
-                                    <td>Course validity is about to expire.</td>
+                                    <td>
+                                        <i class="fas fa-square-full text-danger"></i> PENDING
+                                    </td>
+                                    <td class="text-end">@cntPending</td>
                                 </tr>
                                 <tr>
-                                    <td><span class="badge bg-dark">PERMANENTLY</span></td>
-                                    <td>The course has permanent validity.</td>
-                                </tr>
-                                <tr>
-                                    <td><span class="badge bg-primary">SCHEDULED</span></td>
-                                    <td>The course is pending but already scheduled.</td>
-                                </tr>
-                                <tr>
-                                    <td><span class="badge bg-secondary">NO REQUIRED</span></td>
-                                    <td>The course is not required for this level.</td>
+                                    <td>
+                                        <i class="fas fa-square-full text-secondary"></i> NO REQUIRED
+                                    </td>
+                                    <td class="text-end">@cntNoRequired</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <!-- /STATUS LEGEND -->
-            </div>
-            <!-- /SUMMARY -->
 
+                <!-- Botón para mostrar/ocultar Status Legend -->
+                <div class="d-flex justify-content-end mt-3 mb-1">
+                    <button class="btn btn-outline-info btn-sm"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#statusLegendAlerts"
+                            aria-expanded="false"
+                            aria-controls="statusLegendAlerts">
+                        <i class="fas fa-info-circle"></i> Status legend
+                    </button>
+                </div>
 
+                <!-- Status Legend como collapse con alerts (igual que el primer view) -->
+                <div class="collapse mb-3" id="statusLegendAlerts">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Status legend</h5>
+                            <h6 class="card-subtitle text-muted">
+                                Description of course status colors and how they are grouped in the summary chart.
+                            </h6>
+                        </div>
+                        <div class="card-body">
+
+                            <!-- PERMANENTLY / COMPLETED -->
+                            <div class="alert alert-success alert-outline alert-dismissible mb-3" role="alert">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                <div class="alert-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="alert-message">
+                                    <strong>PERMANENTLY / COMPLETED:</strong>
+                                    Both <strong>PERMANENTLY</strong> and <strong>COMPLETED</strong> are shown together in green.
+                                    They indicate that the course requirement is fully satisfied and does not require further action.
+                                </div>
+                            </div>
+
+                            <!-- PENDING -->
+                            <div class="alert alert-danger alert-outline alert-dismissible mb-3" role="alert">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                <div class="alert-icon">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="alert-message">
+                                    <strong>PENDING:</strong>
+                                    The course is overdue or has not been completed yet. Immediate attention is required.
+                                </div>
+                            </div>
+
+                            <!-- EXPIRING SOON -->
+                            <div class="alert alert-warning alert-outline alert-dismissible mb-3" role="alert">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                <div class="alert-icon">
+                                    <i class="fas fa-hourglass-half"></i>
+                                </div>
+                                <div class="alert-message">
+                                    <strong>EXPIRING SOON:</strong>
+                                    The course validity is about to expire. A renewal or retraining will be needed soon.
+                                </div>
+                            </div>
+
+                            <!-- NO REQUIRED -->
+                            <div class="alert alert-secondary alert-outline alert-dismissible mb-0" role="alert">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                <div class="alert-icon">
+                                    <i class="fas fa-minus-circle"></i>
+                                </div>
+                                <div class="alert-message">
+                                    <strong>NO REQUIRED:</strong>
+                                    The course is not required for this specific level or position.
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- /col-xl-4 -->
         </div>
     </div>
 </div>
@@ -233,20 +326,19 @@
             new Chart(ctx, {
                 type: "pie",
                 data: {
-                    // NO 'NO REQUIRED' en el gráfico
-                    labels: ["SCHEDULED", "PERMANENTLY", "EXPIRING SOON", "PENDING", "COMPLETED"],
+                    labels: ["PERMANENTLY / COMPLETED", "EXPIRING SOON", "PENDING"],
                     datasets: [{
-                        data: [@cntScheduled, @cntPermanently, @cntExpiringSoon, @cntPending, @cntCompleted],
-                        backgroundColor:["#0d6efd","#000000","#ffc107","#dc3545","#198754"],
-                        borderWidth:5,
-                        borderColor:"#ffffff"
+                        data: [@cntPermanentCompleted, @cntExpiringSoon, @cntPending],
+                        backgroundColor: ["#198754", "#ffc107", "#dc3545"],
+                        borderWidth: 5,
+                        borderColor: "#ffffff"
                     }]
                 },
-                options:{
-                    responsive:true,
-                    maintainAspectRatio:false,
-                    cutout:"70%",
-                    plugins:{ legend:{ display:false } }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: "70%",
+                    plugins: { legend: { display: false } }
                 }
             });
         });
