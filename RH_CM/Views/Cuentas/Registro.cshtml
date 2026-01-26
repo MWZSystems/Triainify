@@ -1,4 +1,5 @@
 ﻿@model RH_CM.ViewModels.RegistroViewModel
+@using System.Text.Json
 
 @{
     Layout = null;
@@ -13,8 +14,8 @@
     <meta name="description" content="Responsive Bootstrap 5 Admin &amp; Dashboard Template">
     <meta name="author" content="Bootlab">
 
-    <title>RH</title>
-    <!-- Remove this after purchasing -->
+    <title>RH - Register</title>
+
     <link rel="stylesheet" href="~/Assets/dist/css/light.css" asp-append-version="true" />
     <link rel="shortcut icon" href="~/Assets/dist/img/favicon.ico">
 </head>
@@ -28,62 +29,91 @@
                         <div class="d-table-cell align-middle">
 
                             <div class="text-center mt-4">
-                                <h1 class="h2">Welcome RH System</h1>
+                                <h1 class="h2">Welcome to RH System</h1>
+                                <p class="text-muted">
+                                    Please complete the form to create your account.
+                                </p>
                             </div>
+
                             <div class="card border">
                                 <div class="card-header text-center">
-                                    <h3 class="card-title"><strong>Register</strong></h3>
+                                    <h3 class="card-title mb-0">
+                                        <strong>Register</strong>
+                                    </h3>
                                 </div>
                                 <div class="card-body">
-                                    <form asp-controller="Cuentas" asp-action="Registro" method="post">
+                                    <form asp-controller="Cuentas" asp-action="Registro" method="post" autocomplete="off">
                                         <div class="row">
-                                            <div class="text-danger" asp-validation-summary="All"></div>
+                                            <div class="text-danger mb-2" asp-validation-summary="All"></div>
 
                                             <div class="mb-3 col-md-6">
-                                                <label asp-for="Ntuser" class="form-label"></label>
-                                                <input asp-for="Ntuser" class="form-control" placeholder="Ingresa tu nombre" />
-                                                <span asp-validation-for="Ntuser" class="text-danger"></span>
+                                                <label asp-for="Ntuser" class="form-label">NT Username</label>
+                                                <input asp-for="Ntuser"
+                                                       class="form-control"
+                                                       placeholder="Enter your NT username" />
+                                                <span asp-validation-for="Ntuser" class="text-danger small"></span>
                                             </div>
 
                                             <div class="mb-3 col-md-6">
-                                                <label asp-for="EmployeeNumber" class="form-label"></label>
-                                                <input asp-for="EmployeeNumber" type="text" class="form-control" placeholder="Numero Empleado">
-                                                <span asp-validation-for="EmployeeNumber" class="text-danger"></span>
+                                                <label asp-for="EmployeeNumber" class="form-label">Employee Number</label>
+                                                <input asp-for="EmployeeNumber"
+                                                       type="text"
+                                                       class="form-control"
+                                                       placeholder="Employee number" />
+                                                <span asp-validation-for="EmployeeNumber" class="text-danger small"></span>
                                             </div>
 
                                             <div class="mb-3 col-md-6">
-                                                <label asp-for="Names" class="form-label"></label>
-                                                <input asp-for="Names" type="text" class="form-control" placeholder="Nombre(s)" oninput="this.value = this.value.toUpperCase()">
-                                                <span asp-validation-for="Names" class="text-danger"></span>
+                                                <label asp-for="Names" class="form-label">First Name(s)</label>
+                                                <input asp-for="Names"
+                                                       type="text"
+                                                       class="form-control"
+                                                       placeholder="First name(s)" />
+                                                <span asp-validation-for="Names" class="text-danger small"></span>
                                             </div>
 
                                             <div class="mb-3 col-md-6">
-                                                <label asp-for="LastName" class="form-label"></label>
-                                                <input asp-for="LastName" type="text" class="form-control" placeholder="Apellidos" oninput="this.value = this.value.toUpperCase()">
-                                                <span asp-validation-for="LastName" class="text-danger"></span>
+                                                <label asp-for="LastName" class="form-label">Last Name(s)</label>
+                                                <input asp-for="LastName"
+                                                       type="text"
+                                                       class="form-control"
+                                                       placeholder="Last name(s)" />
+                                                <span asp-validation-for="LastName" class="text-danger small"></span>
                                             </div>
 
                                             <div class="mb-3 col-md-6">
-                                                <label asp-for="Email" class="form-label"></label>
-                                                <input asp-for="Email" class="form-control" placeholder="Ingresa tu email" />
-                                                <span asp-validation-for="Email" class="text-danger"></span>
+                                                <label asp-for="Email" class="form-label">Email</label>
+                                                <input asp-for="Email"
+                                                       type="email"
+                                                       class="form-control"
+                                                       placeholder="Enter your email" />
+                                                <span asp-validation-for="Email" class="text-danger small"></span>
                                             </div>
 
                                             <div class="mb-3 col-md-6">
-                                                <label asp-for="Password" class="form-label"></label>
-                                                <input asp-for="Password" class="form-control" placeholder="Ingresa la contraseña" />
-                                                <span asp-validation-for="Password" class="text-danger"></span>
+                                                <label asp-for="Password" class="form-label">Password</label>
+                                                <input asp-for="Password"
+                                                       type="password"
+                                                       class="form-control"
+                                                       placeholder="Enter your password" />
+                                                <span asp-validation-for="Password" class="text-danger small"></span>
                                             </div>
 
                                             <div class="mb-3 col-md-6">
-                                                <label asp-for="ConfirmPassword" class="form-label"></label>
-                                                <input asp-for="ConfirmPassword" class="form-control" placeholder="Ingresa la confirmación de contraseña" />
-                                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                                <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                                                <input asp-for="ConfirmPassword"
+                                                       type="password"
+                                                       class="form-control"
+                                                       placeholder="Confirm your password" />
+                                                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-sm-10 offset-2">
-                                                <button type="submit" class="btn btn-success w-75 btn-lg">Registrarse</button>
+
+                                        <div class="row mt-3">
+                                            <div class="col-sm-10 offset-sm-2">
+                                                <button type="submit" class="btn btn-success w-75 btn-lg">
+                                                    Register
+                                                </button>
                                             </div>
                                         </div>
                                     </form>
@@ -99,40 +129,41 @@
 
     <script src="~/assets/dist/js/app.js"></script>
 
+    @* Scripts de validación *@
+    <partial name="_ValidationScriptsPartial" />
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Ensure input fields only allow uppercase letters
-            document.querySelectorAll('input[asp-for="Names"], input[asp-for="LastName"]').forEach(function (element) {
+
+            // Force uppercase for Names and LastName using the generated name attributes
+            document.querySelectorAll('input[name="Names"], input[name="LastName"]').forEach(function (element) {
                 element.addEventListener('input', function () {
                     this.value = this.value.toUpperCase();
                 });
             });
 
-            // Handle success and error notifications
-            if ("@TempData["Correcto"]" !== "") {
+            // TempData messages serialized as JSON (safe for quotes)
+            var successMessage = @Html.Raw(JsonSerializer.Serialize(TempData["SuccessMessage"]));
+            var errorMessage   = @Html.Raw(JsonSerializer.Serialize(TempData["ErrorMessage"]));
+
+            if (window.notyf && successMessage) {
                 window.notyf.open({
                     type: 'success',
-                    message: "@TempData["Correcto"]",
+                    message: successMessage,
                     ripple: true,
                     dismissible: true,
-                    position: {
-                        x: 'center',
-                        y: 'top'
-                    },
+                    position: { x: 'center', y: 'top' },
                     duration: 5000
                 });
             }
 
-            if ("@TempData["Error"]" !== "") {
+            if (window.notyf && errorMessage) {
                 window.notyf.open({
                     type: 'error',
-                    message: "@TempData["Error"]",
+                    message: errorMessage,
                     ripple: true,
                     dismissible: true,
-                    position: {
-                        x: 'center',
-                        y: 'top'
-                    },
+                    position: { x: 'center', y: 'top' },
                     duration: 5000
                 });
             }
@@ -140,7 +171,3 @@
     </script>
 </body>
 </html>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}

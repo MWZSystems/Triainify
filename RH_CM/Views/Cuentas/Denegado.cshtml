@@ -1,3 +1,71 @@
-﻿<header>
-    <div class="p-3 mb-2 bg-danger text-white text-center">Usted no tiene acceso a esta sección</div>
-</header>
+﻿@using System.Text.Json
+
+@{
+    Layout = null;
+    var returnUrl = ViewData["ReturnUrl"]?.ToString() ?? "/";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Access Denied</title>
+
+    <link rel="stylesheet" href="~/Assets/dist/css/light.css" asp-append-version="true" />
+</head>
+
+<body class="d-flex align-items-center justify-content-center min-vh-100 bg-light">
+
+    <div class="container">
+        <div class="row justify-content-center mt-4">
+            <div class="col-sm-10 col-md-8 col-lg-6">
+
+                <div class="card shadow-lg border-danger">
+                    <div class="card-header bg-danger text-white text-center py-3">
+                        <h3 class="mb-0 fw-bold">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            ACCESS DENIED
+                        </h3>
+                    </div>
+
+                    <div class="card-body text-center">
+
+                        <p class="text-muted fs-5">
+                            You do not have permission to view this page.
+                        </p>
+
+                        <a href="@returnUrl" class="btn btn-primary mt-3 px-4">
+                            <i class="fas fa-arrow-left me-1"></i>
+                            Go Back
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="~/assets/dist/js/app.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // Error message from TempData
+            var errorMessage = @Html.Raw(JsonSerializer.Serialize(TempData["ErrorMessage"]));
+
+            if (window.notyf && errorMessage) {
+                window.notyf.open({
+                    type: 'error',
+                    message: errorMessage,
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

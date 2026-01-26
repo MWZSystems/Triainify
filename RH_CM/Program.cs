@@ -4,44 +4,54 @@ using RH_CM.Data;
 using RH_CM.Service.ExternalEvidence;
 using RH_CM.Service.SQLSMS;
 using BootstrapBlazor.Components;
-using RH_CM.Service.AccessGroups; // ✅ nuevo: BootstrapBlazor
+using RH_CM.Service.AccessGroups;
+using Microsoft.AspNetCore.ResponseCompression;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Servicios propios
 builder.Services.AddServices();
 
+// ✅ Leer una sola vez la cadena de conexión
+var connectionString = builder.Configuration.GetConnectionString("ConexionSQL");
+
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException(
+        "The connection string 'ConexionSQL' was not found. " +
+        "Please configure it in appsettings.json under ConnectionStrings.");
+}
+
+// ✅ Registrar DbContexts con la misma cadena
 builder.Services.AddDbContext<db_abcd61_rhchdbContext>(opt =>
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("ConexionSQL")));
+    opt.UseSqlServer(connectionString));
 
 builder.Services.AddDbContext<ApplicationDbContext>(opt =>
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("ConexionSQL")));
+    opt.UseSqlServer(connectionString));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+// ✅ Identity
+builder.Services
+    .AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddControllersWithViews();
 
-// ✅ Blazor Server + BootstrapBlazor (para usar <component> y visor PDF)
+// ✅ Blazor Server + BootstrapBlazor
 builder.Services.AddServerSideBlazor();
-builder.Services.AddBootstrapBlazor();   // ⬅️ reemplaza a AddBlazorBootstrap()
+builder.Services.AddBootstrapBlazor();
 
-// ✅ HttpClientFactory (útil si haces proxy de PDFs externos)
+// ✅ HttpClientFactory
 builder.Services.AddHttpClient();
 
-// (Opcional) compresión para SignalR/Blazor
-// builder.Services.AddResponseCompression(opts =>
-// {
-//     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/octet-stream" });
-// });
-
+// Cookies de autenticación
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = new PathString("/Cuentas/Acceso");
     options.AccessDeniedPath = new PathString("/Cuentas/Denegado");
 });
 
-// SOLO aquí, una vez
+// ✅ Session (una sola vez)
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -51,24 +61,23 @@ builder.Services.AddSession(options =>
 
 builder.Services.AddHttpContextAccessor();
 
-
-//Autorizacion por Controller.
+// Autorización por Controller.
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("ViewAccess", policy =>
         policy.Requirements.Add(new ViewAccessRequirement()));
 });
 
-
 var app = builder.Build();
 
+// Middleware de manejo de errores global para producción
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();                 // ✅ recomendado en prod
+    app.UseHsts();
 }
 
-app.UseHttpsRedirection();         // ✅ recomendado
+app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -76,15 +85,12 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// SOLO una vez y antes de MapControllerRoute
 app.UseSession();
 
-// (Opcional) compresión
-// app.UseResponseCompression();
-
-// ✅ Hub de Blazor Server (imprescindible para componentes interactivos)
+// Blazor Server Hub
 app.MapBlazorHub();
 
+// Rutas MVC
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Cuentas}/{action=Acceso}/{id?}");

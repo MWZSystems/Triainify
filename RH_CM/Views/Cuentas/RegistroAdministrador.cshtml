@@ -1,4 +1,5 @@
 ﻿@model RH_CM.ViewModels.RegistroAdminViewModel
+@using System.Text.Json
 
 @{
     ViewData["Title"] = "Add User";
@@ -10,7 +11,7 @@
 
         <div class="card border shadow-sm">
 
-            <!-- Header claro con el icono -->
+            <!-- Header -->
             <div class="card-header bg-light border-bottom">
                 <h3 class="card-title mb-0 fw-bold text-dark">
                     <i class="fas fa-user-plus me-2 text-secondary"></i>
@@ -24,7 +25,7 @@
             <div class="card-body">
                 <form asp-controller="Cuentas" asp-action="RegistroAdministrador" method="post" autocomplete="off">
 
-                    @* Mostrar errores solo si los hay *@
+                    @* Show validation summary only if there are errors *@
                     @if (!ViewData.ModelState.IsValid)
                     {
                         <div asp-validation-summary="All"
@@ -75,7 +76,7 @@
                             <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
                         </div>
 
-                        @* Campo de rol permanece comentado igual que antes *@
+                        @* Role field (still commented out) *@
                         @*
                         <div class="col-md-6">
                             <label asp-for="IdRol" class="form-label fw-semibold">Role</label>
@@ -110,63 +111,63 @@
 </div>
 
 @section Scripts {
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
-            // Ensure input fields only allow uppercase letters
-            document.querySelectorAll('input[asp-for="Names"], input[asp-for="LastName"]').forEach(function (element) {
-                element.addEventListener('input', function () {
-                    this.value = this.value.toUpperCase();
-                });
+    <script>
+        $(document).ready(function () {
+
+            // Force uppercase for Names and LastName
+            $('#Names, #LastName').on('input', function () {
+                this.value = this.value.toUpperCase();
             });
 
-            // Mostrar mensaje de éxito en el modal
-            if ("@TempData["SuccessMessage"]" !== "") {
+            // TempData messages (aligned with controller)
+            var successMessage = @Html.Raw(JsonSerializer.Serialize(TempData["SuccessMessage"]));
+            var errorMessage   = @Html.Raw(JsonSerializer.Serialize(TempData["ErrorMessage"]));
+
+            if (window.notyf && successMessage) {
                 window.notyf.open({
                     type: 'success',
-                    message: "@TempData["SuccessMessage"]",
+                    message: successMessage,
                     ripple: true,
                     dismissible: true,
-                    position: {
-                        x: 'center',
-                        y: 'top'
-                    },
+                    position: { x: 'center', y: 'top' },
                     duration: 5000
                 });
             }
 
-            // Mostrar mensaje de error en el modal
-            if ("@TempData["ErrorMessage"]" !== "") {
+            if (window.notyf && errorMessage) {
                 window.notyf.open({
                     type: 'error',
-                    message: "@TempData["ErrorMessage"]",
+                    message: errorMessage,
                     ripple: true,
                     dismissible: true,
-                    position: {
-                        x: 'center',
-                        y: 'top'
-                    },
+                    position: { x: 'center', y: 'top' },
                     duration: 5000
                 });
             }
 
-            // Inicializar Select2
-            $('.select2').select2({
-                theme: 'bootstrap4',
-                placeholder: 'Search for a location',
-                allowClear: true
-            });
-
-            function confirmClose() {
-                return confirm("Do you want to exit? Unsaved changes will be lost");
+            // Initialize Select2 if there are any .select2 elements
+            if ($('.select2').length) {
+                $('.select2').select2({
+                    theme: 'bootstrap4',
+                    placeholder: 'Select an option',
+                    allowClear: true
+                });
             }
 
-            document.querySelectorAll(".closeBtn").forEach(function (btn) {
-                btn.addEventListener("click", function (e) {
-                    if (confirmClose()) {
-                        window.location.href = this.getAttribute("data-redirect-url");
-                    }
-                });
+            // Confirm before leaving form (Cancel button)
+            function confirmClose() {
+                return confirm("Do you want to exit? Unsaved changes will be lost.");
+            }
+
+            $('.closeBtn').on('click', function (e) {
+                if (!confirmClose()) {
+                    e.preventDefault();
+                }
+                // If confirmClose() returns true, let the default navigation happen
             });
         });
     </script>

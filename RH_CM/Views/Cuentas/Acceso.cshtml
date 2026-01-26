@@ -1,5 +1,6 @@
 ﻿@model RH_CM.ViewModels.AccesoViewModel
 @inject IConfiguration Configuration
+@using System.Text.Json
 
 @{
     Layout = null;
@@ -65,6 +66,7 @@
 
                             <form asp-controller="Cuentas" asp-action="Acceso" method="post">
 
+                                <!-- Validation summary (ModelState) -->
                                 <div asp-validation-summary="ModelOnly" class="text-danger small mb-2"></div>
 
                                 <!-- Username -->
@@ -122,9 +124,38 @@
     </div>
 
     <script src="~/assets/dist/js/app.js"></script>
+
+    @* Validation and Notyf *@
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+
+            var successMessage = @Html.Raw(JsonSerializer.Serialize(TempData["SuccessMessage"]));
+            var errorMessage   = @Html.Raw(JsonSerializer.Serialize(TempData["ErrorMessage"]));
+
+            if (window.notyf && successMessage) {
+                window.notyf.open({
+                    type: 'success',
+                    message: successMessage,
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+
+            if (window.notyf && errorMessage) {
+                window.notyf.open({
+                    type: 'error',
+                    message: errorMessage,
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+        });
+    </script>
 </body>
 </html>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
