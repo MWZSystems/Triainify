@@ -9,10 +9,15 @@ namespace RH_CM.Controllers
     public partial class CatalogController
     {
         //[Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
-        [Authorize(Policy = "ViewAccess")] //OnBoardingView
+        [Authorize(Policy = "ViewAccess")] // OnBoardingView
         public async Task<IActionResult> IndexDepartment()
         {
-            var departments = await _context.CtDepartments.ToListAsync();
+            // ✅ Use AsNoTracking() for read-only lists to reduce memory usage (no EF tracking)
+            var departments = await _context.CtDepartments
+                .AsNoTracking()
+                .OrderBy(d => d.NameDeparment)
+                .ToListAsync();
+
             return View(departments);
         }
 
@@ -55,7 +60,11 @@ namespace RH_CM.Controllers
         {
             if (id == null) return NotFound();
 
-            var department = await _context.CtDepartments.FindAsync(id);
+            // ✅ No tracking: edit form can work with a detached entity, we re-load tracked entity on POST
+            var department = await _context.CtDepartments
+                .AsNoTracking()
+                .FirstOrDefaultAsync(d => d.PkDepartment == id);
+
             return department == null ? NotFound() : View(department);
         }
 
@@ -85,12 +94,13 @@ namespace RH_CM.Controllers
             {
                 _context.Update(existing);
                 await _context.SaveChangesAsync();
+
                 TempData["SuccessMessage"] = "Department updated successfully.";
                 return RedirectToAction(nameof(IndexDepartment));
             }
             catch (DbUpdateConcurrencyException)
             {
-                TempData["ErrorMessage"] = "Concurrency error occurred.";
+                TempData["ErrorMessage"] = "A concurrency error occurred while updating the department. Please try again.";
                 return View(ctDepartment);
             }
         }
@@ -108,6 +118,7 @@ namespace RH_CM.Controllers
                 _context.Update(department);
                 await _context.SaveChangesAsync();
             }
+
             return RedirectToAction(nameof(IndexDepartment));
         }
 
@@ -118,23 +129,24 @@ namespace RH_CM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteDepartment(int id)
         {
-            // 1) ¿Hay headcount ligado a este Department?
+            // 1) Is there any headcount linked to this Department?
             bool hasHeadcount = await _context.SyHeadcounts
                 .AsNoTracking()
                 .AnyAsync(h => h.FkDepartment == id);
 
             if (hasHeadcount)
             {
-                TempData["ErrorMessage"] = "No se puede eliminar el Department porque está ligado a personal (Headcount). " +
-                                           "Primero tiene que desligar el Department de las asignaciones/empleados.";
+                TempData["ErrorMessage"] =
+                    "This department cannot be deleted because it is linked to employees (Headcount). " +
+                    "Please remove the department from employee assignments first.";
                 return RedirectToAction(nameof(IndexDepartment));
             }
 
-            // 2) Buscar el department
+            // 2) Find the department
             var department = await _context.CtDepartments.FindAsync(id);
             if (department == null)
             {
-                TempData["ErrorMessage"] = "El Department no existe o ya fue eliminado.";
+                TempData["ErrorMessage"] = "The department does not exist or has already been deleted.";
                 return RedirectToAction(nameof(IndexDepartment));
             }
 
@@ -142,18 +154,18 @@ namespace RH_CM.Controllers
             {
                 _context.CtDepartments.Remove(department);
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Department eliminado correctamente.";
+                TempData["SuccessMessage"] = "Department deleted successfully.";
             }
             catch (DbUpdateException)
             {
-                // Si se creó una relación después de la validación, la BD lo bloqueará aquí
-                TempData["ErrorMessage"] = "No se puede eliminar el Department porque está ligado a personal (Headcount). " +
-                                           "Primero tiene que desligarlo de las asignaciones/empleados.";
+                // If a relationship was created after our validation, the DB will block deletion here
+                TempData["ErrorMessage"] =
+                    "This department cannot be deleted because it is linked to employees (Headcount). " +
+                    "Please remove the department from employee assignments first.";
             }
 
             return RedirectToAction(nameof(IndexDepartment));
         }
-
 
         private bool CtDepartmentExists(int id)
         {

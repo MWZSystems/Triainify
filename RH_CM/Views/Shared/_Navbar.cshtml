@@ -26,7 +26,14 @@
     *@
 
     <ul class="navbar-nav">
-        @* If user is authenticated, show menus *@
+        <li class="nav-item px-2 dropdown">
+            <a asp-controller="Home" asp-action="Index" class="d-flex align-items-center text-decoration-none">
+                <img src="~/assets/dist/img/icons/logocm.jpeg"
+                     alt="Home"
+                     style="width: 60px; height: 30px; margin-right: 8px;">
+            </a>
+
+        </li>
         @if (User.Identity.IsAuthenticated)
         {
             // =========================
@@ -42,10 +49,6 @@
                        data-bs-toggle="dropdown"
                        aria-haspopup="true"
                        aria-expanded="false">
-
-                        <img src="~/assets/dist/img/icons/logocm.jpeg"
-                             alt="Logo"
-                             style="width: 60px; height: 30px; margin-right: 8px;">
                         CATALOGS
                     </a>
 

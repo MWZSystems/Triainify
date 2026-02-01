@@ -1,4 +1,4 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
+﻿// File: Controllers/CatalogController.Supervisor.cs
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,68 +8,91 @@ namespace RH_CM.Controllers
 {
     public partial class CatalogController
     {
-
-
         [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> IndexSupervisor()
         {
-            var supervisors = _context.CtSupervisors
-                //.Where(s => s.Available == 1)
-                .Join(_context.SyHeadcounts.Where(h => h.Available == 1),
+            // ✅ Use AsNoTracking() for read-only list + build the joins as IQueryable (do NOT materialize early)
+            var supervisors = await _context.CtSupervisors
+                .AsNoTracking()
+                .Join(
+                    _context.SyHeadcounts.AsNoTracking().Where(h => h.Available == 1),
                     s => s.FkHeadcount,
                     h => h.PkHeadcount,
-                    (s, h) => new { s, h })
-                .Join(_context.CtDepartments.Where(d => d.Available == 1),
+                    (s, h) => new { s, h }
+                )
+                .Join(
+                    _context.CtDepartments.AsNoTracking().Where(d => d.Available == 1),
                     temp => temp.s.FkDepartment,
                     d => d.PkDepartment,
-                    (temp, d) => new { temp.s, temp.h, d })
-                .Join(_context.CtPositions.Where(p => p.Available == 1),
+                    (temp, d) => new { temp.s, temp.h, d }
+                )
+                .Join(
+                    _context.CtPositions.AsNoTracking().Where(p => p.Available == 1),
                     temp => temp.s.FkPosition,
                     p => p.PkPosition,
                     (temp, p) => new
                     {
                         temp.s.PkSupervisorId,
                         temp.h.ControlNumber,
-                        FullName = $"{temp.h.Names} {(temp.h.LastName ?? "")} {(temp.h.SecondName ?? "")}".Trim(),
+                        FullName = (temp.h.Names + " " + (temp.h.LastName ?? "") + " " + (temp.h.SecondName ?? "")).Trim(),
                         temp.s.Available,
                         DepartmentName = temp.d.NameDeparment,
                         PositionName = p.NamePosition
-                    })
-                .ToList();
+                    }
+                )
+                .ToListAsync();
 
             return View(supervisors);
         }
 
         // GET: CtSupervisor/Create
         [Authorize(Policy = "ViewAccess")]
-        public IActionResult CreateSupervisor()
+        public async Task<IActionResult> CreateSupervisor()
         {
-            ViewBag.Headcount = _context.SyHeadcounts.Where(d => d.Available == 1).ToList();
-            ViewBag.Departments = _context.CtDepartments.Where(d => d.Available == 1).ToList();
-            ViewBag.Positions = _context.CtPositions.Where(p => p.Available == 1).ToList();
+            // ✅ AsNoTracking for dropdown data (read-only)
+            ViewBag.Headcount = await _context.SyHeadcounts
+                .AsNoTracking()
+                .Where(h => h.Available == 1)
+                .OrderBy(h => h.ControlNumber)
+                .ToListAsync();
+
+            ViewBag.Departments = await _context.CtDepartments
+                .AsNoTracking()
+                .Where(d => d.Available == 1)
+                .OrderBy(d => d.NameDeparment)
+                .ToListAsync();
+
+            ViewBag.Positions = await _context.CtPositions
+                .AsNoTracking()
+                .Where(p => p.Available == 1)
+                .OrderBy(p => p.NamePosition)
+                .ToListAsync();
 
             return View();
         }
 
-
         // POST: CtSupervisor/Create
         [HttpPost]
-        [Authorize(Policy = "ViewAccess")] 
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateSupervisor(CtSupervisor ctSupervisor)
         {
-            // Validar combinación única FkHeadcount + FkDepartment
+            // Validate unique combination FkHeadcount + FkDepartment for ACTIVE supervisors
             bool combinationExists = await _context.CtSupervisors
-                .AnyAsync(s => s.FkHeadcount == ctSupervisor.FkHeadcount && s.FkDepartment == ctSupervisor.FkDepartment && ctSupervisor.Available == 1);
+                .AnyAsync(s =>
+                    s.FkHeadcount == ctSupervisor.FkHeadcount &&
+                    s.FkDepartment == ctSupervisor.FkDepartment &&
+                    s.Available == 1);
 
             if (combinationExists)
             {
-                TempData["ErrorMessage"] = "A supervisor with the same Headcount and Department already exists.";
-                // Redirigir para mostrar el mensaje en la vista
+                TempData["ErrorMessage"] =
+                    "A supervisor with the same Headcount and Department already exists and is active.";
+
                 return RedirectToAction(nameof(CreateSupervisor));
             }
 
-            // Asignar datos de auditoría
+            // Audit fields
             ctSupervisor.Createuser = User.Identity?.Name ?? "Unknown";
             ctSupervisor.Createdate = DateTime.Now;
             ctSupervisor.Lastupdateuser = User.Identity?.Name ?? "Unknown";
@@ -86,33 +109,49 @@ namespace RH_CM.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error creating supervisor: {ex.Message}";
+                TempData["ErrorMessage"] = $"An error occurred while creating the supervisor: {ex.Message}";
                 return RedirectToAction(nameof(CreateSupervisor));
             }
         }
 
         // GET: CtSupervisor/Edit/5
-        [Authorize(Policy = "ViewAccess")] 
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> EditSupervisor(int? id)
         {
-            if (id == null)
-                return NotFound();
+            if (id == null) return NotFound();
 
-            var ctSupervisor = await _context.CtSupervisors.FindAsync(id);
-            if (ctSupervisor == null)
-                return NotFound();
+            // ✅ AsNoTracking on GET (we will load tracked entity on POST to update)
+            var ctSupervisor = await _context.CtSupervisors
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.PkSupervisorId == id);
 
-            // Cargar los dropdowns
-            ViewBag.Headcount = _context.SyHeadcounts.Where(h => h.Available == 1).ToList();
-            ViewBag.Departments = _context.CtDepartments.Where(d => d.Available == 1).ToList();
-            ViewBag.Positions = _context.CtPositions.Where(p => p.Available == 1).ToList();
+            if (ctSupervisor == null) return NotFound();
+
+            // ✅ AsNoTracking for dropdown data
+            ViewBag.Headcount = await _context.SyHeadcounts
+                .AsNoTracking()
+                .Where(h => h.Available == 1)
+                .OrderBy(h => h.ControlNumber)
+                .ToListAsync();
+
+            ViewBag.Departments = await _context.CtDepartments
+                .AsNoTracking()
+                .Where(d => d.Available == 1)
+                .OrderBy(d => d.NameDeparment)
+                .ToListAsync();
+
+            ViewBag.Positions = await _context.CtPositions
+                .AsNoTracking()
+                .Where(p => p.Available == 1)
+                .OrderBy(p => p.NamePosition)
+                .ToListAsync();
 
             return View(ctSupervisor);
         }
 
         // POST: CtSupervisor/Edit/5
         [HttpPost]
-        [Authorize(Policy = "ViewAccess")] 
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditSupervisor(int id, CtSupervisor ctSupervisor)
         {
@@ -122,16 +161,18 @@ namespace RH_CM.Controllers
                 return RedirectToAction(nameof(IndexSupervisor));
             }
 
-            // Validar combinación única FkHeadcount + FkDepartment (excluyendo el mismo registro)
+            // Validate unique combination FkHeadcount + FkDepartment (excluding this record), only for ACTIVE ones
             bool combinationExists = await _context.CtSupervisors
-                .AnyAsync(s => s.FkHeadcount == ctSupervisor.FkHeadcount
-                            && s.FkDepartment == ctSupervisor.FkDepartment
-                            && s.PkSupervisorId != id
-                            && s.Available == 1);
+                .AnyAsync(s =>
+                    s.FkHeadcount == ctSupervisor.FkHeadcount &&
+                    s.FkDepartment == ctSupervisor.FkDepartment &&
+                    s.PkSupervisorId != id &&
+                    s.Available == 1);
 
             if (combinationExists)
             {
-                TempData["ErrorMessage"] = "Another supervisor with the same Headcount and Department already exists.";
+                TempData["ErrorMessage"] =
+                    "Another active supervisor with the same Headcount and Department already exists.";
                 return RedirectToAction(nameof(EditSupervisor), new { id });
             }
 
@@ -158,15 +199,14 @@ namespace RH_CM.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error updating supervisor: {ex.Message}";
+                TempData["ErrorMessage"] = $"An error occurred while updating the supervisor: {ex.Message}";
                 return RedirectToAction(nameof(EditSupervisor), new { id });
             }
         }
 
-
         // POST: /Catalog/ToggleSupervisor/5
         [HttpPost]
-        [Authorize(Policy = "ViewAccess")] 
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleSupervisor(int id)
         {
@@ -177,7 +217,7 @@ namespace RH_CM.Controllers
                 return RedirectToAction(nameof(IndexSupervisor));
             }
 
-            // Si se va a habilitar, validar que no exista combinación duplicada
+            // If enabling, validate no duplicate active combination exists
             if (supervisor.Available == 0)
             {
                 bool combinationExists = await _context.CtSupervisors
@@ -189,12 +229,12 @@ namespace RH_CM.Controllers
 
                 if (combinationExists)
                 {
-                    TempData["ErrorMessage"] = "Cannot enable this supervisor because another active supervisor with the same Headcount and Department already exists.";
+                    TempData["ErrorMessage"] =
+                        "This supervisor cannot be enabled because another active supervisor with the same Headcount and Department already exists.";
                     return RedirectToAction(nameof(IndexSupervisor));
                 }
             }
 
-            // Alternar el estado
             supervisor.Available = supervisor.Available == 1 ? 0 : 1;
             supervisor.Lastupdateuser = User.Identity?.Name ?? "Unknown";
             supervisor.Lastupdatedate = DateTime.Now;
@@ -212,23 +252,24 @@ namespace RH_CM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteSupervisor(int id)
         {
-            // 1) ¿Algún empleado (Headcount) tiene ligado este supervisor?
+            // 1) Is any employee (Headcount) linked to this supervisor?
             bool hasHeadcount = await _context.SyHeadcounts
                 .AsNoTracking()
                 .AnyAsync(h => h.FkSupervisorId == id);
 
             if (hasHeadcount)
             {
-                TempData["ErrorMessage"] = "No se puede eliminar el Supervisor porque está ligado a personal (Headcount). " +
-                                           "Primero tiene que desligarlo de los empleados.";
+                TempData["ErrorMessage"] =
+                    "This supervisor cannot be deleted because it is linked to employees (Headcount). " +
+                    "Please remove the supervisor from employees first.";
                 return RedirectToAction(nameof(IndexSupervisor));
             }
 
-            // 2) Buscar supervisor
+            // 2) Find supervisor
             var supervisor = await _context.CtSupervisors.FindAsync(id);
             if (supervisor == null)
             {
-                TempData["ErrorMessage"] = "El Supervisor no existe o ya fue eliminado.";
+                TempData["ErrorMessage"] = "The supervisor does not exist or has already been deleted.";
                 return RedirectToAction(nameof(IndexSupervisor));
             }
 
@@ -236,18 +277,17 @@ namespace RH_CM.Controllers
             {
                 _context.CtSupervisors.Remove(supervisor);
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Supervisor eliminado correctamente.";
+                TempData["SuccessMessage"] = "Supervisor deleted successfully.";
             }
             catch (DbUpdateException)
             {
-                // Si la BD bloquea por FK (carrera entre validación y borrado), caemos aquí
-                TempData["ErrorMessage"] = "No se puede eliminar el Supervisor porque está ligado a personal (Headcount). " +
-                                           "Primero tiene que desligarlo de los empleados.";
+                TempData["ErrorMessage"] =
+                    "This supervisor cannot be deleted because it is linked to employees (Headcount). " +
+                    "Please remove the supervisor from employees first.";
             }
 
             return RedirectToAction(nameof(IndexSupervisor));
         }
-
 
         private bool CtSupervisorExists(int id)
         {

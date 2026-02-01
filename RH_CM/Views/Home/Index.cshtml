@@ -92,3 +92,43 @@
     </div>
 
 </div>
+
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        $(document).ready(function () {
+            // Inicializa Select2
+            $(".select2").select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                width: '100%'
+            });
+
+            // Mostrar mensajes de éxito
+            if ('@TempData["SuccessMessage"]' !== '') {
+                window.notyf.open({
+                    type: 'success',
+                    message: '@TempData["SuccessMessage"]',
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+
+            // Mostrar mensajes de error
+            if ('@TempData["ErrorMessage"]' !== '') {
+                window.notyf.open({
+                    type: 'error',
+                    message: '@TempData["ErrorMessage"]',
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+        });
+    </script>
+}

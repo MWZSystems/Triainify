@@ -2,7 +2,6 @@
 
 @{
     Layout = null;
-    var returnUrl = ViewData["ReturnUrl"]?.ToString() ?? "/";
 }
 
 <!DOCTYPE html>
@@ -35,10 +34,14 @@
                             You do not have permission to view this page.
                         </p>
 
-                        <a href="@returnUrl" class="btn btn-primary mt-3 px-4">
-                            <i class="fas fa-arrow-left me-1"></i>
-                            Go Back
+                        <!-- ✅ Back to Home Page -->
+                        <a asp-controller="Home"
+                           asp-action="Index"
+                           class="btn btn-primary mt-3 px-4">
+                            <i class="fas fa-home me-1"></i>
+                            Back to Home Page
                         </a>
+
                     </div>
                 </div>
 
@@ -51,7 +54,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
 
-            // Error message from TempData
+            // Error message from TempData (optional)
             var errorMessage = @Html.Raw(JsonSerializer.Serialize(TempData["ErrorMessage"]));
 
             if (window.notyf && errorMessage) {

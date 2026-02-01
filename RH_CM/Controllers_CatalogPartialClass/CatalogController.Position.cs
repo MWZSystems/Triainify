@@ -1,4 +1,4 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
+﻿// File: Controllers/CatalogController.Position.cs
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +10,15 @@ namespace RH_CM.Controllers
     {
         // GET: CtPosition
         //[Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
-        [Authorize(Policy = "ViewAccess")] 
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> IndexPosition()
         {
-            var positions = await _context.CtPositions.ToListAsync();
+            // ✅ Use AsNoTracking() for read-only lists to reduce memory usage (no EF tracking)
+            var positions = await _context.CtPositions
+                .AsNoTracking()
+                .OrderBy(p => p.NamePosition)
+                .ToListAsync();
+
             return View(positions);
         }
 
@@ -30,40 +35,36 @@ namespace RH_CM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreatePosition(CtPosition ctPosition)
         {
-            // Validar si el nombre de la posición ya existe (español)
+            // Validate if the position name already exists
             bool positionExists = await _context.CtPositions
                 .AnyAsync(p => p.NamePosition == ctPosition.NamePosition);
 
-            // Validar si el nombre de la posición en inglés ya existe
+            // Validate if the English position name already exists
             bool englishPositionExists = await _context.CtPositions
                 .AnyAsync(p => p.NamePositionEnglish == ctPosition.NamePositionEnglish);
 
             if (positionExists || englishPositionExists)
             {
-                // Añadir un mensaje de error al TempData
                 TempData["ErrorMessage"] = positionExists
                     ? "The position name already exists. Please choose a different name."
                     : "The English position name already exists. Please choose a different name.";
 
-                // Volver a cargar la vista con el modelo actual
                 return View(ctPosition);
             }
 
-            // Asignar valores automáticos
-            ctPosition.Createuser = User.Identity.Name ?? "Unknown"; // Si el usuario es nulo
+            // Assign automatic values
+            ctPosition.Createuser = User.Identity?.Name ?? "Unknown";
             ctPosition.Createdate = DateTime.Now;
-            ctPosition.Lastupdateuser = User.Identity.Name ?? "Unknown"; // Si el usuario es nulo
+            ctPosition.Lastupdateuser = User.Identity?.Name ?? "Unknown";
             ctPosition.Lastupdatedate = DateTime.Now;
-            ctPosition.Available = 1; // Valor predeterminado: habilitado
+            ctPosition.Available = 1; // default: enabled
 
             try
             {
                 _context.Add(ctPosition);
                 await _context.SaveChangesAsync();
 
-                // Añadir un mensaje de éxito al TempData
                 TempData["SuccessMessage"] = "Position created successfully.";
-
                 return RedirectToAction(nameof(IndexPosition));
             }
             catch (Exception ex)
@@ -77,18 +78,14 @@ namespace RH_CM.Controllers
         [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> EditPosition(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var ctPosition = await _context.CtPositions.FindAsync(id);
-            if (ctPosition == null)
-            {
-                return NotFound();
-            }
+            // ✅ No tracking: edit form can work with a detached entity, we re-load tracked entity on POST
+            var ctPosition = await _context.CtPositions
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.PkPosition == id);
 
-            return View(ctPosition);
+            return ctPosition == null ? NotFound() : View(ctPosition);
         }
 
         // POST: CtPosition/Edit/5
@@ -103,12 +100,14 @@ namespace RH_CM.Controllers
                 return RedirectToAction(nameof(IndexPosition));
             }
 
-            // Verificar si el nombre de la posición ya existe
+            // Check if position name already exists (excluding current record)
             bool positionExists = await _context.CtPositions
-                .AnyAsync(p => p.NamePosition == ctPosition.NamePosition && p.PkPosition != ctPosition.PkPosition);
+                .AnyAsync(p => p.NamePosition == ctPosition.NamePosition &&
+                               p.PkPosition != ctPosition.PkPosition);
 
             bool englishPositionExists = await _context.CtPositions
-                .AnyAsync(p => p.NamePositionEnglish == ctPosition.NamePositionEnglish && p.PkPosition != ctPosition.PkPosition);
+                .AnyAsync(p => p.NamePositionEnglish == ctPosition.NamePositionEnglish &&
+                               p.PkPosition != ctPosition.PkPosition);
 
             if (positionExists || englishPositionExists)
             {
@@ -121,7 +120,7 @@ namespace RH_CM.Controllers
 
             try
             {
-                // Recuperar los datos originales para evitar sobrescrituras accidentales
+                // Reload tracked entity to update safely
                 var existingPosition = await _context.CtPositions.FindAsync(id);
                 if (existingPosition == null)
                 {
@@ -129,11 +128,11 @@ namespace RH_CM.Controllers
                     return NotFound();
                 }
 
-                // Actualizar solo los campos que pueden ser modificados
+                // Update only allowed fields
                 existingPosition.NamePosition = ctPosition.NamePosition;
                 existingPosition.NamePositionEnglish = ctPosition.NamePositionEnglish;
-                existingPosition.Lastupdateuser = User.Identity.Name ?? "Unknown"; // Usuario actual
-                existingPosition.Lastupdatedate = DateTime.Now; // Fecha de actualización
+                existingPosition.Lastupdateuser = User.Identity?.Name ?? "Unknown";
+                existingPosition.Lastupdatedate = DateTime.Now;
 
                 _context.Update(existingPosition);
                 await _context.SaveChangesAsync();
@@ -143,7 +142,8 @@ namespace RH_CM.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                TempData["ErrorMessage"] = "There was a concurrency error while updating the position. Please try again.";
+                TempData["ErrorMessage"] =
+                    "A concurrency error occurred while updating the position. Please try again.";
                 return View(ctPosition);
             }
             catch (Exception ex)
@@ -163,12 +163,11 @@ namespace RH_CM.Controllers
             var ctPosition = await _context.CtPositions.FindAsync(id);
             if (ctPosition != null)
             {
-                // Alternar el estado de disponibilidad
                 ctPosition.Available = ctPosition.Available == 1 ? 0 : 1;
-
                 _context.Update(ctPosition);
                 await _context.SaveChangesAsync();
             }
+
             return RedirectToAction(nameof(IndexPosition));
         }
 
@@ -179,23 +178,24 @@ namespace RH_CM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmedPosition(int id)
         {
-            // 1) ¿Hay personal ligado a esta Position?
+            // 1) Is there any headcount linked to this Position?
             bool hasHeadcount = await _context.SyHeadcounts
                 .AsNoTracking()
                 .AnyAsync(h => h.FkPosition == id);
 
             if (hasHeadcount)
             {
-                TempData["ErrorMessage"] = "No se puede eliminar la Position porque está ligada a personal (Headcount). " +
-                                           "Primero tiene que desligarla de los empleados.";
+                TempData["ErrorMessage"] =
+                    "This position cannot be deleted because it is linked to employees (Headcount). " +
+                    "Please remove the position from employee assignments first.";
                 return RedirectToAction(nameof(IndexPosition));
             }
 
-            // 2) Buscar la posición
+            // 2) Find the position
             var ctPosition = await _context.CtPositions.FindAsync(id);
             if (ctPosition == null)
             {
-                TempData["ErrorMessage"] = "La Position no existe o ya fue eliminada.";
+                TempData["ErrorMessage"] = "The position does not exist or has already been deleted.";
                 return RedirectToAction(nameof(IndexPosition));
             }
 
@@ -203,18 +203,18 @@ namespace RH_CM.Controllers
             {
                 _context.CtPositions.Remove(ctPosition);
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Position eliminada correctamente.";
+                TempData["SuccessMessage"] = "Position deleted successfully.";
             }
             catch (DbUpdateException)
             {
-                // Si entre la validación y el SaveChanges se ligó un Headcount, la FK lo bloqueará aquí
-                TempData["ErrorMessage"] = "No se puede eliminar la Position porque está ligada a personal (Headcount). " +
-                                           "Primero tiene que desligarla de los empleados.";
+                // If a relationship was created after our validation, the DB will block deletion here
+                TempData["ErrorMessage"] =
+                    "This position cannot be deleted because it is linked to employees (Headcount). " +
+                    "Please remove the position from employee assignments first.";
             }
 
             return RedirectToAction(nameof(IndexPosition));
         }
-
 
         private bool CtPositionExists(int id)
         {
