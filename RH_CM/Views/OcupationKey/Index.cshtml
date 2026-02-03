@@ -12,30 +12,17 @@
             <i class="fas fa-briefcase"></i> @ViewData["Title"]
         </h1>
     </div>
-    @* <div class="col-auto">
-        <a asp-action="Index" asp-controller="Permissions" class="btn btn-secondary">
-            <i class="fas fa-rotate-left"></i> CHANGE GROUP
-        </a>
-    </div> *@
 </div>
 
 
 <div id="tableContainer">
     <div class="card">
-        @* <div class="card-header">
-            <div class="mb-3 text-center d-flex flex-wrap justify-content-center gap-3">
-                <div class="p-3 fw-bold rounded fs-3">
-                    Group ID: @Model.GroupId
-                </div>
-                <div class="p-3 fw-bold rounded fs-3">
-                    Group Name: @Model.GroupName
-                </div>
-            </div>
-        </div> *@
+
         <div class="card-body">
             <div class="d-flex justify-content-end mb-3">
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addOcupationCode">
-                    <i class="fas fa-plus"></i> Add Role
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addOcupationCode">
+                    <i class="align-middle fas fa-plus-square"></i>  Add Ocupation
+
                 </button>
             </div>
             @if (Model != null)
@@ -136,7 +123,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success">Add</button>
+                    <button type="submit" class="btn btn-primary">Add Ocupation</button>
                 </div>
             </form>
         </div>
