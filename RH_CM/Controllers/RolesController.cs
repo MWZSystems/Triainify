@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace RH_CM.Controllers
 {
-    [Authorize(Roles = "Administrador")]
     public class RolesController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
@@ -22,7 +21,7 @@ namespace RH_CM.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "ViewAccess")]
+        //[Authorize(Policy = "ViewAccess")]
         public IActionResult Index()
         {
             var roles = _contexto.Roles.ToList();

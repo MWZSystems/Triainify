@@ -35,7 +35,7 @@ namespace RH_CM.Controllers
 
         //AddRole
         [HttpPost]
-        [Authorize(Policy = "ViewAccess")]
+        //[Authorize(Policy = "ViewAccess")]
         public async Task<ActionResult> AddRoleToGroup(int GroupId, string RoleId)
         {
             ServiceAnswerPermissionsAdd answer = await _permissionsService.PostAddRoleToGroup(GroupId, RoleId);

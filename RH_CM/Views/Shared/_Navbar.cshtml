@@ -352,6 +352,10 @@
                                 <i class="fas fa-lock-open"></i> Reset Password
                             </a>
                         }
+
+                        <a class="dropdown-item" asp-controller="Cuentas" asp-action="UnlockAccount">
+                            <i class="fas fa-retweet"></i> Unlock Account
+                        </a>
                     }
 
                     <form id="logoutForm"
@@ -360,7 +364,7 @@
                           asp-controller="Cuentas"
                           asp-action="SalirAplicacion">
                         <button type="submit" class="dropdown-item">
-                            <i class="fas fa-sign-out-alt"></i> Sign out
+                            <i class="fas fa-sign-out-alt"></i> Log out
                         </button>
                     </form>
 

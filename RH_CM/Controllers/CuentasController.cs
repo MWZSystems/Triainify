@@ -1,13 +1,15 @@
-﻿using RH_CM.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.UI.Services;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Text.Encodings.Web;
-using RH_CM.Data;
 using Microsoft.Data.SqlClient; // or System.Data.SqlClient, depending on your version
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using RH_CM.Data;
+using RH_CM.Models;
+using RH_CM.ViewModels;
+using System.Text.Encodings.Web;
 
 namespace RH_CM.Controllers
 {
@@ -489,6 +491,107 @@ namespace RH_CM.Controllers
 
             return View();
         }
+
+        // =========================
+        //  UNLOCK ACCOUNT (DB / AspNetUsers)
+        // =========================
+
+        [HttpGet]
+        [Authorize(Policy = "ViewAccess")]
+        public IActionResult UnlockAccount()
+        {
+            // Empty model for the form
+            return View(new AspNetUser());
+        }
+
+        [HttpPost]
+        [Authorize(Policy = "ViewAccess")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UnlockAccount(AspNetUser model)
+        {
+            try
+            {
+                // Basic validation: at least one field required
+                if (string.IsNullOrWhiteSpace(model.UserName) && string.IsNullOrWhiteSpace(model.Ntuser))
+                {
+                    TempData["ErrorMessage"] = "Username or NT Username is required.";
+                    return View(model);
+                }
+
+                var userName = model.UserName?.Trim();
+                var ntUser = model.Ntuser?.Trim();
+
+                // Try to locate the user using UserName or Ntuser
+                var user = await _contexto.Set<AspNetUser>()
+                    .FirstOrDefaultAsync(u =>
+                        (!string.IsNullOrEmpty(userName) && u.UserName == userName) ||
+                        (!string.IsNullOrEmpty(ntUser) && u.Ntuser == ntUser));
+
+                if (user == null)
+                {
+                    TempData["ErrorMessage"] = "User not found.";
+                    return View(model);
+                }
+
+                // Check if the account is currently locked
+                bool isLocked =
+                    user.LockoutEnd.HasValue &&
+                    user.LockoutEnd.Value > DateTimeOffset.UtcNow;
+
+                if (!isLocked)
+                {
+                    TempData["WarningMessage"] = "This account is not currently locked.";
+                    return View(model);
+                }
+
+                // Unlock the account
+                user.LockoutEnd = null;
+                user.AccessFailedCount = 0;
+
+                // Ensure lockout remains enabled
+                if (!user.LockoutEnabled)
+                    user.LockoutEnabled = true;
+
+                // Optional: restore availability flag
+                if (user.Available.HasValue)
+                    user.Available = 1;
+
+                await _contexto.SaveChangesAsync();
+
+                TempData["SuccessMessage"] =
+                    $"The account '{user.UserName}' has been successfully unlocked.";
+
+                return RedirectToAction(nameof(UnlockAccount));
+            }
+            catch (SqlException ex) when (ex.Number == 208)
+            {
+                _logger.LogError(ex, "SQL error: missing table while unlocking account.");
+
+                TempData["ErrorMessage"] =
+                    "There is a problem with the database structure (missing table). Please contact IT support.";
+
+                return View(model);
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "SQL error while unlocking account.");
+
+                TempData["ErrorMessage"] =
+                    "Unable to connect to the database. Please try again later or contact IT support.";
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while unlocking account.");
+
+                TempData["ErrorMessage"] =
+                    "An unexpected error occurred while unlocking the account. If the problem persists, please contact IT support.";
+
+                return View(model);
+            }
+        }
+
 
     }
 }

@@ -1,7 +1,79 @@
-﻿@{
+﻿@using System.Text.Json
+
+@{
     Layout = null;
 }
 
-<header>
-    <div class="p-3 mb-2 bg-danger text-white">Cuenta de usuario bloqueada</div>
-</header>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Account Locked</title>
+
+    <link rel="stylesheet" href="~/Assets/dist/css/light.css" asp-append-version="true" />
+</head>
+
+<body class="d-flex align-items-center justify-content-center min-vh-100 bg-light">
+
+    <div class="container">
+        <div class="row justify-content-center mt-4">
+            <div class="col-sm-10 col-md-8 col-lg-6">
+
+                <div class="card shadow-lg border-warning">
+                    <div class="card-header bg-warning text-dark text-center py-3">
+                        <h3 class="mb-0 fw-bold">
+                            <i class="fas fa-user-lock me-2"></i>
+                            ACCOUNT LOCKED
+                        </h3>
+                    </div>
+
+                    <div class="card-body text-center">
+
+                        <p class="text-muted fs-5 mb-3">
+                            Your account has been temporarily locked due to multiple unsuccessful login attempts
+                            or security restrictions.
+                        </p>
+
+                        <p class="text-muted">
+                            Please contact the system administrator or wait until your account is unlocked.
+                        </p>
+
+                        <!-- Back to Login -->
+                        <a asp-controller="Account"
+                           asp-action="Login"
+                           class="btn btn-secondary mt-3 px-4">
+                            <i class="fas fa-sign-in-alt me-1"></i>
+                            Back to Login
+                        </a>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="~/assets/dist/js/app.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // Optional warning message from TempData
+            var warningMessage = @Html.Raw(JsonSerializer.Serialize(TempData["WarningMessage"]));
+
+            if (window.notyf && warningMessage) {
+                window.notyf.open({
+                    type: 'warning',
+                    message: warningMessage,
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 6000
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
