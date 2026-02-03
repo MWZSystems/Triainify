@@ -11,9 +11,13 @@ namespace RH_CM.Controllers
         [Authorize(Policy = "ViewAccess")] //OnBoardingView
         public async Task<IActionResult> IndexCourse()
         {
-            var courses = await _context.CtCourses.ToListAsync();
+            var courses = await _context.CtCourses
+                .OrderByDescending(c => c.Available)
+                .ToListAsync();
+
             return View(courses);
         }
+
 
         // GET: CtCourse/Create
         [Authorize(Policy = "ViewAccess")]

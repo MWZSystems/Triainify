@@ -121,23 +121,9 @@
 
             const table = $('#datatables-sup').DataTable({
                 responsive: true,
-                order: [[0, 'asc']],
+                order: [],
                 pageLength: 25,
                 lengthMenu: [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]],
-                language: {
-                    decimal: "",
-                    emptyTable: "No hay información",
-                    info: "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
-                    infoEmpty: "Mostrando 0 a 0 de 0 Entradas",
-                    infoFiltered: "(Filtrado de _MAX_ total entradas)",
-                    thousands: ",",
-                    lengthMenu: "Mostrar _MENU_ Entradas",
-                    loadingRecords: "Cargando...",
-                    processing: "Procesando...",
-                    search: "Buscar:",
-                    zeroRecords: "Sin resultados encontrados",
-                    paginate: { first: "Primero", last: "Último", next: "Siguiente", previous: "Anterior" }
-                },
                 initComplete: function () {
                     const api = this.api();
 
