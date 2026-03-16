@@ -78,37 +78,53 @@ namespace RH_CM.Controllers
             {
                 Supervisors = await GetSupervisorsAsync()
             };
-            return View(vm); // View: MatrizbySupervisorSelect.cshtml
+            return View(vm); 
         }
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //[Authorize(Policy = "ViewAccess")]
+        //public async Task<IActionResult> MatrizbySupervisorSelect(SelectSupervisorViewModel vm)
+        //{
+        //    if (!vm.SelectedSupervisorId.HasValue || vm.SelectedSupervisorId.Value <= 0)
+        //    {
+        //        TempData["ErrorMessage"] = "Select a valid supervisor";
+        //        vm.Supervisors = await GetSupervisorsAsync();
+        //        return View(vm);
+        //    }
+
+        //    return RedirectToAction(nameof(MatrizbySupervisor), new { supervisorId = vm.SelectedSupervisorId.Value });
+        //}
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "ViewAccess")]
-        public async Task<IActionResult> MatrizbySupervisorSelect(SelectSupervisorViewModel vm)
+        public async Task<IActionResult> MatrizbySupervisorSelect(SelectSupervisorViewModel vm, string? managementSystem)
         {
             if (!vm.SelectedSupervisorId.HasValue || vm.SelectedSupervisorId.Value <= 0)
             {
-                TempData["ErrorMessage"] = "Selecciona un supervisor válido.";
+                TempData["ErrorMessage"] = "Select a valid supervisor";
                 vm.Supervisors = await GetSupervisorsAsync();
+                ViewBag.ManagementSystem = managementSystem;
                 return View(vm);
             }
 
-            return RedirectToAction(nameof(MatrizbySupervisor), new { supervisorId = vm.SelectedSupervisorId.Value });
+            return RedirectToAction(nameof(MatrizbySupervisor), new
+            {
+                supervisorId = vm.SelectedSupervisorId.Value,
+                managementSystem = managementSystem
+            });
         }
 
-        // ------------------- Ventana B: Matriz (SOLO muestra) -------------------
         [Authorize(Policy = "ViewAccess")]
         [HttpGet]
-        public async Task<IActionResult> MatrizbySupervisor(int supervisorId)
+        public async Task<IActionResult> MatrizbySupervisor(int supervisorId, string? managementSystem)
         {
-            // ❶ Quitar el valor fijo:
-            // supervisorId = 9;  // <-- ELIMINADO
-
             var result = new List<MatrizBySupervisorViewModel>();
 
             if (supervisorId <= 0)
             {
-                TempData["ErrorMessage"] = "Primero selecciona un supervisor.";
+                TempData["ErrorMessage"] = "Please select a valid supervisor first.";
                 return RedirectToAction(nameof(MatrizbySupervisorSelect));
             }
 
@@ -123,7 +139,18 @@ namespace RH_CM.Controllers
                 {
                     CommandType = CommandType.StoredProcedure
                 };
-                command.Parameters.Add(new SqlParameter("@SupervisorId", SqlDbType.Int) { Value = supervisorId });
+
+                command.Parameters.Add(new SqlParameter("@SupervisorId", SqlDbType.Int)
+                {
+                    Value = supervisorId
+                });
+
+                command.Parameters.Add(new SqlParameter("@ManagementSystem", SqlDbType.NVarChar, 50)
+                {
+                    Value = string.IsNullOrWhiteSpace(managementSystem)
+                        ? (object)DBNull.Value
+                        : managementSystem
+                });
 
                 await using var reader = await command.ExecuteReaderAsync();
 
@@ -151,25 +178,25 @@ namespace RH_CM.Controllers
                 }
 
                 if (result.Count == 0)
-                    TempData["ErrorMessage"] = $"No se encontraron empleados para el supervisor {supervisorId}.";
+                    TempData["ErrorMessage"] = $"No employees were found for supervisor {supervisorId}.";
                 else
-                    TempData["SuccessMessage"] = $"Se encontraron {result.Count} empleados para el supervisor {supervisorId}.";
+                    TempData["SuccessMessage"] = $"{result.Count} employees were found for supervisor {supervisorId}.";
             }
             catch (SqlException ex)
             {
-                TempData["ErrorMessage"] = $"Error SQL: {ex.Message}";
+                TempData["ErrorMessage"] = $"SQL Error: {ex.Message}";
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = $"Error: {ex.Message}";
             }
 
-            return View(result);  // View existente: Views/Trainify/MatrizbySupervisor.cshtml
+            ViewBag.SupervisorId = supervisorId;
+            ViewBag.ManagementSystem = managementSystem;
+
+            return View(result);
         }
 
-        // =============== AJUSTE: abrir Matriz por EMPLEADO por UserName ===============
-        // Antes: tomaba siempre el usuario logueado.
-        // Ahora: si viene userName en la ruta, se usa; si no, se usa el actual.
         [Authorize(Policy = "ViewAccess")]
         [HttpGet]
         public async Task<IActionResult> MatrizbyEmployeeFromSupervisor(string? userName)
@@ -343,14 +370,6 @@ namespace RH_CM.Controllers
             ViewBag.ManagementSystem = managementSystem;
 
             return View(page);
-        }
-
-
-        [Authorize]
-        [HttpGet]
-        public IActionResult MatrizByDeparmentGeneral_RH_BO()
-        {
-            return View(); // Renderiza Views/Reports/MatrizByDeparmentGeneral_RH_BO.cshtml
         }
 
     }

@@ -26,7 +26,7 @@
                     <div class="row">
                         <div class="mb-3 col-md-2">
                             <label asp-for="FkPosition" class="form-label">Position <span class="text-danger">*</span></label>
-                            <select asp-for="FkPosition" class="form-control" asp-items="@(new SelectList(ViewBag.Positions, "PkPosition", "NamePosition"))">
+                            <select asp-for="FkPosition" class="form-control select2" asp-items="@(new SelectList(ViewBag.Positions, "PkPosition", "NamePosition"))">
                                 <option value="">-- Select Position --</option>
                             </select>
                             <span asp-validation-for="FkPosition" class="text-danger"></span>
@@ -34,7 +34,7 @@
 
                         <div class="mb-3 col-md-3">
                             <label asp-for="FkCourse" class="form-label">Course <span class="text-danger">*</span></label>
-                            <select asp-for="FkCourse" class="form-control" asp-items="@(new SelectList(ViewBag.Courses, "PkCourse", "CourseName"))">
+                            <select asp-for="FkCourse" class="form-control select2" asp-items="@(new SelectList(ViewBag.Courses, "PkCourse", "CourseName"))">
                                 <option value="">-- Select Course --</option>
                             </select>
                             <span asp-validation-for="FkCourse" class="text-danger"></span>
@@ -42,7 +42,7 @@
 
                         <div class="mb-3 col-md-2">
                             <label asp-for="FkRequiredCourseLevels" class="form-label">Course Level <span class="text-danger">*</span></label>
-                            <select asp-for="FkRequiredCourseLevels" class="form-control" asp-items="@(new SelectList(ViewBag.LevelCourses, "PkLevelcourse", "DescripctionLevel"))">
+                            <select asp-for="FkRequiredCourseLevels" class="form-control select2" asp-items="@(new SelectList(ViewBag.LevelCourses, "PkLevelcourse", "DescripctionLevel"))">
                                 <option value="">-- Select Level --</option>
                             </select>
                             <span asp-validation-for="FkRequiredCourseLevels" class="text-danger"></span>
@@ -50,7 +50,7 @@
 
                         <div class="mb-3 col-md-2">
                             <label asp-for="FkDeliveryMode" class="form-label">Delivery Mode <span class="text-danger">*</span></label>
-                            <select asp-for="FkDeliveryMode" class="form-control" asp-items="@(new SelectList(ViewBag.DeliveryModes, "PkDeliverymode", "DescriptionDeliverymode"))">
+                            <select asp-for="FkDeliveryMode" class="form-control select2" asp-items="@(new SelectList(ViewBag.DeliveryModes, "PkDeliverymode", "DescriptionDeliverymode"))">
                                 <option value="">-- Select Delivery Mode --</option>
                             </select>
                             <span asp-validation-for="FkDeliveryMode" class="text-danger"></span>
@@ -65,7 +65,6 @@
                             <span asp-validation-for="Requiered" class="text-danger"></span>
                         </div>
                     </div>
-
 
                     <!-- Submit and Cancel Buttons -->
                     <div class="row">
@@ -89,6 +88,14 @@
 
     <script>
         $(document).ready(function () {
+
+            // Initialize Select2 for all dropdowns
+            $(".select2").select2({
+                theme: 'bootstrap4',
+                placeholder: 'Select an option',
+                allowClear: true
+            });
+
             if ("@TempData["SuccessMessage"]" !== "") {
                 window.notyf.open({
                     type: 'success',

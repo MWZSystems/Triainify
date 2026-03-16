@@ -54,7 +54,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 // ✅ Session (una sola vez)
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.IdleTimeout = TimeSpan.FromMinutes(120);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });

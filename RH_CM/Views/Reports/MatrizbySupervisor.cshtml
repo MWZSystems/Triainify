@@ -3,16 +3,46 @@
 @{
     ViewData["Title"] = "Matrix By Supervisor";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    int supervisorId = ViewBag.SupervisorId != null ? (int)ViewBag.SupervisorId : 0;
+    string currentMS = (ViewBag.ManagementSystem as string) ?? "";
+    string msBadge = string.IsNullOrWhiteSpace(currentMS) ? "All" : currentMS.ToUpperInvariant();
 }
 
 <div class="row">
     <div class="col">
-        <h1 class="h3 mb-3 text-center">
+        <h1 class="h3 mb-1 text-center">
             <i class="fas fa-users-gear"></i> @ViewData["Title"]
         </h1>
+        <p class="text-center text-muted">
+            Filter: <span class="badge bg-info">@msBadge</span>
+        </p>
     </div>
     <div class="col-auto">
-        
+    </div>
+</div>
+
+<div class="row mb-2 mb-xl-3">
+    <div class="col-auto ms-auto text-end mt-n1">
+        <div class="dropdown me-2 d-inline-block">
+            <a class="btn btn-light bg-white shadow-sm dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-display="static">
+                <i class="align-middle mt-n1" data-feather="filter"></i> Filter by Management System
+            </a>
+            <div class="dropdown-menu dropdown-menu-end">
+                <h6 class="dropdown-header">Select...</h6>
+                <a class="dropdown-item" href="@Url.Action("MatrizbySupervisor", "Reports", new { supervisorId = supervisorId, managementSystem = (string?)null })">All</a>
+                <a class="dropdown-item" href="@Url.Action("MatrizbySupervisor", "Reports", new { supervisorId = supervisorId, managementSystem = "AMBIENTAL" })">AMBIENTAL</a>
+                <a class="dropdown-item" href="@Url.Action("MatrizbySupervisor", "Reports", new { supervisorId = supervisorId, managementSystem = "CALIDAD" })">CALIDAD</a>
+                <a class="dropdown-item" href="@Url.Action("MatrizbySupervisor", "Reports", new { supervisorId = supervisorId, managementSystem = "SEGURIDAD" })">SEGURIDAD</a>
+                <a class="dropdown-item" href="@Url.Action("MatrizbySupervisor", "Reports", new { supervisorId = supervisorId, managementSystem = "OTROS" })">OTROS</a>
+            </div>
+        </div>
+
+        <a class="btn btn-primary shadow-sm"
+           href="@Url.Action("MatrizbySupervisor", "Reports", new { supervisorId = supervisorId, managementSystem = currentMS })"
+           title="Refresh">
+            <i class="align-middle" data-feather="refresh-cw">&nbsp;</i>
+        </a>
     </div>
 </div>
 
@@ -33,7 +63,6 @@
                             <th class="text-center"><span class="badge bg-primary">Scheduled</span></th>
                             <th class="text-center">Actions</th>
                         </tr>
-                        <!-- Filtros por columna (opcionales) -->
                         <tr class="table-light">
                             <th><input class="form-control form-control-sm" placeholder="Control #" /></th>
                             <th><input class="form-control form-control-sm" placeholder="Name" /></th>
@@ -110,24 +139,9 @@
         $(document).ready(function () {
             const table = $('#datatables-responsive').DataTable({
                 responsive: true,
-                order: [], // sin orden por defecto
-                language: {
-                    "decimal": "",
-                    "emptyTable": "No hay información",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
-                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
-                    "thousands": ",",
-                    "lengthMenu": "Mostrar _MENU_ Entradas",
-                    "loadingRecords": "Cargando...",
-                    "processing": "Procesando...",
-                    "search": "Buscar:",
-                    "zeroRecords": "Sin resultados encontrados",
-                    "paginate": { "first": "Primero", "last": "Último", "next": "Siguiente", "previous": "Anterior" }
-                },
+                order: [],
                 initComplete: function () {
                     const api = this.api();
-                    // Filtros por texto: Control, Name, Position
                     [0, 1, 2].forEach(function (colIdx) {
                         $('thead tr:eq(1) th').eq(colIdx).find('input').on('keyup change clear', function () {
                             if (api.column(colIdx).search() !== this.value) {
@@ -138,7 +152,6 @@
                 }
             });
 
-            // Notificaciones (solo success y error)
             if ("@TempData["SuccessMessage"]" !== "") {
                 window.notyf?.open({
                     type: 'success',
