@@ -127,6 +127,22 @@
     @* Validation and Notyf *@
     <partial name="_ValidationScriptsPartial" />
 
+    @if (Context.Request.Query["expired"] == "true")
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                if (window.notyf) {
+                    window.notyf.open({
+                        type: 'error',
+                        message: 'Session has expired. Please Log In.',
+                        position: { x: 'center', y: 'top' },
+                        duration: 6000
+                    });
+                }
+            });
+        </script>
+    }
+
     <script>
         $(document).ready(function () {
 
