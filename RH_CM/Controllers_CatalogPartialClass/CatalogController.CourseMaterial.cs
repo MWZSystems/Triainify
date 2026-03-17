@@ -436,7 +436,6 @@ namespace RH_CM.Controllers
                 return RedirectToAction(nameof(EditCourseMaterial), new { id });
             }
 
-
             // Validar que contenga al menos un "/" o "\"
             if (!filePath.Contains("/") && !filePath.Contains("\\"))
             {

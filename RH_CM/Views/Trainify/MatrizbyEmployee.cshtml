@@ -4,9 +4,7 @@
     ViewData["Title"] = "Matrix by Employee";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    // Avoid null reference if Model is null
     var data = Model ?? Enumerable.Empty<RH_CM.ViewModels.MatrizByEmployeeViewModel>();
-
     var first = data.FirstOrDefault();
 
     var levelMap = data
@@ -32,6 +30,7 @@
             "EXPIRING SOON" => "bg-warning",
             "PENDING" => "bg-danger",
             "COMPLETED" => "bg-success",
+            "NO REQUIRED" => "bg-secondary",
             _ => "bg-secondary"
         };
     };
@@ -67,13 +66,8 @@
     int cntCompleted = allCells.Count(s => s.Status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase));
     int cntNoRequired = allCells.Count(s => s.Status.Equals("NO REQUIRED", StringComparison.OrdinalIgnoreCase));
 
-    // Table summary
-    int cntPermanentCompleted = cntPermanently + cntCompleted;
-
-    // Chart summary only:
-    // PERMANENTLY + COMPLETED + EXPIRING SOON
-    // NO REQUIRED is excluded from chart
-    int cntPermanentCompletedChart = cntPermanently + cntCompleted + cntExpiringSoon;
+    // PERMANENTLY + COMPLETED + EXPIRING SOON together
+    int cntPermanentCompleted = cntPermanently + cntCompleted + cntExpiringSoon;
 }
 
 <div class="row">
@@ -96,13 +90,11 @@
 
                                 <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
 
-                                    <!-- Control Number -->
                                     <div class="px-3 py-2 border rounded bg-white shadow-sm text-start">
                                         <div class="text-muted fs-6">Control #</div>
                                         <div class="fw-bold fs-4">@first.CONTROL_NUMBER</div>
                                     </div>
 
-                                    <!-- Full Name -->
                                     <div class="px-3 py-2 border rounded bg-white shadow-sm text-start">
                                         <div class="text-muted fs-6">Full Name</div>
                                         <div class="fw-bold fs-4">
@@ -110,13 +102,11 @@
                                         </div>
                                     </div>
 
-                                    <!-- Position -->
                                     <div class="px-3 py-2 border rounded bg-white shadow-sm text-start">
                                         <div class="text-muted fs-6">Position</div>
                                         <div class="fw-bold fs-4">@first.NAME_POSITION_ENGLISH</div>
                                     </div>
 
-                                    <!-- Courses -->
                                     <div class="px-3 py-2 border rounded bg-white shadow-sm text-center">
                                         <div class="text-muted fs-6">Courses Required</div>
 
@@ -177,7 +167,6 @@
             <!-- SUMMARY + CHART + LEGEND -->
             <div class="col-xl-4">
 
-                <!-- COURSE SUMMARY -->
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Course Summary</h5>
@@ -204,28 +193,21 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <i class="fas fa-square-full" style="color:#ffc107;"></i> EXPIRING SOON
-                                    </td>
-                                    <td class="text-end">@cntExpiringSoon</td>
-                                </tr>
-                                <tr>
-                                    <td>
                                         <i class="fas fa-square-full text-danger"></i> PENDING
                                     </td>
                                     <td class="text-end">@cntPending</td>
                                 </tr>
-                                <tr>
+                                @* <tr>
                                     <td>
                                         <i class="fas fa-square-full text-secondary"></i> NO REQUIRED
                                     </td>
                                     <td class="text-end">@cntNoRequired</td>
-                                </tr>
+                                </tr> *@
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- Toggle button for Status Legend -->
                 <div class="d-flex justify-content-end mt-3 mb-1">
                     <button class="btn btn-outline-info btn-sm"
                             type="button"
@@ -237,7 +219,6 @@
                     </button>
                 </div>
 
-                <!-- Status Legend -->
                 <div class="collapse mb-3" id="statusLegendAlerts">
                     <div class="card">
                         <div class="card-header">
@@ -255,7 +236,7 @@
                                 </div>
                                 <div class="alert-message">
                                     <strong>PERMANENTLY / COMPLETED:</strong>
-                                    In the chart, this group includes <strong>PERMANENTLY</strong>, <strong>COMPLETED</strong>, and <strong>EXPIRING SOON</strong>.
+                                    This group includes <strong>PERMANENTLY</strong>, <strong>COMPLETED</strong>, and <strong>EXPIRING SOON</strong> in the summary and chart.
                                 </div>
                             </div>
 
@@ -277,7 +258,7 @@
                                 </div>
                                 <div class="alert-message">
                                     <strong>EXPIRING SOON:</strong>
-                                    This status remains visible in the table, but it is grouped into <strong>PERMANENTLY / COMPLETED</strong> in the chart.
+                                    This status remains visible in the matrix table, but in the summary it is grouped into <strong>PERMANENTLY / COMPLETED</strong>.
                                 </div>
                             </div>
 
@@ -288,7 +269,7 @@
                                 </div>
                                 <div class="alert-message">
                                     <strong>NO REQUIRED:</strong>
-                                    This status is shown in the table, but it is excluded from the chart.
+                                    This status remains visible in the summary table and matrix, but it is excluded from the chart.
                                 </div>
                             </div>
 
@@ -322,7 +303,7 @@
                 data: {
                     labels: ["PERMANENTLY / COMPLETED", "PENDING"],
                     datasets: [{
-                        data: [@cntPermanentCompletedChart, @cntPending],
+                        data: [@cntPermanentCompleted, @cntPending],
                         backgroundColor: ["#198754", "#dc3545"],
                         borderWidth: 5,
                         borderColor: "#ffffff"
