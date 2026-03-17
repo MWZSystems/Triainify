@@ -75,7 +75,7 @@ namespace RH_CM.Controllers
         [Authorize(Policy = "ViewAccess")]
         public IActionResult CreateCourseMaterial(string type)
         {
-            LoadCourseAndLevelViewBags();  // <-- combos para asignar
+            LoadCourseAndLevelViewBags(); 
             ViewBag.Type = type;
             return View(new CtCoursematerial());
         }
@@ -95,9 +95,6 @@ namespace RH_CM.Controllers
                 return RedirectToAction(nameof(CreateCourseMaterial), new { type = "PDF" });
             }
 
-            // ============================
-            // ✅ REGLA: SOLO 1 PDF POR CURSO
-            // ============================
             if (fkCourse > 0)
             {
                 // 1) Si intenta subir más de 1 PDF al mismo curso en un solo post
@@ -126,9 +123,6 @@ namespace RH_CM.Controllers
                 }
             }
 
-            // ======================================================
-            // Validar que Course-Level exista en Courseassignments
-            // ======================================================
             if (fkCourse > 0 && fkLevelCourse > 0)
             {
                 bool comboExists = await _context.CtCourseassignments
@@ -223,51 +217,68 @@ namespace RH_CM.Controllers
             return RedirectToAction(nameof(IndexCourseMaterial));
         }
 
-        //Crear Material PDF
         [HttpPost]
         [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateVideoMaterial(string filePath)
         {
-            if (string.IsNullOrEmpty(filePath))
+            if (string.IsNullOrWhiteSpace(filePath))
             {
-                TempData["ErrorMessage"] = "Please Choose a Video File";
+                TempData["ErrorMessage"] = "Please choose a Video File or valid URL.";
                 return RedirectToAction(nameof(CreateCourseMaterial), new { type = "VIDEO" });
             }
 
             // Lista de extensiones permitidas
             var allowedExtensions = new[] { ".exe", ".mp4", ".avi", ".mov", ".mkv", ".wmv" };
 
-            // Obtener la extensión del archivo
-            var fileExtension = Path.GetExtension(filePath)?.ToLower();
+            bool isValidUrl = false;
 
-            if (!allowedExtensions.Contains(fileExtension))
+            // Validar si es URL http o https
+            if (Uri.TryCreate(filePath, UriKind.Absolute, out Uri uriResult))
             {
-                TempData["ErrorMessage"] = "Not Valid Extension, must end with .exe, .mp4, .avi, .mov, .mkv, .wmv";
-                return RedirectToAction(nameof(CreateCourseMaterial), new { type = "VIDEO" });
+                if (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps)
+                {
+                    isValidUrl = true;
+                }
             }
 
-
-            // Validar que contenga al menos un "/" o "\"
-            if (!filePath.Contains("/") && !filePath.Contains("\\"))
+            if (!isValidUrl)
             {
-                TempData["ErrorMessage"] = "Please enter full path! use: '/' or '\\' to be valid.";
-                return RedirectToAction(nameof(CreateCourseMaterial), new { type = "VIDEO" });
-            }
+                // Si no es URL, validar como ruta de archivo
 
+                var fileExtension = Path.GetExtension(filePath)?.ToLower();
+
+                if (!allowedExtensions.Contains(fileExtension))
+                {
+                    TempData["ErrorMessage"] = "Invalid extension. Must end with: .exe, .mp4, .avi, .mov, .mkv, .wmv OR be a valid http/https link.";
+                    return RedirectToAction(nameof(CreateCourseMaterial), new { type = "VIDEO" });
+                }
+
+                // Validar que contenga al menos "/" o "\"
+                if (!filePath.Contains("/") && !filePath.Contains("\\"))
+                {
+                    TempData["ErrorMessage"] = "Please enter a full file path using '/' or '\\'.";
+                    return RedirectToAction(nameof(CreateCourseMaterial), new { type = "VIDEO" });
+                }
+            }
 
             var fileNameOnly = Path.GetFileNameWithoutExtension(filePath);
 
+            // Si es URL, usar el último segmento del path como nombre
+            if (string.IsNullOrWhiteSpace(fileNameOnly) && isValidUrl)
+            {
+                fileNameOnly = uriResult.Segments.Last().Replace("/", "");
+            }
 
             var existsName = await _context.CtCoursematerials
                 .AsNoTracking()
                 .AnyAsync(m => m.NameMaterial == fileNameOnly && m.Available == 1);
+
             if (existsName)
             {
                 TempData["ErrorMessage"] = "A Video material with the same name already exists.";
                 return RedirectToAction(nameof(CreateCourseMaterial), new { type = "VIDEO" });
             }
-
 
             CtCoursematerial model = new CtCoursematerial();
 

@@ -4,7 +4,7 @@
     ViewData["Title"] = "Matrix by Employee";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    // Evita null reference si Model llega nulo (no cambia el resultado si hay datos)
+    // Avoid null reference if Model is null
     var data = Model ?? Enumerable.Empty<RH_CM.ViewModels.MatrizByEmployeeViewModel>();
 
     var first = data.FirstOrDefault();
@@ -59,6 +59,7 @@
         .ToList();
 
     var allCells = courseGroups.SelectMany(c => c.Cells).ToList();
+
     int cntScheduled = allCells.Count(s => s.Status.Equals("SCHEDULED", StringComparison.OrdinalIgnoreCase));
     int cntPermanently = allCells.Count(s => s.Status.Equals("PERMANENTLY", StringComparison.OrdinalIgnoreCase));
     int cntExpiringSoon = allCells.Count(s => s.Status.Equals("EXPIRING SOON", StringComparison.OrdinalIgnoreCase));
@@ -66,8 +67,13 @@
     int cntCompleted = allCells.Count(s => s.Status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase));
     int cntNoRequired = allCells.Count(s => s.Status.Equals("NO REQUIRED", StringComparison.OrdinalIgnoreCase));
 
-    // PERMANENTLY + COMPLETED juntos en la gráfica
+    // Table summary
     int cntPermanentCompleted = cntPermanently + cntCompleted;
+
+    // Chart summary only:
+    // PERMANENTLY + COMPLETED + EXPIRING SOON
+    // NO REQUIRED is excluded from chart
+    int cntPermanentCompletedChart = cntPermanently + cntCompleted + cntExpiringSoon;
 }
 
 <div class="row">
@@ -190,7 +196,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @* SCHEDULED HIDDEN *@
                                 <tr>
                                     <td>
                                         <i class="fas fa-square-full text-success"></i> PERMANENTLY / COMPLETED
@@ -232,7 +237,7 @@
                     </button>
                 </div>
 
-                <!-- Status Legend as collapsible Outline alerts -->
+                <!-- Status Legend -->
                 <div class="collapse mb-3" id="statusLegendAlerts">
                     <div class="card">
                         <div class="card-header">
@@ -243,7 +248,6 @@
                         </div>
                         <div class="card-body">
 
-                            <!-- PERMANENTLY / COMPLETED -->
                             <div class="alert alert-success alert-outline alert-dismissible mb-3" role="alert">
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 <div class="alert-icon">
@@ -251,12 +255,10 @@
                                 </div>
                                 <div class="alert-message">
                                     <strong>PERMANENTLY / COMPLETED:</strong>
-                                    Both <strong>PERMANENTLY</strong> and <strong>COMPLETED</strong> are shown together in green.
-                                    They indicate that the course requirement is fully satisfied and does not require further action.
+                                    In the chart, this group includes <strong>PERMANENTLY</strong>, <strong>COMPLETED</strong>, and <strong>EXPIRING SOON</strong>.
                                 </div>
                             </div>
 
-                            <!-- PENDING -->
                             <div class="alert alert-danger alert-outline alert-dismissible mb-3" role="alert">
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 <div class="alert-icon">
@@ -268,7 +270,6 @@
                                 </div>
                             </div>
 
-                            <!-- EXPIRING SOON -->
                             <div class="alert alert-warning alert-outline alert-dismissible mb-3" role="alert">
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 <div class="alert-icon">
@@ -276,11 +277,10 @@
                                 </div>
                                 <div class="alert-message">
                                     <strong>EXPIRING SOON:</strong>
-                                    The course validity is about to expire. A renewal or retraining will be needed soon.
+                                    This status remains visible in the table, but it is grouped into <strong>PERMANENTLY / COMPLETED</strong> in the chart.
                                 </div>
                             </div>
 
-                            <!-- NO REQUIRED -->
                             <div class="alert alert-secondary alert-outline alert-dismissible mb-0" role="alert">
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 <div class="alert-icon">
@@ -288,7 +288,7 @@
                                 </div>
                                 <div class="alert-message">
                                     <strong>NO REQUIRED:</strong>
-                                    The course is not required for this specific level or position.
+                                    This status is shown in the table, but it is excluded from the chart.
                                 </div>
                             </div>
 
@@ -296,7 +296,7 @@
                     </div>
                 </div>
 
-            </div> <!-- /col-xl-4 -->
+            </div>
         </div>
     </div>
 </div>
@@ -320,10 +320,10 @@
             new Chart(ctx, {
                 type: "pie",
                 data: {
-                    labels: ["PERMANENTLY / COMPLETED", "EXPIRING SOON", "PENDING"],
+                    labels: ["PERMANENTLY / COMPLETED", "PENDING"],
                     datasets: [{
-                        data: [@cntPermanentCompleted, @cntExpiringSoon, @cntPending],
-                        backgroundColor: ["#198754", "#ffc107", "#dc3545"],
+                        data: [@cntPermanentCompletedChart, @cntPending],
+                        backgroundColor: ["#198754", "#dc3545"],
                         borderWidth: 5,
                         borderColor: "#ffffff"
                     }]
@@ -332,7 +332,9 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     cutout: "70%",
-                    plugins: { legend: { display: false } }
+                    plugins: {
+                        legend: { display: false }
+                    }
                 }
             });
         });

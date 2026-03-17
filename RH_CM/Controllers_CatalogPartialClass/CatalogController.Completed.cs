@@ -57,7 +57,6 @@ namespace RH_CM.Controllers
             return View(lista);
         }
 
-
         [Authorize(Policy = "ViewAccess")]
         public IActionResult IndexCourseCompleted()
         {
@@ -91,7 +90,6 @@ namespace RH_CM.Controllers
 
             return View(rows);
         }
-
 
         [Authorize(Policy = "ViewAccess")]
         [HttpGet]
@@ -345,9 +343,6 @@ namespace RH_CM.Controllers
             return RedirectToAction(nameof(CreateCourseCompletedBulk), new { fkCourse = FkCourse, fkLevel = FkRequiredCourseLevels });
         }
 
-        /// <summary>
-        /// Pobla combos (Courses/Levels) con Available=1.
-        /// </summary>
         private void LoadDeleteCourseCompletedBulkViewBags(int selectedFkCourse, int selectedFkLevel)
         {
             var courses = _context.CtCourses!
@@ -355,13 +350,6 @@ namespace RH_CM.Controllers
                 .Where(c => c.Available == 1)
                 .OrderBy(c => c.CourseName)
                 .Select(c => new { c.PkCourse, c.CourseName })
-                .ToList();
-
-            var levels = _context.CtLevelcourses!
-                .AsNoTracking()
-                .Where(l => l.Available == 1)
-                .OrderBy(l => l.PkLevelcourse)
-                .Select(l => new { l.PkLevelcourse, l.DescripctionLevel })
                 .ToList();
 
             ViewBag.Courses = courses
@@ -373,6 +361,33 @@ namespace RH_CM.Controllers
                 })
                 .ToList();
 
+            var levelsQuery =
+                from ca in _context.CtCourseassignments.AsNoTracking()
+                join l in _context.CtLevelcourses.AsNoTracking()
+                    on ca.FkRequiredCourseLevels equals l.PkLevelcourse
+                join c in _context.CtCourses.AsNoTracking()
+                    on ca.FkCourse equals c.PkCourse
+                where
+                    ca.Available == 1
+                    && l.Available == 1
+                    && c.Available == 1
+                    && (selectedFkCourse <= 0 || ca.FkCourse == selectedFkCourse)
+                select new
+                {
+                    l.PkLevelcourse,
+                    l.DescripctionLevel
+                };
+
+            var levels = levelsQuery
+                .Distinct()
+                .OrderBy(x => x.PkLevelcourse)
+                .ToList();
+
+            if (selectedFkCourse > 0 && selectedFkLevel > 0 && !levels.Any(x => x.PkLevelcourse == selectedFkLevel))
+            {
+                selectedFkLevel = 0;
+            }
+
             ViewBag.Levels = levels
                 .Select(l => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
                 {
@@ -383,20 +398,17 @@ namespace RH_CM.Controllers
                 .ToList();
         }
 
-        // GET: DeleteCourseCompletedBulk  (LISTA con EF/LINQ — SIN SP)
         [Authorize(Policy = "ViewAccess")]
         public IActionResult DeleteCourseCompletedBulk(int? fkCourse, int? fkLevel)
         {
             int selectedFkCourse = fkCourse ?? 0;
             int selectedFkLevel = fkLevel ?? 0;
 
-            // Combos
             LoadDeleteCourseCompletedBulkViewBags(selectedFkCourse, selectedFkLevel);
 
             ViewBag.SelectedFkCourse = selectedFkCourse;
             ViewBag.SelectedFkLevel = selectedFkLevel;
 
-            // Requerir curso + nivel
             bool needFilters = (selectedFkCourse <= 0 || selectedFkLevel <= 0);
             ViewBag.NeedFilters = needFilters;
 
@@ -404,7 +416,6 @@ namespace RH_CM.Controllers
 
             if (!needFilters)
             {
-                // Construimos la lista con EF (joins) — solo disponibles
                 var query =
                     from cc in _context.SyCoursecompleteds.AsNoTracking()
                     join ca in _context.CtCourseassignments.AsNoTracking()
@@ -420,7 +431,6 @@ namespace RH_CM.Controllers
                     join h in _context.SyHeadcounts.AsNoTracking()
                         on cc.FkHeadcount equals h.PkHeadcount
                     where
-                        // disponibles
                         cc.Avaialble == 1
                         && (c.Available == 1 || c.Available == null)
                         && (ca.Available == 1 || ca.Available == null)
@@ -428,7 +438,6 @@ namespace RH_CM.Controllers
                         && (cs.Available == 1 || cs.Available == null)
                         && (dm.Available == 1 || dm.Available == null)
                         && (h.Available == 1 || h.Available == null)
-                        // filtros obligatorios
                         && ca.FkCourse == selectedFkCourse
                         && ca.FkRequiredCourseLevels == selectedFkLevel
                     select new

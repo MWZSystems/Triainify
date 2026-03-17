@@ -1,12 +1,13 @@
-﻿@using RH_CM.ViewModels;
+﻿@using Microsoft.AspNetCore.Mvc.Rendering
+@using RH_CM.ViewModels
 
 @{
     ViewData["Title"] = "Delete Course Completed (Bulk)";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    var rows = (IEnumerable<CourseCompletedRowDtoViewModel>)ViewBag.CourseCompletedRows;
-    var courses = (IEnumerable<SelectListItem>)ViewBag.Courses;
-    var levels = (IEnumerable<SelectListItem>)ViewBag.Levels;
+    var rows = (IEnumerable<CourseCompletedRowDtoViewModel>)(ViewBag.CourseCompletedRows ?? new List<CourseCompletedRowDtoViewModel>());
+    var courses = (IEnumerable<SelectListItem>)(ViewBag.Courses ?? new List<SelectListItem>());
+    var levels = (IEnumerable<SelectListItem>)(ViewBag.Levels ?? new List<SelectListItem>());
 
     int selectedFkCourse = (int)(ViewBag.SelectedFkCourse ?? 0);
     int selectedFkLevel = (int)(ViewBag.SelectedFkLevel ?? 0);
@@ -27,29 +28,38 @@
             <div class="row g-3 align-items-end">
                 <div class="col-md-3">
                     <label class="form-label">Course <span class="text-danger">*</span></label>
-                    <select class="form-control select2" name="fkCourse" id="FkCourse" @(lockFilters ? "disabled" : "") required>
+                    <select class="form-control select2"
+                            name="fkCourse"
+                            id="FkCourse"
+                            @(lockFilters ? "disabled" : "")>
                         <option value="">-- Select Course --</option>
                         @foreach (var c in courses)
                         {
-                            <option value="@c.Value" selected="@(c.Selected)">@c.Text</option>
+                            <option value="@c.Value" selected="@(c.Selected ? "selected" : null)">@c.Text</option>
                         }
                     </select>
                 </div>
+
                 <div class="col-md-3">
                     <label class="form-label">Required Level <span class="text-danger">*</span></label>
-                    <select class="form-control select2" name="fkLevel" id="FkLevel" @(lockFilters ? "disabled" : "") required>
+                    <select class="form-control select2"
+                            name="fkLevel"
+                            id="FkLevel"
+                            @(lockFilters ? "disabled" : "")>
                         <option value="">-- Select Level --</option>
                         @foreach (var l in levels)
                         {
-                            <option value="@l.Value" selected="@(l.Selected)">@l.Text</option>
+                            <option value="@l.Value" selected="@(l.Selected ? "selected" : null)">@l.Text</option>
                         }
                     </select>
                 </div>
+
                 <div class="col-md-2 align-self-end">
                     <button type="submit" class="btn btn-primary w-100" id="btnSearch">
                         <i class="fas fa-search"></i> Search
                     </button>
                 </div>
+
                 <div class="col-md-2 align-self-end">
                     <a href="@Url.Action("DeleteCourseCompletedBulk")" class="btn btn-outline-secondary w-100">
                         <i class="fas fa-undo"></i> Clear
@@ -60,12 +70,14 @@
             @if (needFilters)
             {
                 <div class="alert alert-warning mt-3 mb-0" role="alert">
-                    Debes seleccionar <strong>Course</strong> y <strong>Required Level</strong> para mostrar resultados.
+                    You must select <strong>Course</strong> and <strong>Required Level</strong> to display results.
                 </div>
             }
             else
             {
-                <small class="text-muted mt-2 d-block">Puedes refinar seleccionando otro curso/nivel.</small>
+                <small class="text-muted mt-2 d-block">
+                    You can refine the search by selecting a different course or level.
+                </small>
             }
         </form>
     </div>
@@ -78,12 +90,12 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div>
-                        <h5 class="card-title mb-0">Course Completed encontrados</h5>
-                        <div class="card-subtitle text-muted">Selecciona múltiples registros para eliminar.</div>
+                        <h5 class="card-title mb-0">Course Completed Found</h5>
+                        <div class="card-subtitle text-muted">Select multiple records to delete.</div>
                     </div>
                     <div class="d-flex align-items-center gap-2">
                         <input id="searchRows" class="form-control form-control-sm" placeholder="Search" style="max-width: 220px;" />
-                        <span class="badge bg-info text-dark" id="badge-count-rows">Seleccionados: 0</span>
+                        <span class="badge bg-info text-dark" id="badge-count-rows">Selected: 0</span>
                     </div>
                 </div>
 
@@ -99,21 +111,22 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th style="width:44px;">
-                                            <input type="checkbox" class="form-check-input"
+                                            <input type="checkbox"
+                                                   class="form-check-input"
                                                    onclick="toggleAll('SelectedCourseCompletedIds', this.checked)" />
                                         </th>
                                         <th>Control #</th>
-                                        <th>Nombre</th>
-                                        <th>Curso</th>
-                                        <th>Nivel</th>
-                                        <th>Estatus</th>
-                                        <th>Modo</th>
+                                        <th>Name</th>
+                                        <th>Course</th>
+                                        <th>Level</th>
+                                        <th>Status</th>
+                                        <th>Mode</th>
                                         <th class="text-end">Score</th>
-                                        <th>Fecha</th>
+                                        <th>Date</th>
                                     </tr>
                                 </thead>
                                 <tbody id="rowsWrapper">
-                                    @if (rows?.Any() == true)
+                                    @if (rows.Any())
                                     {
                                         foreach (var r in rows)
                                         {
@@ -139,7 +152,7 @@
                                     else
                                     {
                                         <tr>
-                                            <td colspan="9" class="text-muted">No hay registros con los filtros aplicados.</td>
+                                            <td colspan="9" class="text-muted">No records were found with the selected filters.</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -158,7 +171,7 @@
                 </div>
 
                 <div class="card-footer text-muted small">
-                    Tip: el buscador ignora acentos y trata <code>ñ</code> distinto de <code>n</code>.
+                    Tip: the search ignores accents and treats <code>ñ</code> differently from <code>n</code>.
                 </div>
             </div>
         </div>
@@ -170,14 +183,20 @@
 
     <script>
         function toggleAll(name, check) {
-            document.querySelectorAll(`input[name='${name}']`).forEach(el => { el.checked = check; });
+            document.querySelectorAll(`input[name='${name}']`).forEach(el => {
+                el.checked = check;
+            });
             updateCounts();
         }
+
         function updateCounts() {
             const count = document.querySelectorAll("input[name='SelectedCourseCompletedIds']:checked").length;
             const badge = document.getElementById('badge-count-rows');
-            if (badge) badge.textContent = `Seleccionados: ${count}`;
+            if (badge) {
+                badge.textContent = `Selected: ${count}`;
+            }
         }
+
         function foldEs(str) {
             return (str ?? '')
                 .toString()
@@ -186,10 +205,13 @@
                 .replace(/n\u0303/g, 'ñ')
                 .replace(/[\u0300-\u036f]/g, '');
         }
+
         function attachFilter(inputId, tbodySelector) {
             const input = document.getElementById(inputId);
             const tbody = document.querySelector(tbodySelector);
+
             if (!input || !tbody) return;
+
             input.addEventListener('input', () => {
                 const q = foldEs(input.value);
                 tbody.querySelectorAll('tr.data-row').forEach(row => {
@@ -198,26 +220,64 @@
                 });
             });
         }
-        attachFilter('searchRows', '#rowsWrapper');
 
-        function hasValue(v) { return v !== null && v !== undefined && v !== '' && v !== '0'; }
+        function hasValue(v) {
+            return v !== null && v !== undefined && v !== '' && v !== '0';
+        }
+
         function toggleSearchButton() {
             const courseVal = $('#FkCourse').val();
-            const levelVal  = $('#FkLevel').val();
-            const enabled   = hasValue(courseVal) && hasValue(levelVal);
+            const levelVal = $('#FkLevel').val();
+            const enabled = hasValue(courseVal) && hasValue(levelVal);
             $('#btnSearch').prop('disabled', !enabled);
         }
+
         $(document).ready(function () {
             updateCounts();
-            $('.select2').select2({ theme: 'bootstrap4', placeholder: 'Select an option', allowClear: true });
-            $('#FkCourse, #FkLevel').on('change', toggleSearchButton);
+            attachFilter('searchRows', '#rowsWrapper');
+
+            $('.select2').select2({
+                theme: 'bootstrap4',
+                placeholder: 'Select an option',
+                allowClear: true,
+                width: '100%'
+            });
+
+            // When course changes:
+            // 1. Clear selected level
+            // 2. Submit the form by GET
+            // 3. Controller reloads only valid levels for that course
+            $('#FkCourse').on('change', function () {
+                $('#FkLevel').val('').trigger('change');
+                $('#filterForm').submit();
+            });
+
+            $('#FkCourse, #FkLevel').on('change', function () {
+                toggleSearchButton();
+            });
+
             toggleSearchButton();
 
             if ('@TempData["SuccessMessage"]' !== '') {
-                window.notyf?.open({ type: 'success', message: '@TempData["SuccessMessage"]', duration: 5000, position: { x: 'center', y: 'top' } });
+                window.notyf?.open({
+                    type: 'success',
+                    message: '@TempData["SuccessMessage"]',
+                    duration: 5000,
+                    dismissible: true,
+                    ripple: true,
+                    position: { x: 'center', y: 'top' }
+                });
             }
+
             if ('@TempData["ErrorMessage"]' !== '') {
-                window.notyf?.open({ type: 'error', message: '@TempData["ErrorMessage"]', duration: 5000, position: { x: 'center', y: 'top' } });
+                window.notyf?.open({
+                    type: 'error',
+                    message: '@TempData["ErrorMessage"]',
+                    duration: 5000,
+                    dismissible: true,
+                    ripple: true,
+                    position: { x: 'center', y: 'top' }
+                });
             }
         });
     </script>

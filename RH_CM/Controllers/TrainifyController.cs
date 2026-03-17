@@ -29,7 +29,7 @@ namespace RH_CM.Controllers
         {
             _context = context;
             _userManager = userManager;
-            _connString = configuration.GetConnectionString("ConexionSQL"); // 👈 fuerza esta conexión
+            _connString = configuration.GetConnectionString("ConexionSQL"); 
         }
         // Helper: combo de posiciones
         private async Task<List<SelectListItem>> GetPositionsAsync()
@@ -56,7 +56,7 @@ namespace RH_CM.Controllers
             {
                 Positions = await GetPositionsAsync()
             };
-            return View(vm); // View: MatrizbyPositionSelectPosition.cshtml
+            return View(vm); 
         }
 
         [HttpPost]
@@ -73,8 +73,6 @@ namespace RH_CM.Controllers
 
             return RedirectToAction(nameof(MatrizByPosition), new { fkPosition = vm.SelectedPositionId.Value });
         }
-
-        // ------------------- Ventana B: Matriz (SOLO muestra) -------------------
 
         [Authorize]
         [HttpGet]
@@ -144,7 +142,7 @@ namespace RH_CM.Controllers
                 TempData["ErrorMessage"] = $"Ocurrió un error: {ex.Message}";
             }
 
-            return View(pageVm); // View: MatrizByPosition.cshtml (solo muestra)
+            return View(pageVm); 
         }
 
         [Authorize]
