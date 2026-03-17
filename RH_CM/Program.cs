@@ -49,12 +49,25 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = new PathString("/Cuentas/Acceso");
     options.AccessDeniedPath = new PathString("/Cuentas/Denegado");
+
+    // ⏱ Expiración del login
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+
+    // 🔄 Si el usuario sigue activo se renueva el tiempo
+    options.SlidingExpiration = true;
+
+    // 🚪 Cuando expire lo manda al login con indicador
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.Redirect("/Cuentas/Acceso?expired=true");
+        return Task.CompletedTask;
+    };
 });
 
 // ✅ Session (una sola vez)
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(120);
+    options.IdleTimeout = TimeSpan.FromHours(8);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });

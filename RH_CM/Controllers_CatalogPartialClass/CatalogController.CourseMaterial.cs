@@ -228,47 +228,28 @@ namespace RH_CM.Controllers
                 return RedirectToAction(nameof(CreateCourseMaterial), new { type = "VIDEO" });
             }
 
-            // Lista de extensiones permitidas
-            var allowedExtensions = new[] { ".exe", ".mp4", ".avi", ".mov", ".mkv", ".wmv" };
+            //// Lista de extensiones permitidas
+            //var allowedExtensions = new[] { ".exe", ".mp4", ".avi", ".mov", ".mkv", ".wmv" };
 
-            bool isValidUrl = false;
+            //// Obtener la extensión del archivo
+            //var fileExtension = Path.GetExtension(filePath)?.ToLower();
 
-            // Validar si es URL http o https
-            if (Uri.TryCreate(filePath, UriKind.Absolute, out Uri uriResult))
+            //if (!allowedExtensions.Contains(fileExtension))
+            //{
+            //    TempData["ErrorMessage"] = "Not Valid Extension, must end with .exe, .mp4, .avi, .mov, .mkv, .wmv";
+            //    return RedirectToAction(nameof(CreateCourseMaterial), new { type = "VIDEO" });
+            //}
+
+
+            // Validar que contenga al menos un "/" o "\"
+            if (!filePath.Contains("https://"))
             {
-                if (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps)
-                {
-                    isValidUrl = true;
-                }
-            }
-
-            if (!isValidUrl)
-            {
-                // Si no es URL, validar como ruta de archivo
-
-                var fileExtension = Path.GetExtension(filePath)?.ToLower();
-
-                if (!allowedExtensions.Contains(fileExtension))
-                {
-                    TempData["ErrorMessage"] = "Invalid extension. Must end with: .exe, .mp4, .avi, .mov, .mkv, .wmv OR be a valid http/https link.";
-                    return RedirectToAction(nameof(CreateCourseMaterial), new { type = "VIDEO" });
-                }
-
-                // Validar que contenga al menos "/" o "\"
-                if (!filePath.Contains("/") && !filePath.Contains("\\"))
-                {
-                    TempData["ErrorMessage"] = "Please enter a full file path using '/' or '\\'.";
-                    return RedirectToAction(nameof(CreateCourseMaterial), new { type = "VIDEO" });
-                }
+                TempData["ErrorMessage"] = "Please enter full path! use: https:// to be valid.";
+                return RedirectToAction(nameof(CreateCourseMaterial), new { type = "VIDEO" });
             }
 
             var fileNameOnly = Path.GetFileNameWithoutExtension(filePath);
 
-            // Si es URL, usar el último segmento del path como nombre
-            if (string.IsNullOrWhiteSpace(fileNameOnly) && isValidUrl)
-            {
-                fileNameOnly = uriResult.Segments.Last().Replace("/", "");
-            }
 
             var existsName = await _context.CtCoursematerials
                 .AsNoTracking()
@@ -421,26 +402,26 @@ namespace RH_CM.Controllers
             if (string.IsNullOrEmpty(filePath))
             {
                 TempData["ErrorMessage"] = "Please Choose a Video File";
-                return RedirectToAction(nameof(EditCourseMaterial), new { id });
+                return RedirectToAction(nameof(EditPDFMaterial), new { id });
             }
 
-            // Lista de extensiones permitidas
-            var allowedExtensions = new[] { ".exe", ".mp4", ".avi", ".mov", ".mkv", ".wmv" };
+            //// Lista de extensiones permitidas
+            //var allowedExtensions = new[] { ".exe", ".mp4", ".avi", ".mov", ".mkv", ".wmv" };
 
-            // Obtener la extensión del archivo
-            var fileExtension = Path.GetExtension(filePath)?.ToLower();
+            //// Obtener la extensión del archivo
+            //var fileExtension = Path.GetExtension(filePath)?.ToLower();
 
-            if (!allowedExtensions.Contains(fileExtension))
-            {
-                TempData["ErrorMessage"] = "Not Valid Extension, must end with .exe, .mp4, .avi, .mov, .mkv, .wmv";
-                return RedirectToAction(nameof(EditCourseMaterial), new { id });
-            }
+            //if (!allowedExtensions.Contains(fileExtension))
+            //{
+            //    TempData["ErrorMessage"] = "Not Valid Extension, must end with .exe, .mp4, .avi, .mov, .mkv, .wmv";
+            //    return RedirectToAction(nameof(CreateCourseMaterial), new { type = "VIDEO" });
+            //}
 
             // Validar que contenga al menos un "/" o "\"
-            if (!filePath.Contains("/") && !filePath.Contains("\\"))
+            if (!filePath.Contains("https://"))
             {
-                TempData["ErrorMessage"] = "Please enter full path! use: '/' or '\\' to be valid.";
-                return RedirectToAction(nameof(EditCourseMaterial), new { id });
+                TempData["ErrorMessage"] = "Please enter full path! use: https:// to be valid.";
+                return RedirectToAction(nameof(CreateCourseMaterial), new { type = "VIDEO" });
             }
 
             var fileNameOnly = Path.GetFileNameWithoutExtension(filePath);
