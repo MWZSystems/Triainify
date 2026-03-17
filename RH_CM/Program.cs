@@ -51,7 +51,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = new PathString("/Cuentas/Denegado");
 
     // ⏱ Expiración del login
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
 
     // 🔄 Si el usuario sigue activo se renueva el tiempo
     options.SlidingExpiration = true;
@@ -67,7 +67,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 // ✅ Session (una sola vez)
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.IdleTimeout = TimeSpan.FromHours(8);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
