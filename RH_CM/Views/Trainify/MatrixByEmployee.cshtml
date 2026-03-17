@@ -1,15 +1,17 @@
 ﻿@model IEnumerable<RH_CM.ViewModels.MatrizByEmployeeViewModel>
+@using Microsoft.AspNetCore.Mvc.Rendering
 
 @{
-    ViewData["Title"] = "Employee Matrix";
+    ViewData["Title"] = "Matrix";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    // Evita null reference si Model llega nulo
     var data = Model ?? Enumerable.Empty<RH_CM.ViewModels.MatrizByEmployeeViewModel>();
-
     var first = data.FirstOrDefault();
 
-    // Construir el mapa nivel -> descripción (tomado del SP)
+    string mode = (ViewBag.Mode as string) ?? "EMPLOYEE";
+    int? selectedPositionId = ViewBag.SelectedPositionId as int?;
+    var positions = (IEnumerable<SelectListItem>)(ViewBag.Positions ?? new List<SelectListItem>());
+
     var levelMap = data
         .GroupBy(m => m.FK_RequiredCourseLevels)
         .Select(g => new
@@ -21,10 +23,8 @@
         .OrderBy(x => x.Level)
         .ToList();
 
-    // Lista ordenada de niveles (para iterar columnas)
     var levels = levelMap.Select(x => x.Level).ToList();
 
-    // Mapeo de badge por estado
     Func<string, string> badgeClass = (statusRaw) =>
     {
         var s = (statusRaw ?? "").Trim().ToUpperInvariant();
@@ -32,14 +32,15 @@
         {
             "SCHEDULED" => "bg-primary",
             "PERMANENTLY" => "bg-dark",
-            "EXPIRING SOON" => "bg-warning",
+            "EXPIRING SOON" => "bg-warning text-dark",
             "PENDING" => "bg-danger",
             "COMPLETED" => "bg-success",
-            _ => "bg-secondary" // NO REQUIRED u otro
+            "NO REQUIRED" => "bg-secondary",
+            "NO ASSIGNED" => "bg-light text-dark border",
+            _ => "bg-secondary"
         };
     };
 
-    // Agrupar cursos => celdas por nivel; si falta una fila para un nivel => NO REQUIRED
     var courseGroups = data
         .GroupBy(x => new { x.FK_Course, x.CourseName })
         .OrderBy(g => g.Key.CourseName)
@@ -52,77 +53,86 @@
                 var cell = g.FirstOrDefault(r => r.FK_RequiredCourseLevels == l);
                 if (cell == null)
                 {
-                    return new { Level = l, Status = "NO REQUIRED", Class = "bg-secondary" };
+                    return new { Level = l, Status = "NO ASSIGNED", Class = "bg-light text-dark border" };
                 }
 
-                var status = (cell.CourseStatus ?? "").Trim();  // COMPLETED | PERMANENTLY | SCHEDULED | EXPIRING SOON | PENDING
+                var status = (cell.CourseStatus ?? "").Trim();
                 var cls = badgeClass(status);
                 return new { Level = l, Status = status, Class = cls };
             }).ToList()
         })
         .ToList();
 
-    // Resumen para chart (contar todas las celdas, incluyendo NO REQUIRED)
     var allCells = courseGroups.SelectMany(c => c.Cells).ToList();
-    int cntScheduled = allCells.Count(s => s.Status.Equals("SCHEDULED", StringComparison.OrdinalIgnoreCase));
+
     int cntPermanently = allCells.Count(s => s.Status.Equals("PERMANENTLY", StringComparison.OrdinalIgnoreCase));
     int cntExpiringSoon = allCells.Count(s => s.Status.Equals("EXPIRING SOON", StringComparison.OrdinalIgnoreCase));
     int cntPending = allCells.Count(s => s.Status.Equals("PENDING", StringComparison.OrdinalIgnoreCase));
     int cntCompleted = allCells.Count(s => s.Status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase));
-    int cntNoRequired = allCells.Count(s => s.Status.Equals("NO REQUIRED", StringComparison.OrdinalIgnoreCase));
 
-    // PERMANENTLY + COMPLETED juntos en la gráfica
-    int cntPermanentCompleted = cntPermanently + cntCompleted;
+    int cntPermanentCompleted = cntPermanently + cntCompleted + cntExpiringSoon;
+
+    int coursesNeedingAttention = courseGroups.Count(c =>
+        c.Cells.Any(cell =>
+            cell.Status.Equals("PENDING", StringComparison.OrdinalIgnoreCase) ||
+            cell.Status.Equals("EXPIRING SOON", StringComparison.OrdinalIgnoreCase)
+        )
+    );
+
+    string pageTitle = mode == "POSITION" ? "MATRIX BY POSITION" : "MATRIX BY EMPLOYEE";
 }
+
+@* <div class="row mb-3">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">
+            <i class="fas fa-table me-2"></i>@pageTitle
+        </h1>
+    </div>
+</div> *@
 
 <div class="row">
     <div class="col-xl-12">
         <div class="row">
 
-            <!-- MATRIX -->
             <div class="col-xl-8">
                 <div class="card">
                     <div class="card-header bg-light border-bottom">
-
                         @if (first != null)
                         {
                             <div class="d-flex flex-column align-items-center text-center py-2">
-
                                 <h4 class="fw-bold text-dark mb-1">
                                     <i class="fas fa-id-card-alt me-2 text-secondary"></i>
-                                    MATRIX BY EMPLOYEE
+                                    @pageTitle
                                 </h4>
 
                                 <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
 
-                                    <!-- Control Number -->
-                                    <div class="px-3 py-2 border rounded bg-white shadow-sm text-start">
-                                        <div class="text-muted fs-6">Control #</div>
-                                        <div class="fw-bold fs-4">@first.CONTROL_NUMBER</div>
-                                    </div>
-
-                                    <!-- Full Name -->
-                                    <div class="px-3 py-2 border rounded bg-white shadow-sm text-start">
-                                        <div class="text-muted fs-6">Full Name</div>
-                                        <div class="fw-bold fs-4">
-                                            @first.NAMES @first.LAST_NAME @first.SECOND_NAME
+                                    @if (mode == "EMPLOYEE")
+                                    {
+                                        <div class="px-3 py-2 border rounded bg-white shadow-sm text-start">
+                                            <div class="text-muted fs-6">Control #</div>
+                                            <div class="fw-bold fs-4">@first.CONTROL_NUMBER</div>
                                         </div>
-                                    </div>
 
-                                    <!-- Position -->
+                                        <div class="px-3 py-2 border rounded bg-white shadow-sm text-start">
+                                            <div class="text-muted fs-6">Full Name</div>
+                                            <div class="fw-bold fs-4">
+                                                @first.NAMES @first.LAST_NAME @first.SECOND_NAME
+                                            </div>
+                                        </div>
+                                    }
+
                                     <div class="px-3 py-2 border rounded bg-white shadow-sm text-start">
                                         <div class="text-muted fs-6">Position</div>
                                         <div class="fw-bold fs-4">@first.NAME_POSITION_ENGLISH</div>
                                     </div>
 
-                                    <!-- Courses -->
                                     <div class="px-3 py-2 border rounded bg-white shadow-sm text-center">
-                                        <div class="text-muted fs-6">Courses Required</div>
-
+                                        <div class="text-muted fs-6">Courses Needing Attention</div>
                                         <div class="fw-bold fs-3 mt-3 d-flex justify-content-center">
-                                            <div class="bg-primary text-white d-flex align-items-center justify-content-center"
-                                                 style="width: 90px; height: 60px; font-size: 1.7rem; border-radius: 10px;">
-                                                @courseGroups.Count
+                                            <div class="bg-danger text-white d-flex align-items-center justify-content-center rounded"
+                                                 style="width: 90px; height: 60px;">
+                                                @coursesNeedingAttention
                                             </div>
                                         </div>
                                     </div>
@@ -150,11 +160,9 @@
                                     {
                                         <tr>
                                             <td>@c.CourseName</td>
-
                                             @foreach (var cell in c.Cells)
                                             {
                                                 <td>
-                                                    @* Igual que en el primer view: NO mostramos SCHEDULED *@
                                                     @if (!cell.Status.Equals("SCHEDULED", StringComparison.OrdinalIgnoreCase))
                                                     {
                                                         <span class="badge @cell.Class">@cell.Status</span>
@@ -174,10 +182,7 @@
                 </div>
             </div>
 
-            <!-- SUMMARY + CHART + LEGEND -->
             <div class="col-xl-4">
-
-                <!-- COURSE SUMMARY -->
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title mb-0">Course Summary</h5>
@@ -196,113 +201,96 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @* SCHEDULED se oculta del resumen y gráfica *@
                                 <tr>
-                                    <td>
-                                        <i class="fas fa-square-full text-success"></i> PERMANENTLY / COMPLETED
-                                    </td>
+                                    <td><i class="fas fa-square-full text-success"></i> PERMANENTLY / COMPLETED</td>
                                     <td class="text-end">@cntPermanentCompleted</td>
                                 </tr>
                                 <tr>
-                                    <td>
-                                        <i class="fas fa-square-full" style="color:#ffc107;"></i> EXPIRING SOON
-                                    </td>
-                                    <td class="text-end">@cntExpiringSoon</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <i class="fas fa-square-full text-danger"></i> PENDING
-                                    </td>
+                                    <td><i class="fas fa-square-full text-danger"></i> PENDING</td>
                                     <td class="text-end">@cntPending</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <i class="fas fa-square-full text-secondary"></i> NO REQUIRED
-                                    </td>
-                                    <td class="text-end">@cntNoRequired</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- Botón para mostrar/ocultar Status Legend -->
+                @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Administrador"))
+                {
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">View Options</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="get" asp-action="MatrixByEmployee" id="matrixViewOptionsForm">
+                                <div class="mb-3">
+                                    <label class="form-label">Mode</label>
+                                    <select class="form-control" name="mode" id="modeSelector">
+                                        <option value="EMPLOYEE" selected="@(mode == "EMPLOYEE")">Employee</option>
+                                        <option value="POSITION" selected="@(mode == "POSITION")">Position</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3" id="positionContainer" style="display:@(mode == "POSITION" ? "block" : "none")">
+                                    <label class="form-label">Position</label>
+                                    <select class="form-control select2" name="fkPosition" id="fkPosition">
+                                        <option value="">-- Select Position --</option>
+                                        @foreach (var p in positions)
+                                        {
+                                            <option value="@p.Value" selected="@(selectedPositionId?.ToString() == p.Value)">@p.Text</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search"></i> Load
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                }
+
                 <div class="d-flex justify-content-end mt-3 mb-1">
                     <button class="btn btn-outline-info btn-sm"
                             type="button"
                             data-bs-toggle="collapse"
-                            data-bs-target="#statusLegendAlerts"
-                            aria-expanded="false"
-                            aria-controls="statusLegendAlerts">
+                            data-bs-target="#statusLegendAlerts">
                         <i class="fas fa-info-circle"></i> Status legend
                     </button>
                 </div>
 
-                <!-- Status Legend como collapse con alerts (igual que el primer view) -->
                 <div class="collapse mb-3" id="statusLegendAlerts">
                     <div class="card">
                         <div class="card-header">
                             <h5 class="card-title mb-0">Status legend</h5>
-                            <h6 class="card-subtitle text-muted">
-                                Description of course status colors and how they are grouped in the summary chart.
-                            </h6>
                         </div>
                         <div class="card-body">
-
-                            <!-- PERMANENTLY / COMPLETED -->
-                            <div class="alert alert-success alert-outline alert-dismissible mb-3" role="alert">
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                <div class="alert-icon">
-                                    <i class="fas fa-check-circle"></i>
-                                </div>
-                                <div class="alert-message">
-                                    <strong>PERMANENTLY / COMPLETED:</strong>
-                                    Both <strong>PERMANENTLY</strong> and <strong>COMPLETED</strong> are shown together in green.
-                                    They indicate that the course requirement is fully satisfied and does not require further action.
-                                </div>
+                            <div class="alert alert-success alert-outline mb-3">
+                                <strong>PERMANENTLY / COMPLETED:</strong>
+                                Includes PERMANENTLY, COMPLETED, and EXPIRING SOON in the summary and chart.
                             </div>
-
-                            <!-- PENDING -->
-                            <div class="alert alert-danger alert-outline alert-dismissible mb-3" role="alert">
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                <div class="alert-icon">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                </div>
-                                <div class="alert-message">
-                                    <strong>PENDING:</strong>
-                                    The course is overdue or has not been completed yet. Immediate attention is required.
-                                </div>
+                            <div class="alert alert-danger alert-outline mb-3">
+                                <strong>PENDING:</strong>
+                                The course is overdue or has not been completed yet.
                             </div>
-
-                            <!-- EXPIRING SOON -->
-                            <div class="alert alert-warning alert-outline alert-dismissible mb-3" role="alert">
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                <div class="alert-icon">
-                                    <i class="fas fa-hourglass-half"></i>
-                                </div>
-                                <div class="alert-message">
-                                    <strong>EXPIRING SOON:</strong>
-                                    The course validity is about to expire. A renewal or retraining will be needed soon.
-                                </div>
+                            <div class="alert alert-warning alert-outline mb-3">
+                                <strong>EXPIRING SOON:</strong>
+                                Visible in the matrix, grouped in summary.
                             </div>
-
-                            <!-- NO REQUIRED -->
-                            <div class="alert alert-secondary alert-outline alert-dismissible mb-0" role="alert">
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                <div class="alert-icon">
-                                    <i class="fas fa-minus-circle"></i>
-                                </div>
-                                <div class="alert-message">
-                                    <strong>NO REQUIRED:</strong>
-                                    The course is not required for this specific level or position.
-                                </div>
+                            <div class="alert alert-secondary alert-outline mb-3">
+                                <strong>NO REQUIRED:</strong>
+                                Assigned to the employee/position, but not required.
                             </div>
-
+                            <div class="alert alert-light border mb-0">
+                                <strong>NO ASSIGNED:</strong>
+                                The course level is shown to complete the matrix, but is not assigned.
+                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-            </div> <!-- /col-xl-4 -->
         </div>
     </div>
 </div>
@@ -316,8 +304,23 @@
                 responsive: true,
                 order: [],
                 pageLength: 50,
-                lengthMenu: [[10, 25, 50, 100, -1],
-                             [10, 25, 50, 100, "All"]]
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
+            });
+
+            // Select2
+            $('.select2').select2({
+                theme: 'bootstrap4',
+                placeholder: 'Select an option',
+                allowClear: true
+            });
+
+            $('#modeSelector').on('change', function () {
+                const isPosition = $(this).val() === 'POSITION';
+                $('#positionContainer').toggle(isPosition);
+
+                if (!isPosition) {
+                    $('#fkPosition').val(null).trigger('change');
+                }
             });
         });
 
@@ -326,10 +329,10 @@
             new Chart(ctx, {
                 type: "pie",
                 data: {
-                    labels: ["PERMANENTLY / COMPLETED", "EXPIRING SOON", "PENDING"],
+                    labels: ["PERMANENTLY / COMPLETED", "PENDING"],
                     datasets: [{
-                        data: [@cntPermanentCompleted, @cntExpiringSoon, @cntPending],
-                        backgroundColor: ["#198754", "#ffc107", "#dc3545"],
+                        data: [@cntPermanentCompleted, @cntPending],
+                        backgroundColor: ["#198754", "#dc3545"],
                         borderWidth: 5,
                         borderColor: "#ffffff"
                     }]
@@ -338,7 +341,9 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     cutout: "70%",
-                    plugins: { legend: { display: false } }
+                    plugins: {
+                        legend: { display: false }
+                    }
                 }
             });
         });

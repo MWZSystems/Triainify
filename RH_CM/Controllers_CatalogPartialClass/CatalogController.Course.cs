@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using RH_CM.Models;
 
@@ -8,7 +9,7 @@ namespace RH_CM.Controllers
     public partial class CatalogController
     {
         // GET: CtCourse
-        [Authorize(Policy = "ViewAccess")] //OnBoardingView
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> IndexCourse()
         {
             var courses = await _context.CtCourses
@@ -18,7 +19,6 @@ namespace RH_CM.Controllers
             return View(courses);
         }
 
-
         // GET: CtCourse/Create
         [Authorize(Policy = "ViewAccess")]
         public IActionResult CreateCourse()
@@ -26,12 +26,13 @@ namespace RH_CM.Controllers
             return View();
         }
 
+        // POST: CtCourse/Create
         [HttpPost]
-        [Authorize(Policy = "ViewAccess")] 
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateCourse(CtCourse ctCourse)
         {
-            // Validar campos requeridos manualmente
+            // Validate required fields manually
             if (string.IsNullOrWhiteSpace(ctCourse.ManagementSystem))
             {
                 TempData["ErrorMessage"] = "The Management System field is required.";
@@ -56,11 +57,11 @@ namespace RH_CM.Controllers
                 return View(ctCourse);
             }
 
-            // Verificar si el Course ID ya existe
+            // Check if Course ID already exists
             bool idExists = await _context.CtCourses
                 .AnyAsync(c => c.Idcourse == ctCourse.Idcourse);
 
-            // Verificar si el Course Name ya existe
+            // Check if Course Name already exists
             bool nameExists = await _context.CtCourses
                 .AnyAsync(c => c.CourseName == ctCourse.CourseName);
 
@@ -80,7 +81,7 @@ namespace RH_CM.Controllers
                 return View(ctCourse);
             }
 
-            // Asignar valores automáticos
+            // Assign automatic values
             ctCourse.CreateUser = User.Identity.Name ?? "Unknown";
             ctCourse.CreateDate = DateTime.Now;
             ctCourse.LastUpdateUser = User.Identity.Name ?? "Unknown";
@@ -115,12 +116,13 @@ namespace RH_CM.Controllers
             {
                 return NotFound();
             }
+
             return View(ctCourse);
         }
 
         // POST: CtCourse/Edit/5
         [HttpPost]
-        [Authorize(Policy = "ViewAccess")] 
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditCourse(int id, CtCourse ctCourse)
         {
@@ -130,8 +132,7 @@ namespace RH_CM.Controllers
                 return RedirectToAction(nameof(IndexCourse));
             }
 
-
-            // Validar campos requeridos manualmente
+            // Validate required fields manually
             if (string.IsNullOrWhiteSpace(ctCourse.ManagementSystem))
             {
                 TempData["ErrorMessage"] = "The Management System field is required.";
@@ -162,7 +163,7 @@ namespace RH_CM.Controllers
                 return View(ctCourse);
             }
 
-            // Verificar duplicados en la base de datos (excluyendo el curso actual)
+            // Check for duplicates excluding current course
             bool idExists = await _context.CtCourses
                 .AnyAsync(c => c.Idcourse == ctCourse.Idcourse && c.PkCourse != ctCourse.PkCourse);
 
@@ -194,7 +195,7 @@ namespace RH_CM.Controllers
                     return NotFound();
                 }
 
-                // Actualizar campos permitidos
+                // Update allowed fields
                 existingCourse.ManagementSystem = ctCourse.ManagementSystem;
                 existingCourse.Idcourse = ctCourse.Idcourse;
                 existingCourse.CourseName = ctCourse.CourseName;
@@ -210,7 +211,7 @@ namespace RH_CM.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                TempData["ErrorMessage"] = "There was a concurrency error while updating the course.";
+                TempData["ErrorMessage"] = "A concurrency error occurred while updating the course.";
                 return View(ctCourse);
             }
             catch (Exception ex)
@@ -220,48 +221,106 @@ namespace RH_CM.Controllers
             }
         }
 
+        //// POST: Toggle Course Availability
+        //[HttpPost]
+        //[Route("ToggleCourse")]
+        //[Authorize(Policy = "ViewAccess")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> ToggleCourse(int id)
+        //{
+        //    var ctCourse = await _context.CtCourses.FindAsync(id);
+        //    if (ctCourse != null)
+        //    {
+        //        ctCourse.Available = ctCourse.Available == 1 ? 0 : 1;
+        //        _context.Update(ctCourse);
+        //        await _context.SaveChangesAsync();
+        //    }
 
-        // POST: /CtCourse/ToggleCourse/5
+        //    return RedirectToAction(nameof(IndexCourse));
+        //}
+
+        // POST: Update Course Availability
         [HttpPost]
         [Route("ToggleCourse")]
-        [Authorize(Policy = "ViewAccess")] 
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ToggleCourse(int id)
+        public async Task<IActionResult> ToggleCourse(int id, int available, bool applyToAssignments)
         {
-            var ctCourse = await _context.CtCourses.FindAsync(id);
-            if (ctCourse != null)
+            try
             {
-                ctCourse.Available = ctCourse.Available == 1 ? 0 : 1;
-                _context.Update(ctCourse);
-                await _context.SaveChangesAsync();
+                var courseExists = await _context.CtCourses
+                    .AsNoTracking()
+                    .AnyAsync(c => c.PkCourse == id);
+
+                if (!courseExists)
+                {
+                    TempData["ErrorMessage"] = "The selected course was not found.";
+                    return RedirectToAction(nameof(IndexCourse));
+                }
+
+                var updateUser = User.Identity?.Name ?? "Unknown";
+
+                var pkCourseParam = new SqlParameter("@PkCourse", id);
+                var availableParam = new SqlParameter("@Available", available);
+                var applyToAssignmentsParam = new SqlParameter("@ApplyToAssignments", applyToAssignments);
+                var updateUserParam = new SqlParameter("@UpdateUser", updateUser);
+
+                await _context.Database.ExecuteSqlRawAsync(
+                    "EXEC dbo.sp_UpdateCourseAvailability @PkCourse, @Available, @ApplyToAssignments, @UpdateUser",
+                    pkCourseParam,
+                    availableParam,
+                    applyToAssignmentsParam,
+                    updateUserParam
+                );
+
+                if (available == 1 && applyToAssignments)
+                {
+                    TempData["SuccessMessage"] = "The course and all related course assignments were enabled successfully.";
+                }
+                else if (available == 1 && !applyToAssignments)
+                {
+                    TempData["SuccessMessage"] = "The course was enabled successfully.";
+                }
+                else if (available == 0 && applyToAssignments)
+                {
+                    TempData["SuccessMessage"] = "The course and all related course assignments were disabled successfully.";
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = "The course was disabled successfully.";
+                }
             }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred while updating the course availability: {ex.Message}";
+            }
+
             return RedirectToAction(nameof(IndexCourse));
         }
 
-        // POST: /CtCourse/DeleteCourse/5
+        // POST: Delete Course
         [HttpPost]
         [Route("DeleteCourse")]
-        [Authorize(Policy = "ViewAccess")] 
+        [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCourse(int id)
         {
-            // 1) Validar si el curso está ligado a asignaciones
+            // Validate if the course is linked to assignments
             bool hasAssignments = await _context.CtCourseassignments
                 .AsNoTracking()
                 .AnyAsync(a => a.FkCourse == id);
 
             if (hasAssignments)
             {
-                TempData["ErrorMessage"] = "No se puede eliminar el curso porque está ligado a asignaciones. " +
-                                           "Primero tiene que desligar el Course de las asignaciones.";
+                TempData["ErrorMessage"] = "The course cannot be deleted because it is linked to assignments. Please unlink it first.";
                 return RedirectToAction(nameof(IndexCourse));
             }
 
-            // 2) Buscar el curso
+            // Find the course
             var ctCourse = await _context.CtCourses.FindAsync(id);
             if (ctCourse == null)
             {
-                TempData["ErrorMessage"] = "El curso no existe o ya fue eliminado.";
+                TempData["ErrorMessage"] = "The course does not exist or has already been deleted.";
                 return RedirectToAction(nameof(IndexCourse));
             }
 
@@ -269,14 +328,12 @@ namespace RH_CM.Controllers
             {
                 _context.CtCourses.Remove(ctCourse);
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Curso eliminado correctamente.";
+                TempData["SuccessMessage"] = "Course deleted successfully.";
             }
             catch (DbUpdateException)
             {
-                // En caso de que la BD tenga una FK restrictiva y alguien agregue asignaciones
-                // después de la validación previa, caeríamos aquí.
-                TempData["ErrorMessage"] = "No se puede eliminar el curso porque está ligado a asignaciones. " +
-                                           "Primero tiene que desligar el Course de las asignaciones.";
+                // In case of FK restriction at database level
+                TempData["ErrorMessage"] = "The course cannot be deleted because it is linked to assignments. Please unlink it first.";
             }
 
             return RedirectToAction(nameof(IndexCourse));

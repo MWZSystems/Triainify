@@ -27,10 +27,11 @@
         {
             "SCHEDULED" => "bg-primary",
             "PERMANENTLY" => "bg-dark",
-            "EXPIRING SOON" => "bg-warning",
+            "EXPIRING SOON" => "bg-warning text-dark",
             "PENDING" => "bg-danger",
             "COMPLETED" => "bg-success",
             "NO REQUIRED" => "bg-secondary",
+            "NO ASSIGNED" => "bg-light text-dark border",
             _ => "bg-secondary"
         };
     };
@@ -47,7 +48,7 @@
                 var cell = g.FirstOrDefault(r => r.FK_RequiredCourseLevels == l);
                 if (cell == null)
                 {
-                    return new { Level = l, Status = "NO REQUIRED", Class = "bg-secondary" };
+                    return new { Level = l, Status = "NO ASSIGNED", Class = "bg-light text-dark border" };
                 }
 
                 var status = (cell.CourseStatus ?? "").Trim();
@@ -65,9 +66,16 @@
     int cntPending = allCells.Count(s => s.Status.Equals("PENDING", StringComparison.OrdinalIgnoreCase));
     int cntCompleted = allCells.Count(s => s.Status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase));
     int cntNoRequired = allCells.Count(s => s.Status.Equals("NO REQUIRED", StringComparison.OrdinalIgnoreCase));
+    int cntNoAssigned = allCells.Count(s => s.Status.Equals("NO ASSIGNED", StringComparison.OrdinalIgnoreCase));
 
-    // PERMANENTLY + COMPLETED + EXPIRING SOON together
     int cntPermanentCompleted = cntPermanently + cntCompleted + cntExpiringSoon;
+
+    int coursesNeedingAttention = courseGroups.Count(c =>
+        c.Cells.Any(cell =>
+            cell.Status.Equals("PENDING", StringComparison.OrdinalIgnoreCase) ||
+            cell.Status.Equals("EXPIRING SOON", StringComparison.OrdinalIgnoreCase)
+        )
+    );
 }
 
 <div class="row">
@@ -108,12 +116,12 @@
                                     </div>
 
                                     <div class="px-3 py-2 border rounded bg-white shadow-sm text-center">
-                                        <div class="text-muted fs-6">Courses Required</div>
+                                        <div class="text-muted fs-6">Courses Needing Attention</div>
 
                                         <div class="fw-bold fs-3 mt-3 d-flex justify-content-center">
-                                            <div class="bg-primary text-white d-flex align-items-center justify-content-center"
-                                                 style="width: 90px; height: 60px; font-size: 1.7rem; border-radius: 10px;">
-                                                @courseGroups.Count
+                                            <div class="bg-danger text-white d-flex align-items-center justify-content-center rounded"
+                                                 style="width: 90px; height: 60px;">
+                                                @coursesNeedingAttention
                                             </div>
                                         </div>
                                     </div>
@@ -197,12 +205,6 @@
                                     </td>
                                     <td class="text-end">@cntPending</td>
                                 </tr>
-                                @* <tr>
-                                    <td>
-                                        <i class="fas fa-square-full text-secondary"></i> NO REQUIRED
-                                    </td>
-                                    <td class="text-end">@cntNoRequired</td>
-                                </tr> *@
                             </tbody>
                         </table>
                     </div>
@@ -262,14 +264,25 @@
                                 </div>
                             </div>
 
-                            <div class="alert alert-secondary alert-outline alert-dismissible mb-0" role="alert">
+                            <div class="alert alert-secondary alert-outline alert-dismissible mb-3" role="alert">
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 <div class="alert-icon">
                                     <i class="fas fa-minus-circle"></i>
                                 </div>
                                 <div class="alert-message">
                                     <strong>NO REQUIRED:</strong>
-                                    This status remains visible in the summary table and matrix, but it is excluded from the chart.
+                                    The course is assigned to the employee, but it does not affect them and is not required.
+                                </div>
+                            </div>
+
+                            <div class="alert alert-light alert-outline alert-dismissible mb-0 border" role="alert">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                <div class="alert-icon">
+                                    <i class="fas fa-ban text-dark"></i>
+                                </div>
+                                <div class="alert-message text-dark">
+                                    <strong>NO ASSIGNED:</strong>
+                                    The course level is shown to complete the matrix, but it is not assigned to the employee.
                                 </div>
                             </div>
 

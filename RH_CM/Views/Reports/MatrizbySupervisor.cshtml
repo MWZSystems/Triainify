@@ -12,7 +12,7 @@
 <div class="row">
     <div class="col">
         <h1 class="h3 mb-1 text-center">
-            <i class="fas fa-users-gear"></i> @ViewData["Title"]
+            <i class="fas fa-user-tie"></i> @ViewData["Title"]
         </h1>
         <p class="text-center text-muted">
             Filter: <span class="badge bg-info">@msBadge</span>
@@ -93,8 +93,9 @@
                                         @if (!string.IsNullOrWhiteSpace(r.UserName))
                                         {
                                             <a class="btn btn-info btn-sm"
-                                               asp-action="MatrizbyEmployeeFromSupervisor"
-                                               asp-controller="Reports"
+                                               asp-action="MatrixByEmployee"
+                                               asp-controller="Trainify"
+                                               asp-route-mode="EMPLOYEE"
                                                asp-route-userName="@r.UserName"
                                                target="_blank"
                                                title="Open employee matrix">
@@ -103,7 +104,7 @@
                                         }
                                         else
                                         {
-                                            <button class="btn btn-secondary btn-sm" disabled title="Sin UserName">
+                                            <button class="btn btn-secondary btn-sm" disabled title="No UserName">
                                                 <i class="fas fa-eye-slash"></i>
                                             </button>
                                         }

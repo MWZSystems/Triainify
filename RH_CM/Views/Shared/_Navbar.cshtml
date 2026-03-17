@@ -220,12 +220,12 @@
                         <div class="d-md-flex align-items-start justify-content-start">
                             <div class="dropdown-mega-list">
 
-                                @if (accesos.MatrixByPosition)
+                                @* @if (accesos.MatrixByPosition)
                                 {
                                     <a class="dropdown-item" asp-controller="Trainify" asp-action="MatrizbyPositionSelectPosition">
                                         <i class="align-middle fas fa-list-check"></i> Matrix by Position
                                     </a>
-                                }
+                                } *@
 
                                 @if (accesos.MatrixBySupervisor)
                                 {
@@ -279,7 +279,7 @@
                     <div class="d-md-flex align-items-start justify-content-start">
                         <div class="dropdown-mega-list">
 
-                            <a class="dropdown-item" asp-controller="Trainify" asp-action="MatrizbyEmployee">
+                            <a class="dropdown-item" asp-controller="Trainify" asp-action="MatrixByEmployee">
                                 <i class="align-middle fas fa-id-card-alt"></i> Matrix by Employee
                             </a>
 
