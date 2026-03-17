@@ -235,7 +235,6 @@ namespace RH_CM.Controllers
             );
         }
 
-        // GET: Reports/MatrizByDeparmentGeneral_RH
         [Authorize]
         [HttpGet]
         public async Task<ActionResult> MatrizByDeparmentGeneral_RH(string? managementSystem)
@@ -251,10 +250,11 @@ namespace RH_CM.Controllers
                 CommandType = CommandType.StoredProcedure
             };
 
-            // Parámetro opcional: si viene null/empty, se manda DBNull.Value
             command.Parameters.Add(new SqlParameter("@ManagementSystem", SqlDbType.NVarChar, 50)
             {
-                Value = string.IsNullOrWhiteSpace(managementSystem) ? (object)DBNull.Value : managementSystem
+                Value = string.IsNullOrWhiteSpace(managementSystem)
+                    ? (object)DBNull.Value
+                    : managementSystem
             });
 
             await using var reader = await command.ExecuteReaderAsync();
@@ -269,8 +269,7 @@ namespace RH_CM.Controllers
                     Department = IsNull("NAME_DEPARMENT") ? "—" : reader.GetString(Ord("NAME_DEPARMENT")),
                     TotalAssigned = IsNull("Total_Asignados") ? 0 : Convert.ToInt32(reader["Total_Asignados"]),
                     TotalCompleted = IsNull("Total_Completados") ? 0 : Convert.ToInt32(reader["Total_Completados"]),
-                    // TotalPending es calculado en el VM, pero si prefieres asignar:
-                    // TotalPending = IsNull("Total_Pendientes") ? 0 : Convert.ToInt32(reader["Total_Pendientes"]),
+                    TotalPending = IsNull("Total_Pendientes") ? 0 : Convert.ToInt32(reader["Total_Pendientes"]),
                     PercentCompleted = IsNull("Porcentaje_Completo_Value")
                         ? 0m
                         : Convert.ToDecimal(reader["Porcentaje_Completo_Value"], CultureInfo.InvariantCulture)
@@ -279,21 +278,22 @@ namespace RH_CM.Controllers
                 page.Rows.Add(row);
             }
 
-            // Totales para el donut
+            // Overall totals
             page.OverallAssigned = page.Rows.Sum(x => x.TotalAssigned);
             page.OverallCompleted = page.Rows.Sum(x => x.TotalCompleted);
-            // OverallPending se calcula en el VM (propiedad derivada)
+            page.OverallPending = page.Rows.Sum(x => x.TotalPending);
+
             if (page.OverallAssigned > 0)
             {
                 page.OverallCompletedPct = Math.Round(100m * page.OverallCompleted / page.OverallAssigned, 2);
-                // OverallPendingPct se deriva del VM (100 - OverallCompletedPct)
+                page.OverallPendingPct = Math.Round(100m * page.OverallPending / page.OverallAssigned, 2);
             }
             else
             {
                 page.OverallCompletedPct = 0;
+                page.OverallPendingPct = 0;
             }
 
-            // Pasar el filtro actual a la vista (para remarcar UI)
             ViewBag.ManagementSystem = managementSystem;
 
             return View(page);

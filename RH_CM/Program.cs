@@ -51,7 +51,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = new PathString("/Cuentas/Denegado");
 
     // ⏱ Expiración del login
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
 
     // 🔄 Si el usuario sigue activo se renueva el tiempo
     options.SlidingExpiration = true;

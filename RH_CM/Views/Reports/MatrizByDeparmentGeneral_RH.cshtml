@@ -5,7 +5,6 @@
     ViewData["Title"] = "Completed by Department";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    // Datos para JS (labels y % completado por depto)
     var labels = Model.Rows.Select(r => r.Department).ToList();
     var percCompleted = Model.Rows.Select(r => Math.Round(r.PercentCompleted, 2)).ToList();
 
@@ -45,7 +44,9 @@
                 <a class="dropdown-item" href="@Url.Action("MatrizByDeparmentGeneral_RH", "Reports", new { managementSystem = "OTROS" })">OTROS</a>
             </div>
         </div>
-        <a class="btn btn-primary shadow-sm" href="@Url.Action("MatrizByDeparmentGeneral_RH", "Reports", new { managementSystem = currentMS })" title="Refresh">
+        <a class="btn btn-primary shadow-sm"
+           href="@Url.Action("MatrizByDeparmentGeneral_RH", "Reports", new { managementSystem = currentMS })"
+           title="Refresh">
             <i class="align-middle" data-feather="refresh-cw">&nbsp;</i>
         </a>
     </div>
@@ -53,7 +54,6 @@
 
 <div class="row">
 
-    <!-- Donut: Completed vs Pending (dinámico) -->
     <div class="col-12 col-lg-5 col-xl-4 d-flex">
         <div class="card flex-fill w-100">
             <div class="card-header">
@@ -91,7 +91,6 @@
         </div>
     </div>
 
-    <!-- Tabla: COMPLETADO por departamento -->
     <div class="col-12 col-lg-4 d-flex">
         <div class="card flex-fill w-100">
             <div class="card-header">
@@ -131,7 +130,6 @@
         </div>
     </div>
 
-    <!-- Radar: % COMPLETED por departamento -->
     <div class="col-12 col-lg-3 d-flex">
         <div class="card flex-fill w-100">
             <div class="card-header">
@@ -147,11 +145,10 @@
 
 </div>
 
-<!-- ==== Scripts de gráficos (dinámicos) ==== -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const completed = @overallCompleted.ToString(System.Globalization.CultureInfo.InvariantCulture);
-        const pending   = @overallPending.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        const pending = @overallPending.ToString(System.Globalization.CultureInfo.InvariantCulture);
 
         new Chart(document.getElementById("chartjs-dashboard-pie"), {
             type: "pie",
@@ -171,7 +168,7 @@
                 legend: { display: true, position: "bottom" },
                 tooltips: {
                     callbacks: {
-                        label: function(tooltipItem, data) {
+                        label: function (tooltipItem, data) {
                             const label = data.labels[tooltipItem.index];
                             const value = data.datasets[0].data[tooltipItem.index];
                             return `${label}: ${Number(value).toFixed(2)}%`;
@@ -184,7 +181,7 @@
 </script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         const labels = @Html.Raw(labelsJson);
         const completedPercents = @Html.Raw(percCompletedJson);
 
@@ -212,13 +209,13 @@
                         beginAtZero: true,
                         max: 100,
                         stepSize: 10,
-                        callback: function(v){ return v + "%"; },
+                        callback: function (v) { return v + "%"; },
                         showLabelBackdrop: false
                     }
                 },
                 tooltips: {
                     callbacks: {
-                        label: function(tooltipItem, data) {
+                        label: function (tooltipItem, data) {
                             const label = data.labels[tooltipItem.index];
                             const value = data.datasets[0].data[tooltipItem.index];
                             return label + ": " + Number(value).toFixed(2) + "%";
