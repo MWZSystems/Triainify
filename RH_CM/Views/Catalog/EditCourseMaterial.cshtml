@@ -3,47 +3,66 @@
 @{
     ViewData["Title"] = "Edit Course Material";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var assignedCourses = ViewBag.AssignedCourses as IEnumerable<string>
+        ?? Enumerable.Empty<string>();
 }
 
-@* Si el material a editar es PDF muestra una vista, si es VIDEO muestra otra *@
-@if (@Model.MaterialType == "PDF")
+@if (Model.MaterialType == "PDF")
 {
     <div class="row">
         <div class="col">
-            <h1 class="h3 mb-3 text-center">EDIT PDF MATERIAL - ID: @Model.PkCoursematerial </h1>
+            <h1 class="h3 mb-3 text-center">
+                EDIT PDF MATERIAL - ID: @Model.PkCoursematerial
+            </h1>
         </div>
     </div>
-
 
     <div class="row">
         <div class="col-md-8 offset-md-2">
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title">Edit Material Details</h5>
-                    <h6 class="card-subtitle text-muted">Update the fields below. Fields marked with an asterisk (*) are required.</h6>
+                    <h6 class="card-subtitle text-muted">
+                        Upload a new PDF only when the current file needs to be replaced.
+                    </h6>
                 </div>
+
                 <div class="card-body">
-                    <form asp-action="EditPDFMaterial" method="post" enctype="multipart/form-data">
+                    <form asp-action="EditPDFMaterial"
+                          method="post"
+                          enctype="multipart/form-data">
+
                         @Html.HiddenFor(m => m.PkCoursematerial)
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                        <div class="row">
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger"></div>
 
-                            <!-- Upload New File (optional) -->
-                            <div class="mb-3 col-md-12">
-                                <label class="form-label">Upload New File (PDF)</label>
-                                <input type="file" name="uploadedFile" class="form-control" accept=".pdf" />
-                                <small class="form-text text-muted">Leave empty to keep the current file.</small>
-                            </div>
+                        <div class="mb-3">
+                            <label for="uploadedFile" class="form-label">
+                                Upload New File (PDF)
+                            </label>
+
+                            <input type="file"
+                                   id="uploadedFile"
+                                   name="uploadedFile"
+                                   class="form-control"
+                                   accept=".pdf" />
+
+                            <small class="form-text text-muted">
+                                Leave empty to keep the current file.
+                            </small>
                         </div>
 
-                        <!-- Buttons -->
                         <div class="row mt-3">
                             <div class="col-12 text-end">
-                                <a asp-action="IndexCourseMaterial" class="btn btn-secondary">
+                                <a asp-action="IndexCourseMaterial"
+                                   class="btn btn-secondary">
                                     <i class="fas fa-arrow-left"></i> Cancel
                                 </a>
-                                <button type="submit" class="btn btn-primary">
+
+                                <button type="submit"
+                                        class="btn btn-primary">
                                     <i class="fas fa-save"></i> Update
                                 </button>
                             </div>
@@ -58,44 +77,98 @@ else
 {
     <div class="row">
         <div class="col">
-            <h1 class="h3 mb-3 text-center">EDIT VIDEO MATERIAL - ID: @Model.PkCoursematerial </h1>
+            <h1 class="h3 mb-3 text-center">
+                EDIT VIDEO MATERIAL - ID: @Model.PkCoursematerial
+            </h1>
         </div>
     </div>
-
 
     <div class="row">
         <div class="col-md-8 offset-md-2">
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title">Edit Video Material Details</h5>
-                    <h6 class="card-subtitle text-muted">Update the fields below. Fields marked with an asterisk (*) are required.</h6>
+                    <h6 class="card-subtitle text-muted">
+                        Only the video path can be modified.
+                    </h6>
                 </div>
+
                 <div class="card-body">
-                    <form asp-action="EditVIDEOMaterial" method="post" enctype="multipart/form-data">
+                    <form asp-action="EditVIDEOMaterial" method="post">
+                        @Html.AntiForgeryToken()
                         @Html.HiddenFor(m => m.PkCoursematerial)
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                        <div class="row">
-                           
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger"></div>
 
-                            <div class="mb-3 col-md-12">
-                                <label class="form-label">
-                                    Enter the full file path
-                                    <span class="text-danger">*</span>
-                                </label>
-                                <input type="text" name="filePath" class="form-control" placeholder="C:\Videos\curso1.mp4" required />
-                            </div>
+                        <div class="mb-3">
+                            <label asp-for="NameMaterial" class="form-label">
+                                Material Name
+                            </label>
 
+                            <input asp-for="NameMaterial"
+                                   class="form-control"
+                                   readonly />
                         </div>
 
-                        <!-- Buttons -->
+                        <div class="mb-3">
+                            <span id="assignedCoursesLabel"
+                                  class="form-label d-block">
+                                Assigned Courses
+                            </span>
+
+                            @if (assignedCourses.Any())
+                            {
+                                <div class="form-control bg-light"
+                                     role="group"
+                                     aria-labelledby="assignedCoursesLabel"
+                                     style="min-height: 42px;">
+                                    @foreach (var courseName in assignedCourses)
+                                    {
+                                        <span class="badge bg-primary me-1 mb-1">
+                                            @courseName
+                                        </span>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <input id="assignedCourses"
+                                       class="form-control"
+                                       value="Not Assigned"
+                                       aria-labelledby="assignedCoursesLabel"
+                                       readonly />
+                            }
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="filePath" class="form-label">
+                                Video Path
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            <textarea id="filePath"
+                                      name="filePath"
+                                      class="form-control"
+                                      rows="3"
+                                      required>@Model.UrlPath</textarea>
+
+                            <small class="form-text text-muted">
+                                This is the only editable field.
+                            </small>
+                        </div>
+
                         <div class="row mt-3">
                             <div class="col-12 text-end">
-                                <a asp-action="IndexCourseMaterial" class="btn btn-secondary">
+                                <a asp-action="ViewVideoMaterial"
+                                   asp-route-id="@Model.PkCoursematerial"
+                                   class="btn btn-secondary">
                                     <i class="fas fa-arrow-left"></i> Cancel
                                 </a>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save"></i> Update
+
+                                <button type="submit"
+                                        class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Update Path
                                 </button>
                             </div>
                         </div>
@@ -106,28 +179,43 @@ else
     </div>
 }
 
+<input type="hidden"
+       id="successMessage"
+       value="@TempData["SuccessMessage"]" />
+
+<input type="hidden"
+       id="errorMessage"
+       value="@TempData["ErrorMessage"]" />
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
+
     <script>
-        $(function () {
-            if ("@TempData["SuccessMessage"]" !== "") {
+        $(function() {
+            const successMessage =
+                document.getElementById("successMessage")?.value ?? "";
+
+            const errorMessage =
+                document.getElementById("errorMessage")?.value ?? "";
+
+            if (successMessage) {
                 window.notyf?.open?.({
-                    type: 'success',
-                    message: "@TempData["SuccessMessage"]",
+                    type: "success",
+                    message: successMessage,
                     ripple: true,
                     dismissible: true,
-                    position: { x: 'center', y: 'top' },
+                    position: { x: "center", y: "top" },
                     duration: 5000
                 });
             }
-            if ("@TempData["ErrorMessage"]" !== "") {
+
+            if (errorMessage) {
                 window.notyf?.open?.({
-                    type: 'error',
-                    message: "@TempData["ErrorMessage"]",
+                    type: "error",
+                    message: errorMessage,
                     ripple: true,
                     dismissible: true,
-                    position: { x: 'center', y: 'top' },
+                    position: { x: "center", y: "top" },
                     duration: 5000
                 });
             }
