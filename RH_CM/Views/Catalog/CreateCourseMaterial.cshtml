@@ -1,188 +1,274 @@
 ﻿@model RH_CM.Models.CtCoursematerial
 
 @{
-    var type = ViewBag.Type as string;
-
-    var courses = (IEnumerable<RH_CM.Models.CtCourse>)(ViewBag.Courses ?? Enumerable.Empty<RH_CM.Models.CtCourse>());
-    var levels = (IEnumerable<RH_CM.Models.CtLevelcourse>)(ViewBag.LevelCourses ?? Enumerable.Empty<RH_CM.Models.CtLevelcourse>());
-
     ViewData["Title"] = "Create Course Material";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var materialType = ViewBag.Type?.ToString()?.ToUpperInvariant() ?? "PDF";
+    var courses = ViewBag.Courses as IEnumerable<dynamic>
+        ?? Enumerable.Empty<dynamic>();
+    var levels = ViewBag.LevelCourses as IEnumerable<dynamic>
+        ?? Enumerable.Empty<dynamic>();
 }
 
-@if (type == "PDF")
-{
-    <div class="row">
-        <div class="col">
-            <h1 class="h3 mb-3 text-center">CREATE PDF MATERIAL</h1>
-        </div>
-    </div>
+<h1 class="h3 mb-3 text-center">
+    CREATE @materialType MATERIAL
+</h1>
 
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title">New PDF Material Details</h5>
-                    <h6 class="card-subtitle text-muted">
-                        Upload one or more PDF files. The PDF Name will be the Material Name!
-                    </h6>
-                </div>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Material Details</h5>
+                <h6 class="card-subtitle text-muted">
+                    Fill in the fields; those marked with an asterisk (*) are required.
+                </h6>
+            </div>
 
-                <div class="card-body">
-                    <form asp-action="CreatePDFMaterial" method="post" enctype="multipart/form-data">
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="card-body">
+                @if (materialType == "VIDEO")
+                {
+                    <form asp-action="CreateVideoMaterial" method="post">
+                        @Html.AntiForgeryToken()
 
-                        <!-- OPTIONAL ASSIGNMENT -->
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger"></div>
+
                         <div class="row">
-                            <div class="mb-3 col-md-6">
-                                <label class="form-label">Course (optional)</label>
-                                <select name="fkCourse" class="form-control select2"
-                                        asp-items="@(new SelectList(courses, "PkCourse", "CourseName"))">
-                                    <option value="0">-- Select Course --</option>
+                            <div class="mb-2 col-md-4">
+                                <label for="materialName" class="form-label">
+                                    Material Name
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <input id="materialName"
+                                       name="materialName"
+                                       type="text"
+                                       class="form-control"
+                                       maxlength="250"
+                                       placeholder="Enter material name"
+                                       required />
+                            </div>
+
+                            <div class="mb-2 col-md-4">
+                                <label for="fkCourse" class="form-label">
+                                    Course
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <select id="fkCourse"
+                                        name="fkCourse"
+                                        class="form-control select2"
+                                        required>
+                                    <option value="" disabled selected>
+                                        --- SELECT COURSE ---
+                                    </option>
+
+                                    @foreach (var course in courses)
+                                    {
+                                        <option value="@course.PkCourse">
+                                            @course.CourseName
+                                        </option>
+                                    }
                                 </select>
                             </div>
 
-                            <div class="mb-3 col-md-6">
-                                <label class="form-label">Level (optional)</label>
-                                <select name="fkLevelCourse" class="form-control select2"
-                                        asp-items="@(new SelectList(levels, "PkLevelcourse", "DescripctionLevel"))">
-                                    <option value="0">-- Select Level --</option>
+                            <div class="mb-2 col-md-4">
+                                <label for="fkLevelCourse" class="form-label">
+                                    Level
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <select id="fkLevelCourse"
+                                        name="fkLevelCourse"
+                                        class="form-control select2"
+                                        required>
+                                    <option value="" disabled selected>
+                                        --- SELECT LEVEL ---
+                                    </option>
+
+                                    @foreach (var level in levels)
+                                    {
+                                        <option value="@level.PkLevelcourse">
+                                            @level.DescripctionLevel
+                                        </option>
+                                    }
                                 </select>
                             </div>
                         </div>
 
-                        <!-- Upload Multiple Files -->
-                        <div class="mb-3 col-md-12">
-                            <label class="form-label">
-                                Upload Files (PDF) <span class="text-danger">*</span>
-                            </label>
-                            <input type="file" name="uploadedFiles" class="form-control" accept=".pdf" multiple required />
+                        <div class="row">
+                            <div class="mb-2 col-12">
+                                <label for="filePath" class="form-label">
+                                    Video Path
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <input id="filePath"
+                                       name="filePath"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder="\\Server\Folder\Video.exe"
+                                       required />
+
+                                <small class="form-text text-muted">
+                                    Enter the complete network path or URL.
+                                </small>
+                            </div>
                         </div>
 
-                        <!-- Buttons -->
-                        <div class="row mt-3">
-                            <div class="col-12 text-end">
-                                <a asp-action="IndexCourseMaterial" class="btn btn-secondary">
-                                    <i class="fas fa-arrow-left"></i> Cancel
-                                </a>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save"></i> Upload
-                                </button>
-                            </div>
+                        <div class="col-12 text-end mt-3">
+                            <a asp-action="IndexCourseMaterial"
+                               class="btn btn-secondary"
+                               onclick="return confirm('Are you sure you want to cancel without saving changes?')">
+                                <i class="align-middle fas fa-arrow-left"></i>
+                                CANCEL
+                            </a>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="align-middle fas fa-plus-square"></i>
+                                CREATE VIDEO MATERIAL
+                            </button>
                         </div>
                     </form>
-                </div>
+                }
+                else
+                {
+                    <form asp-action="CreatePDFMaterial"
+                          method="post"
+                          enctype="multipart/form-data">
 
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger"></div>
+
+                        <div class="row">
+                            <div class="mb-2 col-md-6">
+                                <label for="uploadedFiles" class="form-label">
+                                    PDF File
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <input id="uploadedFiles"
+                                       name="uploadedFiles"
+                                       type="file"
+                                       class="form-control"
+                                       accept=".pdf"
+                                       multiple
+                                       required />
+                            </div>
+
+                            <div class="mb-2 col-md-3">
+                                <label for="fkCourse" class="form-label">
+                                    Course
+                                </label>
+
+                                <select id="fkCourse"
+                                        name="fkCourse"
+                                        class="form-control select2">
+                                    <option value="0" selected>
+                                        --- NOT ASSIGNED ---
+                                    </option>
+
+                                    @foreach (var course in courses)
+                                    {
+                                        <option value="@course.PkCourse">
+                                            @course.CourseName
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="mb-2 col-md-3">
+                                <label for="fkLevelCourse" class="form-label">
+                                    Level
+                                </label>
+
+                                <select id="fkLevelCourse"
+                                        name="fkLevelCourse"
+                                        class="form-control select2">
+                                    <option value="0" selected>
+                                        --- NOT ASSIGNED ---
+                                    </option>
+
+                                    @foreach (var level in levels)
+                                    {
+                                        <option value="@level.PkLevelcourse">
+                                            @level.DescripctionLevel
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-12 text-end mt-3">
+                            <a asp-action="IndexCourseMaterial"
+                               class="btn btn-secondary"
+                               onclick="return confirm('Are you sure you want to cancel without saving changes?')">
+                                <i class="align-middle fas fa-arrow-left"></i>
+                                CANCEL
+                            </a>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="align-middle fas fa-plus-square"></i>
+                                UPLOAD PDF MATERIAL
+                            </button>
+                        </div>
+                    </form>
+                }
             </div>
         </div>
     </div>
-}
-else
-{
-    <!-- ======================= VIDEO ======================= -->
-    <div class="row">
-        <div class="col">
-            <h1 class="h3 mb-3 text-center">CREATE VIDEO MATERIAL</h1>
-        </div>
-    </div>
+</div>
 
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title">New Video Material Details</h5>
-                    <h6 class="card-subtitle text-muted">
-                        Please paste the full video Path, include the Extension (.exe, .mp4, etc.)
-                    </h6>
-                </div>
+<input type="hidden"
+       id="successMessage"
+       value="@TempData["SuccessMessage"]" />
 
-                <div class="card-body">
-                    <form asp-action="CreateVideoMaterial" method="post" enctype="multipart/form-data">
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                        <!-- OPTIONAL ASSIGNMENT -->
-                        <div class="row">
-                            <div class="mb-3 col-md-6">
-                                <label class="form-label">Course (optional)</label>
-                                <select name="fkCourse" class="form-control select2"
-                                        asp-items="@(new SelectList(courses, "PkCourse", "CourseName"))">
-                                    <option value="0">-- Select Course --</option>
-                                </select>
-                            </div>
-
-                            <div class="mb-3 col-md-6">
-                                <label class="form-label">Level (optional)</label>
-                                <select name="fkLevelCourse" class="form-control select2"
-                                        asp-items="@(new SelectList(levels, "PkLevelcourse", "DescripctionLevel"))">
-                                    <option value="0">-- Select Level --</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Path -->
-                        <div class="mb-3 col-md-12">
-                            <label class="form-label">
-                                Enter the full file path
-                                <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" name="filePath" class="form-control"
-                                   placeholder="C:\Videos\curso1.mp4" required />
-                        </div>
-
-                        <!-- Buttons -->
-                        <div class="row mt-3">
-                            <div class="col-12 text-end">
-                                <a asp-action="IndexCourseMaterial" class="btn btn-secondary">
-                                    <i class="fas fa-arrow-left"></i> Cancel
-                                </a>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save"></i> Create
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-            </div>
-        </div>
-    </div>
-}
+<input type="hidden"
+       id="errorMessage"
+       value="@TempData["ErrorMessage"]" />
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
 
     <script>
-        $(function () {
-
-            // Notificaciones
-            if ("@TempData["SuccessMessage"]" !== "") {
-                window.notyf?.open?.({
-                    type: 'success',
-                    message: "@TempData["SuccessMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-            if ("@TempData["ErrorMessage"]" !== "") {
-                window.notyf?.open?.({
-                    type: 'error',
-                    message: "@TempData["ErrorMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-
-            // Select2
+        document.addEventListener("DOMContentLoaded", function() {
             $(".select2").select2({
-                theme: 'bootstrap4',
-                placeholder: 'Select an option',
-                allowClear: true
+                theme: "bootstrap4",
+                placeholder: "Select an option",
+                allowClear: true,
+                width: "100%"
             });
 
+            const successMessage =
+                document.getElementById("successMessage")?.value ?? "";
+
+            const errorMessage =
+                document.getElementById("errorMessage")?.value ?? "";
+
+            if (successMessage) {
+                window.notyf?.open?.({
+                    type: "success",
+                    message: successMessage,
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: "center", y: "top" },
+                    duration: 5000
+                });
+            }
+
+            if (errorMessage) {
+                window.notyf?.open?.({
+                    type: "error",
+                    message: errorMessage,
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: "center", y: "top" },
+                    duration: 5000
+                });
+            }
         });
     </script>
 }

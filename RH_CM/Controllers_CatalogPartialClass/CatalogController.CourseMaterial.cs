@@ -295,7 +295,11 @@ namespace RH_CM.Controllers
         [HttpPost]
         [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateVideoMaterial(string filePath)
+        public async Task<IActionResult> CreateVideoMaterial(
+            string materialName,
+            string filePath,
+            int fkCourse,
+            int fkLevelCourse)
         {
             if (!ModelState.IsValid)
             {
@@ -304,51 +308,111 @@ namespace RH_CM.Controllers
                     "The submitted information is not valid.");
             }
 
+            materialName = materialName?.Trim() ?? string.Empty;
+            filePath = filePath?.Trim() ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(materialName))
+            {
+                return RedirectToMaterialCreation(
+                    VideoMaterialType,
+                    "Material Name is required.");
+            }
+
+            if (fkCourse <= 0)
+            {
+                return RedirectToMaterialCreation(
+                    VideoMaterialType,
+                    "Course is required.");
+            }
+
+            if (fkLevelCourse <= 0)
+            {
+                return RedirectToMaterialCreation(
+                    VideoMaterialType,
+                    "Level is required.");
+            }
+
             if (string.IsNullOrWhiteSpace(filePath))
             {
                 return RedirectToMaterialCreation(
                     VideoMaterialType,
-                    "Please enter a file path or URL.");
+                    "Video Path is required.");
             }
 
-            var fileNameOnly = Path.GetFileNameWithoutExtension(filePath);
-
-            if (string.IsNullOrWhiteSpace(fileNameOnly))
+            if (!await CourseLevelCombinationExistsAsync(fkCourse, fkLevelCourse))
             {
-                fileNameOnly = filePath.Trim();
+                return RedirectToMaterialCreation(
+                    VideoMaterialType,
+                    "The selected Course-Level combination is not valid.");
             }
 
             var existsName = await _context.CtCoursematerials
                 .AsNoTracking()
                 .AnyAsync(m =>
-                    m.NameMaterial == fileNameOnly &&
+                    m.NameMaterial == materialName &&
                     m.Available == AvailableStatus);
 
             if (existsName)
             {
                 return RedirectToMaterialCreation(
                     VideoMaterialType,
-                    "A Video material with the same name already exists.");
+                    "A material with the same name already exists.");
             }
 
-            var model = new CtCoursematerial
+            await using var transaction =
+                await _context.Database.BeginTransactionAsync();
+
+            try
             {
-                NameMaterial = fileNameOnly,
-                MaterialType = VideoMaterialType,
-                UrlPath = filePath.Trim(),
-                CreateUser = User.Identity?.Name ?? "Unknown",
-                CreateDate = DateTime.Now,
-                LastUpdateUser = User.Identity?.Name ?? "Unknown",
-                LastUpdateDate = DateTime.Now,
-                Available = AvailableStatus
-            };
+                var material = new CtCoursematerial
+                {
+                    NameMaterial = materialName,
+                    MaterialType = VideoMaterialType,
+                    UrlPath = filePath,
+                    CreateUser = User.Identity?.Name ?? "Unknown",
+                    CreateDate = DateTime.Now,
+                    LastUpdateUser = User.Identity?.Name ?? "Unknown",
+                    LastUpdateDate = DateTime.Now,
+                    Available = AvailableStatus
+                };
 
-            _context.CtCoursematerials.Add(model);
-            await _context.SaveChangesAsync();
+                _context.CtCoursematerials.Add(material);
+                await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Material created successfully.";
-            return RedirectToAction(nameof(IndexCourseMaterial));
+                _context.CtCourseLevelMaterials.Add(
+                    new CtCourseLevelMaterial
+                    {
+                        FkCourse = fkCourse,
+                        FkLevelCourse = fkLevelCourse,
+                        FkCourseMaterial = material.PkCoursematerial,
+                        CreateUser = User.Identity?.Name ?? "Unknown",
+                        CreateDate = DateTime.Now,
+                        LastUpdateUser = User.Identity?.Name ?? "Unknown",
+                        LastUpdateDate = DateTime.Now,
+                        Available = AvailableStatus
+                    });
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                TempData["SuccessMessage"] =
+                    "Video material and course assignment created successfully.";
+
+                return RedirectToAction(nameof(IndexCourseMaterial));
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+
+                TempData["ErrorMessage"] =
+                    "The video material could not be created.";
+
+                return RedirectToAction(
+                    nameof(CreateCourseMaterial),
+                    new { type = VideoMaterialType });
+            }
         }
+
 
         [Authorize(Policy = "ViewAccess")]
         [HttpGet]
@@ -479,7 +543,17 @@ namespace RH_CM.Controllers
                 return NotFound();
             }
 
-            ViewBag.AssignedCourses = await GetAssignedCourseNamesAsync(id);
+            var assignedCourses = await GetAssignedCourseNamesAsync(id);
+
+            if (assignedCourses.Count == 0)
+            {
+                TempData["ErrorMessage"] =
+                    "This video material does not have a valid course assignment.";
+
+                return RedirectToAction(nameof(IndexCourseMaterial));
+            }
+
+            ViewBag.AssignedCourses = assignedCourses;
 
             return View(material);
         }
@@ -504,7 +578,17 @@ namespace RH_CM.Controllers
                 return NotFound();
             }
 
-            ViewBag.AssignedCourses = await GetAssignedCourseNamesAsync(id);
+            var assignedCourses = await GetAssignedCourseNamesAsync(id);
+
+            if (assignedCourses.Count == 0)
+            {
+                TempData["ErrorMessage"] =
+                    "This video material does not have a valid course assignment.";
+
+                return RedirectToAction(nameof(IndexCourseMaterial));
+            }
+
+            ViewBag.AssignedCourses = assignedCourses;
 
             return View("EditCourseMaterial", material);
         }
