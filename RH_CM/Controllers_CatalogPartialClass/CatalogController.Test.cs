@@ -138,15 +138,15 @@ namespace RH_CM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleTest(int id)
         {
-            CtTest test = await _context.CtTests.FindAsync (id);
-            
+            CtTest test = await _context.CtTests.FindAsync(id);
+
             //Validacion si se enciende, checar que no haya ya una combinacion (Course/Level) activa
-            
+
 
             if (test.Available == 0 && await _context.CtTests
                              .AnyAsync(t => t.FkCourse == test.FkCourse
                                              && t.FkLevelcourse == test.FkLevelcourse
-                                             && t.Available ==1))
+                                             && t.Available == 1))
             {
                 TempData["ErrorMessage"] = "There is already a Test Active for this Course/Level, please disable it first.";
                 return RedirectToAction(nameof(IndexTest));
@@ -216,7 +216,7 @@ namespace RH_CM.Controllers
 
             //Si solo el nombre cambia la operacion continua, si no, hace todas las validaciones extras.
             if (!(existingTest.TestName != model.TestName && existingTest.FkCourse == model.FkCourse && existingTest.FkLevelcourse == model.FkLevelcourse))
-            {  
+            {
                 //Si hay alguien ya respondio el test, no permite cambiar el Course/Level
                 if (await _context.SyUserAnswers
                                  .AnyAsync(ua => ua.FkTest == id))
@@ -315,17 +315,11 @@ namespace RH_CM.Controllers
             var vm = new TestCreateViewModel();
             await InitializeCreateTestViewModelAsync(vm);
 
-            vm.Questions = new List<QuestionCreateViewModel>
-            {
-                new QuestionCreateViewModel
-                {
-                    Options = new List<OptionCreateViewModel>
-                    {
-                        new OptionCreateViewModel(),
-                        new OptionCreateViewModel()
-                    }
-                }
-            };
+            // CHANGED: antes se pre-cargaba una pregunta "dummy" con 2 opciones vacías, pero la vista
+            // nunca la usaba (el questions-container se armaba 100% por JS). Ahora que la vista SÍ
+            // renderiza Model.Questions (para poder recuperar datos tras un error de validación),
+            // dejamos la lista vacía en el alta inicial para no mostrar una tarjeta en blanco.
+            vm.Questions = new List<QuestionCreateViewModel>();
 
             return View(vm);
         }
@@ -357,7 +351,7 @@ namespace RH_CM.Controllers
             {
                 TempData["ErrorMessage"] = "Each question must have at least one correct option.";
             }
-           //Validación: la combinación debe existir en CtCourseassignments
+            //Validación: la combinación debe existir en CtCourseassignments
             else if (!await _context.CtCourseassignments
                              .AnyAsync(ca => ca.FkCourse == model.FkCourse
                                              && ca.FkRequiredCourseLevels == model.FkRequiredCourseLevels))
@@ -376,6 +370,9 @@ namespace RH_CM.Controllers
 
             if (TempData.ContainsKey("ErrorMessage"))
             {
+                // NOTE: model.Questions ya viene completo desde el POST (el model binding de ASP.NET
+                // reconstruye la lista a partir de "Questions[i].QuestionText", "Questions[i].Options[j].OptionText",
+                // etc.). Solo faltaba que la vista lo usara para re-pintar el HTML — ver CreateQuestions.cshtml.
                 await InitializeCreateTestViewModelAsync(model);
                 return View(model);
             }
@@ -485,7 +482,7 @@ namespace RH_CM.Controllers
             .Select(q => new QuestionCreateViewModel
             {
                 QuestionText = q.Question,
-                FkTypeOption = q.FkTypeOption, 
+                FkTypeOption = q.FkTypeOption,
                 Options = _context.CtOptions
                     .Where(o => o.FkQuestions == q.PkQuestions)
                     .OrderBy(o => o.PkOptions)
@@ -521,14 +518,22 @@ namespace RH_CM.Controllers
                              .AnyAsync(ua => ua.FkTest == id))
             {
                 TempData["ErrorMessage"] = "This test has already been answered by users. Please disable this one, and create a new one.";
-                return RedirectToAction(nameof(EditQuestions), new { id = id });
 
+                // CHANGED: antes se hacía RedirectToAction(EditQuestions, { id }), lo que disparaba un
+                // nuevo GET que volvía a leer el test desde la base de datos y descartaba cualquier
+                // cambio que el usuario ya hubiera escrito en el formulario. Ahora devolvemos la misma
+                // vista con el "model" que llegó del POST, así no se pierde nada de lo ya editado.
+                await InitializeCreateTestViewModelAsync(model);
+                return View(model);
             }
             //Nueva validación: cada pregunta debe tener al menos una opción correcta
             else if (model.Questions.Any(q => q.Options.All(o => o.IsCorrect == false)))
             {
                 TempData["ErrorMessage"] = "Each question must have at least one correct option.";
-                return RedirectToAction(nameof(EditQuestions), new { id = id });
+
+                // CHANGED: mismo motivo que arriba — se preserva lo que el usuario ya tenía escrito.
+                await InitializeCreateTestViewModelAsync(model);
+                return View(model);
             }
 
             using var transaction = await _context.Database.BeginTransactionAsync();
@@ -589,6 +594,11 @@ namespace RH_CM.Controllers
             {
                 await transaction.RollbackAsync();
                 TempData["ErrorMessage"] = $"Error updating questions: {ex.Message}";
+
+                // CHANGED: antes devolvía View(model) sin AvailableCourses/AvailableLevels/AvailableOptionTypes,
+                // lo cual no rompía nada gracias al "?." en la vista, pero para mantener consistencia con los
+                // otros dos casos de error dejamos también esta ruta re-inicializando las listas.
+                await InitializeCreateTestViewModelAsync(model);
                 return View(model);
             }
         }

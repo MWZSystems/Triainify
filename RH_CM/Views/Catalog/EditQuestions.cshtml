@@ -22,6 +22,16 @@
                 <form asp-action="EditQuestions" method="post">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+                    @* FIX: estos campos son de solo lectura visualmente (no tienen "name" en el
+                       <input readonly>), así que nunca viajaban de vuelta al servidor. Si una
+                       validación fallaba, el controller devolvía la vista con TestName/FkCourse/
+                       FkRequiredCourseLevels en null/0, mostrando "N/A" aunque las preguntas sí
+                       se hubieran preservado. Con estos hidden el modelo viaja completo en cada
+                       POST, así que el re-render tras un error queda idéntico a como estaba. *@
+                    <input type="hidden" asp-for="TestName" />
+                    <input type="hidden" asp-for="FkCourse" />
+                    <input type="hidden" asp-for="FkRequiredCourseLevels" />
+
                     <!-- Read-only Test Info -->
                     <div class="row">
                         <div class="mb-3 col-md-4">
@@ -77,7 +87,7 @@
                                                         <input type="radio"
                                                                name="Questions[@q].SelectedOptionIndex"
                                                                value="@o"
-                                                               @(opt.IsCorrect ? "checked" : "") />
+                                                        @(opt.IsCorrect ? "checked" : "") />
 
                                                         <input type="hidden" name="Questions[@q].Options[@o].IsCorrect" value="@(opt.IsCorrect ? "true" : "false")" />
                                                     }
@@ -88,7 +98,7 @@
                                                                class="option-checkbox"
                                                                name="Questions[@q].Options[@o].IsCorrect"
                                                                value="true"
-                                                               @(opt.IsCorrect ? "checked" : "") />
+                                                        @(opt.IsCorrect ? "checked" : "") />
                                                     }
                                                 </div>
                                                 <input name="Questions[@q].Options[@o].OptionText"
@@ -118,7 +128,7 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
 
             var successMessage = '@TempData["SuccessMessage"]';
             var errorMessage = '@TempData["ErrorMessage"]';
@@ -146,7 +156,7 @@
             }
 
             // Actualizar hidden de radios para que solo una opción quede en true
-            $(document).on("change", "input[type=radio][name^='Questions'][name$='SelectedOptionIndex']", function () {
+            $(document).on("change", "input[type=radio][name^='Questions'][name$='SelectedOptionIndex']", function() {
                 const qIndex = $(this).closest(".question-block").index();
                 const optionIndex = parseInt($(this).val());
 

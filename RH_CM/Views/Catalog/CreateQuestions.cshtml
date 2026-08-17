@@ -69,8 +69,61 @@
                         </div>
                     </div>
 
+                    @* FIX: si venimos de un POST que falló una validación (TempData["ErrorMessage"]),
+                       Model.Questions ya trae todo lo que el usuario había armado (el model binding de
+                       ASP.NET reconstruye la lista a partir de los inputs "Questions[i].*" que manda el form).
+                       Antes este div se renderizaba siempre vacío porque solo JS lo llenaba, y al volver de
+                       una validación fallida se perdía todo. Ahora reconstruimos acá, en el servidor, el mismo
+                       HTML que generaría el JS, para que el usuario recupere exactamente lo que ya tenía. *@
                     <div id="questions-container">
-                        <!-- Dynamically added questions will appear here -->
+                        @if (Model.Questions != null)
+                        {
+                            for (int qIndex = 0; qIndex < Model.Questions.Count; qIndex++)
+                            {
+                                var q = Model.Questions[qIndex];
+                                var typeDesc = Model.AvailableOptionTypes
+                                    .FirstOrDefault(t => t.PkOptiontype == q.FkTypeOption)?.DescriptionOptiontype ?? "";
+                                var inputType = typeDesc.ToLower().Contains("checkbox") ? "checkbox" : "radio";
+                                var options = q.Options ?? new List<RH_CM.ViewModels.OptionCreateViewModel>();
+
+                                <div class="card mb-3 question-block border border-primary" data-question-type="@typeDesc">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h5>Question @(qIndex + 1): @q.QuestionText</h5>
+                                            <button type="button" class="btn btn-sm btn-outline-danger remove-question-btn">
+                                                <i class="fas fa-trash"></i> Remove Question
+                                            </button>
+                                        </div>
+                                        <input type="hidden" name="Questions[@qIndex].QuestionText" value="@q.QuestionText" />
+                                        <input type="hidden" name="Questions[@qIndex].FkTypeOption" value="@q.FkTypeOption" />
+                                        <div class="options-container">
+                                            @for (int oIndex = 0; oIndex < options.Count; oIndex++)
+                                            {
+                                                var o = options[oIndex];
+
+                                                <div class="input-group mb-2 align-items-center">
+                                                    <div class="input-group-text">
+                                                        <input type="@inputType" class="option-correct-input"
+                                                               name="question-@(qIndex)-correct"
+                                                        @(o.IsCorrect ? "checked" : "") />
+                                                    </div>
+                                                    <input type="hidden" name="Questions[@qIndex].Options[@oIndex].OptionText" value="@o.OptionText" />
+                                                    <input type="hidden" name="Questions[@qIndex].Options[@oIndex].IsCorrect" value="@(o.IsCorrect ? "true" : "false")" />
+                                                    <span class="form-control bg-light">@o.OptionText</span>
+                                                    <button type="button" class="btn btn-outline-danger remove-option-btn">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="input-group mt-2">
+                                            <input type="text" class="form-control option-text-input" placeholder="Enter option text">
+                                            <button type="button" class="btn btn-primary add-option-confirm-btn">Confirm Option</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
                     </div>
 
                     <div class="text-end mt-3">
@@ -91,7 +144,7 @@
     @await Html.PartialAsync("_ValidationScriptsPartial")
 
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
 
             // 🔹 Mostrar mensajes de TempData con notyf
             if ("@TempData["SuccessMessage"]") {
@@ -124,9 +177,12 @@
             });
 
             // 🔹 Variables y eventos para agregar preguntas y opciones
-            let questionIndex = 0;
+            // FIX: arrancamos el índice después de las preguntas que ya vinieron
+            // renderizadas desde el servidor (ver bloque Razor arriba), para que las
+            // preguntas nuevas que agregues no pisen los índices de las recuperadas.
+            let questionIndex = @(Model.Questions?.Count ?? 0);
 
-            $("#add-question-btn").click(function () {
+            $("#add-question-btn").click(function() {
                 const text = $("#newQuestionText").val().trim();
                 const typeId = $("#newQuestionType").val();
                 const typeText = $("#newQuestionType option:selected").text();
@@ -137,30 +193,30 @@
                 }
 
                 const questionHtml = `
-                    <div class="card mb-3 question-block border border-primary" data-question-type="${typeText}">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h5>Question ${questionIndex + 1}: ${text}</h5>
-                                <button type="button" class="btn btn-sm btn-outline-danger remove-question-btn">
-                                    <i class="fas fa-trash"></i> Remove Question
-                                </button>
-                            </div>
-                            <input type="hidden" name="Questions[${questionIndex}].QuestionText" value="${text}" />
-                            <input type="hidden" name="Questions[${questionIndex}].FkTypeOption" value="${typeId}" />
-                            <div class="options-container"></div>
-                            <div class="input-group mt-2">
-                                <input type="text" class="form-control option-text-input" placeholder="Enter option text">
-                                <button type="button" class="btn btn-primary add-option-confirm-btn">Confirm Option</button>
-                            </div>
-                        </div>
-                    </div>`;
+                            <div class="card mb-3 question-block border border-primary" data-question-type="${typeText}">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5>Question ${questionIndex + 1}: ${text}</h5>
+                                        <button type="button" class="btn btn-sm btn-outline-danger remove-question-btn">
+                                            <i class="fas fa-trash"></i> Remove Question
+                                        </button>
+                                    </div>
+                                    <input type="hidden" name="Questions[${questionIndex}].QuestionText" value="${text}" />
+                                    <input type="hidden" name="Questions[${questionIndex}].FkTypeOption" value="${typeId}" />
+                                    <div class="options-container"></div>
+                                    <div class="input-group mt-2">
+                                        <input type="text" class="form-control option-text-input" placeholder="Enter option text">
+                                        <button type="button" class="btn btn-primary add-option-confirm-btn">Confirm Option</button>
+                                    </div>
+                                </div>
+                            </div>`;
 
                 $("#questions-container").append(questionHtml);
                 $("#newQuestionText").val('');
                 questionIndex++;
             });
 
-            $(document).on("click", ".add-option-confirm-btn", function () {
+            $(document).on("click", ".add-option-confirm-btn", function() {
                 const cardBody = $(this).closest(".card-body");
                 const qIndex = $(".question-block").index($(this).closest(".question-block"));
                 const typeText = $(this).closest(".question-block").attr("data-question-type");
@@ -179,23 +235,23 @@
                 if (typeText.toLowerCase().includes("checkbox")) inputType = "checkbox";
 
                 const optionHtml = `
-                    <div class="input-group mb-2 align-items-center">
-                        <div class="input-group-text">
-                            <input type="${inputType}" class="option-correct-input" name="question-${qIndex}-correct" />
-                        </div>
-                        <input type="hidden" name="Questions[${qIndex}].Options[${oIndex}].OptionText" value="${text}" />
-                        <input type="hidden" name="Questions[${qIndex}].Options[${oIndex}].IsCorrect" value="false" />
-                        <span class="form-control bg-light">${text}</span>
-                        <button type="button" class="btn btn-outline-danger remove-option-btn">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>`;
+                            <div class="input-group mb-2 align-items-center">
+                                <div class="input-group-text">
+                                    <input type="${inputType}" class="option-correct-input" name="question-${qIndex}-correct" />
+                                </div>
+                                <input type="hidden" name="Questions[${qIndex}].Options[${oIndex}].OptionText" value="${text}" />
+                                <input type="hidden" name="Questions[${qIndex}].Options[${oIndex}].IsCorrect" value="false" />
+                                <span class="form-control bg-light">${text}</span>
+                                <button type="button" class="btn btn-outline-danger remove-option-btn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>`;
 
                 container.append(optionHtml);
                 optionTextInput.val('');
             });
 
-            $(document).on("change", ".option-correct-input", function () {
+            $(document).on("change", ".option-correct-input", function() {
                 const group = $(this).closest(".options-container");
                 const isCheckbox = $(this).attr("type") === "checkbox";
 
@@ -211,15 +267,14 @@
                 }
             });
 
-            $(document).on("click", ".remove-option-btn", function () {
+            $(document).on("click", ".remove-option-btn", function() {
                 $(this).closest(".input-group").remove();
             });
 
-            $(document).on("click", ".remove-question-btn", function () {
+            $(document).on("click", ".remove-question-btn", function() {
                 $(this).closest(".question-block").remove();
             });
 
         });
     </script>
 }
-

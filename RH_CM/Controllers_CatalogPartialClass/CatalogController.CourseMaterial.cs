@@ -32,6 +32,9 @@ namespace RH_CM.Controllers
             return RedirectToAction(nameof(CreateCourseMaterial), new { type = materialType });
         }
 
+        // CHANGED: la validación de "ya tiene PDF" ahora se hace por Course + Level,
+        // no solo por Course. Antes bloqueaba el alta de un PDF para "IATF 16949 / Básico"
+        // si el curso ya tenía un PDF en, por ejemplo, "IATF 16949 / Intermedio".
         private async Task<string?> ValidatePdfCourseSelectionAsync(
             int fkCourse,
             int fkLevelCourse,
@@ -42,11 +45,6 @@ namespace RH_CM.Controllers
                 return "Only one PDF can be assigned per course. Please upload a single PDF.";
             }
 
-            if (fkCourse > 0 && await CourseAlreadyHasPdfAsync(fkCourse))
-            {
-                return "This course already has a PDF assigned. Only one PDF is allowed per course.";
-            }
-
             if (fkCourse > 0 &&
                 fkLevelCourse > 0 &&
                 !await CourseLevelCombinationExistsAsync(fkCourse, fkLevelCourse))
@@ -54,19 +52,56 @@ namespace RH_CM.Controllers
                 return "This Course-Level combination doesn't exist in Courseassignments.";
             }
 
+            // Solo tiene sentido chequear "ya tiene PDF" cuando se va a crear el vínculo
+            // Course+Level (AssignMaterialsToCourseLevelAsync solo corre si ambos > 0).
+            if (fkCourse > 0 &&
+                fkLevelCourse > 0 &&
+                await CourseAlreadyHasPdfAsync(fkCourse, fkLevelCourse))
+            {
+                return "This course already has a PDF assigned for this level. Only one PDF is allowed per course-level.";
+            }
+
             return null;
         }
 
-        private Task<bool> CourseAlreadyHasPdfAsync(int fkCourse, int? excludedMaterialId = null)
+        // CHANGED: ahora recibe fkLevelCourse y filtra también por CtCourseLevelMaterial.FkLevelCourse,
+        // igual que ya hacía AssignMaterialsToCourseLevelAsync y CourseLevelCombinationExistsAsync.
+        private Task<bool> CourseAlreadyHasPdfAsync(
+            int fkCourse,
+            int fkLevelCourse,
+            int? excludedMaterialId = null)
         {
             return (
                 from clm in _context.CtCourseLevelMaterials.AsNoTracking()
                 join cm in _context.CtCoursematerials.AsNoTracking()
                     on clm.FkCourseMaterial equals cm.PkCoursematerial
                 where clm.FkCourse == fkCourse
+                      && clm.FkLevelCourse == fkLevelCourse
                       && clm.Available == AvailableStatus
                       && cm.Available == AvailableStatus
                       && cm.MaterialType == PdfMaterialType
+                      && (!excludedMaterialId.HasValue ||
+                          cm.PkCoursematerial != excludedMaterialId.Value)
+                select clm.PkCourseLevelMaterial
+            ).AnyAsync();
+        }
+
+        // NEW: misma idea que CourseAlreadyHasPdfAsync pero para VIDEO.
+        // Evita más de un video activo para la misma combinación Course + Level.
+        private Task<bool> CourseAlreadyHasVideoAsync(
+            int fkCourse,
+            int fkLevelCourse,
+            int? excludedMaterialId = null)
+        {
+            return (
+                from clm in _context.CtCourseLevelMaterials.AsNoTracking()
+                join cm in _context.CtCoursematerials.AsNoTracking()
+                    on clm.FkCourseMaterial equals cm.PkCoursematerial
+                where clm.FkCourse == fkCourse
+                      && clm.FkLevelCourse == fkLevelCourse
+                      && clm.Available == AvailableStatus
+                      && cm.Available == AvailableStatus
+                      && cm.MaterialType == VideoMaterialType
                       && (!excludedMaterialId.HasValue ||
                           cm.PkCoursematerial != excludedMaterialId.Value)
                 select clm.PkCourseLevelMaterial
@@ -346,6 +381,14 @@ namespace RH_CM.Controllers
                     "The selected Course-Level combination is not valid.");
             }
 
+            // NEW: mismo criterio que el PDF — un solo video activo por Course + Level.
+            if (await CourseAlreadyHasVideoAsync(fkCourse, fkLevelCourse))
+            {
+                return RedirectToMaterialCreation(
+                    VideoMaterialType,
+                    "This course already has a video assigned for this level. Only one video is allowed per course-level.");
+            }
+
             var existsName = await _context.CtCoursematerials
                 .AsNoTracking()
                 .AnyAsync(m =>
@@ -487,10 +530,12 @@ namespace RH_CM.Controllers
                     return RedirectToAction(nameof(EditPDFMaterial), new { id });
                 }
 
-                if (await CourseAlreadyHasPdfAsync(fkCourse, id))
+                // CHANGED: ahora se compara por Course + Level (y se excluye el propio
+                // material que se está editando), en vez de bloquear por Course solo.
+                if (await CourseAlreadyHasPdfAsync(fkCourse, fkLevelCourse, id))
                 {
                     TempData["ErrorMessage"] =
-                        "This course already has a PDF assigned. Only one PDF is allowed per course.";
+                        "This course already has a PDF assigned for this level. Only one PDF is allowed per course-level.";
 
                     return RedirectToAction(nameof(EditPDFMaterial), new { id });
                 }
