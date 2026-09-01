@@ -15,11 +15,11 @@
 
     <title>Trainify Login</title>
     <link rel="stylesheet" href="~/Assets/dist/css/light.css" asp-append-version="true" />
-    <link rel="shortcut icon" href="assets/favicon.ico">
+    <link rel="shortcut icon" href="~/Assets/favicon.ico">
 
     <style>
         body {
-            background-image: url('assets/WallpaperBackground.jpeg');
+            background-image: url('@Url.Content("~/Assets/WallpaperBackground.jpeg")');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -57,7 +57,7 @@
                         <div class="card-body p-4">
 
                             <div class="text-center mb-3">
-                                <img src="~/assets/dist/img/avatars/user.png"
+                                <img src="~/Assets/dist/img/avatars/user.png"
                                      alt="Login"
                                      class="img-fluid rounded-circle"
                                      style="width: 80px; height: 80px; object-fit: cover;" />
@@ -122,7 +122,7 @@
         </div>
     </div>
 
-    <script src="~/assets/dist/js/app.js"></script>
+    <script src="~/Assets/dist/js/app.js"></script>
 
     @* Validation and Notyf *@
     <partial name="_ValidationScriptsPartial" />

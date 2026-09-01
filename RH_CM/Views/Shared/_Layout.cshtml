@@ -11,11 +11,11 @@
     <title>@ViewData["Title"] - RH</title>
 
     <!-- Estilos base del tema -->
-    <link rel="stylesheet" href="~/assets/dist/css/light.css" asp-append-version="true" />
-    <link rel="shortcut icon" href="~/assets/favicon.ico" />
+    <link rel="stylesheet" href="~/Assets/dist/css/light.css" asp-append-version="true" />
+    <link rel="shortcut icon" href="~/Assets/favicon.ico" />
 
     <!-- Select2 (global) -->
-    <link rel="stylesheet" href="~/assets/dist/css/select2.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Assets/dist/css/select2.css" asp-append-version="true" />
 
     <!-- CSS de BootstrapBlazor (desde NuGet) -->
     @* <link rel="stylesheet" href="~/_content/BootstrapBlazor/css/bootstrap.blazor.bundle.min.css" /> *@
@@ -23,7 +23,7 @@
     @RenderSection("head", required: false)
 
     <!-- Paletas/acentos por página -->
-    <link rel="stylesheet" href="~/assets/dist/css/bodyclass.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Assets/dist/css/bodyclass.css" asp-append-version="true" />
 </head>
 
 <body class="@(ViewData["BodyClass"] as string ?? "")"
@@ -61,9 +61,9 @@
     @* <script src="~/_content/BootstrapBlazor/js/bootstrap.blazor.bundle.min.js"></script> *@
 
     <!-- JS base -->
-    <script src="~/assets/dist/js/app.js" asp-append-version="true"></script>
+    <script src="~/Assets/dist/js/app.js" asp-append-version="true"></script>
     <!-- Select2 (global) -->
-    <script src="~/assets/dist/js/select2.js" asp-append-version="true"></script>
+    <script src="~/Assets/dist/js/select2.js" asp-append-version="true"></script>
 
     <!-- Blazor Server runtime (requerido para componentes interactivos) -->
     <script src="~/_framework/blazor.server.js"></script>
