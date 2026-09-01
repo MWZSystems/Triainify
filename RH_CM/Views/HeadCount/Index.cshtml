@@ -21,9 +21,9 @@
 
 <!-- Loader -->
 <div id="loader" class="text-center my-5">
-    <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+    <output class="spinner-border" style="width: 3rem; height: 3rem;" aria-live="polite">
         <span class="visually-hidden">Loading...</span>
-    </div>
+    </output>
 </div>
 
 <!-- Tabla envuelta en contenedor oculto -->
@@ -118,7 +118,7 @@
     @await Html.PartialAsync("_ValidationScriptsPartial")
 
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             // Ocultar tabla y mostrar loader
             $('#tableContainer').hide();
             $('#loader').show();
@@ -127,8 +127,8 @@
             $('#datatables-responsive').DataTable({
                 responsive: true,
                 order: [[0, 'asc']],
-                initComplete: function () {
-                    $('#loader').fadeOut(200, function () {
+                initComplete: function() {
+                    $('#loader').fadeOut(200, function() {
                         $('#tableContainer').fadeIn(200);
                     });
                 }
@@ -136,7 +136,7 @@
 
             // Mostrar mensajes de éxito y error
             if ("@TempData["SuccessMessage"]" !== "") {
-                window.notyf.open({
+                window.notyf?.open?.({
                     type: 'success',
                     message: "@TempData["SuccessMessage"]",
                     ripple: true,
@@ -147,7 +147,7 @@
             }
 
             if ("@TempData["ErrorMessage"]" !== "") {
-                window.notyf.open({
+                window.notyf?.open?.({
                     type: 'error',
                     message: "@TempData["ErrorMessage"]",
                     ripple: true,

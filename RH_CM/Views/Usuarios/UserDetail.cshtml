@@ -1,0 +1,106 @@
+@model RH_CM.ViewModels.AppUsuario
+
+@{
+    ViewData["Title"] = "User Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var isLocked = Model.LockoutEnd != null && Model.LockoutEnd > DateTime.Now;
+}
+
+<h1 class="h3 mb-3 text-center">User Detail</h1>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">User Detail</h5>
+                <h6 class="card-subtitle text-muted">
+                    Read-only view of this user's information.
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="mb-2 col-md-4">
+                        <label class="form-label">User Name</label>
+                        <input type="text" value="@Model.UserName" class="form-control" disabled />
+                    </div>
+                    <div class="mb-2 col-md-4">
+                        <label class="form-label">Email</label>
+                        <input type="text" value="@Model.Email" class="form-control" disabled />
+                    </div>
+                    <div class="mb-2 col-md-4">
+                        <label class="form-label">Role</label>
+                        <input type="text" value="@Model.Rol" class="form-control" disabled />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="mb-2 col-md-4">
+                        <label class="form-label">Names</label>
+                        <input type="text" value="@Model.Names" class="form-control" disabled />
+                    </div>
+                    <div class="mb-2 col-md-4">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" value="@Model.LastName" class="form-control" disabled />
+                    </div>
+                    <div class="mb-2 col-md-4">
+                        <label class="form-label">Employee Number</label>
+                        <input type="text" value="@Model.EmployeeNumber" class="form-control" disabled />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="mb-2 col-md-4">
+                        <label class="form-label">NT User</label>
+                        <input type="text" value="@Model.Ntuser" class="form-control" disabled />
+                    </div>
+                    <div class="mb-2 col-md-4">
+                        <label class="form-label">Status</label>
+                        <input type="text" value="@(Model.Available == 1 ? "Available" : "Unavailable")" class="form-control" disabled />
+                    </div>
+                    <div class="mb-2 col-md-4">
+                        <label class="form-label">Lock Status</label>
+                        <input type="text" value="@(isLocked ? $"Locked until {Model.LockoutEnd:g}" : "Unlocked")" class="form-control" disabled />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="mb-2 col-md-4">
+                        <label class="form-label">Created Date</label>
+                        <input type="text" value="@Model.CreateDate.ToShortDateString()" class="form-control" disabled />
+                    </div>
+                </div>
+                <div class="col-12 text-end">
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="align-middle fas fa-arrow-left"></i> BACK
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var ok = "@(TempData["Correcto"] ?? TempData["SuccessMessage"])";
+        var err = "@(TempData["Error"] ?? TempData["ErrorMessage"])";
+
+        if (ok && ok !== "") {
+            window.notyf?.open?.({
+                type: 'success',
+                message: ok,
+                ripple: true,
+                dismissible: true,
+                position: { x: 'center', y: 'top' },
+                duration: 5000
+            });
+        }
+
+        if (err && err !== "") {
+            window.notyf?.open?.({
+                type: 'error',
+                message: err,
+                ripple: true,
+                dismissible: true,
+                position: { x: 'center', y: 'top' },
+                duration: 5000
+            });
+        }
+    });
+</script>

@@ -1,9 +1,8 @@
-﻿using ClosedXML.Excel;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using RH_CM.Data;
 using RH_CM.Service.DTOs;
 using RH_CM.Service.SQLSMS;
-using System.Data;
+using System.Linq;
 
 namespace RH_CM.Service.ExternalEvidence
 {
@@ -100,24 +99,13 @@ namespace RH_CM.Service.ExternalEvidence
 
         public async Task<ServiceAnswerAndFeedbackDTOs> PostCreateExternalEvidenceAsync(CreateExternalEvidenceInputDTOs DTOs)
         {
-            //Post data from view to db
-
-            //Gets all the values.
-            //int courseID = int.Parse(DTOs.SelectedCourse.Substring(0, DTOs.SelectedCourse.IndexOf(" ")));
-
             string[] splitCourse = DTOs.SelectedCourse.Split(" - ");
             int courseID = int.Parse(splitCourse[0]);
             string courseName = splitCourse[1];
-            string userName = DTOs.UserName;
-            
-            
-            
-            //int level = ReturnLevelID(DTOs.SelectedLevel); //Returns the ID in the description
 
             string query = $"SELECT [PK_LEVELCOURSE] FROM [CT_LEVELCOURSE] WHERE [DESCRIPCTION_LEVEL] = '{DTOs.SelectedLevel}' ";
 
             int level = int.Parse(await _unitOfWork.QuerySingleScalarAsync(query));
-
 
             byte[] fileBytes;
             int controlNumber;
@@ -125,20 +113,9 @@ namespace RH_CM.Service.ExternalEvidence
             bool feedBackRequired = false;
             string fullName;
             string evidenceFileName = DTOs.UploadedFile.FileName;
-            DataTable feedBackDT = new DataTable();
-
-            // Agregar de Feedback DT
-            feedBackDT.Columns.Add("ControlNumber", typeof(int));
-            feedBackDT.Columns.Add("FullName", typeof(string));
-            feedBackDT.Columns.Add("PositionName", typeof(string));
-            feedBackDT.Columns.Add("CourseID", typeof(int));
-            feedBackDT.Columns.Add("CourseName", typeof(string));
-            feedBackDT.Columns.Add("Level", typeof(string));
-            feedBackDT.Columns.Add("EvidenceFilename", typeof(string));
-            feedBackDT.Columns.Add("FeedBackComment", typeof(string));
+            List<ExternalEvidenceFeedbackItemDTOs> feedbackItems = new();
 
             ServiceAnswerAndFeedbackDTOs serviceAnswerAndFeedback = new();
-            serviceAnswerAndFeedback.FeedbackFile = null;
 
             if (!PDFValidation(DTOs.UploadedFile))
             {
@@ -149,7 +126,7 @@ namespace RH_CM.Service.ExternalEvidence
             //Save file in Binary
             using (var memoryStream = new MemoryStream())
             {
-                    DTOs.UploadedFile.CopyTo(memoryStream);
+                DTOs.UploadedFile.CopyTo(memoryStream);
                 fileBytes = memoryStream.ToArray();
             }
 
@@ -157,9 +134,9 @@ namespace RH_CM.Service.ExternalEvidence
             //(No todos los cursos tienen los 4 niveles, para eso esta validacion)
             string LevelExistsQuery = @$" IF EXISTS (SELECT 1
                                                         FROM [dbo].[CT_COURSEASSIGNMENTS]
-                                                        WHERE FK_Course = {courseID} 
-                                                            ANd FK_RequiredCourseLevels = {level}
-                                                             ANd FK_DeliveryMode = 2    
+                                                        WHERE FK_Course = {courseID}
+                                                            AND FK_RequiredCourseLevels = {level}
+                                                            AND FK_DeliveryMode = 2
                                                             )
                                             BEGIN
                                                 SELECT 'OK' as result
@@ -173,7 +150,7 @@ namespace RH_CM.Service.ExternalEvidence
 
             if (LevelExists != "OK")
             {
-                serviceAnswerAndFeedback.ServiceAnswer = new(false, "ErrorMessage", $"The Course {courseName} doesn't have a '{DTOs.SelectedLevel}' level Or External DeliveryType in CourseAssignments");
+                serviceAnswerAndFeedback.ServiceAnswer = new(false, "ErrorMessage", $"The course '{courseName}' does not have a '{DTOs.SelectedLevel}' level with External delivery type in Course Assignments.");
                 return serviceAnswerAndFeedback;
             }
 
@@ -185,39 +162,56 @@ namespace RH_CM.Service.ExternalEvidence
                 fullName = employeeData[1];
                 positionName = employeeData[2];
 
-
-
                 //Revisa si es internal, External, o si el Position-Course no existe en absoluto
                 string AssignmentExistsQuery = @$"         DECLARE  @pResultado VARCHAR(20)
-                                                        SET @pResultado = 
-                                                        (SELECT CASE 
-                                                                    WHEN A.FK_DeliveryMode = 1 THEN 'Internal' 
-                                                                    WHEN A.FK_DeliveryMode = 2 THEN 'External' 
+                                                        SET @pResultado =
+                                                        (SELECT CASE
+                                                                    WHEN A.FK_DeliveryMode = 1 THEN 'Internal'
+                                                                    WHEN A.FK_DeliveryMode = 2 THEN 'External'
                                                                      END AS Answer
 
                                                          FROM [dbo].[CT_COURSEASSIGNMENTS] A
                                                             LEFT JOIN dbo.CT_POSITION B ON A.FK_Position = B.PK_POSITION
-                                                         WHERE A.FK_Course = {courseID} 
+                                                         WHERE A.FK_Course = {courseID}
                                                          AND A.FK_RequiredCourseLevels = {level}
                                                          AND B.NAME_POSITION = '{positionName}'
                                                          )
 
                                                          SELECT COALESCE(@pResultado, 'Empty') As resultado";
 
-
                 string AssignmentExists = await _unitOfWork.QuerySingleScalarAsync(AssignmentExistsQuery);
 
                 if (AssignmentExists == "Internal")
                 {
-                    //Aqui añade al feedback con error
-                    feedBackDT.Rows.Add(controlNumber, fullName, positionName, courseID, courseName, DTOs.SelectedLevel, "", "Error: This Position-Course-Level is marked as 'INTERNAL' in CourseAssignments Catalog. Record Not Added");
+                    feedbackItems.Add(new ExternalEvidenceFeedbackItemDTOs
+                    {
+                        ControlNumber = controlNumber,
+                        FullName = fullName,
+                        PositionName = positionName,
+                        CourseID = courseID,
+                        CourseName = courseName,
+                        Level = DTOs.SelectedLevel,
+                        EvidenceFileName = "",
+                        Success = false,
+                        FeedBackComment = $"The position '{positionName}' has course '{courseName}' (level '{DTOs.SelectedLevel}') assigned as INTERNAL, not External, in Course Assignments. The evidence was not added."
+                    });
                     feedBackRequired = true;
-
                     continue;
                 }
                 else if (AssignmentExists == "Empty")
                 {
-                    feedBackDT.Rows.Add(controlNumber, fullName, positionName, courseID, courseName, DTOs.SelectedLevel, "", "Error: This Position-Course-Level link does not exists in CourseAssignments Catalog. Record Not Added");
+                    feedbackItems.Add(new ExternalEvidenceFeedbackItemDTOs
+                    {
+                        ControlNumber = controlNumber,
+                        FullName = fullName,
+                        PositionName = positionName,
+                        CourseID = courseID,
+                        CourseName = courseName,
+                        Level = DTOs.SelectedLevel,
+                        EvidenceFileName = "",
+                        Success = false,
+                        FeedBackComment = $"The position '{positionName}' does not have course '{courseName}' assigned at level '{DTOs.SelectedLevel}' in Course Assignments. The evidence was not added."
+                    });
                     feedBackRequired = true;
                     continue;
                 }
@@ -238,28 +232,53 @@ namespace RH_CM.Service.ExternalEvidence
 
                 if (result != "Completed")
                 {
-                    feedBackDT.Rows.Add(controlNumber, fullName, positionName, courseID, courseName, DTOs.SelectedLevel,"", "Error: This record has not been added. Please Check it in detail");
+                    feedbackItems.Add(new ExternalEvidenceFeedbackItemDTOs
+                    {
+                        ControlNumber = controlNumber,
+                        FullName = fullName,
+                        PositionName = positionName,
+                        CourseID = courseID,
+                        CourseName = courseName,
+                        Level = DTOs.SelectedLevel,
+                        EvidenceFileName = "",
+                        Success = false,
+                        FeedBackComment = "This record could not be added. Please review it in detail."
+                    });
                     feedBackRequired = true;
                     continue;
                 }
 
-                feedBackDT.Rows.Add(controlNumber, fullName, positionName, courseID, courseName, DTOs.SelectedLevel, evidenceFileName, "Success: This record has been successfully added with the evidence provided.");
-
+                feedbackItems.Add(new ExternalEvidenceFeedbackItemDTOs
+                {
+                    ControlNumber = controlNumber,
+                    FullName = fullName,
+                    PositionName = positionName,
+                    CourseID = courseID,
+                    CourseName = courseName,
+                    Level = DTOs.SelectedLevel,
+                    EvidenceFileName = evidenceFileName,
+                    Success = true,
+                    FeedBackComment = "This record was successfully added with the evidence provided."
+                });
             }
 
             if (feedBackRequired)
             {
-                serviceAnswerAndFeedback.ServiceAnswer = new(false, "ErrorMessage", "Some Evidences Could not be Assigned due to errors, please check Feedback File");
-                serviceAnswerAndFeedback.FeedbackFile = DataTableToExcelStream(feedBackDT);// AQUI VA EL METODO QUE CONVIERTA EL DT a byte[]// feedBackDT;
+                int errorCount = feedbackItems.Count(f => !f.Success);
+                int totalCount = feedbackItems.Count;
+
+                serviceAnswerAndFeedback.ServiceAnswer = new(
+                    false,
+                    "ErrorMessage",
+                    $"{errorCount} of {totalCount} selected record(s) could not be assigned. Review the detail below.");
+                serviceAnswerAndFeedback.FeedbackItems = feedbackItems;
             }
-            else 
+            else
             {
-                serviceAnswerAndFeedback.ServiceAnswer = new(false, "SuccessMessage", "The evidence was successfully added to every record!");
+                serviceAnswerAndFeedback.ServiceAnswer = new(true, "SuccessMessage", "The evidence was successfully added to every selected record.");
             }
-            
 
             return serviceAnswerAndFeedback;
-
         }
 
         /// <summary>
@@ -385,68 +404,48 @@ namespace RH_CM.Service.ExternalEvidence
         {
             ServiceAnswer serviceAnswer = new();
             int? PK_ExternalEvidence = DTOs.PK_ExternalEvidence;
-            byte[] fileBinary = null;
-            string fileNamePDF = null;
-            //decimal? Score = DTOs.Score == 0 ? (decimal?)null : DTOs.Score;
             string? userName = DTOs.UserName;
 
-
-            fileBinary = new byte[1]; // un byte con valor 0
-
-            //if (Score == null && file == null)
-            //{
-            //    serviceAnswer.MessageType = "ErrorMessage";
-            //    serviceAnswer.Message = "No data was provided for update";
-            //    return serviceAnswer;
-            //}
-
-            if (file != null)
+            // Same check the Create flow uses (null/empty/extension), applied here too for
+            // defense in depth — the controller already validates the file before calling this,
+            // but the service should not trust its caller blindly.
+            if (!PDFValidation(file))
             {
-                var fileName = file.FileName?.ToLowerInvariant() ?? "";
-
-
-                if (!fileName.EndsWith(".pdf"))
-                {
-                    serviceAnswer.MessageType = "ErrorMessage";
-                    serviceAnswer.Message = "Only PDFs can be provided.";
-                    return serviceAnswer;
-                }
-
-                //Save file in Binary
-                using (var memoryStream = new MemoryStream())
-                {
-                    file.CopyTo(memoryStream);
-                    fileBinary = memoryStream.ToArray();
-                }
-
-                fileNamePDF = file.FileName;
+                serviceAnswer.MessageType = "ErrorMessage";
+                serviceAnswer.Message = "File Empty or .PDF format not correct";
+                return serviceAnswer;
             }
 
+            byte[] fileBinary;
+            using (var memoryStream = new MemoryStream())
+            {
+                file.CopyTo(memoryStream);
+                fileBinary = memoryStream.ToArray();
+            }
+
+            string fileNamePDF = file.FileName;
 
             var parameters = new Dictionary<string, object>
                 {
                     { "@pPK_ExternalEvidence", PK_ExternalEvidence },
-                    //{ "@pScore", Score },
                     { "@pFile", fileBinary },
                     { "@pFileName", fileNamePDF },
                     { "@pUserName", userName }
                 };
-
 
             string result = await _unitOfWork.ExecuteStoredProcedureScalarAsync("[dbo].[sp_ExternalEvidence_Edit_Post]", parameters);
 
             if (result != "Completed")
             {
                 serviceAnswer.MessageType = "ErrorMessage";
-                serviceAnswer.Message = "UpdateFailed";
+                serviceAnswer.Message = "The record could not be updated. Please try again or contact support.";
                 return serviceAnswer;
             }
 
             serviceAnswer.MessageType = "SuccessMessage";
-            serviceAnswer.Message = "Record Updated";
+            serviceAnswer.Message = "The evidence was updated successfully.";
 
             return serviceAnswer;
-
         }
 
         public async Task<ServiceAnswer> PostDeleteRecordAsync(int? id)
@@ -517,73 +516,6 @@ namespace RH_CM.Service.ExternalEvidence
             }
 
             return idResult;
-        }
-
-
-        /// <summary>
-        /// Recibe Datatable y devuelve el archivo Excel.
-        /// </summary>
-        /// <param name="dataTable"></param>
-        /// <returns></returns>
-        private byte[] DataTableToExcelStream(DataTable dataTable)
-        {
-            byte[] content = null;
-
-            //Crear Excel
-            using var wb = new XLWorkbook();
-            var ws = wb.Worksheets.Add("ExternalEvidenceFeedback");
-
-            // Encabezados
-            ws.Cell(1, 1).Value = "Control Number";
-            ws.Cell(1, 2).Value = "Full Name";
-            ws.Cell(1, 3).Value = "Position Name";
-            ws.Cell(1, 4).Value = "PK Course";
-            ws.Cell(1, 5).Value = "Course Name";
-            ws.Cell(1, 6).Value = "Level";
-            ws.Cell(1, 7).Value = "Evidence File Name";
-            ws.Cell(1, 8).Value = "FeedBack Comment";
-
-            var header = ws.Range("A1:H1");
-            header.Style.Font.Bold = true;
-            header.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-            header.Style.Fill.BackgroundColor = XLColor.LightGreen;
-
-            // 2) Datos
-            int row = 2;
-            foreach (DataRow linea in dataTable.Rows)
-            {
-                ws.Cell(row, 1).Value = linea["ControlNumber"].ToString();
-                ws.Cell(row, 2).Value = linea["FullName"].ToString();
-                ws.Cell(row, 3).Value = linea["PositionName"].ToString();
-                ws.Cell(row, 4).Value = linea["CourseID"].ToString();
-                ws.Cell(row, 5).Value = linea["CourseName"].ToString();
-                ws.Cell(row, 6).Value = linea["Level"].ToString();
-                ws.Cell(row, 7).Value = linea["EvidenceFilename"].ToString();
-                ws.Cell(row, 8).Value = linea["FeedBackComment"].ToString();
-                row++;
-            }
-
-            // 3) Estilos y formato
-            int lastRow = row - 1;
-            var dataRange = ws.Range(1, 1, lastRow, 8);
-            dataRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-            dataRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
-            dataRange.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
-            dataRange.SetAutoFilter();
-
-            // Ajuste de columnas y congelar encabezado
-            ws.Columns().AdjustToContents();
-            ws.SheetView.FreezeRows(1);
-
-            // 4) a excel.
-            //string fechaActual = DateTime.Now.ToString("yyyyMMdd");
-            using var stream = new MemoryStream();
-            wb.SaveAs(stream);
-
-
-            content = stream.ToArray();
-
-            return content;
         }
 
     }

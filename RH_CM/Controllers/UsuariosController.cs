@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -34,34 +34,71 @@ namespace RH_CM.Controllers
                 var rol = rolesUsuario.FirstOrDefault(u => u.UserId == usuario.Id);
                 if (rol == null)
                 {
-                    usuario.Rol = "Ninguno";
+                    usuario.Rol = "None";
                 }
                 else
                 {
-                    usuario.Rol = roles.FirstOrDefault(u => u.Id == rol.RoleId).Name;
+                    usuario.Rol = roles.FirstOrDefault(u => u.Id == rol.RoleId)?.Name ?? "None";
                 }
             }
 
             return View(usuarios);
         }
 
-        // ==============================
-        // CREAR USUARIO
-        // ==============================
+        private async Task<AppUsuario?> GetUserWithRoleAsync(string id)
+        {
+            var usuario = await _contexto.AppUsuario.FirstOrDefaultAsync(u => u.Id == id);
+            if (usuario == null)
+            {
+                return null;
+            }
+
+            var rolUsuario = await _contexto.UserRoles.FirstOrDefaultAsync(u => u.UserId == usuario.Id);
+            if (rolUsuario == null)
+            {
+                usuario.Rol = "None";
+                return usuario;
+            }
+
+            var rol = await _contexto.Roles.FirstOrDefaultAsync(r => r.Id == rolUsuario.RoleId);
+            usuario.Rol = rol?.Name ?? "None";
+
+            return usuario;
+        }
 
         [HttpGet]
         [Authorize(Roles = "Administrador")]
-        public IActionResult Crear()
+        public async Task<IActionResult> UserDetail(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                TempData["Error"] = "Invalid request: user id is required.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var usuario = await GetUserWithRoleAsync(id);
+            if (usuario == null)
+            {
+                TempData["Error"] = "User not found.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(usuario);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Crear()
         {
             var modelo = new AppUsuario();
 
-            // Combo de Roles
-            modelo.ListaRoles = _contexto.Roles
+            modelo.ListaRoles = await _contexto.Roles
                 .Select(u => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
                 {
                     Text = u.Name,
                     Value = u.Id
-                });
+                })
+                .ToListAsync();
 
             return View(modelo);
         }
@@ -69,139 +106,133 @@ namespace RH_CM.Controllers
         [HttpPost]
         [Authorize(Roles = "Administrador")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Crear(AppUsuario usuario /*, string? password */)
+        public async Task<IActionResult> Crear(AppUsuario usuario)
         {
-            // Validaciones básicas
+            if (!ModelState.IsValid)
+            {
+                TempData["Error"] = "Invalid request: please review the submitted data.";
+                return RedirectToAction(nameof(Crear));
+            }
+
             if (usuario == null)
             {
-                TempData["Error"] = "Solicitud inválida: datos de usuario vacíos.";
+                TempData["Error"] = "Invalid request: user data is empty.";
                 return RedirectToAction(nameof(Crear));
             }
 
             if (string.IsNullOrWhiteSpace(usuario.UserName))
             {
-                TempData["Error"] = "El nombre de usuario es requerido.";
+                TempData["Error"] = "Username is required.";
                 return RedirectToAction(nameof(Crear));
             }
 
             if (string.IsNullOrWhiteSpace(usuario.Email))
             {
-                TempData["Error"] = "El correo electrónico es requerido.";
+                TempData["Error"] = "Email is required.";
                 return RedirectToAction(nameof(Crear));
             }
 
             if (string.IsNullOrWhiteSpace(usuario.Names) || string.IsNullOrWhiteSpace(usuario.LastName))
             {
-                TempData["Error"] = "El nombre y apellido son requeridos.";
+                TempData["Error"] = "First name and last name are required.";
                 return RedirectToAction(nameof(Crear));
             }
 
             if (string.IsNullOrWhiteSpace(usuario.IdRol))
             {
-                TempData["Error"] = "Debe seleccionar un rol para continuar.";
+                TempData["Error"] = "You must select a role to continue.";
                 return RedirectToAction(nameof(Crear));
             }
 
             var rol = await _contexto.Roles.FirstOrDefaultAsync(r => r.Id == usuario.IdRol);
             if (rol == null)
             {
-                TempData["Error"] = "El rol seleccionado no existe.";
+                TempData["Error"] = "The selected role does not exist.";
                 return RedirectToAction(nameof(Crear));
             }
 
-            // Duplicados
             var existeUserName = await _userManager.FindByNameAsync(usuario.UserName);
             if (existeUserName != null)
             {
-                TempData["Error"] = "El nombre de usuario ya existe. Elige otro.";
+                TempData["Error"] = "This username already exists. Please choose another one.";
                 return RedirectToAction(nameof(Crear));
             }
 
             var existeEmail = await _userManager.FindByEmailAsync(usuario.Email);
             if (existeEmail != null)
             {
-                TempData["Error"] = "El correo electrónico ya está en uso.";
+                TempData["Error"] = "This email is already in use.";
                 return RedirectToAction(nameof(Crear));
             }
 
-            // Construir la entidad nueva (copiar solo campos necesarios)
             var nuevoUsuario = new AppUsuario
             {
                 UserName = usuario.UserName,
                 Email = usuario.Email,
                 Names = usuario.Names,
                 LastName = usuario.LastName,
-                // Asigna aquí otros campos que uses en tu modelo:
-                // EmployeeNumber = usuario.EmployeeNumber,
-                // Ntuser = usuario.Ntuser,
-                EmailConfirmed = true, // opcional: si quieres confirmación automática
+                EmailConfirmed = true,
                 LockoutEnabled = true
             };
 
-            // Crear usuario en Identity (sin password). Si deseas usar password, descomenta la variante con password.
             IdentityResult createResult = await _userManager.CreateAsync(nuevoUsuario);
-            // IdentityResult createResult = await _userManager.CreateAsync(nuevoUsuario, password);
 
             if (!createResult.Succeeded)
             {
                 var errores = string.Join(" | ", createResult.Errors.Select(e => e.Description));
-                TempData["Error"] = $"No se pudo crear el usuario: {errores}";
+                TempData["Error"] = $"Could not create the user: {errores}";
                 return RedirectToAction(nameof(Crear));
             }
 
-            // Asignar Rol
             var addRoleResult = await _userManager.AddToRoleAsync(nuevoUsuario, rol.Name);
             if (!addRoleResult.Succeeded)
             {
-                // Rollback: si falla asignar el rol, elimina el usuario para no dejarlo inconsistente
                 await _userManager.DeleteAsync(nuevoUsuario);
                 var errores = string.Join(" | ", addRoleResult.Errors.Select(e => e.Description));
-                TempData["Error"] = $"No se pudo asignar el rol seleccionado: {errores}";
+                TempData["Error"] = $"Could not assign the selected role: {errores}";
                 return RedirectToAction(nameof(Crear));
             }
 
-            // Guardar cambios en el contexto, por si usas tablas extendidas
             await _contexto.SaveChangesAsync();
 
-            TempData["Correcto"] = "Usuario creado y rol asignado correctamente.";
+            TempData["Correcto"] = "User created and role assigned successfully.";
             return RedirectToAction(nameof(Index));
         }
 
-        // Editar usuario (Asignación de rol)
         [HttpGet]
         [Authorize(Roles = "Administrador")]
-        public IActionResult Editar(string id)
+        public async Task<IActionResult> Editar(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
             {
-                TempData["Error"] = "Solicitud inválida: el identificador del usuario es requerido.";
+                TempData["Error"] = "Invalid request: user id is required.";
                 return RedirectToAction(nameof(Index));
             }
 
-            var usuarioBD = _contexto.AppUsuario.FirstOrDefault(u => u.Id == id);
+            var usuarioBD = await _contexto.AppUsuario.FirstOrDefaultAsync(u => u.Id == id);
             if (usuarioBD == null)
             {
-                TempData["Error"] = "El usuario no fue encontrado.";
+                TempData["Error"] = "User not found.";
                 return RedirectToAction(nameof(Index));
             }
 
-            // Rol actual del usuario
-            var rolUsuario = _contexto.UserRoles.FirstOrDefault(u => u.UserId == usuarioBD.Id);
+            var rolUsuario = await _contexto.UserRoles.FirstOrDefaultAsync(u => u.UserId == usuarioBD.Id);
             if (rolUsuario != null)
             {
-                var rolActual = _contexto.Roles.FirstOrDefault(u => u.Id == rolUsuario.RoleId);
+                var rolActual = await _contexto.Roles.FirstOrDefaultAsync(u => u.Id == rolUsuario.RoleId);
                 if (rolActual != null)
                 {
                     usuarioBD.IdRol = rolActual.Id;
                 }
             }
 
-            // Lista de Roles
-            usuarioBD.ListaRoles = _contexto.Roles.Select(u => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
-            {
-                Text = u.Name,
-                Value = u.Id
-            });
+            usuarioBD.ListaRoles = await _contexto.Roles
+                .Select(u => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id
+                })
+                .ToListAsync();
 
             return View(usuarioBD);
         }
@@ -211,43 +242,47 @@ namespace RH_CM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Editar(AppUsuario usuario)
         {
-            // Validaciones básicas
+            if (!ModelState.IsValid)
+            {
+                TempData["Error"] = "Invalid request: please review the submitted data.";
+                return RedirectToAction(nameof(Editar), new { id = usuario?.Id });
+            }
+
             if (usuario == null || string.IsNullOrWhiteSpace(usuario.Id))
             {
-                TempData["Error"] = "Solicitud inválida: datos de usuario incompletos.";
+                TempData["Error"] = "Invalid request: incomplete user data.";
                 return RedirectToAction(nameof(Index));
             }
 
             if (string.IsNullOrWhiteSpace(usuario.IdRol))
             {
-                TempData["Error"] = "Debe seleccionar un rol para continuar.";
+                TempData["Error"] = "You must select a role to continue.";
                 return RedirectToAction(nameof(Editar), new { id = usuario.Id });
             }
 
-            var usuarioBD = _contexto.AppUsuario.FirstOrDefault(u => u.Id == usuario.Id);
+            var usuarioBD = await _contexto.AppUsuario.FirstOrDefaultAsync(u => u.Id == usuario.Id);
             if (usuarioBD == null)
             {
-                TempData["Error"] = "El usuario no fue encontrado.";
+                TempData["Error"] = "User not found.";
                 return RedirectToAction(nameof(Index));
             }
 
-            var nuevoRol = _contexto.Roles.FirstOrDefault(r => r.Id == usuario.IdRol);
+            var nuevoRol = await _contexto.Roles.FirstOrDefaultAsync(r => r.Id == usuario.IdRol);
             if (nuevoRol == null)
             {
-                TempData["Error"] = "El rol seleccionado no existe.";
+                TempData["Error"] = "The selected role does not exist.";
                 return RedirectToAction(nameof(Editar), new { id = usuario.Id });
             }
 
             try
             {
-                // Quitar rol actual si existe
-                var rolUsuario = _contexto.UserRoles.FirstOrDefault(u => u.UserId == usuarioBD.Id);
+                var rolUsuario = await _contexto.UserRoles.FirstOrDefaultAsync(u => u.UserId == usuarioBD.Id);
                 if (rolUsuario != null)
                 {
-                    var rolActualNombre = _contexto.Roles
+                    var rolActualNombre = await _contexto.Roles
                         .Where(u => u.Id == rolUsuario.RoleId)
                         .Select(e => e.Name)
-                        .FirstOrDefault();
+                        .FirstOrDefaultAsync();
 
                     if (!string.IsNullOrWhiteSpace(rolActualNombre))
                     {
@@ -255,40 +290,43 @@ namespace RH_CM.Controllers
                         if (!removeResult.Succeeded)
                         {
                             var errores = string.Join(" | ", removeResult.Errors.Select(e => e.Description));
-                            TempData["Error"] = $"No se pudo remover el rol actual: {errores}";
+                            TempData["Error"] = $"Could not remove the current role: {errores}";
                             return RedirectToAction(nameof(Editar), new { id = usuario.Id });
                         }
                     }
                 }
 
-                // Agregar nuevo rol
                 var addResult = await _userManager.AddToRoleAsync(usuarioBD, nuevoRol.Name);
                 if (!addResult.Succeeded)
                 {
                     var errores = string.Join(" | ", addResult.Errors.Select(e => e.Description));
-                    TempData["Error"] = $"No se pudo asignar el nuevo rol: {errores}";
+                    TempData["Error"] = $"Could not assign the new role: {errores}";
                     return RedirectToAction(nameof(Editar), new { id = usuario.Id });
                 }
 
                 await _contexto.SaveChangesAsync();
-                TempData["Correcto"] = "Cambios realizados correctamente.";
+                TempData["Correcto"] = "Changes saved successfully.";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                TempData["Error"] = $"Ocurrió un error al guardar los cambios: {ex.Message}";
+                TempData["Error"] = $"An error occurred while saving changes: {ex.Message}";
                 return RedirectToAction(nameof(Editar), new { id = usuario.Id });
             }
         }
 
-        //Método bloquear/desbloquear usuario
         [HttpPost]
         [Authorize(Roles = "Administrador")]
         [ValidateAntiForgeryToken]
-        public IActionResult BloquearDesbloquear(string idUsuario)
+        public async Task<IActionResult> BloquearDesbloquear(string idUsuario)
         {
+            if (string.IsNullOrWhiteSpace(idUsuario))
+            {
+                TempData["Error"] = "Invalid request: user id is required.";
+                return RedirectToAction(nameof(Index));
+            }
 
-            var usuariBD = _contexto.AppUsuario.FirstOrDefault(u => u.Id == idUsuario);
+            var usuariBD = await _contexto.AppUsuario.FirstOrDefaultAsync(u => u.Id == idUsuario);
             if (usuariBD == null)
             {
                 return NotFound();
@@ -296,52 +334,52 @@ namespace RH_CM.Controllers
 
             if (usuariBD.LockoutEnd != null && usuariBD.LockoutEnd > DateTime.Now)
             {
-                //El usuario se encuentra bloqueado y lo podemos desbloquear
                 usuariBD.LockoutEnd = DateTime.Now;
-                TempData["Correcto"] = "Usuario desbloqueado correctamente";
+                TempData["Correcto"] = "User unlocked successfully.";
             }
             else
             {
-                //El usuario no está bloqueado y lo podemos bloquear
                 usuariBD.LockoutEnd = DateTime.Now.AddYears(100);
-                TempData["Error"] = "Usuario bloqueado correctamente";
+                TempData["Error"] = "User locked successfully.";
             }
 
-            _contexto.SaveChanges();
+            await _contexto.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-
-        //Método para borrar usuario
         [HttpPost]
         [Authorize(Roles = "Administrador")]
         [ValidateAntiForgeryToken]
-        public IActionResult Borrar(string idUsuario)
+        public async Task<IActionResult> Borrar(string idUsuario)
         {
+            if (string.IsNullOrWhiteSpace(idUsuario))
+            {
+                TempData["Error"] = "Invalid request: user id is required.";
+                return RedirectToAction(nameof(Index));
+            }
 
-            var usuariBD = _contexto.AppUsuario.FirstOrDefault(u => u.Id == idUsuario);
+            var usuariBD = await _contexto.AppUsuario.FirstOrDefaultAsync(u => u.Id == idUsuario);
             if (usuariBD == null)
             {
                 return NotFound();
             }
 
             _contexto.AppUsuario.Remove(usuariBD);
-            _contexto.SaveChanges();
-            TempData["Correcto"] = "Usuario borrado correctamente";
+            await _contexto.SaveChangesAsync();
+            TempData["Correcto"] = "User deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
 
-
-        //Editar perfil
         [HttpGet]
-        public IActionResult EditarPerfil(string id)
+        [Authorize]
+        public async Task<IActionResult> EditarPerfil(string id)
         {
-            if (id == null)
+            if (string.IsNullOrWhiteSpace(id))
             {
                 return NotFound();
             }
 
-            var usuarioBd = _contexto.AppUsuario.Find(id);
+            var usuarioBd = await _contexto.AppUsuario.FindAsync(id);
             if (usuarioBd == null)
             {
                 return NotFound();
@@ -351,12 +389,18 @@ namespace RH_CM.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditarPerfil(AppUsuario appUsuario)
         {
             if (ModelState.IsValid)
             {
                 var usuario = await _contexto.AppUsuario.FindAsync(appUsuario.Id);
+                if (usuario == null)
+                {
+                    return NotFound();
+                }
+
                 usuario.UserName = appUsuario.Ntuser;
                 usuario.EmployeeNumber = appUsuario.EmployeeNumber;
                 usuario.Email = appUsuario.Email;
@@ -371,8 +415,8 @@ namespace RH_CM.Controllers
             return View(appUsuario);
         }
 
-        //Manejo de claims
         [HttpGet]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> AdministrarClaimsUsuario(string idUsuario)
         {
             IdentityUser usuario = await _userManager.FindByIdAsync(idUsuario);
@@ -405,8 +449,15 @@ namespace RH_CM.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrador")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AdministrarClaimsUsuario(ClaimsUsuarioViewModel cuViewModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(cuViewModel);
+            }
+
             IdentityUser usuario = await _userManager.FindByIdAsync(cuViewModel.IdUsuario);
             if (usuario == null)
             {
@@ -428,15 +479,14 @@ namespace RH_CM.Controllers
             {
                 return View(cuViewModel);
             }
-            TempData["Correcto"] = "Cambios realizados correctamente";
+            TempData["Correcto"] = "Changes saved successfully.";
             return RedirectToAction(nameof(Index));
         }
 
-        // Toggle Available (0 / 1)
         [HttpPost]
         [Authorize(Roles = "Administrador")]
         [ValidateAntiForgeryToken]
-        public IActionResult ToggleAvailable(string idUsuario)
+        public async Task<IActionResult> ToggleAvailable(string idUsuario)
         {
             if (string.IsNullOrWhiteSpace(idUsuario))
             {
@@ -444,16 +494,15 @@ namespace RH_CM.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var usuarioBD = _contexto.AppUsuario.FirstOrDefault(u => u.Id == idUsuario);
+            var usuarioBD = await _contexto.AppUsuario.FirstOrDefaultAsync(u => u.Id == idUsuario);
             if (usuarioBD == null)
             {
                 return NotFound();
             }
 
-            // Si es 1 -> pasa a 0, si es 0 (o cualquier otro) -> pasa a 1
             usuarioBD.Available = (usuarioBD.Available == 1) ? 0 : 1;
 
-            _contexto.SaveChanges();
+            await _contexto.SaveChangesAsync();
 
             if (usuarioBD.Available == 1)
             {

@@ -9,11 +9,11 @@
 @using RH_CM.Service.DTOs
 
 @{
-    GroupsAccessDTOs accesos = null;
-    var accesosJson = HttpContextAccessor.HttpContext.Session.GetString("Accesos");
+    GroupsAccessDTOs accesos = new GroupsAccessDTOs();
+    var accesosJson = HttpContextAccessor.HttpContext?.Session.GetString("Accesos");
     if (!string.IsNullOrEmpty(accesosJson))
     {
-        accesos = JsonConvert.DeserializeObject<GroupsAccessDTOs>(accesosJson);
+        accesos = JsonConvert.DeserializeObject<GroupsAccessDTOs>(accesosJson) ?? new GroupsAccessDTOs();
     }
 }
 
@@ -34,7 +34,7 @@
             </a>
 
         </li>
-        @if (User.Identity.IsAuthenticated)
+        @if (User.Identity?.IsAuthenticated == true)
         {
             // =========================
             // CATALOGS MENU
@@ -309,7 +309,7 @@
 
                 <div class="dropdown-menu dropdown-menu-end">
 
-                    @if (User.Identity.IsAuthenticated)
+                    @if (User.Identity?.IsAuthenticated == true)
                     {
                         var user = await UserManager.GetUserAsync(User);
 
@@ -324,7 +324,7 @@
                     }
 
                     @* User management menu *@
-                    @if (User.Identity.IsAuthenticated)
+                    @if (User.Identity?.IsAuthenticated == true)
                     {
                         @if (accesos.Users)
                         {

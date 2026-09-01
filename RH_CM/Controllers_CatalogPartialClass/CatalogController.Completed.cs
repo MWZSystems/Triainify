@@ -1,4 +1,4 @@
-﻿using ClosedXML.Excel;
+using ClosedXML.Excel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -18,7 +18,6 @@ namespace RH_CM.Controllers
         {
             var lista = new List<CourseCompletedViewModel>();
 
-            // Obtener el connection string desde el contexto de EF Core
             var connectionString = _context.Database.GetConnectionString();
 
             using (var connection = new SqlConnection(connectionString))
@@ -58,7 +57,7 @@ namespace RH_CM.Controllers
         }
 
         [Authorize(Policy = "ViewAccess")]
-        public IActionResult IndexCourseCompleted()
+        public async Task<IActionResult> IndexCourseCompleted()
         {
             var rows = new List<CourseCompletedSummaryItemViewModel>();
             var cs = _context.Database.GetDbConnection().ConnectionString;
@@ -67,8 +66,8 @@ namespace RH_CM.Controllers
             using var cmd = new SqlCommand("dbo.sp_IndexCourseCompletedSummary", conn)
             { CommandType = CommandType.StoredProcedure };
 
-            conn.Open();
-            using var rdr = cmd.ExecuteReader();
+            await conn.OpenAsync();
+            using var rdr = await cmd.ExecuteReaderAsync();
 
             int ordCourse = rdr.GetOrdinal("CourseName");
             int ordLevel = rdr.GetOrdinal("LevelName");
@@ -76,7 +75,7 @@ namespace RH_CM.Controllers
             int ordStat = rdr.GetOrdinal("Course_Status");
             int ordTotal = rdr.GetOrdinal("TotalCompletions");
 
-            while (rdr.Read())
+            while (await rdr.ReadAsync())
             {
                 rows.Add(new CourseCompletedSummaryItemViewModel
                 {
@@ -95,7 +94,6 @@ namespace RH_CM.Controllers
         [HttpGet]
         public async Task<IActionResult> ExportCourseCompletedToExcel()
         {
-            // 1) Mismo query que IndexCourseCompleted (mismas uniones y columnas)
             var data =
                 await (from s in _context.SyCoursecompleteds.AsNoTracking()
                        join ca in _context.CtCourseassignments.AsNoTracking()
@@ -113,22 +111,20 @@ namespace RH_CM.Controllers
                            hc.ControlNumber,
                            HeadcountName = hc.Names + " " + (hc.LastName ?? "") + " " + (hc.SecondName ?? ""),
                            CourseName = c.CourseName,
-                           LevelDescription = lc.DescripctionLevel, // ajusta a DescriptionLevel si aplica
-                           s.Avaialble,                              // (int 0/1 en tu modelo)
+                           LevelDescription = lc.DescripctionLevel,
+                           s.Avaialble,
                            s.LastUpdateDate
                        }).ToListAsync();
 
-            // 2) Crear Excel
             using var wb = new XLWorkbook();
             var ws = wb.Worksheets.Add("CourseCompleted");
 
-            // Encabezados EXACTOS (mismo orden que el select new de arriba)
             ws.Cell(1, 1).Value = "PkCourseCompleted";
             ws.Cell(1, 2).Value = "ControlNumber";
             ws.Cell(1, 3).Value = "HeadcountName";
             ws.Cell(1, 4).Value = "CourseName";
             ws.Cell(1, 5).Value = "LevelDescription";
-            ws.Cell(1, 6).Value = "Available";          // corresponde a Avaialble (0/1)
+            ws.Cell(1, 6).Value = "Available";
             ws.Cell(1, 7).Value = "LastUpdateDate";
 
             var header = ws.Range("A1:G1");
@@ -136,7 +132,6 @@ namespace RH_CM.Controllers
             header.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
             header.Style.Fill.BackgroundColor = XLColor.LightGreen;
 
-            // 3) Escribir filas (manteniendo tipos)
             int row = 2;
             foreach (var x in data)
             {
@@ -145,16 +140,11 @@ namespace RH_CM.Controllers
                 ws.Cell(row, 3).Value = x.HeadcountName?.Trim();
                 ws.Cell(row, 4).Value = x.CourseName;
                 ws.Cell(row, 5).Value = x.LevelDescription;
-
-                // Si prefieres 0/1, usa: ws.Cell(row, 6).Value = x.Avaialble;
-                // Si prefieres texto, deja esta línea:
-                ws.Cell(row, 6).Value = (Convert.ToInt32(x.Avaialble) == 1) ? "Sí" : "No";
-
+                ws.Cell(row, 6).Value = (Convert.ToInt32(x.Avaialble) == 1) ? "Yes" : "No";
                 ws.Cell(row, 7).Value = x.LastUpdateDate;
                 row++;
             }
 
-            // 4) Estilos y formatos
             int lastRow = row - 1;
             var dataRange = ws.Range(1, 1, lastRow, 7);
             dataRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
@@ -162,13 +152,11 @@ namespace RH_CM.Controllers
             dataRange.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
             dataRange.SetAutoFilter();
 
-            // Formato de fecha/hora para LastUpdateDate
             ws.Column(7).Style.DateFormat.Format = "yyyy-MM-dd HH:mm:ss";
 
             ws.Columns().AdjustToContents();
             ws.SheetView.FreezeRows(1);
 
-            // 5) Descargar
             string fechaActual = DateTime.Now.ToString("yyyyMMdd");
             using var stream = new MemoryStream();
             wb.SaveAs(stream);
@@ -181,39 +169,31 @@ namespace RH_CM.Controllers
             );
         }
 
-        private void LoadCourseCompletedBulkViewBags(int selectedFkCourse, int selectedFkLevel)
+        private async Task LoadCourseCompletedBulkViewBagsAsync(int selectedFkCourse, int selectedFkLevel)
         {
-            // --- Courses (solo disponibles)
-            ViewBag.Courses = _context.CtCourses
+            ViewBag.Courses = await _context.CtCourses
                 .AsNoTracking()
                 .Where(c => c.Available == 1)
                 .OrderBy(c => c.CourseName)
                 .Select(c => new { c.PkCourse, c.CourseName })
-                .ToList();
+                .ToListAsync();
 
-            // --- Levels (solo disponibles)
-            ViewBag.Levels = _context.CtLevelcourses
+            ViewBag.Levels = await _context.CtLevelcourses
                 .AsNoTracking()
                 .Where(l => l.Available == 1)
                 .OrderBy(l => l.PkLevelcourse)
                 .Select(l => new { l.PkLevelcourse, l.DescripctionLevel })
-                .ToList();
+                .ToListAsync();
 
-            // --- Headcounts:
-            //     Solo los disponibles (Available=1) que además tengan al menos un CourseAssignment disponible (Available=1)
-            //     que conecte su FK_Position con el curso y nivel seleccionados.
-            // --- Headcounts:
-            ViewBag.Headcounts = _context.SyHeadcounts
+            ViewBag.Headcounts = await _context.SyHeadcounts
                 .AsNoTracking()
                 .Where(h =>
                     h.Available == 1
-                    // Debe existir un CourseAssignment disponible que conecte curso + nivel + posición
                     && _context.CtCourseassignments.Any(ca =>
                            ca.Available == 1
                            && ca.FkCourse == selectedFkCourse
                            && ca.FkRequiredCourseLevels == selectedFkLevel
                            && ca.FkPosition == h.FkPosition)
-                    // Y NO debe existir ya un CourseCompleted (activo) para ese headcount
                     && !_context.SyCoursecompleteds.Any(cc =>
                            cc.Avaialble == 1
                            && cc.FkHeadcount == h.PkHeadcount
@@ -248,36 +228,39 @@ namespace RH_CM.Controllers
                         (_context.CtPositions
                             .Where(p => p.PkPosition == h.FkPosition)
                             .Select(p => p.NamePosition)
-                            .FirstOrDefault() ?? "Sin posición")
+                            .FirstOrDefault() ?? "No position")
                     )
                 })
                 .OrderBy(x => x.Display)
-                .ToList();
+                .ToListAsync();
 
-            // --- Course Status (solo disponibles)
-            ViewBag.CourseStatus = _context.CtCoursestatuses
+            ViewBag.CourseStatus = await _context.CtCoursestatuses
                 .AsNoTracking()
                 .Where(s => s.Available == 1)
                 .OrderBy(s => s.DescriptionCoursestatus)
                 .Select(s => new { s.PkCoursestatus, s.DescriptionCoursestatus })
-                .ToList();
+                .ToListAsync();
 
-            // --- Delivery Modes (solo disponibles)
-            ViewBag.DeliveryModes = _context.CtDeliverymodes
+            ViewBag.DeliveryModes = await _context.CtDeliverymodes
                 .AsNoTracking()
                 .Where(d => d.Available == 1)
                 .OrderBy(d => d.DescriptionDeliverymode)
                 .Select(d => new { Id = d.PkDeliverymode, Text = d.DescriptionDeliverymode })
-                .ToList();
+                .ToListAsync();
         }
 
         [Authorize(Policy = "ViewAccess")]
-        public IActionResult CreateCourseCompletedBulk(int? fkCourse, int? fkLevel)
+        public async Task<IActionResult> CreateCourseCompletedBulk(int? fkCourse, int? fkLevel)
         {
+            if (!ModelState.IsValid)
+            {
+                return NotFound();
+            }
+
             int selectedFkCourse = fkCourse ?? 0;
             int selectedFkLevel = fkLevel ?? 0;
 
-            LoadCourseCompletedBulkViewBags(selectedFkCourse, selectedFkLevel);
+            await LoadCourseCompletedBulkViewBagsAsync(selectedFkCourse, selectedFkLevel);
 
             ViewBag.SelectedFkCourse = selectedFkCourse;
             ViewBag.SelectedFkLevel = selectedFkLevel;
@@ -292,17 +275,15 @@ namespace RH_CM.Controllers
             int FkCourse,
             int FkRequiredCourseLevels,
             int[] SelectedHeadcounts,
-            bool allowUpsert
-            = true)
+            bool allowUpsert = true)
         {
-            if (FkCourse <= 0 || FkRequiredCourseLevels <= 0 || SelectedHeadcounts == null || SelectedHeadcounts.Length == 0)
+            if (!ModelState.IsValid || FkCourse <= 0 || FkRequiredCourseLevels <= 0 || SelectedHeadcounts == null || SelectedHeadcounts.Length == 0)
             {
-                TempData["ErrorMessage"] = "Selecciona curso, nivel y al menos una persona.";
+                TempData["ErrorMessage"] = "Select a course, a level, and at least one person.";
                 return RedirectToAction(nameof(CreateCourseCompletedBulk), new { fkCourse = FkCourse, fkLevel = FkRequiredCourseLevels });
             }
 
-            // Headcounts que YA tienen CourseCompleted (activo) para este curso+nivel
-            var alreadyCompletedHc = (
+            var alreadyCompletedHc = await (
                 from cc in _context.SyCoursecompleteds.AsNoTracking()
                 join ca in _context.CtCourseassignments.AsNoTracking()
                     on cc.FkCourseAssignment equals ca.PkCourseAssignment
@@ -310,18 +291,18 @@ namespace RH_CM.Controllers
                    && ca.FkCourse == FkCourse
                    && ca.FkRequiredCourseLevels == FkRequiredCourseLevels
                 select cc.FkHeadcount
-            ).ToHashSet();
+            ).ToListAsync();
 
-            // Quita de la selección los ya completados
-            var filtered = SelectedHeadcounts.Distinct().Where(hc => !alreadyCompletedHc.Contains(hc)).ToArray();
+            var alreadyCompletedHcSet = alreadyCompletedHc.ToHashSet();
+
+            var filtered = SelectedHeadcounts.Distinct().Where(hc => !alreadyCompletedHcSet.Contains(hc)).ToArray();
 
             if (filtered.Length == 0)
             {
-                TempData["ErrorMessage"] = "Todas las personas seleccionadas ya tienen el curso completado para ese nivel.";
+                TempData["ErrorMessage"] = "All selected people already have the course completed for that level.";
                 return RedirectToAction(nameof(CreateCourseCompletedBulk), new { fkCourse = FkCourse, fkLevel = FkRequiredCourseLevels });
             }
 
-            // TVP dbo.IntIdList(Id INT)
             var tvp = new System.Data.DataTable();
             tvp.Columns.Add("Id", typeof(int));
             foreach (var id in filtered) tvp.Rows.Add(id);
@@ -339,18 +320,18 @@ namespace RH_CM.Controllers
             var sql = "EXEC dbo.sp_BulkCreateCourseCompleted_ByCourse @Headcounts, @FkCourse, @FkLevel, @UserName, @AllowUpsert";
             await _context.Database.ExecuteSqlRawAsync(sql, pHeadcounts, pFkCourse, pFkLevel, pUserName, pAllowUpsert);
 
-            TempData["SuccessMessage"] = "Registros creados/actualizados correctamente";
+            TempData["SuccessMessage"] = "Records created/updated successfully.";
             return RedirectToAction(nameof(CreateCourseCompletedBulk), new { fkCourse = FkCourse, fkLevel = FkRequiredCourseLevels });
         }
 
-        private void LoadDeleteCourseCompletedBulkViewBags(int selectedFkCourse, int selectedFkLevel)
+        private async Task LoadDeleteCourseCompletedBulkViewBagsAsync(int selectedFkCourse, int selectedFkLevel)
         {
-            var courses = _context.CtCourses!
+            var courses = await _context.CtCourses!
                 .AsNoTracking()
                 .Where(c => c.Available == 1)
                 .OrderBy(c => c.CourseName)
                 .Select(c => new { c.PkCourse, c.CourseName })
-                .ToList();
+                .ToListAsync();
 
             ViewBag.Courses = courses
                 .Select(c => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
@@ -378,10 +359,10 @@ namespace RH_CM.Controllers
                     l.DescripctionLevel
                 };
 
-            var levels = levelsQuery
+            var levels = await levelsQuery
                 .Distinct()
                 .OrderBy(x => x.PkLevelcourse)
-                .ToList();
+                .ToListAsync();
 
             if (selectedFkCourse > 0 && selectedFkLevel > 0 && !levels.Any(x => x.PkLevelcourse == selectedFkLevel))
             {
@@ -399,12 +380,17 @@ namespace RH_CM.Controllers
         }
 
         [Authorize(Policy = "ViewAccess")]
-        public IActionResult DeleteCourseCompletedBulk(int? fkCourse, int? fkLevel)
+        public async Task<IActionResult> DeleteCourseCompletedBulk(int? fkCourse, int? fkLevel)
         {
+            if (!ModelState.IsValid)
+            {
+                return NotFound();
+            }
+
             int selectedFkCourse = fkCourse ?? 0;
             int selectedFkLevel = fkLevel ?? 0;
 
-            LoadDeleteCourseCompletedBulkViewBags(selectedFkCourse, selectedFkLevel);
+            await LoadDeleteCourseCompletedBulkViewBagsAsync(selectedFkCourse, selectedFkLevel);
 
             ViewBag.SelectedFkCourse = selectedFkCourse;
             ViewBag.SelectedFkLevel = selectedFkLevel;
@@ -432,12 +418,12 @@ namespace RH_CM.Controllers
                         on cc.FkHeadcount equals h.PkHeadcount
                     where
                         cc.Avaialble == 1
-                        && (c.Available == 1 || c.Available == null)
-                        && (ca.Available == 1 || ca.Available == null)
-                        && (lc.Available == 1 || lc.Available == null)
-                        && (cs.Available == 1 || cs.Available == null)
-                        && (dm.Available == 1 || dm.Available == null)
-                        && (h.Available == 1 || h.Available == null)
+                        && c.Available == 1
+                        && ca.Available == 1
+                        && lc.Available == 1
+                        && cs.Available == 1
+                        && dm.Available == 1
+                        && h.Available == 1
                         && ca.FkCourse == selectedFkCourse
                         && ca.FkRequiredCourseLevels == selectedFkLevel
                     select new
@@ -457,7 +443,7 @@ namespace RH_CM.Controllers
                         DeliveryModeName = dm.DescriptionDeliverymode
                     };
 
-                rows = query
+                rows = await query
                     .OrderBy(x => x.CourseName)
                     .ThenByDescending(x => x.CreateDate)
                     .Select(x => new CourseCompletedRowDtoViewModel
@@ -472,27 +458,26 @@ namespace RH_CM.Controllers
                         Score = x.Score,
                         CreateDate = x.CreateDate
                     })
-                    .ToList();
+                    .ToListAsync();
             }
 
             ViewBag.CourseCompletedRows = rows;
             return View();
         }
 
-        // POST: DeleteCourseCompletedBulk (BORRADO con SP + TVP, igual que ya tenías)
         [HttpPost]
         [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteCourseCompletedBulk(
+        public async Task<IActionResult> DeleteCourseCompletedBulk(
             [FromForm] int[] SelectedCourseCompletedIds,
             [FromForm] bool SoftDelete,
             [FromForm] int FkCourse,
             [FromForm] int FkLevel
         )
         {
-            if (SelectedCourseCompletedIds == null || SelectedCourseCompletedIds.Length == 0)
+            if (!ModelState.IsValid || FkCourse <= 0 || FkLevel <= 0 || SelectedCourseCompletedIds == null || SelectedCourseCompletedIds.Length == 0)
             {
-                TempData["ErrorMessage"] = "Selecciona al menos un registro a eliminar.";
+                TempData["ErrorMessage"] = "Select at least one record to delete.";
                 return RedirectToAction(nameof(DeleteCourseCompletedBulk), new { fkCourse = FkCourse, fkLevel = FkLevel });
             }
 
@@ -521,33 +506,38 @@ namespace RH_CM.Controllers
                 cmd.Parameters.Add(new SqlParameter("@UserName", SqlDbType.NVarChar, 256) { Value = user });
                 cmd.Parameters.Add(new SqlParameter("@SoftDelete", SqlDbType.Bit) { Value = SoftDelete });
 
-                conn.Open();
-                int affected = cmd.ExecuteNonQuery();
+                await conn.OpenAsync();
+                int affected = await cmd.ExecuteNonQueryAsync();
 
                 if (affected == 0)
-                    TempData["ErrorMessage"] = "No se eliminaron registros (verifica selección y filtros).";
+                    TempData["ErrorMessage"] = "No records were deleted (check your selection and filters).";
                 else
-                    TempData["SuccessMessage"] = $"Operación completada. Filas afectadas: {affected}.";
+                    TempData["SuccessMessage"] = $"Operation completed. Rows affected: {affected}.";
             }
             catch (SqlException ex)
             {
-                TempData["ErrorMessage"] = $"Ocurrió un error al eliminar los completados masivos. Detalle: {ex.Message}";
+                TempData["ErrorMessage"] = $"An error occurred while bulk-deleting completed courses. Detail: {ex.Message}";
             }
 
             return RedirectToAction(nameof(DeleteCourseCompletedBulk), new { fkCourse = FkCourse, fkLevel = FkLevel });
         }
 
-        // POST: SyCoursecompleted/Toggle/5
         [HttpPost]
         [Route("ToggleCourseCompleted")]
         [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleCourseCompleted(int id)
         {
+            if (!ModelState.IsValid || id <= 0)
+            {
+                TempData["ErrorMessage"] = "Invalid record.";
+                return RedirectToAction(nameof(IndexCourseCompleted));
+            }
+
             var item = await _context.SyCoursecompleteds.FindAsync(id);
             if (item != null)
             {
-                item.Avaialble = item.Avaialble == 1 ? 0 : 1; // nombre exacto del modelo
+                item.Avaialble = item.Avaialble == 1 ? 0 : 1;
                 item.LastUpdateUser = User?.Identity?.Name ?? "Unknown";
                 item.LastUpdateDate = DateTime.Now;
 
@@ -557,17 +547,22 @@ namespace RH_CM.Controllers
             return RedirectToAction(nameof(IndexCourseCompleted));
         }
 
-        // POST: SyCoursecompleted/Delete/5
         [HttpPost]
         [Route("DeleteCourseCompleted")]
         [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCourseCompleted(int id)
         {
+            if (!ModelState.IsValid || id <= 0)
+            {
+                TempData["ErrorMessage"] = "Invalid record.";
+                return RedirectToAction(nameof(IndexCourseCompleted));
+            }
+
             var item = await _context.SyCoursecompleteds.FindAsync(id);
             if (item == null)
             {
-                TempData["ErrorMessage"] = "El registro no existe o ya fue eliminado.";
+                TempData["ErrorMessage"] = "The record does not exist or has already been deleted.";
                 return RedirectToAction(nameof(IndexCourseCompleted));
             }
 
@@ -575,19 +570,14 @@ namespace RH_CM.Controllers
             {
                 _context.SyCoursecompleteds.Remove(item);
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Registro eliminado correctamente.";
+                TempData["SuccessMessage"] = "Record deleted successfully.";
             }
             catch (DbUpdateException)
             {
-                TempData["ErrorMessage"] = "No se puede eliminar el registro debido a relaciones en la base de datos.";
+                TempData["ErrorMessage"] = "The record cannot be deleted because of related database records.";
             }
 
             return RedirectToAction(nameof(IndexCourseCompleted));
-        }
-
-        private bool SyCourseCompletedExists(int id)
-        {
-            return _context.SyCoursecompleteds.Any(e => e.PkCourseCompleted == id);
         }
     }
 }

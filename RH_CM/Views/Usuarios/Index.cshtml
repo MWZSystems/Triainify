@@ -156,6 +156,15 @@
                                             <div class="text-center">
                                                 <form asp-controller="Usuarios" asp-action="Borrar" asp-route-idUsuario="@item.Id" method="post" style="display:inline;">
 
+                                                    <!-- View details -->
+                                                    <a class="btn btn-info"
+                                                       asp-controller="Usuarios"
+                                                       asp-action="UserDetail"
+                                                       asp-route-id="@item.Id"
+                                                       title="View details">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+
                                                     <!-- Edit user -->
                                                     <a class="btn btn-warning"
                                                        asp-controller="Usuarios"

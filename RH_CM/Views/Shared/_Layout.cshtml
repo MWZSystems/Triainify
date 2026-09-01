@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="~/assets/dist/css/bodyclass.css" asp-append-version="true" />
 </head>
 
-<body class="@((string)ViewData["BodyClass"] ?? "")"
+<body class="@(ViewData["BodyClass"] as string ?? "")"
       data-theme="default" data-layout="fluid"
       data-sidebar-position="left" data-sidebar-behavior="sticky">
 

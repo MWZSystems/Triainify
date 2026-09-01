@@ -1,9 +1,5 @@
 ﻿@model IEnumerable<RH_CM.Service.DTOs.ExternalEvidenceDTOs>
 
-@using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
-
 @{
     ViewData["Title"] = "External Evidence";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -24,9 +20,9 @@
 
 <!-- Loader -->
 <div id="loader" class="text-center my-5">
-    <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+    <output class="spinner-border" style="width: 3rem; height: 3rem;" aria-live="polite">
         <span class="visually-hidden">Loading...</span>
-    </div>
+    </output>
 </div>
 
 <!-- Tabla envuelta en contenedor oculto -->
@@ -62,16 +58,16 @@
                                         <td>@item.Score</td>
                                         <td>@item.CreateDate</td>
                                         <td>@item.Status</td>
- 
+
                                         <td>
                                             <div class="text-center d-flex gap-1">
 
-                                                    <a class="btn btn-info" asp-action="ViewEvidenceMaterial" asp-route-id="@item.ID" target="_blank" title="View PDF">
-                                                        <i class="fas fa-eye"></i>
-                                                    </a>
-                                                    <a class="btn btn-primary" asp-action="DownloadEvidenceMaterial" asp-route-id="@item.ID" title="Download">
-                                                        <i class="fas fa-download"></i>
-                                                    </a>
+                                                <a class="btn btn-info" asp-action="ViewEvidenceMaterial" asp-route-id="@item.ID" target="_blank" title="View PDF">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a class="btn btn-primary" asp-action="DownloadEvidenceMaterial" asp-route-id="@item.ID" title="Download">
+                                                    <i class="fas fa-download"></i>
+                                                </a>
 
                                                 <form asp-action="ToggleEvidenceMaterial" asp-route-id="@item.ID" method="post" style="display:inline;">
                                                     <button type="submit"
@@ -85,7 +81,7 @@
                                                     <i class="fas fa-edit"></i>
                                                 </a>
 
-                                                @if (User.Identity.IsAuthenticated && User.IsInRole("Administrador"))
+                                                @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Administrador"))
                                                 {
                                                     <form asp-action="DeleteEvidenceMaterial" asp-route-id="@item.ID" method="post" style="display:inline;">
                                                         <button type="submit"
@@ -118,15 +114,15 @@
     @await Html.PartialAsync("_ValidationScriptsPartial")
 
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('#tableContainer').hide();
             $('#loader').show();
 
             $('#datatables-responsive').DataTable({
                 responsive: true,
                 order: [],
-                initComplete: function () {
-                    $('#loader').fadeOut(200, function () {
+                initComplete: function() {
+                    $('#loader').fadeOut(200, function() {
                         $('#tableContainer').fadeIn(200);
                     });
                 }

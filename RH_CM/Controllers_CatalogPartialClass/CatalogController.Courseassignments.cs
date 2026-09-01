@@ -94,14 +94,14 @@ namespace RH_CM.Controllers
             using var wb = new XLWorkbook();
             var ws = wb.Worksheets.Add("CourseAssignments");
 
-            // Encabezados (incluye auditoría)
+            // Headers (includes audit fields)
             ws.Cell(1, 1).Value = "PkCourseAssignment";
-            ws.Cell(1, 2).Value = "Puesto";
-            ws.Cell(1, 3).Value = "Curso";
-            ws.Cell(1, 4).Value = "Nivel requerido";
-            ws.Cell(1, 5).Value = "Requerido";
-            ws.Cell(1, 6).Value = "Disponible";
-            ws.Cell(1, 7).Value = "Modo de entrega";
+            ws.Cell(1, 2).Value = "Position";
+            ws.Cell(1, 3).Value = "Course";
+            ws.Cell(1, 4).Value = "Required Level";
+            ws.Cell(1, 5).Value = "Required";
+            ws.Cell(1, 6).Value = "Available";
+            ws.Cell(1, 7).Value = "Delivery Mode";
             ws.Cell(1, 8).Value = "CreateUser";
             ws.Cell(1, 9).Value = "CreateDate";
             ws.Cell(1, 10).Value = "LastUpdateUser";
@@ -121,13 +121,13 @@ namespace RH_CM.Controllers
                 ws.Cell(row, 3).Value = it.CourseName;
                 ws.Cell(row, 4).Value = it.RequiredCourseLevelDescription;
 
-                // Requiered es bool -> "Sí/No"
-                ws.Cell(row, 5).Value = it.Requiered ? "Sí" : "No";
+                // Requiered is bool -> "Yes/No"
+                ws.Cell(row, 5).Value = it.Requiered ? "Yes" : "No";
 
-                // Available es int (0/1) -> "Sí/No"
-                ws.Cell(row, 6).Value = it.Available == 1 ? "Sí" : "No";
+                // Available is int (0/1) -> "Yes/No"
+                ws.Cell(row, 6).Value = it.Available == 1 ? "Yes" : "No";
 
-                ws.Cell(row, 7).Value = it.DeliveryModeDescription ?? ""; // vacío si null
+                ws.Cell(row, 7).Value = it.DeliveryModeDescription ?? ""; // empty if null
 
                 ws.Cell(row, 8).Value = it.CreateUser;
                 ws.Cell(row, 9).Value = it.CreateDate;
@@ -266,27 +266,27 @@ namespace RH_CM.Controllers
             //[FromForm] bool Requiered
             [FromForm] bool Requiered)
         {
-            bool required = Requiered;  // ya viene correcto
+            bool required = Requiered;  // already correct as-is
 
-            // Validaciones básicas
+            // Basic validations
             if (SelectedPositions == null || SelectedPositions.Length == 0)
             {
-                TempData["ErrorMessage"] = "Selecciona al menos una Position.";
+                TempData["ErrorMessage"] = "Select at least one Position.";
                 return RedirectToAction(nameof(CreateCourseAssignmentBulk));
             }
             if (SelectedCourses == null || SelectedCourses.Length == 0)
             {
-                TempData["ErrorMessage"] = "Selecciona al menos un Course.";
+                TempData["ErrorMessage"] = "Select at least one Course.";
                 return RedirectToAction(nameof(CreateCourseAssignmentBulk));
             }
-            if (SelectedLevels == null || SelectedLevels.Length == 0)     // <-- NUEVO
+            if (SelectedLevels == null || SelectedLevels.Length == 0)     // <-- NEW
             {
-                TempData["ErrorMessage"] = "Selecciona al menos un Course Level.";
+                TempData["ErrorMessage"] = "Select at least one Course Level.";
                 return RedirectToAction(nameof(CreateCourseAssignmentBulk));
             }
             if (FkDeliveryMode <= 0)
             {
-                TempData["ErrorMessage"] = "Delivery Mode es obligatorio.";
+                TempData["ErrorMessage"] = "Delivery Mode is required.";
                 return RedirectToAction(nameof(CreateCourseAssignmentBulk));
             }
 
@@ -333,13 +333,13 @@ namespace RH_CM.Controllers
                 int affected = cmd.ExecuteNonQuery();
 
                 if (affected == 0)
-                    TempData["ErrorMessage"] = "No se generaron asignaciones nuevas (posibles duplicados).";
+                    TempData["ErrorMessage"] = "No new assignments were generated (possible duplicates).";
                 else
-                    TempData["SuccessMessage"] = $"Se crearon {affected} asignaciones nuevas.";
+                    TempData["SuccessMessage"] = $"{affected} new assignments were created.";
             }
             catch (SqlException)
             {
-                TempData["ErrorMessage"] = "Ocurrió un error al crear las asignaciones masivas.";
+                TempData["ErrorMessage"] = "An error occurred while creating the bulk assignments.";
             }
 
             return RedirectToAction(nameof(CreateCourseAssignmentBulk));
@@ -494,11 +494,11 @@ namespace RH_CM.Controllers
         {
             if (selectedIds == null || selectedIds.Length == 0)
             {
-                TempData["ErrorMessage"] = "Selecciona al menos un registro.";
+                TempData["ErrorMessage"] = "Select at least one record.";
                 return RedirectToAction(nameof(IndexCourseassignments));
             }
 
-            // Helper para TVP (mismo que usas en CreateBulk)
+            // TVP helper (same as used in CreateBulk)
             static DataTable ToTvp(int[] ids)
             {
                 var dt = new DataTable();
@@ -532,13 +532,13 @@ namespace RH_CM.Controllers
                     deleted = d;
 
                 if (deleted == 0)
-                    TempData["ErrorMessage"] = "No se eliminaron registros (¿IDs inexistentes?).";
+                    TempData["ErrorMessage"] = "No records were deleted (nonexistent IDs?).";
                 else
-                    TempData["SuccessMessage"] = $"Se eliminaron {deleted} asignaciones.";
+                    TempData["SuccessMessage"] = $"{deleted} assignments were deleted.";
             }
             catch (SqlException)
             {
-                TempData["ErrorMessage"] = "Ocurrió un error al eliminar las asignaciones.";
+                TempData["ErrorMessage"] = "An error occurred while deleting the assignments.";
             }
 
             return RedirectToAction(nameof(IndexCourseassignments));

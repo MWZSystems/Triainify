@@ -10,34 +10,27 @@ using RH_CM.ViewModels;
 
 namespace RH_CM.Controllers
 {
-    
     public class HeadCountController : Controller
     {
         private readonly db_abcd61_rhchdbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
 
         public HeadCountController(db_abcd61_rhchdbContext context,
-                                    UserManager<IdentityUser> userManager,
-                                SignInManager<IdentityUser> signInManager )
+                                    UserManager<IdentityUser> userManager)
         {
             _context = context;
             _userManager = userManager;
-            _signInManager = signInManager;
         }
 
-        // [Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
         [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> Index()
         {
             var departments = await _context.CtDepartments.ToListAsync();
             var positions = await _context.CtPositions.ToListAsync();
             var syHeadCounts = await _context.SyHeadcounts
-                .Where(hc => hc.Available == 1) // Filtrar por Available = 1
+                .Where(hc => hc.Available == 1) 
                 .ToListAsync();
 
-            // Calcular edades
             var headCountAges = syHeadCounts.ToDictionary(
                 hc => hc.PkHeadcount,
                 hc => CalculateAge(hc.Birthdate)
@@ -48,13 +41,12 @@ namespace RH_CM.Controllers
                 Departments = departments,
                 Positions = positions,
                 SyHeadCount = syHeadCounts,
-                HeadCountAges = headCountAges // Agregar edades al modelo
+                HeadCountAges = headCountAges 
             };
 
             return View(model);
         }
 
-        // Método para calcular la edad a partir de la fecha de nacimiento
         private int CalculateAge(DateTime birthdate)
         {
             var today = DateTime.Today;
@@ -62,29 +54,48 @@ namespace RH_CM.Controllers
             if (birthdate.Date > today.AddYears(-age)) age--;
             return age;
         }
+
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> ExportHeadCountToExcel()
         {
-            // Obtener los datos necesarios para el archivo Excel
             var departments = await _context.CtDepartments.ToListAsync();
             var positions = await _context.CtPositions.ToListAsync();
-            //var syHeadCounts = await _context.SyHeadcounts.ToListAsync();
             var syHeadCounts = await _context.SyHeadcounts
                                 .Where(h => h.Available == 1)
                                 .ToListAsync();
             var supervisors = await _context.CtSupervisors.ToListAsync();
 
-            // Calcular edades
             var headCountAges = syHeadCounts.ToDictionary(
                 hc => hc.PkHeadcount,
                 hc => CalculateAge(hc.Birthdate)
             );
 
-            // Crear el archivo Excel
+            string GetSupervisorDisplayName(int? fkSupervisorId)
+            {
+                if (fkSupervisorId == null)
+                {
+                    return "";
+                }
+
+                var supervisorRecord = supervisors.FirstOrDefault(s => s.PkSupervisorId == fkSupervisorId);
+                if (supervisorRecord == null)
+                {
+                    return "";
+                }
+
+                var supervisorHeadCount = syHeadCounts.FirstOrDefault(h => h.PkHeadcount == supervisorRecord.FkHeadcount);
+                if (supervisorHeadCount == null)
+                {
+                    return "";
+                }
+
+                return $"{supervisorHeadCount.Names} {supervisorHeadCount.LastName} {supervisorHeadCount.SecondName}";
+            }
+
             using (var workbook = new XLWorkbook())
             {
                 var worksheet = workbook.Worksheets.Add("HeadCountList");
 
-                // Encabezados
                 var headerRow = worksheet.Row(1);
                 headerRow.Cell(1).Value = "Control Number";
                 headerRow.Cell(2).Value = "Names";
@@ -97,7 +108,7 @@ namespace RH_CM.Controllers
                 headerRow.Cell(9).Value = "Position";
                 headerRow.Cell(10).Value = "Supervisor";
                 headerRow.Cell(11).Value = "Birthdate";
-                headerRow.Cell(12).Value = "Age"; 
+                headerRow.Cell(12).Value = "Age";
                 headerRow.Cell(13).Value = "Curp";
                 headerRow.Cell(14).Value = "RFC";
                 headerRow.Cell(15).Value = "Social Security";
@@ -113,13 +124,11 @@ namespace RH_CM.Controllers
                 headerRow.Cell(25).Value = "City";
                 headerRow.Cell(26).Value = "Zip Code";
 
-                // Aplicar estilo al encabezado
                 var headerRange = worksheet.Range("A1:Z1");
                 headerRange.Style.Font.Bold = true;
                 headerRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                 headerRange.Style.Fill.BackgroundColor = XLColor.LightGreen;
 
-                // Llenar los datos
                 int row = 2;
                 foreach (var item in syHeadCounts)
                 {
@@ -132,20 +141,7 @@ namespace RH_CM.Controllers
                     worksheet.Cell(row, 7).Value = item.StarDate.ToShortDateString();
                     worksheet.Cell(row, 8).Value = departments.FirstOrDefault(d => d.PkDepartment == item.FkDepartment)?.NameDeparment;
                     worksheet.Cell(row, 9).Value = positions.FirstOrDefault(p => p.PkPosition == item.FkPosition)?.NamePosition;
-                    //worksheet.Cell(row, 10).Value = item.FkSupervisorId != 0
-                    //    ? $"{syHeadCounts.FirstOrDefault(p => p.FkSupervisorId == item.FkSupervisorId)?.Names} {syHeadCounts.FirstOrDefault(p => p.PkHeadcount == item)?.LastName} {syHeadCounts.FirstOrDefault(p => p.PkHeadcount == item.Supervisor)?.SecondName}"
-                    //    : "Not Aissgned";
-                    worksheet.Cell(row, 10).Value = item.FkSupervisorId != null
-                                                        ? syHeadCounts
-                                                            .FirstOrDefault(h =>
-                                                                h.PkHeadcount ==
-                                                                supervisors
-                                                                    .FirstOrDefault(s => s.PkSupervisorId == item.FkSupervisorId)
-                                                                    ?.FkHeadcount
-                                                            ) is var sup && sup != null
-                                                                ? $"{sup.Names} {sup.LastName} {sup.SecondName}"
-                                                                : ""
-                                                        : "";
+                    worksheet.Cell(row, 10).Value = GetSupervisorDisplayName(item.FkSupervisorId);
                     worksheet.Cell(row, 11).Value = item.Birthdate.ToShortDateString();
                     worksheet.Cell(row, 12).Value = headCountAges.GetValueOrDefault(item.PkHeadcount, 0);
                     worksheet.Cell(row, 13).Value = item.Curp;
@@ -165,19 +161,15 @@ namespace RH_CM.Controllers
                     row++;
                 }
 
-                // Ajustar el ancho de las columnas
                 worksheet.Columns().AdjustToContents();
 
-                // Agregar bordes al rango de datos
                 var dataRange = worksheet.Range(1, 1, row - 1, 26);
                 dataRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
                 dataRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
 
-                // Aplicar alineación de texto
                 dataRange.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
                 dataRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Left;
 
-                // Guardar y devolver el archivo Excel
                 using (var stream = new MemoryStream())
                 {
                     workbook.SaveAs(stream);
@@ -187,17 +179,15 @@ namespace RH_CM.Controllers
             }
         }
 
-        //[Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
         [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> HeadCountUnavailable()
         {
             var departments = await _context.CtDepartments.ToListAsync();
             var positions = await _context.CtPositions.ToListAsync();
             var syHeadCounts = await _context.SyHeadcounts
-                .Where(hc => hc.Available == 0) // Filtrar por Available = 1
+                .Where(hc => hc.Available == 0) 
                 .ToListAsync();
 
-            // Calcular edades
             var headCountAges = syHeadCounts.ToDictionary(
                 hc => hc.PkHeadcount,
                 hc => CalculateAge(hc.Birthdate)
@@ -208,23 +198,20 @@ namespace RH_CM.Controllers
                 Departments = departments,
                 Positions = positions,
                 SyHeadCount = syHeadCounts,
-                HeadCountAges = headCountAges // Agregar edades al modelo
+                HeadCountAges = headCountAges 
             };
 
             return View(model);
         }
 
-        // GET: SyHeadCounts
-        //[Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
-        [Authorize(Policy = "ViewAccess")] //OnBoardingView
+        [Authorize(Policy = "ViewAccess")] 
         public async Task<IActionResult> IndexHeadCount()
         {
             var departments = await _context.CtDepartments.ToListAsync();
             var positions = await _context.CtPositions.ToListAsync();
             var syHeadCounts = await _context.SyHeadcounts
-            .Where(h => h.Available == 1)
-            .ToListAsync();
-
+                .Where(h => h.Available == 1)
+                .ToListAsync();
 
             var model = new IndexHeadCountListViewModel
             {
@@ -236,17 +223,15 @@ namespace RH_CM.Controllers
             return View(model);
         }
 
-        // GET: SyHeadCounts
-        //[Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
-        [Authorize(Policy = "ViewAccess")] //OnBoardingView
+
+        [Authorize(Policy = "ViewAccess")] 
         public async Task<IActionResult> IndexOFFBoarding()
         {
             var departments = await _context.CtDepartments.ToListAsync();
             var positions = await _context.CtPositions.ToListAsync();
             var syHeadCounts = await _context.SyHeadcounts
-            .Where(h => h.Available == 0)
-            .ToListAsync();
-
+                .Where(h => h.Available == 0)
+                .ToListAsync();
 
             var model = new IndexHeadCountListViewModel
             {
@@ -255,17 +240,15 @@ namespace RH_CM.Controllers
                 SyHeadCount = syHeadCounts
             };
 
-            // Usa el nombre real del .cshtml que ya tienes
             return View(model);
         }
 
-        // Método de inicialización simplificado
-        private CreateHeadCountViewModel InitializeCreateHeadCount()
+        private async Task<CreateHeadCountViewModel> InitializeCreateHeadCountAsync()
         {
-            var departments = _context.CtDepartments.ToList();
-            var positions = _context.CtPositions.ToList();
+            var departments = await _context.CtDepartments.ToListAsync();
+            var positions = await _context.CtPositions.ToListAsync();
 
-            var supervisors = (
+            var supervisors = await (
                 from s in _context.CtSupervisors
                 join h in _context.SyHeadcounts
                     on s.FkHeadcount equals h.PkHeadcount
@@ -279,7 +262,7 @@ namespace RH_CM.Controllers
                     SecondName = h.SecondName,
                     LastName = h.LastName
                 }
-            ).ToList();
+            ).ToListAsync();
 
             var model = new CreateHeadCountViewModel
             {
@@ -291,26 +274,23 @@ namespace RH_CM.Controllers
             return model;
         }
 
-        // GET: HeadCount/Create
-        //[Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
         [Authorize(Policy = "ViewAccess")]
-        public IActionResult CreateHeadCount()
+        public async Task<IActionResult> CreateHeadCount()
         {
-            var model = InitializeCreateHeadCount();
+            var model = await InitializeCreateHeadCountAsync();
             return View(model);
         }
 
         [HttpPost]
-        //[Authorize(Roles = "Administrador, RHGerente, RHAdmin, RH")]
         [Authorize(Policy = "ViewAccess")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateHeadCount(CreateHeadCountViewModel model)
         {
-            // Helper method to reload view data
-            void ReloadViewData()
+            async Task ReloadViewDataAsync()
             {
-                model.Departments = _context.CtDepartments.ToList();
-                model.Position = _context.CtPositions.ToList();
-                model.Supervisors = (
+                model.Departments = await _context.CtDepartments.ToListAsync();
+                model.Position = await _context.CtPositions.ToListAsync();
+                model.Supervisors = await (
                     from s in _context.CtSupervisors
                     join h in _context.SyHeadcounts
                         on s.FkHeadcount equals h.PkHeadcount
@@ -324,14 +304,13 @@ namespace RH_CM.Controllers
                         SecondName = h.SecondName,
                         LastName = h.LastName
                     }
-                ).ToList();
+                ).ToListAsync();
             }
 
-            // Helper method to return with error
-            IActionResult ReturnWithError(string errorMessage)
+            async Task<IActionResult> ReturnWithErrorAsync(string errorMessage)
             {
                 TempData["ErrorMessage"] = errorMessage;
-                ReloadViewData();
+                await ReloadViewDataAsync();
                 return View(model);
             }
 
@@ -339,23 +318,19 @@ namespace RH_CM.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    ReloadViewData();
+                    await ReloadViewDataAsync();
                     return View(model);
                 }
 
-                // Validate LastName or SecondName
                 if (string.IsNullOrWhiteSpace(model.LastName) && string.IsNullOrWhiteSpace(model.SecondName))
-                    return ReturnWithError("Please provide either a Last Name or a Second Name.");
+                    return await ReturnWithErrorAsync("Please provide either a Last Name or a Second Name.");
 
-                // Validate duplicate ControlNumber
-                if (_context.SyHeadcounts.Any(h => h.ControlNumber == model.ControlNumber))
-                    return ReturnWithError("The Control Number already exists.");
-                
-                // Validate duplicate username
-                if (_context.AspNetUsers.Any(u => u.Ntuser == model.Ntuser))
-                    return ReturnWithError("The UserName "+ model.Ntuser  + " already exists.");
+                if (await _context.SyHeadcounts.AnyAsync(h => h.ControlNumber == model.ControlNumber))
+                    return await ReturnWithErrorAsync("The Control Number already exists.");
 
-                // Create entity
+                if (await _context.AspNetUsers.AnyAsync(u => u.Ntuser == model.Ntuser))
+                    return await ReturnWithErrorAsync("The UserName " + model.Ntuser + " already exists.");
+
                 var headCount = new SyHeadcount
                 {
                     ControlNumber = model.ControlNumber,
@@ -363,7 +338,7 @@ namespace RH_CM.Controllers
                     Names = model.Names,
                     LastName = model.LastName ?? "",
                     SecondName = model.SecondName ?? "",
-                    LevelEmployee = model.LevelEmployee,
+                    LevelEmployee = model.LevelEmployee ?? "",
                     ShiftWork = model.ShiftWork,
                     StarDate = model.StarDate,
                     Curp = model.Curp,
@@ -372,11 +347,11 @@ namespace RH_CM.Controllers
                     Birthdate = model.Birthdate,
                     Sex = model.Sex,
                     MaritalStatus = model.MaritalStatus ?? "",
-                    Street = model.Street,
-                    Neighborhood = model.Neighborhood,
+                    Street = model.Street ?? "",
+                    Neighborhood = model.Neighborhood ?? "",
                     City = model.City ?? "CHIHUAHUA",
                     ZipCode = model.ZipCode,
-                    Phone1 = model.Phone1,
+                    Phone1 = model.Phone1 ?? "",
                     Phone2 = model.Phone2 ?? "0",
                     Email = model.Email ?? "",
                     EducationLevel = model.EducationLevel ?? "",
@@ -392,28 +367,25 @@ namespace RH_CM.Controllers
                     Available = 1
                 };
 
-                //save the heacount creation
                 _context.SyHeadcounts.Add(headCount);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
 
-                //If everythig sucess when creating an inboud, create his user aswell
                 var usuario = new AppUsuario
                 {
                     UserName = model.Ntuser,
                     EmployeeNumber = model.ControlNumber.ToString(),
                     Email = model.Email,
                     Names = model.Names,
-                    LastName = model.LastName,
+                    LastName = model.LastName ?? "",
                     Available = 1,
                     CreateDate = DateTime.Today,
                     Ntuser = model.Ntuser
                 };
 
-                var resultado = await _userManager.CreateAsync(usuario, "Temp12345!"); //Generic Password for new users.
+                var resultado = await _userManager.CreateAsync(usuario, "Temp12345!"); 
 
                 if (resultado.Succeeded)
                 {
-                    // Asignar el rol al usuario
                     await _userManager.AddToRoleAsync(usuario, "Empleado");
 
                     TempData["SuccessMessage"] = "Head count created successfully.";
@@ -422,29 +394,18 @@ namespace RH_CM.Controllers
 
                 TempData["ErrorMessage"] = "HeadCount Added, but user could not be created.";
                 return RedirectToAction(nameof(IndexHeadCount));
-
-
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = $"An error occurred while creating the head count: {ex.Message}";
-                ReloadViewData();
+                await ReloadViewDataAsync();
                 return View(model);
             }
         }
 
-        [HttpGet]
-        //[Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
-        [Authorize(Policy = "ViewAccess")]
-        public IActionResult EditHeadCount(int id)
+        private async Task<EditHeadCountViewModel> BuildHeadCountViewModelAsync(SyHeadcount headCount)
         {
-            var headCount = _context.SyHeadcounts.Find(id);
-            if (headCount == null)
-            {
-                return NotFound();
-            }
-
-            var viewModel = new EditHeadCountViewModel
+            return new EditHeadCountViewModel
             {
                 PkHeadcount = headCount.PkHeadcount,
                 ControlNumber = headCount.ControlNumber,
@@ -473,9 +434,9 @@ namespace RH_CM.Controllers
                 FkPosition = headCount.FkPosition,
                 ZipCodesat = headCount.ZipCodesat,
                 FkSupervisorId = headCount.FkSupervisorId,
-                Departments = _context.CtDepartments.ToList(),
-                Position = _context.CtPositions.ToList(),
-                Supervisors = (
+                Departments = await _context.CtDepartments.ToListAsync(),
+                Position = await _context.CtPositions.ToListAsync(),
+                Supervisors = await (
                     from supervisor in _context.CtSupervisors
                     join sHead in _context.SyHeadcounts
                         on supervisor.FkHeadcount equals sHead.PkHeadcount
@@ -489,24 +450,60 @@ namespace RH_CM.Controllers
                         SecondName = sHead.SecondName,
                         LastName = sHead.LastName
                     }
-                ).ToList()
+                ).ToListAsync()
             };
+        }
+
+        [HttpGet]
+        [Authorize(Policy = "ViewAccess")]
+        public async Task<IActionResult> EditHeadCount(int id)
+        {
+            if (!ModelState.IsValid || id <= 0)
+            {
+                return NotFound();
+            }
+
+            var headCount = await _context.SyHeadcounts.FindAsync(id);
+            if (headCount == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = await BuildHeadCountViewModelAsync(headCount);
+
+            return View(viewModel);
+        }
+
+        [HttpGet]
+        [Authorize(Policy = "ViewAccess")]
+        public async Task<IActionResult> DetailHeadCount(int id)
+        {
+            if (!ModelState.IsValid || id <= 0)
+            {
+                return NotFound();
+            }
+
+            var headCount = await _context.SyHeadcounts.FindAsync(id);
+            if (headCount == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = await BuildHeadCountViewModelAsync(headCount);
 
             return View(viewModel);
         }
 
         [HttpPost]
-        //[Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
         [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditHeadCount(EditHeadCountViewModel viewModel)
         {
-            // Helper method to reload view data
-            void ReloadViewData()
+            async Task ReloadViewDataAsync()
             {
-                viewModel.Departments = _context.CtDepartments.ToList();
-                viewModel.Position = _context.CtPositions.ToList();
-                viewModel.Supervisors = (
+                viewModel.Departments = await _context.CtDepartments.ToListAsync();
+                viewModel.Position = await _context.CtPositions.ToListAsync();
+                viewModel.Supervisors = await (
                     from supervisor in _context.CtSupervisors
                     join sHead in _context.SyHeadcounts
                         on supervisor.FkHeadcount equals sHead.PkHeadcount
@@ -520,14 +517,13 @@ namespace RH_CM.Controllers
                         SecondName = sHead.SecondName,
                         LastName = sHead.LastName
                     }
-                ).ToList();
+                ).ToListAsync();
             }
 
-            // Helper method to set error message and reload view
-            IActionResult ReturnWithError(string errorMessage)
+            async Task<IActionResult> ReturnWithErrorAsync(string errorMessage)
             {
                 TempData["ErrorMessage"] = errorMessage;
-                ReloadViewData();
+                await ReloadViewDataAsync();
                 return View(viewModel);
             }
 
@@ -540,27 +536,23 @@ namespace RH_CM.Controllers
                     return RedirectToAction(nameof(IndexHeadCount));
                 }
 
-                // Validar el modelo
                 if (!ModelState.IsValid)
                 {
-                    ReloadViewData();
+                    await ReloadViewDataAsync();
                     return View(viewModel);
                 }
 
-                // Validar LastName o SecondName
                 if (string.IsNullOrWhiteSpace(viewModel.LastName) && string.IsNullOrWhiteSpace(viewModel.SecondName))
-                    return ReturnWithError("Please provide either a Last Name or a Second Name.");
+                    return await ReturnWithErrorAsync("Please provide either a Last Name or a Second Name.");
 
-                // Validar duplicados en ControlNumber, excluyendo el registro actual
-                if (_context.SyHeadcounts.Any(h => h.ControlNumber == viewModel.ControlNumber && h.PkHeadcount != viewModel.PkHeadcount))
-                    return ReturnWithError("The 'Control Number' already exists.");
+                if (await _context.SyHeadcounts.AnyAsync(h => h.ControlNumber == viewModel.ControlNumber && h.PkHeadcount != viewModel.PkHeadcount))
+                    return await ReturnWithErrorAsync("The 'Control Number' already exists.");
 
-                // Actualizar headCount con datos validados
                 headCount.ControlNumber = viewModel.ControlNumber;
                 headCount.Names = viewModel.Names;
                 headCount.LastName = viewModel.LastName ?? "";
                 headCount.SecondName = viewModel.SecondName ?? "";
-                headCount.LevelEmployee = viewModel.LevelEmployee;
+                headCount.LevelEmployee = viewModel.LevelEmployee ?? "";
                 headCount.ShiftWork = viewModel.ShiftWork;
                 headCount.StarDate = viewModel.StarDate;
                 headCount.Curp = viewModel.Curp;
@@ -569,11 +561,11 @@ namespace RH_CM.Controllers
                 headCount.Birthdate = viewModel.Birthdate;
                 headCount.Sex = viewModel.Sex;
                 headCount.MaritalStatus = viewModel.MaritalStatus ?? "";
-                headCount.Street = viewModel.Street;
-                headCount.Neighborhood = viewModel.Neighborhood;
+                headCount.Street = viewModel.Street ?? "";
+                headCount.Neighborhood = viewModel.Neighborhood ?? "";
                 headCount.City = viewModel.City ?? "CHIHUAHUA";
                 headCount.ZipCode = viewModel.ZipCode;
-                headCount.Phone1 = viewModel.Phone1;
+                headCount.Phone1 = viewModel.Phone1 ?? "";
                 headCount.Phone2 = viewModel.Phone2 ?? "0";
                 headCount.Email = viewModel.Email ?? "";
                 headCount.EducationLevel = viewModel.EducationLevel ?? "";
@@ -594,22 +586,25 @@ namespace RH_CM.Controllers
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = $"An error occurred while updating the head count: {ex.Message}";
-                ReloadViewData();
+                await ReloadViewDataAsync();
                 return View(viewModel);
             }
         }
 
-        // POST: SyHeadCounts/Delete/5
         [HttpPost, ActionName("DeleteHeadCount")]
-        //[Authorize(Roles = "Administrador, RHGerente")]
         [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteHeadCountConfirmed(int id)
         {
+            if (!ModelState.IsValid || id <= 0)
+            {
+                TempData["ErrorMessage"] = "Invalid head count identifier.";
+                return RedirectToAction(nameof(IndexHeadCount));
+            }
+
             var headCount = await _context.SyHeadcounts.FindAsync(id);
             if (headCount != null)
             {
-                // Elimina el registro de la base de datos
                 _context.SyHeadcounts.Remove(headCount);
                 await _context.SaveChangesAsync();
 
@@ -622,13 +617,17 @@ namespace RH_CM.Controllers
             return RedirectToAction(nameof(IndexHeadCount));
         }
 
-        // POST: SyHeadCounts/ToggleAvailability/5
         [HttpPost, ActionName("ToggleAvailabilityHeadCount")]
-        //[Authorize(Roles = "Administrador, RHGerente, RHAdmin")]
         [Authorize(Policy = "ViewAccess")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleAvailabilityConfirmedHeadCount(int id)
         {
+            if (!ModelState.IsValid || id <= 0)
+            {
+                TempData["ErrorMessage"] = "Invalid head count identifier.";
+                return RedirectToAction(nameof(IndexHeadCount));
+            }
+
             var headCount = await _context.SyHeadcounts.FindAsync(id);
             if (headCount == null)
             {
@@ -636,16 +635,10 @@ namespace RH_CM.Controllers
                 return RedirectToAction(nameof(IndexHeadCount));
             }
 
-            // Determina el nuevo valor
             var newAvailable = (headCount.Available == 1) ? 0 : 1;
 
-            // Aplica cambios
             headCount.Available = newAvailable;
             headCount.Layoffday = (newAvailable == 0) ? DateTime.Now : (DateTime?)null;
-
-            // (Opcional) auditoría
-            // headCount.LastUpdateUser = User.Identity?.Name ?? "system";
-            // headCount.LastUpdateDate = DateTime.Now;
 
             try
             {
@@ -667,7 +660,5 @@ namespace RH_CM.Controllers
 
             return RedirectToAction(nameof(IndexHeadCount));
         }
-
-
     }
 }

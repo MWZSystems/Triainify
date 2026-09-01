@@ -1,0 +1,229 @@
+@model RH_CM.ViewModels.EditHeadCountViewModel
+
+@{
+    ViewData["Title"] = "ONBOARDING DETAIL";
+}
+
+<h1 class="h3 mb-3 text-center">ONBOARDING DETAIL</h1>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">ONBOARDING DETAIL</h5>
+                <h6 class="card-subtitle text-muted">
+                    Read-only view of this record.
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- First Row -->
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="Names" class="form-label">Names</label>
+                        <input type="text" asp-for="Names" class="form-control" disabled />
+                    </div>
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="LastName" class="form-label">Last Name</label>
+                        <input type="text" asp-for="LastName" class="form-control" disabled />
+                    </div>
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="SecondName" class="form-label">Second Last Name</label>
+                        <input type="text" asp-for="SecondName" class="form-control" disabled />
+                    </div>
+
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="Birthdate" class="form-label">Birthdate</label>
+                        <input type="date" asp-for="Birthdate" class="form-control" disabled />
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- Second Row -->
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="Sex" class="form-label">Sex</label>
+                        <select asp-for="Sex" class="form-control" disabled>
+                            <option value="M">M</option>
+                            <option value="F">F</option>
+                        </select>
+                    </div>
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="Street" class="form-label">Street</label>
+                        <input type="text" asp-for="Street" class="form-control" disabled />
+                    </div>
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="Neighborhood" class="form-label">Neighborhood</label>
+                        <input type="text" asp-for="Neighborhood" class="form-control" disabled />
+                    </div>
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="ZipCode" class="form-label">ZIP Code</label>
+                        <input type="number" asp-for="ZipCode" class="form-control" disabled />
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- Third Row -->
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="Phone1" class="form-label">Phone 1</label>
+                        <input type="text" asp-for="Phone1" class="form-control" disabled />
+                    </div>
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="Phone2" class="form-label">Phone 2</label>
+                        <input type="text" asp-for="Phone2" class="form-control" disabled />
+                    </div>
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="Email" class="form-label">Email</label>
+                        <input type="email" asp-for="Email" class="form-control" disabled />
+                    </div>
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="Curp" class="form-label">CURP</label>
+                        <input type="text" asp-for="Curp" class="form-control" disabled />
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- Fourth Row -->
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="Rfc" class="form-label">RFC</label>
+                        <input type="text" asp-for="Rfc" class="form-control" disabled />
+                    </div>
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="SocialSecurity" class="form-label">Social Security</label>
+                        <input type="text" asp-for="SocialSecurity" class="form-control" disabled />
+                    </div>
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="MaritalStatus" class="form-label">Marital Status</label>
+                        <select asp-for="MaritalStatus" class="form-control" disabled>
+                            <option value="Casado">Casado</option>
+                            <option value="Soltero">Soltero</option>
+                            <option value="Divorciado">Divorciado</option>
+                            <option value="Union Libre">Union Libre</option>
+                            <option value="Viudo">Viudo</option>
+                        </select>
+                    </div>
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="LevelEmployee" class="form-label">Level of Employee</label>
+                        <select asp-for="LevelEmployee" class="form-control" disabled>
+                            <option value="INDI">INDI</option>
+                            <option value="ADMI">ADMI</option>
+                            <option value="DIREC">DIREC</option>
+                            <option value="GER1">GER1</option>
+                            <option value="GERE">GERE</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- Fifth Row -->
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="EducationLevel" class="form-label">Education Level</label>
+                        <select asp-for="EducationLevel" class="form-control" disabled>
+                            <option value="Primaria">Primaria</option>
+                            <option value="Secundaria">Secundaria</option>
+                            <option value="Carrera técnica">Carrera técnica</option>
+                            <option value="Bachilleres / Preparatoria">Bachilleres / Preparatoria</option>
+                            <option value="TSU">TSU</option>
+                            <option value="Licenciatura">Licenciatura</option>
+                            <option value="Maestría">Maestría</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="Specialization" class="form-label">Specialization</label>
+                        <input type="text" asp-for="Specialization" class="form-control" disabled />
+                    </div>
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="FkDepartment" class="form-label">Department</label>
+                        <select asp-for="FkDepartment" class="form-control" disabled>
+                            @foreach (var department in Model.Departments)
+                            {
+                                <option value="@department.PkDepartment">@department.NameDeparment</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="FkSupervisorId" class="form-label">Supervisor</label>
+                        <select asp-for="FkSupervisorId" class="form-control" disabled>
+                            @foreach (var supervisor in Model.Supervisors)
+                            {
+                                <option value="@supervisor.PkSupervisorId">
+                                    (@supervisor.ControlNumber) @supervisor.Names @supervisor.SecondName @supervisor.LastName
+                                </option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- Sixth Row -->
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="ShiftWork" class="form-label">Shift Work</label>
+                        <select asp-for="ShiftWork" class="form-control" disabled>
+                            <option value="1o">1o</option>
+                            <option value="2o">2o</option>
+                            <option value="3o">3o</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="FkPosition" class="form-label">Position</label>
+                        <select asp-for="FkPosition" class="form-control" disabled>
+                            @foreach (var position in Model.Position)
+                            {
+                                <option value="@position.PkPosition">@position.NamePosition</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-2 col-md-3">
+
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- Seventh Row -->
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="StarDate" class="form-label">Start Date</label>
+                        <input type="date" asp-for="StarDate" class="form-control" disabled />
+                    </div>
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="ControlNumber" class="form-label">Control Number</label>
+                        <input type="number" asp-for="ControlNumber" class="form-control" disabled />
+                    </div>
+                    <div class="mb-2 col-md-3">
+                        <label asp-for="ZipCodesat" class="form-label">ZIP Code SAT</label>
+                        <input type="number" asp-for="ZipCodesat" class="form-control" disabled />
+                    </div>
+
+                    <div class="mb-2 col-md-3">
+                    </div>
+                </div>
+                <div class="col-12 text-end">
+                    <a asp-action="IndexHeadCount" class="btn btn-secondary">
+                        <i class="align-middle fas fa-arrow-left"></i> BACK
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+            // Show success or error messages
+            if ("@TempData["SuccessMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'success',
+                    message: "@TempData["SuccessMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+            if ("@TempData["ErrorMessage"]" !== "") {
+                window.notyf?.open?.({
+                    type: 'error',
+                    message: "@TempData["ErrorMessage"]",
+                    ripple: true,
+                    dismissible: true,
+                    position: { x: 'center', y: 'top' },
+                    duration: 5000
+                });
+            }
+    });
+</script>

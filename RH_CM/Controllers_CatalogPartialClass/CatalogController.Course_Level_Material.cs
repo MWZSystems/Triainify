@@ -160,7 +160,7 @@ namespace RH_CM.Controllers
                 ws.Cell(row, 2).Value = it.Course;
                 ws.Cell(row, 3).Value = it.Level;
                 ws.Cell(row, 4).Value = it.Material;
-                ws.Cell(row, 5).Value = it.Available == 1 ? "Sí" : "No";
+                ws.Cell(row, 5).Value = it.Available == 1 ? "Yes" : "No";
                 ws.Cell(row, 6).Value = it.CreateUser;
                 ws.Cell(row, 7).Value = it.CreateDate;
                 ws.Cell(row, 8).Value = it.LastUpdateUser;
