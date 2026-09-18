@@ -5,10 +5,10 @@
     ViewData["Title"] = "Diagnostic Result";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    // AssignmentId desde ViewBag (si no llega, usa 0)
+    // AssignmentId from ViewBag (defaults to 0 if not provided)
     var assignmentId = ViewBag.CourseAssignmentId as int? ?? 0;
 
-    // URLs para continuar (PDF) y fallback (volver a la lista)
+    // URLs to continue (PDF) and fallback (back to the list)
     var pdfUrl = Url.Action("OpenPdfCourseMaterialByCourseLevel", "Catalog",
         new { courseId = Model.NextCourseId, levelId = Model.NextLevelId, courseAssignmentId = assignmentId }) ?? "#";
 
@@ -141,7 +141,7 @@
                 {
                     <a id="btn-continue"
                        class="btn btn-success ms-auto"
-                       href="@pdfUrl">
+                       href="@pdfUrl" title="Continue">
                         <i class="fas fa-arrow-right"></i> Continue
                     </a>
                 }
@@ -166,26 +166,6 @@
     @await Html.PartialAsync("_ValidationScriptsPartial")
     <script>
         (function () {
-            if ('@TempData["SuccessMessage"]' !== '') {
-                window.notyf?.open?.({
-                    type: 'success',
-                    message: '@TempData["SuccessMessage"]',
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-            if ('@TempData["ErrorMessage"]' !== '') {
-                window.notyf?.open?.({
-                    type: 'error',
-                    message: '@TempData["ErrorMessage"]',
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-        })();
+})();
     </script>
 }

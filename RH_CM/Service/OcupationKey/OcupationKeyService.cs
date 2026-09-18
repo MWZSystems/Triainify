@@ -2,6 +2,7 @@
 using RH_CM.Service.DTOs;
 using RH_CM.Service.DTOs.OcupationKey;
 using RH_CM.Service.SQLSMS;
+using RH_CM.Messages.OcupationKey;
 
 namespace RH_CM.Service.OcupationKey
 {
@@ -14,9 +15,8 @@ namespace RH_CM.Service.OcupationKey
         }
 
         /// <summary>
-        /// Gets the List of objets to display the crud table
+        /// Gets the list of occupation codes for the CRUD table.
         /// </summary>
-        /// <returns></returns>
         public async Task<OcupationDTOs> IndexGet_async()
         {
             OcupationDTOs ocupationDTOs = new OcupationDTOs();
@@ -34,8 +34,13 @@ namespace RH_CM.Service.OcupationKey
         {
             ServiceAnswer serviceAnswer = new();
 
-            int PositionID = int.Parse(Position.Split(" - ")[0]);
-
+            string[] splitPosition = (Position ?? string.Empty).Split(" - ");
+            if (splitPosition.Length < 1 || !int.TryParse(splitPosition[0], out int PositionID))
+            {
+                serviceAnswer.MessageType = "ErrorMessage";
+                serviceAnswer.Message = OcupationKeyMessages.SelectAValidPosition;
+                return serviceAnswer;
+            }
 
             var parameters = new Dictionary<string, object>
             {
@@ -49,7 +54,7 @@ namespace RH_CM.Service.OcupationKey
             if (answer == "Completed")
             {
                 serviceAnswer.MessageType = ServiceAnswer.MessageType_Success;
-                serviceAnswer.Message = "Record Successfully Added!";
+                serviceAnswer.Message = OcupationKeyMessages.RecordSuccessfullyAdded;
             }
             else
             {
@@ -61,7 +66,7 @@ namespace RH_CM.Service.OcupationKey
         }
 
         //EditOcupationCodeAsync
-        public async Task<OcupationsList> GetEditOcupationCodeAsync(int id)
+        public async Task<OcupationsList?> GetEditOcupationCodeAsync(int id)
         {
 
             var parameters = new Dictionary<string, object>
@@ -71,11 +76,7 @@ namespace RH_CM.Service.OcupationKey
 
             List<OcupationsList> ocupationsList = await _unitOfWork.ExecuteStoredProcedureToListAsync<OcupationsList>("[sp_OcupationKey_EditRecord_Get]", parameters);
 
-
-            OcupationsList ocupation = ocupationsList[0];
-
-
-            return ocupation;
+            return ocupationsList.FirstOrDefault();
         }
 
         public async Task<ServiceAnswer> PostEditOcupationCodeAsync(OcupationsList Answer, string UserName)
@@ -96,7 +97,7 @@ namespace RH_CM.Service.OcupationKey
             if (answer == "Completed")
             {
                 serviceAnswer.MessageType = ServiceAnswer.MessageType_Success;
-                serviceAnswer.Message = "Record Successfully Updated!";
+                serviceAnswer.Message = OcupationKeyMessages.RecordSuccessfullyUpdated;
             }
             else
             {
@@ -125,7 +126,7 @@ namespace RH_CM.Service.OcupationKey
             if (answer == "Completed")
             {
                 serviceAnswer.MessageType = ServiceAnswer.MessageType_Success;
-                serviceAnswer.Message = "Record Successfully Toggled!";
+                serviceAnswer.Message = OcupationKeyMessages.RecordSuccessfullyToggled;
             }
             else
             {
@@ -152,7 +153,7 @@ namespace RH_CM.Service.OcupationKey
             if (answer == "Completed")
             {
                 serviceAnswer.MessageType = ServiceAnswer.MessageType_Success;
-                serviceAnswer.Message = "Record Successfully Deleted!";
+                serviceAnswer.Message = OcupationKeyMessages.RecordSuccessfullyDeleted;
             }
             else
             {

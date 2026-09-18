@@ -2,7 +2,8 @@
 @using Microsoft.AspNetCore.Mvc.Rendering
 
 @{
-    ViewData["Title"] = "Matrix";
+    ViewData["Title"] = "Matrix by Employee";
+    ViewData["BodyClass"] = "page-matrix-employee";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var data = Model ?? Enumerable.Empty<RH_CM.ViewModels.MatrizByEmployeeViewModel>();
@@ -35,6 +36,8 @@
             "EXPIRING SOON" => "bg-warning text-dark",
             "PENDING" => "bg-danger",
             "COMPLETED" => "bg-success",
+            "REQUIRED" => "bg-primary",
+            "OPTIONAL" => "bg-info text-dark",
             "NO REQUIRED" => "bg-secondary",
             "NO ASSIGNED" => "bg-light text-dark border",
             _ => "bg-secondary"
@@ -71,6 +74,8 @@
     int cntCompleted = allCells.Count(s => s.Status.Equals("COMPLETED", StringComparison.OrdinalIgnoreCase));
 
     int cntPermanentCompleted = cntPermanently + cntCompleted + cntExpiringSoon;
+    int cntRequired = allCells.Count(s => s.Status.Equals("REQUIRED", StringComparison.OrdinalIgnoreCase));
+    int cntOptional = allCells.Count(s => s.Status.Equals("OPTIONAL", StringComparison.OrdinalIgnoreCase));
 
     int coursesNeedingAttention = courseGroups.Count(c =>
         c.Cells.Any(cell =>
@@ -79,16 +84,20 @@
         )
     );
 
-    string pageTitle = mode == "POSITION" ? "MATRIX BY POSITION" : "MATRIX BY EMPLOYEE";
+    string pageTitle = mode == "POSITION" ? "Matrix by Position" : "Matrix by Employee";
+    ViewData["Title"] = pageTitle;
+    var pageHelp = new RH_CM.ViewModels.PageHeaderViewModel
+    {
+        Title = pageTitle,
+        HelpBullets = new List<string>
+        {
+            "Shows every required course for an employee (or the configured course matrix for a position).",
+            "Switch between Employee and Position using the View Options panel.",
+            "Each column is a course level; check the badge color to see its status or requirement.",
+            "Position mode does not use the signed-in employee's course history."
+        }
+    };
 }
-
-@* <div class="row mb-3">
-    <div class="col">
-        <h1 class="h3 mb-3 text-center">
-            <i class="fas fa-table me-2"></i>@pageTitle
-        </h1>
-    </div>
-</div> *@
 
 <div class="row">
     <div class="col-xl-12">
@@ -97,14 +106,15 @@
             <div class="col-xl-8">
                 <div class="card">
                     <div class="card-header bg-light border-bottom">
+                        <div class="d-flex align-items-center justify-content-center py-2">
+                            <h4 class="fw-bold title-accent mb-0">
+                                <i class="fas fa-id-card-alt me-2"></i>@pageTitle
+                            </h4>
+                            <partial name="_PageHelpButton" model="pageHelp" />
+                        </div>
                         @if (first != null)
                         {
                             <div class="d-flex flex-column align-items-center text-center py-2">
-                                <h4 class="fw-bold text-dark mb-1">
-                                    <i class="fas fa-id-card-alt me-2 text-secondary"></i>
-                                    @pageTitle
-                                </h4>
-
                                 <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
 
                                     @if (mode == "EMPLOYEE")
@@ -142,11 +152,13 @@
                         }
                     </div>
 
+                    <partial name="_PageHelpModal" model="pageHelp" />
+
                     <div class="card-body">
                         @if (data.Any())
                         {
                             <table id="datatables-responsive" class="table table-striped">
-                                <thead class="table-primary">
+                                    <thead class="table-accent">
                                     <tr>
                                         <th>Course</th>
                                         @foreach (var lm in levelMap)
@@ -185,7 +197,7 @@
             <div class="col-xl-4">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title mb-0">Course Summary</h5>
+                        <h5 class="card-title mb-0">@(mode == "POSITION" ? "Position Matrix Summary" : "Course Summary")</h5>
                     </div>
                     <div class="card-body">
                         <div class="py-3">
@@ -201,14 +213,28 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td><i class="fas fa-square-full text-success"></i> PERMANENTLY / COMPLETED</td>
-                                    <td class="text-end">@cntPermanentCompleted</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="fas fa-square-full text-danger"></i> PENDING</td>
-                                    <td class="text-end">@cntPending</td>
-                                </tr>
+                                @if (mode == "POSITION")
+                                {
+                                    <tr>
+                                        <td><i class="fas fa-square-full text-primary"></i> REQUIRED</td>
+                                        <td class="text-end">@cntRequired</td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="fas fa-square-full text-info"></i> OPTIONAL</td>
+                                        <td class="text-end">@cntOptional</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td><i class="fas fa-square-full text-success"></i> PERMANENTLY / COMPLETED</td>
+                                        <td class="text-end">@cntPermanentCompleted</td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="fas fa-square-full text-danger"></i> PENDING</td>
+                                        <td class="text-end">@cntPending</td>
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                     </div>
@@ -242,7 +268,7 @@
                                 </div>
 
                                 <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary">
+                                    <button type="submit" class="btn btn-primary" title="Load">
                                         <i class="fas fa-search"></i> Load
                                     </button>
                                 </div>
@@ -255,7 +281,7 @@
                     <button class="btn btn-outline-info btn-sm"
                             type="button"
                             data-bs-toggle="collapse"
-                            data-bs-target="#statusLegendAlerts">
+                            data-bs-target="#statusLegendAlerts" title="Status legend">
                         <i class="fas fa-info-circle"></i> Status legend
                     </button>
                 </div>
@@ -266,6 +292,22 @@
                             <h5 class="card-title mb-0">Status legend</h5>
                         </div>
                         <div class="card-body">
+                            @if (mode == "POSITION")
+                            {
+                                <div class="alert alert-primary alert-outline mb-3">
+                                    <strong>REQUIRED:</strong>
+                                    The course and level are required by the selected position's configured matrix.
+                                </div>
+                                <div class="alert alert-info alert-outline mb-3">
+                                    <strong>OPTIONAL:</strong>
+                                    The assignment belongs to the position but is not mandatory.
+                                </div>
+                                <div class="alert alert-light border mb-0">
+                                    Employee completions and the signed-in user's courses are not used in this mode.
+                                </div>
+                            }
+                            else
+                            {
                             <div class="alert alert-success alert-outline mb-3">
                                 <strong>PERMANENTLY / COMPLETED:</strong>
                                 Includes PERMANENTLY, COMPLETED, and EXPIRING SOON in the summary and chart.
@@ -286,6 +328,7 @@
                                 <strong>NO ASSIGNED:</strong>
                                 The course level is shown to complete the matrix, but is not assigned.
                             </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -329,10 +372,16 @@
             new Chart(ctx, {
                 type: "pie",
                 data: {
-                    labels: ["PERMANENTLY / COMPLETED", "PENDING"],
+                    labels: @(mode == "POSITION"
+                        ? Html.Raw("[\"REQUIRED\", \"OPTIONAL\"]")
+                        : Html.Raw("[\"PERMANENTLY / COMPLETED\", \"PENDING\"]")),
                     datasets: [{
-                        data: [@cntPermanentCompleted, @cntPending],
-                        backgroundColor: ["#198754", "#dc3545"],
+                        data: @(mode == "POSITION"
+                            ? Html.Raw($"[{cntRequired}, {cntOptional}]")
+                            : Html.Raw($"[{cntPermanentCompleted}, {cntPending}]")),
+                        backgroundColor: @(mode == "POSITION"
+                            ? Html.Raw("[\"#0d6efd\", \"#0dcaf0\"]")
+                            : Html.Raw("[\"#198754\", \"#dc3545\"]")),
                         borderWidth: 5,
                         borderColor: "#ffffff"
                     }]

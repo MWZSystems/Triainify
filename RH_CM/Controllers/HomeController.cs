@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RH_CM.Models;
@@ -13,31 +12,22 @@ namespace RH_CM.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly AccessGroupsService _accessGroupService;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public HomeController(ILogger<HomeController> logger, 
-                                AccessGroupsService accessGroupsService,
-                                UserManager<IdentityUser> userManager,
-                                IHttpContextAccessor httpContextAccessor)
+        public HomeController(AccessGroupsService accessGroupsService)
         {
-            _logger = logger;
             _accessGroupService = accessGroupsService;
-            _userManager = userManager;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IActionResult> Index()
         {
-            // Borra la sesion de las cookies anteriores
+            // Clear the session from previous cookies
             HttpContext.Session.Remove("Accesos");
 
-            // Esta parte guarda los accesos que tiene este usuario para el NavBar los este leyendo de ahi. y no tener que estar refrescandolos.
+            // This stores the user's access rights in Session so the NavBar can read them from there instead of refreshing them on every request.
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("Accesos")))
             {
-                GroupsAccessDTOs accesos = await _accessGroupService.GetMenusToShow(); //_accesosService.CargarAccesos(usuarioId);
+                GroupsAccessDTOs accesos = await _accessGroupService.GetMenusToShow();
 
                 HttpContext.Session.SetString("Accesos", JsonConvert.SerializeObject(accesos));
             }

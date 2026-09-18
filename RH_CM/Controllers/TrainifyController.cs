@@ -2,7 +2,6 @@
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
@@ -10,26 +9,26 @@ using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using RH_CM.Data;
 using RH_CM.Models;
+using RH_CM.Service.SQLSMS;
+using RH_CM.Service.Trainify;
 using RH_CM.ViewModels;
 using System.Data;
 using static RH_CM.ViewModels.ViewModels;
+using RH_CM.Messages.Trainify;
 
 namespace RH_CM.Controllers
 {
     public class TrainifyController : Controller
     {
         private readonly db_abcd61_rhchdbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly string _connString;
+        private readonly DiagnosticExamService _diagnosticExamService;
 
         public TrainifyController(
             db_abcd61_rhchdbContext context,
-            UserManager<IdentityUser> userManager,
-            IConfiguration configuration)
+            DiagnosticExamService diagnosticExamService)
         {
             _context = context;
-            _userManager = userManager;
-            _connString = configuration.GetConnectionString("ConexionSQL");
+            _diagnosticExamService = diagnosticExamService;
         }
 
         // Helper: positions dropdown
@@ -49,106 +48,72 @@ namespace RH_CM.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> MatrixByEmployee(string mode = "EMPLOYEE", int? fkPosition = null, string? userName = null)
+        public async Task<IActionResult> MatrixByEmployee(string? mode = "EMPLOYEE", int? fkPosition = null, string? userName = null)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var result = new List<MatrizByEmployeeViewModel>();
             var normalizedMode = string.IsNullOrWhiteSpace(mode) ? "EMPLOYEE" : mode.Trim().ToUpper();
 
-            string? effectiveUserName = null;
-            int? selectedPosition = null;
+            var (targetResolved, effectiveUserName, selectedPosition, targetError) =
+                ResolveMatrixByEmployeeTarget(normalizedMode, fkPosition, userName);
 
-            if (normalizedMode == "POSITION")
+            if (!targetResolved)
             {
-                if (!fkPosition.HasValue || fkPosition.Value <= 0)
-                {
-                    TempData["ErrorMessage"] = "Please select a valid position.";
-                    ViewBag.Mode = "POSITION";
-                    ViewBag.Positions = await GetPositionsAsync();
-                    ViewBag.SelectedPositionId = null;
-                    ViewBag.TargetUserName = null;
-                    return View(result);
-                }
-
-                selectedPosition = fkPosition.Value;
-            }
-            else
-            {
-                effectiveUserName = string.IsNullOrWhiteSpace(userName)
-                    ? User?.Identity?.Name
-                    : userName;
-
-                if (string.IsNullOrWhiteSpace(effectiveUserName))
-                {
-                    TempData["ErrorMessage"] = "Unable to retrieve the current user.";
-                    ViewBag.Mode = "EMPLOYEE";
-                    ViewBag.Positions = await GetPositionsAsync();
-                    ViewBag.SelectedPositionId = null;
-                    ViewBag.TargetUserName = null;
-                    return View(result);
-                }
+                TempData["ErrorMessage"] = targetError;
+                ViewBag.Mode = normalizedMode;
+                ViewBag.Positions = await GetPositionsAsync();
+                ViewBag.SelectedPositionId = null;
+                ViewBag.TargetUserName = null;
+                return View(result);
             }
 
             string connectionString = _context.Database.GetDbConnection().ConnectionString;
 
             try
             {
-                await using var connection = new SqlConnection(connectionString);
-                await connection.OpenAsync();
-
-                await using var command = new SqlCommand("sp_GetMatrizbyEmployeeCourseAssignments", connection)
+                if (normalizedMode == "POSITION")
                 {
-                    CommandType = CommandType.StoredProcedure
-                };
-
-                command.Parameters.Add(new SqlParameter("@UserName", SqlDbType.NVarChar, 256)
+                    result = await LoadPositionMatrixAsync(selectedPosition!.Value);
+                }
+                else
                 {
-                    Value = string.IsNullOrWhiteSpace(effectiveUserName)
-                        ? (object)DBNull.Value
-                        : effectiveUserName
-                });
+                    await using var connection = new SqlConnection(connectionString);
+                    await connection.OpenAsync();
 
-                command.Parameters.Add(new SqlParameter("@FkPosition", SqlDbType.Int)
-                {
-                    Value = selectedPosition.HasValue
-                        ? (object)selectedPosition.Value
-                        : DBNull.Value
-                });
-
-                await using var reader = await command.ExecuteReaderAsync();
-
-                int Ord(string n) => reader.GetOrdinal(n);
-                bool IsNull(string n) => reader.IsDBNull(Ord(n));
-
-                while (await reader.ReadAsync())
-                {
-                    result.Add(new MatrizByEmployeeViewModel
+                    await using var command = new SqlCommand("sp_GetMatrizbyEmployeeCourseAssignments", connection)
                     {
-                        FK_Position = IsNull("FK_Position") ? 0 : reader.GetInt32(Ord("FK_Position")),
-                        NAME_POSITION_ENGLISH = IsNull("NAME_POSITION_ENGLISH") ? "—" : reader.GetString(Ord("NAME_POSITION_ENGLISH")),
-                        FK_Course = IsNull("FK_Course") ? 0 : reader.GetInt32(Ord("FK_Course")),
-                        CourseName = IsNull("CourseName") ? "—" : reader.GetString(Ord("CourseName")),
-                        FK_RequiredCourseLevels = IsNull("FK_RequiredCourseLevels") ? 0 : reader.GetInt32(Ord("FK_RequiredCourseLevels")),
-                        DESCRIPCTION_LEVEL = IsNull("DESCRIPCTION_LEVEL") ? null : reader.GetString(Ord("DESCRIPCTION_LEVEL")),
-                        Requiered = !IsNull("Requiered") && Convert.ToBoolean(reader["Requiered"]),
-                        FK_DeliveryMode = IsNull("FK_DeliveryMode") ? 0 : Convert.ToInt32(reader["FK_DeliveryMode"]),
-                        CourseValidityDays = IsNull("CourseValidityDays") ? (int?)null : Convert.ToInt32(reader["CourseValidityDays"]),
-                        UserName = IsNull("UserName") ? "—" : reader["UserName"]?.ToString() ?? "—",
-                        CONTROL_NUMBER = IsNull("CONTROL_NUMBER") ? "—" : reader["CONTROL_NUMBER"]?.ToString() ?? "—",
-                        NAMES = IsNull("NAMES") ? "—" : reader["NAMES"]?.ToString() ?? "—",
-                        LAST_NAME = IsNull("LAST_NAME") ? "—" : reader["LAST_NAME"]?.ToString() ?? "—",
-                        SECOND_NAME = IsNull("SECOND_NAME") ? "—" : reader["SECOND_NAME"]?.ToString() ?? "—",
-                        LastUpdateDate = IsNull("LastUpdateDate") ? (DateTime?)null : Convert.ToDateTime(reader["LastUpdateDate"]),
-                        CourseStatus = IsNull("CourseStatus") ? "—" : reader["CourseStatus"]?.ToString() ?? "—"
+                        CommandType = CommandType.StoredProcedure
+                    };
+
+                    command.Parameters.Add(new SqlParameter("@UserName", SqlDbType.NVarChar, 256)
+                    {
+                        Value = effectiveUserName ?? (object)DBNull.Value
                     });
+
+                    command.Parameters.Add(new SqlParameter("@FkPosition", SqlDbType.Int)
+                    {
+                        Value = DBNull.Value
+                    });
+
+                    await using var reader = await command.ExecuteReaderAsync();
+
+                    while (await reader.ReadAsync())
+                    {
+                        result.Add(MapEmployeeRow(reader));
+                    }
                 }
             }
             catch (SqlException ex)
             {
-                TempData["ErrorMessage"] = $"SQL error while querying data: {ex.Message}";
+                TempData["ErrorMessage"] = string.Format(TrainifyMessages.SqlErrorWhileQueryingDataFormat, ex.Message);
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+                TempData["ErrorMessage"] = string.Format(TrainifyMessages.ErrorOccurredFormat, ex.Message);
             }
 
             ViewBag.Mode = normalizedMode;
@@ -157,6 +122,112 @@ namespace RH_CM.Controllers
             ViewBag.TargetUserName = effectiveUserName;
 
             return View(result);
+        }
+
+        /// <summary>
+        /// Builds the configured matrix for a position without reading employee progress,
+        /// completed courses, exam attempts, or the currently signed-in user's history.
+        /// </summary>
+        private async Task<List<MatrizByEmployeeViewModel>> LoadPositionMatrixAsync(int positionId)
+        {
+            var assignments = await (
+                from assignment in _context.CtCourseassignments.AsNoTracking()
+                join position in _context.CtPositions.AsNoTracking()
+                    on assignment.FkPosition equals position.PkPosition
+                join course in _context.CtCourses.AsNoTracking()
+                    on assignment.FkCourse equals course.PkCourse
+                join level in _context.CtLevelcourses.AsNoTracking()
+                    on assignment.FkRequiredCourseLevels equals level.PkLevelcourse
+                where assignment.FkPosition == positionId
+                   && assignment.Available == 1
+                   && position.Available == 1
+                   && course.Available == 1
+                   && level.Available == 1
+                orderby course.CourseName, level.DescripctionLevel
+                select new
+                {
+                    assignment.FkPosition,
+                    PositionName = position.NamePositionEnglish,
+                    assignment.FkCourse,
+                    course.CourseName,
+                    assignment.FkRequiredCourseLevels,
+                    LevelName = level.DescripctionLevel,
+                    assignment.Requiered,
+                    assignment.FkDeliveryMode,
+                    course.CourseValidityDays,
+                    assignment.LastUpdateDate
+                }).ToListAsync();
+
+            return assignments.Select(x => new MatrizByEmployeeViewModel
+            {
+                FK_Position = x.FkPosition,
+                NAME_POSITION_ENGLISH = x.PositionName,
+                FK_Course = x.FkCourse,
+                CourseName = x.CourseName,
+                FK_RequiredCourseLevels = x.FkRequiredCourseLevels,
+                DESCRIPCTION_LEVEL = x.LevelName,
+                Requiered = x.Requiered,
+                FK_DeliveryMode = x.FkDeliveryMode ?? 0,
+                CourseValidityDays = x.CourseValidityDays,
+                LastUpdateDate = x.LastUpdateDate,
+                CourseStatus = x.Requiered ? "REQUIRED" : "OPTIONAL"
+            }).ToList();
+        }
+
+        /// <summary>
+        /// Resolves the (userName, position) target for MatrixByEmployee based on the requested mode,
+        /// or an error message when the request doesn't have what it needs (e.g. no position selected,
+        /// or the current user's name couldn't be determined).
+        /// </summary>
+        private (bool Resolved, string? EffectiveUserName, int? SelectedPosition, string? Error) ResolveMatrixByEmployeeTarget(
+            string normalizedMode, int? fkPosition, string? userName)
+        {
+            if (normalizedMode == "POSITION")
+            {
+                if (!fkPosition.HasValue || fkPosition.Value <= 0)
+                {
+                    return (false, null, null, TrainifyMessages.SelectAValidPosition);
+                }
+
+                return (true, null, fkPosition.Value, null);
+            }
+
+            var effectiveUserName = string.IsNullOrWhiteSpace(userName)
+                ? User?.Identity?.Name
+                : userName;
+
+            if (string.IsNullOrWhiteSpace(effectiveUserName))
+            {
+                return (false, null, null, TrainifyMessages.UnableToRetrieveTheCurrentUser);
+            }
+
+            return (true, effectiveUserName, null, null);
+        }
+
+        /// <summary>
+        /// Maps the current row of a sp_GetMatrizbyEmployeeCourseAssignments reader to a view model.
+        /// </summary>
+        private static MatrizByEmployeeViewModel MapEmployeeRow(SqlDataReader reader)
+        {
+            return new MatrizByEmployeeViewModel
+            {
+                FK_Position = ReadInt32(reader, "FK_Position"),
+                NAME_POSITION_ENGLISH = ReadString(reader, "NAME_POSITION_ENGLISH"),
+                FK_Course = ReadInt32(reader, "FK_Course"),
+                CourseName = ReadString(reader, "CourseName"),
+                FK_RequiredCourseLevels = ReadInt32(reader, "FK_RequiredCourseLevels"),
+                DESCRIPCTION_LEVEL = ReadNullableString(reader, "DESCRIPCTION_LEVEL"),
+                Requiered = ReadBoolean(reader, "Requiered"),
+                FK_DeliveryMode = ReadInt32(reader, "FK_DeliveryMode"),
+                CourseValidityDays = ReadNullableInt32(reader, "CourseValidityDays"),
+                UserName = ReadString(reader, "UserName"),
+                CONTROL_NUMBER = ReadString(reader, "CONTROL_NUMBER"),
+                NAMES = ReadString(reader, "NAMES"),
+                LAST_NAME = ReadString(reader, "LAST_NAME"),
+                SECOND_NAME = ReadString(reader, "SECOND_NAME"),
+                LastUpdateDate = ReadNullableDateTime(reader, "LastUpdateDate"),
+                CourseStatus = ReadString(reader, "CourseStatus")
+            };
         }
 
         [Authorize(Policy = "ViewAccess")]
@@ -227,12 +298,17 @@ namespace RH_CM.Controllers
             _context.SyCoursecompleteds.Add(entity);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Record created successfully.";
+            TempData["SuccessMessage"] = TrainifyMessages.RecordCreatedSuccessfully;
             return RedirectToAction(nameof(IndexCourseCompleted));
         }
 
         public async Task<IActionResult> EditCourseCompleted(int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var entity = await _context.SyCoursecompleteds.FindAsync(id);
             if (entity == null) return NotFound();
 
@@ -264,12 +340,17 @@ namespace RH_CM.Controllers
 
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Record updated successfully.";
+            TempData["SuccessMessage"] = TrainifyMessages.RecordUpdatedSuccessfully;
             return RedirectToAction(nameof(IndexCourseCompleted));
         }
 
         public async Task<IActionResult> DeleteCourseCompleted(int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var entity = await _context.SyCoursecompleteds.FindAsync(id);
             if (entity == null) return NotFound();
 
@@ -281,13 +362,18 @@ namespace RH_CM.Controllers
         [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> DeleteCourseCompletedConfirmed(int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var entity = await _context.SyCoursecompleteds.FindAsync(id);
             if (entity == null) return NotFound();
 
             _context.SyCoursecompleteds.Remove(entity);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Record deleted successfully.";
+            TempData["SuccessMessage"] = TrainifyMessages.RecordDeletedSuccessfully;
             return RedirectToAction(nameof(IndexCourseCompleted));
         }
 
@@ -311,6 +397,7 @@ namespace RH_CM.Controllers
         private async Task PopulateSelects(SyCourseCompletedVM vm)
         {
             var caList = await _context.CtCourseassignments
+                .AsNoTracking()
                 .OrderBy(x => x.PkCourseAssignment)
                 .Select(x => new
                 {
@@ -320,17 +407,20 @@ namespace RH_CM.Controllers
                 .ToListAsync();
 
             var csList = await _context.CtCoursestatuses
+                .AsNoTracking()
                 .Where(x => x.Available == 1)
                 .OrderBy(x => x.DescriptionCoursestatus)
                 .ToListAsync();
 
             var dmList = await _context.CtDeliverymodes
+                .AsNoTracking()
                 .Where(x => x.Available == 1)
                 .OrderBy(x => x.DescriptionDeliverymode)
                 .ToListAsync();
             dmList.Insert(0, new CtDeliverymode { PkDeliverymode = 0, DescriptionDeliverymode = "Not Assigned" });
 
             var hcList = await _context.SyHeadcounts
+                .AsNoTracking()
                 .Where(x => x.Available == 1)
                 .OrderBy(x => x.Names)
                 .Select(x => new
@@ -382,9 +472,14 @@ namespace RH_CM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upload(IFormFile file, bool allowUpsert = true)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             if (file == null || file.Length == 0)
             {
-                TempData["ErrorMessage"] = "Please select an Excel file.";
+                TempData["ErrorMessage"] = TrainifyMessages.SelectAnExcelFile;
                 return RedirectToAction(nameof(Index));
             }
 
@@ -405,8 +500,8 @@ namespace RH_CM.Controllers
                     int DeliveryModeId = GetInt(ws.Cell(row, 4).GetValue<string>());
                     int ControlNumber = GetInt(ws.Cell(row, 5).GetValue<string>());
                     int Available = GetInt(ws.Cell(row, 6).GetValue<string>());
-                    string CreateUser = ws.Cell(row, 7).GetValue<string>()?.Trim();
-                    string LastUpdateUser = ws.Cell(row, 8).GetValue<string>()?.Trim();
+                    string? CreateUser = ws.Cell(row, 7).GetValue<string>()?.Trim();
+                    string? LastUpdateUser = ws.Cell(row, 8).GetValue<string>()?.Trim();
 
                     var dr = tvp.NewRow();
                     dr["RowNum"] = RowNum > 0 ? RowNum : row - 1;
@@ -424,7 +519,7 @@ namespace RH_CM.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error reading the Excel file: {ex.Message}";
+                TempData["ErrorMessage"] = string.Format(TrainifyMessages.ErrorReadingTheExcelFileFormat, ex.Message);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -448,19 +543,26 @@ namespace RH_CM.Controllers
                 cmd.Parameters.Add(new SqlParameter("@UserName", SqlDbType.NVarChar, 256) { Value = userName });
                 cmd.Parameters.Add(new SqlParameter("@AllowUpsert", SqlDbType.Bit) { Value = allowUpsert });
 
-                using var da = new SqlDataAdapter(cmd);
-                var ds = new DataSet();
-                da.Fill(ds);
+                using var reader = await cmd.ExecuteReaderAsync();
 
-                if (ds.Tables.Count > 0) errors = ds.Tables[0];
-                if (ds.Tables.Count > 1) summary = ds.Tables[1];
+                if (reader.FieldCount > 0)
+                {
+                    errors = new DataTable();
+                    errors.Load(reader);
+                }
+
+                if (await reader.NextResultAsync() && reader.FieldCount > 0)
+                {
+                    summary = new DataTable();
+                    summary.Load(reader);
+                }
 
                 TempData["SuccessMessage"] = BuildSummaryMessage(summary, errors);
                 TempData["ErrorTable"] = DataTableToHtml(errors);
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error processing the upload: {ex.Message}";
+                TempData["ErrorMessage"] = string.Format(TrainifyMessages.ErrorProcessingTheUploadFormat, ex.Message);
             }
 
             return RedirectToAction(nameof(Index));
@@ -514,105 +616,31 @@ namespace RH_CM.Controllers
             return sw.ToString();
         }
 
-        /// <summary>
-        /// PDF READER
-        /// </summary>
-        private async Task<bool> ExistsDiagnosticTestAsync(int courseId, int levelId)
-        {
-            return await _context.CtTests
-                .AsNoTracking()
-                .AnyAsync(t => t.Available == 1 && t.FkCourse == courseId && t.FkLevelcourse == levelId);
-        }
-
-        private async Task<bool> ExistsMaterialAsync(int courseId, int levelId)
-        {
-            return await (
-                from clm in _context.CtCourseLevelMaterials.AsNoTracking()
-                join m in _context.CtCoursematerials.AsNoTracking()
-                    on clm.FkCourseMaterial equals m.PkCoursematerial
-                where clm.Available == 1
-                   && clm.FkCourse == courseId
-                   && clm.FkLevelCourse == levelId
-                   && (m.Available ?? 0) == 1
-                   && ((m.File != null && m.File.Length > 0) || !string.IsNullOrWhiteSpace(m.UrlPath))
-                select clm.PkCourseLevelMaterial
-            ).AnyAsync();
-        }
-
-        private async Task<int?> GetDiagnosticTestIdAsync(int courseId, int levelId)
-        {
-            return await _context.CtTests
-                .AsNoTracking()
-                .Where(t => t.Available == 1 && t.FkCourse == courseId && t.FkLevelcourse == levelId)
-                .OrderByDescending(t => t.PkTest)
-                .Select(t => (int?)t.PkTest)
-                .FirstOrDefaultAsync();
-        }
-
-        private async Task<(int HeadcountId, int ControlNumber, string UserName)?> GetCurrentHeadcountInfoAsync()
-        {
-            var currentUser = User?.Identity?.Name;
-            if (string.IsNullOrWhiteSpace(currentUser))
-                return null;
-
-            var userRow = await _context.AspNetUsers
-                .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.UserName == currentUser);
-
-            if (userRow == null || string.IsNullOrWhiteSpace(userRow.EmployeeNumber))
-                return null;
-
-            if (!int.TryParse(userRow.EmployeeNumber.Trim(), out var controlNumber))
-                return null;
-
-            var hc = await _context.SyHeadcounts
-                .AsNoTracking()
-                .FirstOrDefaultAsync(h => h.ControlNumber == controlNumber && h.Available == 1);
-
-            if (hc == null)
-                return null;
-
-            return (hc.PkHeadcount, controlNumber, currentUser);
-        }
-
-        private async Task<bool> HasDiagnosticAttemptAsync(int courseId, int levelId)
-        {
-            var current = await GetCurrentHeadcountInfoAsync();
-            if (current == null)
-                return false;
-
-            var testId = await GetDiagnosticTestIdAsync(courseId, levelId);
-            if (!testId.HasValue)
-                return false;
-
-            return await _context.SyUserDiagnostics
-                .AsNoTracking()
-                .AnyAsync(d =>
-                    d.FkHeadcount == current.Value.HeadcountId &&
-                    d.FkTest == testId.Value &&
-                    d.Available == 1);
-        }
-
         [Authorize]
         [HttpGet("/Catalog/StartCourse")]
         public async Task<IActionResult> StartCourse([FromQuery] int courseId, [FromQuery] int levelId, [FromQuery] int? courseAssignmentId)
         {
-            if (!await ExistsDiagnosticTestAsync(courseId, levelId))
+            if (!ModelState.IsValid)
             {
-                TempData["ErrorMessage"] = "No diagnostic test was found for this course/level. Please contact HR.";
+                return BadRequest(ModelState);
+            }
+
+            if (!await _diagnosticExamService.ExistsDiagnosticTestAsync(courseId, levelId))
+            {
+                TempData["ErrorMessage"] = TrainifyMessages.NoDiagnosticTestWasFoundForThis;
                 return RedirectToAction("LearningTrainify", "Trainify");
             }
 
-            if (!await ExistsMaterialAsync(courseId, levelId))
+            if (!await _diagnosticExamService.ExistsMaterialAsync(courseId, levelId))
             {
-                TempData["ErrorMessage"] = "No course material (PDF/URL) is linked to this course/level. Please contact HR.";
+                TempData["ErrorMessage"] = TrainifyMessages.NoCourseMaterialPdfUrlIsLinked;
                 return RedirectToAction("LearningTrainify", "Trainify");
             }
 
-            var testId = await GetDiagnosticTestIdAsync(courseId, levelId);
+            var testId = await _diagnosticExamService.GetDiagnosticTestIdAsync(courseId, levelId);
             if (!testId.HasValue)
             {
-                TempData["ErrorMessage"] = "Diagnostic test not found.";
+                TempData["ErrorMessage"] = TrainifyMessages.DiagnosticTestNotFound;
                 return RedirectToAction("LearningTrainify", "Trainify");
             }
 
@@ -628,7 +656,7 @@ namespace RH_CM.Controllers
 
             if (string.IsNullOrWhiteSpace(userName))
             {
-                TempData["ErrorMessage"] = "Unable to retrieve the current user.";
+                TempData["ErrorMessage"] = TrainifyMessages.UnableToRetrieveTheCurrentUser;
                 ViewBag.RequiredFilter = requiredFilter;
                 return View(result);
             }
@@ -659,62 +687,19 @@ namespace RH_CM.Controllers
 
                 using var reader = await command.ExecuteReaderAsync();
 
-                int Ord(string n) => reader.GetOrdinal(n);
-                bool IsNull(string n) => reader.IsDBNull(Ord(n));
-                bool HasCol(string n)
-                {
-                    var schema = reader.GetSchemaTable();
-                    if (schema == null) return false;
-
-                    foreach (DataRow r in schema.Rows)
-                    {
-                        if (string.Equals(r["ColumnName"]?.ToString(), n, StringComparison.OrdinalIgnoreCase))
-                            return true;
-                    }
-
-                    return false;
-                }
-
                 while (await reader.ReadAsync())
                 {
-                    var vm = new LearningCourseToDoViewModel
-                    {
-                        PK_CourseAssignment = IsNull("PK_CourseAssignment") ? 0 : reader.GetInt32(Ord("PK_CourseAssignment")),
-                        NAME_POSITION_ENGLISH = IsNull("NAME_POSITION_ENGLISH") ? "—" : reader.GetString(Ord("NAME_POSITION_ENGLISH")),
-
-                        FK_Course = HasCol("FK_Course") && !IsNull("FK_Course") ? reader.GetInt32(Ord("FK_Course")) : 0,
-                        CourseName = IsNull("CourseName") ? "—" : reader.GetString(Ord("CourseName")),
-                        CourseLevel = HasCol("CourseLevel") && !IsNull("CourseLevel") ? reader.GetString(Ord("CourseLevel")) : "—",
-                        FK_RequiredCourseLevels = HasCol("FK_RequiredCourseLevels") && !IsNull("FK_RequiredCourseLevels") ? reader.GetInt32(Ord("FK_RequiredCourseLevels")) : 0,
-
-                        DeliveryMode = HasCol("DeliveryMode") && !IsNull("DeliveryMode") ? reader.GetString(Ord("DeliveryMode")) : "—",
-                        CourseValidityDays = HasCol("CourseValidityDays") && !IsNull("CourseValidityDays") ? Convert.ToInt32(reader["CourseValidityDays"]) : (int?)null,
-
-                        CONTROL_NUMBER = HasCol("CONTROL_NUMBER") && !IsNull("CONTROL_NUMBER") ? reader["CONTROL_NUMBER"].ToString()! : "—",
-                        FullName = HasCol("FullName") && !IsNull("FullName") ? reader["FullName"].ToString()! : "—",
-
-                        LastUpdateDate = HasCol("LastUpdateDate") && !IsNull("LastUpdateDate") ? Convert.ToDateTime(reader["LastUpdateDate"]) : (DateTime?)null,
-                        CourseStatus = HasCol("CourseStatus") && !IsNull("CourseStatus") ? reader["CourseStatus"].ToString()! : "—"
-                    };
-
-                    result.Add(vm);
+                    result.Add(MapLearningRow(reader));
                 }
-
-                var normalizedFilter = (requiredFilter ?? "REQUIRED").Trim().ToUpper();
 
                 if (result.Count == 0)
                 {
-                    TempData["SuccessMessage"] = normalizedFilter switch
-                    {
-                        "NOT_REQUIRED" => "There are no non-required courses to display.",
-                        "ALL" => "There are no courses to display.",
-                        _ => "There are no required pending courses to display."
-                    };
+                    TempData["SuccessMessage"] = BuildNoCoursesMessage(requiredFilter);
                 }
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error loading courses: {ex.Message}";
+                TempData["ErrorMessage"] = string.Format(TrainifyMessages.ErrorLoadingCoursesFormat, ex.Message);
             }
 
             ViewBag.RequiredFilter = string.IsNullOrWhiteSpace(requiredFilter)
@@ -724,21 +709,100 @@ namespace RH_CM.Controllers
             return View(result);
         }
 
+        /// <summary>
+        /// Maps the current row of a sp_GetCoursestoDo_Learning reader to a view model. Some columns
+        /// are only present for certain filter modes, hence the HasColumn checks.
+        /// </summary>
+        private static LearningCourseToDoViewModel MapLearningRow(SqlDataReader reader)
+        {
+            return new LearningCourseToDoViewModel
+            {
+                PK_CourseAssignment = ReadInt32(reader, "PK_CourseAssignment"),
+                NAME_POSITION_ENGLISH = ReadString(reader, "NAME_POSITION_ENGLISH"),
+                FK_Course = ReadInt32(reader, "FK_Course"),
+                CourseName = ReadString(reader, "CourseName"),
+                CourseLevel = ReadString(reader, "CourseLevel"),
+                FK_RequiredCourseLevels = ReadInt32(reader, "FK_RequiredCourseLevels"),
+                DeliveryMode = ReadString(reader, "DeliveryMode"),
+                CourseValidityDays = ReadNullableInt32(reader, "CourseValidityDays"),
+                CONTROL_NUMBER = ReadString(reader, "CONTROL_NUMBER"),
+                FullName = ReadString(reader, "FullName"),
+                LastUpdateDate = ReadNullableDateTime(reader, "LastUpdateDate"),
+                CourseStatus = ReadString(reader, "CourseStatus")
+            };
+        }
+
+        private static bool HasReaderValue(SqlDataReader reader, string columnName)
+        {
+            return reader.HasColumn(columnName) && !reader.IsDBNull(reader.GetOrdinal(columnName));
+        }
+
+        private static string ReadString(SqlDataReader reader, string columnName, string fallback = "—")
+        {
+            return HasReaderValue(reader, columnName) ? reader[columnName]?.ToString() ?? fallback : fallback;
+        }
+
+        private static string? ReadNullableString(SqlDataReader reader, string columnName)
+        {
+            return HasReaderValue(reader, columnName) ? reader[columnName]?.ToString() : null;
+        }
+
+        private static int ReadInt32(SqlDataReader reader, string columnName)
+        {
+            return HasReaderValue(reader, columnName) ? Convert.ToInt32(reader[columnName]) : 0;
+        }
+
+        private static int? ReadNullableInt32(SqlDataReader reader, string columnName)
+        {
+            return HasReaderValue(reader, columnName) ? Convert.ToInt32(reader[columnName]) : null;
+        }
+
+        private static bool ReadBoolean(SqlDataReader reader, string columnName)
+        {
+            return HasReaderValue(reader, columnName) && Convert.ToBoolean(reader[columnName]);
+        }
+
+        private static DateTime? ReadNullableDateTime(SqlDataReader reader, string columnName)
+        {
+            return HasReaderValue(reader, columnName) ? Convert.ToDateTime(reader[columnName]) : null;
+        }
+
+        /// <summary>
+        /// Builds the "no courses to display" message for the current filter, when the query returns nothing.
+        /// </summary>
+        private static string BuildNoCoursesMessage(string requiredFilter)
+        {
+            var normalizedFilter = (requiredFilter ?? "REQUIRED").Trim().ToUpper();
+
+            return normalizedFilter switch
+            {
+                "NOT_REQUIRED" => "There are no non-required courses to display.",
+                "ALL" => "There are no courses to display.",
+                _ => "There are no required pending courses to display."
+            };
+        }
+
         [HttpGet("/Catalog/OpenPdfCourseMaterialByCourseLevel")]
         public async Task<IActionResult> OpenPdfCourseMaterialByCourseLevel(
             [FromQuery] int courseId, [FromQuery] int levelId, [FromQuery] int? courseAssignmentId)
         {
-            var hasDiagnosticAttempt = await HasDiagnosticAttemptAsync(courseId, levelId);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var currentUser = User?.Identity?.Name ?? string.Empty;
+            var hasDiagnosticAttempt = await _diagnosticExamService.HasDiagnosticAttemptAsync(currentUser, courseId, levelId);
             if (!hasDiagnosticAttempt)
             {
-                var diagnosticTestId = await GetDiagnosticTestIdAsync(courseId, levelId);
+                var diagnosticTestId = await _diagnosticExamService.GetDiagnosticTestIdAsync(courseId, levelId);
                 if (!diagnosticTestId.HasValue)
                 {
-                    TempData["ErrorMessage"] = "No diagnostic test was found for this course/level. Please contact HR.";
+                    TempData["ErrorMessage"] = TrainifyMessages.NoDiagnosticTestWasFoundForThis;
                     return RedirectToAction("LearningTrainify", "Trainify");
                 }
 
-                TempData["ErrorMessage"] = "You must complete the diagnostic test before opening the material.";
+                TempData["ErrorMessage"] = TrainifyMessages.YouMustCompleteTheDiagnosticTestBefore;
                 return RedirectToAction("Diagnostic", "Trainify", new
                 {
                     id = diagnosticTestId.Value,
@@ -748,25 +812,11 @@ namespace RH_CM.Controllers
                 });
             }
 
-            var link = await _context.CtCourseLevelMaterials
-                .AsNoTracking()
-                .Where(x => x.Available == 1 && x.FkCourse == courseId && x.FkLevelCourse == levelId)
-                .OrderByDescending(x => x.PkCourseLevelMaterial)
-                .FirstOrDefaultAsync();
-
-            if (link == null)
-            {
-                TempData["ErrorMessage"] = "No course material is linked to this course/level. Please contact HR.";
-                return RedirectToAction("LearningTrainify", "Trainify");
-            }
-
-            var material = await _context.CtCoursematerials
-                .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.PkCoursematerial == link.FkCourseMaterial && (m.Available ?? 0) == 1);
+            var material = await _diagnosticExamService.GetActiveMaterialAsync(courseId, levelId);
 
             if (material == null)
             {
-                TempData["ErrorMessage"] = "Course material not found or unavailable. Please contact HR.";
+                TempData["ErrorMessage"] = TrainifyMessages.NoCourseMaterialIsLinkedToThis;
                 return RedirectToAction("LearningTrainify", "Trainify");
             }
 
@@ -798,25 +848,16 @@ namespace RH_CM.Controllers
         [HttpGet("/Catalog/StreamPdfCourseMaterialByCourseLevel")]
         public async Task<IActionResult> StreamPdfCourseMaterialByCourseLevel(int courseId, int levelId)
         {
-            var link = await _context.CtCourseLevelMaterials
-                .AsNoTracking()
-                .Where(x => x.Available == 1 && x.FkCourse == courseId && x.FkLevelCourse == levelId)
-                .OrderByDescending(x => x.PkCourseLevelMaterial)
-                .FirstOrDefaultAsync();
-
-            if (link == null)
+            if (!ModelState.IsValid)
             {
-                TempData["ErrorMessage"] = "No course material is linked to this course/level. Please contact HR.";
-                return RedirectToAction("LearningTrainify", "Trainify");
+                return BadRequest(ModelState);
             }
 
-            var material = await _context.CtCoursematerials
-                .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.PkCoursematerial == link.FkCourseMaterial && (m.Available ?? 0) == 1);
+            var material = await _diagnosticExamService.GetActiveMaterialAsync(courseId, levelId);
 
             if (material == null)
             {
-                TempData["ErrorMessage"] = "Course material not found or unavailable. Please contact HR.";
+                TempData["ErrorMessage"] = TrainifyMessages.NoCourseMaterialIsLinkedToThis;
                 return RedirectToAction("LearningTrainify", "Trainify");
             }
 
@@ -826,269 +867,84 @@ namespace RH_CM.Controllers
             if (!string.IsNullOrWhiteSpace(material.UrlPath))
                 return Redirect(material.UrlPath);
 
-            TempData["ErrorMessage"] = "The material exists but has no file or URL. Please contact HR.";
+            TempData["ErrorMessage"] = TrainifyMessages.MaterialExistsButHasNoFileOr;
             return RedirectToAction("LearningTrainify", "Trainify");
         }
 
         [HttpGet]
         public async Task<IActionResult> Diagnostic(int id, int? courseId, int? levelId, int? courseAssignmentId)
         {
-            var test = await _context.CtTests
-                .AsNoTracking()
-                .FirstOrDefaultAsync(t => t.PkTest == id && t.Available == 1);
-
-            if (test == null)
+            if (!ModelState.IsValid)
             {
-                TempData["ErrorMessage"] = "Test not found or not available.";
+                return BadRequest(ModelState);
+            }
+
+            var loadResult = await _diagnosticExamService.GetDiagnosticViewModelAsync(id, courseId, levelId, courseAssignmentId);
+
+            if (loadResult.Model == null)
+            {
+                TempData["ErrorMessage"] = loadResult.ErrorMessage;
                 return RedirectToAction("LearningTrainify", "Trainify");
             }
 
-            var cId = courseId ?? test.FkCourse;
-            var lId = levelId ?? test.FkLevelcourse;
-
-            var questions = await _context.CtQuestions
-                .AsNoTracking()
-                .Where(q => q.FkTest == test.PkTest && q.Available == 1)
-                .OrderBy(q => q.PkQuestions)
-                .ToListAsync();
-
-            if (!questions.Any())
-            {
-                TempData["ErrorMessage"] = "This test has no questions. Please contact HR.";
-                return RedirectToAction("LearningTrainify", "Trainify");
-            }
-
-            var questionIds = questions.Select(q => q.PkQuestions).ToList();
-
-            var optionList = await _context.CtOptions
-                .AsNoTracking()
-                .Where(o => questionIds.Contains(o.FkQuestions) && o.Available == 1)
-                .OrderBy(o => o.PkOptions)
-                .ToListAsync();
-
-            var model = new SubmitTestViewModel
-            {
-                FkTest = test.PkTest,
-                TestName = test.TestName,
-                NextCourseId = cId,
-                NextLevelId = lId,
-                CourseAssignmentId = courseAssignmentId,
-                Questions = questions.Select(q =>
-                {
-                    var opts = optionList
-                        .Where(o => o.FkQuestions == q.PkQuestions)
-                        .OrderBy(o => o.PkOptions)
-                        .ToList();
-
-                    return new SubmitQuestionViewModel
-                    {
-                        FkQuestion = q.PkQuestions,
-                        QuestionText = q.Question,
-                        IsMultiple = opts.Count(o => o.Answer == 1) > 1,
-                        Options = opts.Select(o => new SubmitOptionViewModel
-                        {
-                            FkOption = o.PkOptions,
-                            OptionText = o.Options,
-                            IsSelected = false
-                        }).ToList()
-                    };
-                }).ToList()
-            };
-
-            return View("Diagnostic", model);
+            return View("Diagnostic", loadResult.Model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SubmitDiagnostic(SubmitTestViewModel model)
         {
-            if (model?.Questions == null || !model.Questions.Any())
+            if (!ModelState.IsValid)
             {
-                TempData["ErrorMessage"] = "There are no answers to submit.";
-                return RedirectToAction("LearningTrainify", "Trainify");
-            }
-
-            var hasAnySelection = model.Questions
-                .SelectMany(q => q.Options ?? new List<SubmitOptionViewModel>())
-                .Any(o => o.IsSelected);
-
-            if (!hasAnySelection)
-            {
-                TempData["ErrorMessage"] = "Please select at least one option before submitting.";
-                return View("Diagnostic", model);
+                return BadRequest(ModelState);
             }
 
             var currentUser = User.Identity?.Name ?? "Anon";
-            var now = DateTime.Now;
+            var outcome = await _diagnosticExamService.SubmitDiagnosticAsync(model, currentUser);
 
-            var userRow = await _context.AspNetUsers
-                .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.UserName == currentUser);
-
-            if (userRow == null || string.IsNullOrWhiteSpace(userRow.EmployeeNumber))
+            if (outcome.RedirectToLearning)
             {
-                TempData["ErrorMessage"] = "Unable to resolve the current user's employee (missing EmployeeNumber).";
+                TempData["ErrorMessage"] = outcome.ErrorMessage;
+                return RedirectToAction("LearningTrainify", "Trainify");
+            }
+
+            if (!outcome.Success)
+            {
+                TempData["ErrorMessage"] = outcome.ErrorMessage;
                 return View("Diagnostic", model);
             }
-
-            if (!int.TryParse(userRow.EmployeeNumber.Trim(), out var controlNumber))
-            {
-                TempData["ErrorMessage"] = "EmployeeNumber is not a valid number.";
-                return View("Diagnostic", model);
-            }
-
-            var hc = await _context.SyHeadcounts
-                .AsNoTracking()
-                .FirstOrDefaultAsync(h => h.ControlNumber == controlNumber && h.Available == 1);
-
-            if (hc == null)
-            {
-                TempData["ErrorMessage"] = "The employee (Headcount) associated with the current user does not exist or is not available.";
-                return View("Diagnostic", model);
-            }
-
-            var questionIds = model.Questions.Select(q => q.FkQuestion).Distinct().ToList();
-
-            var questionTextMap = await _context.CtQuestions
-                .Where(qq => questionIds.Contains(qq.PkQuestions))
-                .ToDictionaryAsync(qq => qq.PkQuestions, qq => qq.Question);
-
-            var correctMap = await _context.CtOptions
-                .Where(o => questionIds.Contains(o.FkQuestions) && o.Available == 1 && o.Answer == 1)
-                .GroupBy(o => o.FkQuestions)
-                .Select(g => new
-                {
-                    FkQuestion = g.Key,
-                    Ids = g.Select(x => x.PkOptions).ToList(),
-                    Csv = string.Join(",", g.OrderBy(x => x.PkOptions).Select(x => x.PkOptions))
-                })
-                .ToDictionaryAsync(x => x.FkQuestion, x => (Ids: x.Ids, Csv: x.Csv));
-
-            var resultVm = new DiagnosticResultViewModel
-            {
-                FkTest = model.FkTest,
-                TestName = model.TestName,
-                NextCourseId = model.NextCourseId,
-                NextLevelId = model.NextLevelId,
-                Questions = new List<DiagnosticQuestionResultViewModel>(),
-                CourseAssignmentId = model.CourseAssignmentId ?? 0
-            };
-
-            using var tx = await _context.Database.BeginTransactionAsync();
-            try
-            {
-                var codeExam = await GetNextDiagnosticCodeExamAsync();
-
-                foreach (var q in model.Questions)
-                {
-                    var selectedIds = (q.Options ?? new List<SubmitOptionViewModel>())
-                        .Where(o => o.IsSelected)
-                        .Select(o => o.FkOption)
-                        .OrderBy(id => id)
-                        .ToList();
-
-                    var csvSelected = string.Join(",", selectedIds);
-                    var correctIds = correctMap.TryGetValue(q.FkQuestion, out var t1) ? t1.Ids : new List<int>();
-                    var csvCorrect = correctMap.TryGetValue(q.FkQuestion, out var t2) ? t2.Csv : string.Empty;
-
-                    _context.SyUserDiagnostics.Add(new SyUserDiagnostic
-                    {
-                        CodeExam = codeExam,
-                        FkTest = model.FkTest,
-                        FkQuestions = q.FkQuestion,
-                        FkOptionSelected = csvSelected,
-                        FkOptionCorrected = csvCorrect,
-                        FkHeadcount = hc.PkHeadcount,
-                        Createuser = currentUser,
-                        Createdate = now,
-                        Available = 1
-                    });
-
-                    var optionResults = (q.Options ?? new List<SubmitOptionViewModel>())
-                        .Select(o => new DiagnosticOptionResultViewModel
-                        {
-                            FkOption = o.FkOption,
-                            OptionText = o.OptionText,
-                            IsSelected = selectedIds.Contains(o.FkOption),
-                            IsCorrect = correctIds.Contains(o.FkOption)
-                        })
-                        .OrderBy(o => o.FkOption)
-                        .ToList();
-
-                    bool questionCorrect =
-                        selectedIds.Count == correctIds.Count &&
-                        !selectedIds.Except(correctIds).Any() &&
-                        !correctIds.Except(selectedIds).Any();
-
-                    var safeQuestionText =
-                        !string.IsNullOrWhiteSpace(q.QuestionText)
-                            ? q.QuestionText
-                            : (questionTextMap.TryGetValue(q.FkQuestion, out var qt) ? qt : string.Empty);
-
-                    resultVm.Questions.Add(new DiagnosticQuestionResultViewModel
-                    {
-                        FkQuestion = q.FkQuestion,
-                        QuestionText = safeQuestionText,
-                        IsMultiple = q.IsMultiple,
-                        SelectedOptionIds = selectedIds,
-                        CorrectOptionIds = correctIds,
-                        IsCorrect = questionCorrect,
-                        Options = optionResults
-                    });
-                }
-
-                await _context.SaveChangesAsync();
-                await tx.CommitAsync();
-            }
-            catch (Exception ex)
-            {
-                await tx.RollbackAsync();
-                TempData["ErrorMessage"] = $"Error saving diagnostic: {ex.Message}";
-                return View("Diagnostic", model);
-            }
-
-            resultVm.TotalQuestions = resultVm.Questions.Count;
-            resultVm.CorrectCount = resultVm.Questions.Count(x => x.IsCorrect);
-            resultVm.Score = (int)Math.Round((double)resultVm.CorrectCount * 100.0 / Math.Max(1, resultVm.TotalQuestions), 0);
-            resultVm.HasMaterial = await ExistsMaterialAsync(resultVm.NextCourseId, resultVm.NextLevelId);
 
             ViewBag.CourseAssignmentId = model.CourseAssignmentId;
-            TempData["SuccessMessage"] = "Diagnostic submitted. Review your results below.";
-            return View("DiagnosticResult", resultVm);
-        }
-
-        private async Task<int> GetNextDiagnosticCodeExamAsync()
-        {
-            await using var conn = new SqlConnection(_connString);
-            await conn.OpenAsync();
-
-            await using var cmd = conn.CreateCommand();
-            cmd.CommandText = "SELECT CAST(NEXT VALUE FOR dbo.Seq_UserDiagnostic_CodeExam AS INT)";
-            var result = await cmd.ExecuteScalarAsync();
-
-            return Convert.ToInt32(result);
+            TempData["SuccessMessage"] = TrainifyMessages.DiagnosticSubmittedReviewYourResultsBelow;
+            return View("DiagnosticResult", outcome.Result);
         }
 
         [HttpGet]
         public async Task<IActionResult> Exam(int? id, int? courseId, int? levelId, int? courseAssignmentId)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             if (!courseId.HasValue || !levelId.HasValue)
             {
-                TempData["ErrorMessage"] = "Course and level are required to open the final exam.";
+                TempData["ErrorMessage"] = TrainifyMessages.CourseAndLevelAreRequiredToOpen;
                 return RedirectToAction("LearningTrainify", "Trainify");
             }
 
-            var hasDiagnosticAttempt = await HasDiagnosticAttemptAsync(courseId.Value, levelId.Value);
+            var currentUser = User?.Identity?.Name ?? string.Empty;
+            var hasDiagnosticAttempt = await _diagnosticExamService.HasDiagnosticAttemptAsync(currentUser, courseId.Value, levelId.Value);
             if (!hasDiagnosticAttempt)
             {
-                var diagnosticTestId = await GetDiagnosticTestIdAsync(courseId.Value, levelId.Value);
+                var diagnosticTestId = await _diagnosticExamService.GetDiagnosticTestIdAsync(courseId.Value, levelId.Value);
                 if (!diagnosticTestId.HasValue)
                 {
-                    TempData["ErrorMessage"] = "No diagnostic test was found for this course/level. Please contact HR.";
+                    TempData["ErrorMessage"] = TrainifyMessages.NoDiagnosticTestWasFoundForThis;
                     return RedirectToAction("LearningTrainify", "Trainify");
                 }
 
-                TempData["ErrorMessage"] = "You must complete the diagnostic test before taking the final exam.";
+                TempData["ErrorMessage"] = TrainifyMessages.YouMustCompleteTheDiagnosticTestBeforeTaking;
                 return RedirectToAction("Diagnostic", "Trainify", new
                 {
                     id = diagnosticTestId.Value,
@@ -1098,315 +954,52 @@ namespace RH_CM.Controllers
                 });
             }
 
-            CtTest? test = null;
+            var loadResult = await _diagnosticExamService.GetExamViewModelAsync(id, courseId.Value, levelId.Value, courseAssignmentId ?? 0);
 
-            if (id.HasValue)
+            if (loadResult.Model == null)
             {
-                test = await _context.CtTests
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(t => t.PkTest == id.Value && t.Available == 1);
-            }
-            else
-            {
-                test = await _context.CtTests
-                    .AsNoTracking()
-                    .Where(t => t.Available == 1 && t.FkCourse == courseId.Value && t.FkLevelcourse == levelId.Value)
-                    .OrderByDescending(t => t.PkTest)
-                    .FirstOrDefaultAsync();
-            }
-
-            if (test == null)
-            {
-                TempData["ErrorMessage"] = "Exam not found or not available.";
+                TempData["ErrorMessage"] = loadResult.ErrorMessage;
                 return RedirectToAction("LearningTrainify", "Trainify");
             }
 
-            var questions = await _context.CtQuestions
-                .AsNoTracking()
-                .Where(q => q.FkTest == test.PkTest && q.Available == 1)
-                .OrderBy(q => q.PkQuestions)
-                .ToListAsync();
-
-            if (!questions.Any())
-            {
-                TempData["ErrorMessage"] = "This exam has no questions. Please contact HR.";
-                return RedirectToAction("LearningTrainify", "Trainify");
-            }
-
-            var questionIds = questions.Select(q => q.PkQuestions).ToList();
-
-            var optionList = await _context.CtOptions
-                .AsNoTracking()
-                .Where(o => questionIds.Contains(o.FkQuestions) && o.Available == 1)
-                .OrderBy(o => o.PkOptions)
-                .ToListAsync();
-
-            var model = new SubmitTestViewModel
-            {
-                FkTest = test.PkTest,
-                TestName = test.TestName,
-                NextCourseId = courseId.Value,
-                NextLevelId = levelId.Value,
-                CourseAssignmentId = courseAssignmentId ?? 0,
-                Questions = questions.Select(q =>
-                {
-                    var opts = optionList
-                        .Where(o => o.FkQuestions == q.PkQuestions)
-                        .OrderBy(o => o.PkOptions)
-                        .ToList();
-
-                    return new SubmitQuestionViewModel
-                    {
-                        FkQuestion = q.PkQuestions,
-                        QuestionText = q.Question,
-                        IsMultiple = opts.Count(o => o.Answer == 1) > 1,
-                        Options = opts.Select(o => new SubmitOptionViewModel
-                        {
-                            FkOption = o.PkOptions,
-                            OptionText = o.Options,
-                            IsSelected = false
-                        }).ToList()
-                    };
-                }).ToList()
-            };
-
-            return View("Exam", model);
-        }
-
-        private async Task<int> GetLastDiagnosticCodeExamAsync(int fkHeadcount, int fkTest)
-        {
-            return await _context.SyUserDiagnostics
-                .AsNoTracking()
-                .Where(d => d.FkHeadcount == fkHeadcount && d.FkTest == fkTest && d.Available == 1)
-                .OrderByDescending(d => d.Createdate)
-                .Select(d => d.CodeExam)
-                .FirstOrDefaultAsync();
+            return View("Exam", loadResult.Model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SubmitExam(SubmitTestViewModel model)
         {
-            if (model?.Questions == null || !model.Questions.Any())
+            if (!ModelState.IsValid)
             {
-                TempData["ErrorMessage"] = "There are no answers to submit.";
-                return RedirectToAction("LearningTrainify", "Trainify");
-            }
-
-            var hasAnySelection = model.Questions
-                .SelectMany(q => q.Options ?? new List<SubmitOptionViewModel>())
-                .Any(o => o.IsSelected);
-
-            if (!hasAnySelection)
-            {
-                TempData["ErrorMessage"] = "Please select at least one option before submitting.";
-                return View("Exam", model);
+                return BadRequest(ModelState);
             }
 
             var currentUser = User.Identity?.Name ?? "Anon";
-            var now = DateTime.Now;
+            var outcome = await _diagnosticExamService.SubmitExamAsync(model, currentUser);
 
-            var userRow = await _context.AspNetUsers
-                .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.UserName == currentUser);
-
-            if (userRow == null || string.IsNullOrWhiteSpace(userRow.EmployeeNumber))
+            if (outcome.RedirectToLearning)
             {
-                TempData["ErrorMessage"] = "Unable to resolve the current user's employee (missing EmployeeNumber).";
+                TempData["ErrorMessage"] = outcome.RedirectMessage;
+                return RedirectToAction("LearningTrainify", "Trainify");
+            }
+
+            if (outcome.ReshowExamForm)
+            {
+                TempData["ErrorMessage"] = outcome.ReshowMessage;
                 return View("Exam", model);
             }
 
-            if (!int.TryParse(userRow.EmployeeNumber.Trim(), out var controlNumber))
+            if (outcome.ResultErrorMessage != null)
             {
-                TempData["ErrorMessage"] = "EmployeeNumber is not a valid number.";
-                return View("Exam", model);
+                TempData["ErrorMessage"] = outcome.ResultErrorMessage;
+            }
+            else if (outcome.Result != null)
+            {
+                TempData["SuccessMessage"] = "Exam recorded successfully. The course completion was confirmed.";
             }
 
-            var hc = await _context.SyHeadcounts
-                .AsNoTracking()
-                .FirstOrDefaultAsync(h => h.ControlNumber == controlNumber && h.Available == 1);
-
-            if (hc == null)
-            {
-                TempData["ErrorMessage"] = "The employee (Headcount) associated with the current user does not exist or is not available.";
-                return View("Exam", model);
-            }
-
-            var questionIds = model.Questions.Select(q => q.FkQuestion).Distinct().ToList();
-
-            var questionTextMap = await _context.CtQuestions
-                .Where(qq => questionIds.Contains(qq.PkQuestions))
-                .ToDictionaryAsync(qq => qq.PkQuestions, qq => qq.Question);
-
-            var correctMap = await _context.CtOptions
-                .Where(o => questionIds.Contains(o.FkQuestions) && o.Available == 1 && o.Answer == 1)
-                .GroupBy(o => o.FkQuestions)
-                .Select(g => new
-                {
-                    FkQuestion = g.Key,
-                    Ids = g.Select(x => x.PkOptions).ToList(),
-                    Csv = string.Join(",", g.OrderBy(x => x.PkOptions).Select(x => x.PkOptions))
-                })
-                .ToDictionaryAsync(x => x.FkQuestion, x => (Ids: x.Ids, Csv: x.Csv));
-
-            var resultVm = new DiagnosticResultViewModel
-            {
-                FkTest = model.FkTest,
-                TestName = model.TestName,
-                NextCourseId = model.NextCourseId,
-                NextLevelId = model.NextLevelId,
-                Questions = new List<DiagnosticQuestionResultViewModel>()
-            };
-
-            foreach (var q in model.Questions)
-            {
-                var selectedIds = (q.Options ?? new List<SubmitOptionViewModel>())
-                    .Where(o => o.IsSelected)
-                    .Select(o => o.FkOption)
-                    .OrderBy(id => id)
-                    .ToList();
-
-                var correctIds = correctMap.TryGetValue(q.FkQuestion, out var t1) ? t1.Ids : new List<int>();
-
-                bool questionCorrect =
-                    selectedIds.Count == correctIds.Count &&
-                    !selectedIds.Except(correctIds).Any() &&
-                    !correctIds.Except(selectedIds).Any();
-
-                var optionResults = (q.Options ?? new List<SubmitOptionViewModel>())
-                    .Select(o => new DiagnosticOptionResultViewModel
-                    {
-                        FkOption = o.FkOption,
-                        OptionText = o.OptionText,
-                        IsSelected = selectedIds.Contains(o.FkOption),
-                        IsCorrect = correctIds.Contains(o.FkOption)
-                    })
-                    .OrderBy(o => o.FkOption)
-                    .ToList();
-
-                var safeQuestionText =
-                    !string.IsNullOrWhiteSpace(q.QuestionText)
-                        ? q.QuestionText
-                        : (questionTextMap.TryGetValue(q.FkQuestion, out var qt) ? qt : string.Empty);
-
-                resultVm.Questions.Add(new DiagnosticQuestionResultViewModel
-                {
-                    FkQuestion = q.FkQuestion,
-                    QuestionText = safeQuestionText,
-                    IsMultiple = q.IsMultiple,
-                    SelectedOptionIds = selectedIds,
-                    CorrectOptionIds = correctIds,
-                    IsCorrect = questionCorrect,
-                    Options = optionResults
-                });
-            }
-
-            resultVm.TotalQuestions = resultVm.Questions.Count;
-            resultVm.CorrectCount = resultVm.Questions.Count(x => x.IsCorrect);
-            resultVm.Score = (int)Math.Round((double)resultVm.CorrectCount * 100.0 / Math.Max(1, resultVm.TotalQuestions), 0);
-
-            if (resultVm.Score < 80)
-            {
-                resultVm.HasMaterial = await ExistsMaterialAsync(resultVm.NextCourseId, resultVm.NextLevelId);
-                ViewBag.CourseAssignmentId = model.CourseAssignmentId;
-                TempData["ErrorMessage"] = "Minimum score is 80. Results were recorded locally only; no course completion was stored.";
-                return View("ExamResult", resultVm);
-            }
-
-            if (!model.CourseAssignmentId.HasValue || model.CourseAssignmentId.Value <= 0)
-            {
-                resultVm.HasMaterial = await ExistsMaterialAsync(resultVm.NextCourseId, resultVm.NextLevelId);
-                ViewBag.CourseAssignmentId = model.CourseAssignmentId;
-                TempData["ErrorMessage"] = "Missing course assignment. Please contact your provider or IT support.";
-                return View("ExamResult", resultVm);
-            }
-
-            using var tx = await _context.Database.BeginTransactionAsync();
-            try
-            {
-                var codeExam = await GetLastDiagnosticCodeExamAsync(hc.PkHeadcount, model.FkTest);
-
-                foreach (var q in resultVm.Questions)
-                {
-                    var csvSelected = string.Join(",", q.SelectedOptionIds ?? new List<int>());
-                    var csvCorrect = string.Join(",", q.CorrectOptionIds ?? new List<int>());
-
-                    _context.SyUserAnswers.Add(new SyUserAnswer
-                    {
-                        CodeExam = codeExam,
-                        FkTest = model.FkTest,
-                        FkQuestions = q.FkQuestion,
-                        FkOptionSelected = csvSelected,
-                        FkOptionCorrected = csvCorrect,
-                        FkHeadcount = hc.PkHeadcount,
-                        Createuser = currentUser,
-                        Createdate = now,
-                        Available = 1
-                    });
-                }
-
-                _context.SyCoursemovements.Add(new SyCoursemovement
-                {
-                    CodeExam = codeExam,
-                    FkCourseAssignment = model.CourseAssignmentId.Value,
-                    FkCourseStatus = 1,
-                    FkDeliveryMode = 1,
-                    FkHeadcount = hc.PkHeadcount,
-                    Score = resultVm.Score,
-                    CreateUser = currentUser,
-                    CreateDate = now,
-                    LastUpdateUser = currentUser,
-                    LastUpdateDate = now,
-                    Avaialble = 1
-                });
-
-                var existingCompleted = await _context.SyCoursecompleteds
-                    .FirstOrDefaultAsync(c =>
-                        c.FkCourseAssignment == model.CourseAssignmentId.Value &&
-                        c.FkHeadcount == hc.PkHeadcount &&
-                        c.Avaialble == 1);
-
-                if (existingCompleted != null)
-                {
-                    existingCompleted.FkCourseStatus = 1;
-                    existingCompleted.FkDeliveryMode = 1;
-                    existingCompleted.Score = resultVm.Score;
-                    existingCompleted.LastUpdateUser = currentUser;
-                    existingCompleted.LastUpdateDate = now;
-
-                    _context.SyCoursecompleteds.Update(existingCompleted);
-                }
-                else
-                {
-                    _context.SyCoursecompleteds.Add(new SyCoursecompleted
-                    {
-                        FkCourseAssignment = model.CourseAssignmentId.Value,
-                        FkCourseStatus = 1,
-                        FkDeliveryMode = 1,
-                        FkHeadcount = hc.PkHeadcount,
-                        Score = resultVm.Score,
-                        CreateUser = currentUser,
-                        CreateDate = now,
-                        LastUpdateUser = currentUser,
-                        LastUpdateDate = now,
-                        Avaialble = 1
-                    });
-                }
-
-                await _context.SaveChangesAsync();
-                await tx.CommitAsync();
-            }
-            catch (Exception ex)
-            {
-                await tx.RollbackAsync();
-                TempData["ErrorMessage"] = $"Error saving exam: {ex.Message}";
-                return View("Exam", model);
-            }
-
-            resultVm.HasMaterial = await ExistsMaterialAsync(resultVm.NextCourseId, resultVm.NextLevelId);
             ViewBag.CourseAssignmentId = model.CourseAssignmentId;
-
-            return View("ExamResult", resultVm);
+            return View("ExamResult", outcome.Result);
         }
     }
 }

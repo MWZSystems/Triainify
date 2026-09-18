@@ -1,17 +1,23 @@
 ﻿@model RH_CM.ViewModels.SelectSupervisorViewModel
 
 @{
-    ViewData["Title"] = "Matrix By Supervisor";
+    ViewData["Title"] = "Select Supervisor";
+    ViewData["BodyClass"] = "page-matrix-supervisor";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="row">
     <div class="col">
-        <h1 class="h3 mb-3 text-center">
-            <i class="fas fa-user-tie"></i> @ViewData["Title"]
-        </h1>
-    </div>
-    <div class="col-auto">
+        <partial name="_PageHeader" model="@(new RH_CM.ViewModels.PageHeaderViewModel
+        {
+            Title = "Select Supervisor",
+            IconClass = "fa-user-tie",
+            HelpBullets = new List<string>
+            {
+                "Step 1 of the \"Matrix by Supervisor\" report: pick which supervisor's team you want to review.",
+                "After choosing a supervisor and clicking Continue, you'll see the training matrix for everyone reporting to them."
+            }
+        })" />
     </div>
 </div>
 
@@ -43,10 +49,10 @@
 
                     <div class="row">
                         <div class="col-12 text-end">
-                            <a href="javascript:history.back()" class="btn btn-secondary">
+                            <a href="javascript:history.back()" class="btn btn-secondary" title="Cancel">
                                 <i class="fas fa-arrow-left"></i> Cancel
                             </a>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" title="Continue">
                                 <i class="align-middle fas fa-check-circle"></i> Continue
                             </button>
                         </div>
@@ -68,27 +74,6 @@
                 width: '100%'
             });
 
-            if ('@TempData["SuccessMessage"]' !== '') {
-                window.notyf.open({
-                    type: 'success',
-                    message: '@TempData["SuccessMessage"]',
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-
-            if ('@TempData["ErrorMessage"]' !== '') {
-                window.notyf.open({
-                    type: 'error',
-                    message: '@TempData["ErrorMessage"]',
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-        });
+});
     </script>
 }

@@ -3,28 +3,28 @@ using RH_CM.Data;
 using RH_CM.Service.DTOs;
 using RH_CM.Service.SQLSMS;
 using System.Linq;
+using RH_CM.Messages.ExternalEvidence;
 
 namespace RH_CM.Service.ExternalEvidence
 {
     
     public class ExternalEvidenceService
     {
-        //Variable que vive durante la ejecucion de la clase
+        // Field that lives for the lifetime of the class instance
         private readonly UnitOfWork _unitOfWork;
         private readonly db_abcd61_rhchdbContext _context;
                                          
-        //Instancia en el constructor
+        // Instantiated in the constructor
         public ExternalEvidenceService(UnitOfWork unitOfWork, db_abcd61_rhchdbContext context)
         {
-            //Inyeccion de dependencia
+            // Dependency injection
             _unitOfWork = unitOfWork;
             _context = context;
         }
 
         /// <summary>
-        /// Gets Data for index in object List<GetExternalEvidenceDTOs>
+        /// Gets the external evidence records for the index table.
         /// </summary>
-        /// <returns></returns>
         public async Task<List<ExternalEvidenceDTOs>> GetIndexAsync()
         {
             //Gets data for preliminary Crud Table
@@ -53,9 +53,8 @@ namespace RH_CM.Service.ExternalEvidence
 
 
         /// <summary>
-        /// Returns from DB the List<object> needed for the view
+        /// Gets the dropdown options (users, courses, levels) for the create-evidence form.
         /// </summary>
-        /// <returns></returns>
         public async Task<CreateExternalEvidenceDTOs> GetCreateExternalEvidenceAsync()
         {
             //Gets data for Combobox in CreateExternalEvidence
@@ -99,29 +98,44 @@ namespace RH_CM.Service.ExternalEvidence
 
         public async Task<ServiceAnswerAndFeedbackDTOs> PostCreateExternalEvidenceAsync(CreateExternalEvidenceInputDTOs DTOs)
         {
-            string[] splitCourse = DTOs.SelectedCourse.Split(" - ");
-            int courseID = int.Parse(splitCourse[0]);
+            ServiceAnswerAndFeedbackDTOs invalidRequest = new();
+
+            string[] splitCourse = (DTOs.SelectedCourse ?? string.Empty).Split(" - ");
+            if (splitCourse.Length < 2 || !int.TryParse(splitCourse[0], out int courseID))
+            {
+                invalidRequest.ServiceAnswer = new(false, "ErrorMessage", ExternalEvidenceMessages.SelectAValidCourse);
+                return invalidRequest;
+            }
             string courseName = splitCourse[1];
 
-            string query = $"SELECT [PK_LEVELCOURSE] FROM [CT_LEVELCOURSE] WHERE [DESCRIPCTION_LEVEL] = '{DTOs.SelectedLevel}' ";
+            string query = "SELECT [PK_LEVELCOURSE] FROM [CT_LEVELCOURSE] WHERE [DESCRIPCTION_LEVEL] = @pLevel";
+            string levelResult = await _unitOfWork.QuerySingleScalarAsync(query, new Dictionary<string, object>
+            {
+                { "@pLevel", DTOs.SelectedLevel ?? string.Empty }
+            });
 
-            int level = int.Parse(await _unitOfWork.QuerySingleScalarAsync(query));
+            if (!int.TryParse(levelResult, out int level))
+            {
+                invalidRequest.ServiceAnswer = new(false, "ErrorMessage", ExternalEvidenceMessages.SelectAValidLevel);
+                return invalidRequest;
+            }
 
             byte[] fileBytes;
             int controlNumber;
             string positionName;
             bool feedBackRequired = false;
             string fullName;
-            string evidenceFileName = DTOs.UploadedFile.FileName;
             List<ExternalEvidenceFeedbackItemDTOs> feedbackItems = new();
 
             ServiceAnswerAndFeedbackDTOs serviceAnswerAndFeedback = new();
 
-            if (!PDFValidation(DTOs.UploadedFile))
+            if (DTOs.UploadedFile == null || !PDFValidation(DTOs.UploadedFile))
             {
-                serviceAnswerAndFeedback.ServiceAnswer = new(false, "ErrorMessage", "File Empty or .PDF format not correct");
+                serviceAnswerAndFeedback.ServiceAnswer = new(false, "ErrorMessage", ExternalEvidenceMessages.FileEmptyOrPdfFormatNotCorrect);
                 return serviceAnswerAndFeedback;
             }
+
+            string evidenceFileName = DTOs.UploadedFile.FileName;
 
             //Save file in Binary
             using (var memoryStream = new MemoryStream())
@@ -130,8 +144,8 @@ namespace RH_CM.Service.ExternalEvidence
                 fileBytes = memoryStream.ToArray();
             }
 
-            //Valida que si exista ese nivel en el CourseAssignment Si no, error al usuario
-            //(No todos los cursos tienen los 4 niveles, para eso esta validacion)
+            // Validates that this level actually exists in the CourseAssignment; otherwise, error to the user
+            // (not every course has all 4 levels, hence this validation)
             string LevelExistsQuery = @$" IF EXISTS (SELECT 1
                                                         FROM [dbo].[CT_COURSEASSIGNMENTS]
                                                         WHERE FK_Course = {courseID}
@@ -150,20 +164,24 @@ namespace RH_CM.Service.ExternalEvidence
 
             if (LevelExists != "OK")
             {
-                serviceAnswerAndFeedback.ServiceAnswer = new(false, "ErrorMessage", $"The course '{courseName}' does not have a '{DTOs.SelectedLevel}' level with External delivery type in Course Assignments.");
+                serviceAnswerAndFeedback.ServiceAnswer = new(false, "ErrorMessage", string.Format(ExternalEvidenceMessages.CourseDoesNotHaveExternalLevelFormat, courseName, DTOs.SelectedLevel));
                 return serviceAnswerAndFeedback;
             }
 
-            foreach (var line in DTOs.SelectedUsers)
+            foreach (var line in DTOs.SelectedUsers ?? Enumerable.Empty<string>())
             {
                 //Gets employee Data.
-                string[] employeeData = line.Split(" - ");
-                controlNumber = int.Parse(employeeData[0]);
+                string[] employeeData = (line ?? string.Empty).Split(" - ");
+                if (employeeData.Length < 3 || !int.TryParse(employeeData[0], out controlNumber))
+                {
+                    feedBackRequired = true;
+                    continue;
+                }
                 fullName = employeeData[1];
                 positionName = employeeData[2];
 
                 //Revisa si es internal, External, o si el Position-Course no existe en absoluto
-                string AssignmentExistsQuery = @$"         DECLARE  @pResultado VARCHAR(20)
+                string AssignmentExistsQuery = @"         DECLARE  @pResultado VARCHAR(20)
                                                         SET @pResultado =
                                                         (SELECT CASE
                                                                     WHEN A.FK_DeliveryMode = 1 THEN 'Internal'
@@ -172,14 +190,19 @@ namespace RH_CM.Service.ExternalEvidence
 
                                                          FROM [dbo].[CT_COURSEASSIGNMENTS] A
                                                             LEFT JOIN dbo.CT_POSITION B ON A.FK_Position = B.PK_POSITION
-                                                         WHERE A.FK_Course = {courseID}
-                                                         AND A.FK_RequiredCourseLevels = {level}
-                                                         AND B.NAME_POSITION = '{positionName}'
+                                                         WHERE A.FK_Course = @pCourseId
+                                                         AND A.FK_RequiredCourseLevels = @pLevel
+                                                         AND B.NAME_POSITION = @pPositionName
                                                          )
 
                                                          SELECT COALESCE(@pResultado, 'Empty') As resultado";
 
-                string AssignmentExists = await _unitOfWork.QuerySingleScalarAsync(AssignmentExistsQuery);
+                string AssignmentExists = await _unitOfWork.QuerySingleScalarAsync(AssignmentExistsQuery, new Dictionary<string, object>
+                {
+                    { "@pCourseId", courseID },
+                    { "@pLevel", level },
+                    { "@pPositionName", positionName }
+                });
 
                 if (AssignmentExists == "Internal")
                 {
@@ -190,7 +213,7 @@ namespace RH_CM.Service.ExternalEvidence
                         PositionName = positionName,
                         CourseID = courseID,
                         CourseName = courseName,
-                        Level = DTOs.SelectedLevel,
+                        Level = DTOs.SelectedLevel ?? string.Empty,
                         EvidenceFileName = "",
                         Success = false,
                         FeedBackComment = $"The position '{positionName}' has course '{courseName}' (level '{DTOs.SelectedLevel}') assigned as INTERNAL, not External, in Course Assignments. The evidence was not added."
@@ -207,7 +230,7 @@ namespace RH_CM.Service.ExternalEvidence
                         PositionName = positionName,
                         CourseID = courseID,
                         CourseName = courseName,
-                        Level = DTOs.SelectedLevel,
+                        Level = DTOs.SelectedLevel ?? string.Empty,
                         EvidenceFileName = "",
                         Success = false,
                         FeedBackComment = $"The position '{positionName}' does not have course '{courseName}' assigned at level '{DTOs.SelectedLevel}' in Course Assignments. The evidence was not added."
@@ -219,11 +242,11 @@ namespace RH_CM.Service.ExternalEvidence
                 var parameters = new Dictionary<string, object>
                 {
                     { "@pControlNumber", controlNumber },
-                    { "@pScore", DTOs.Score },
+                    { "@pScore", DTOs.Score ?? (object)DBNull.Value },
                     { "@pPositionName", positionName },
                     { "@pCourseID", courseID },
                     { "@pLevel", level },
-                    { "@pUser", DTOs.UserName },
+                    { "@pUser", DTOs.UserName ?? string.Empty },
                     { "@pEvidenceFile", fileBytes },
                     { "@pEvidenceFileName", evidenceFileName }
                 };
@@ -239,7 +262,7 @@ namespace RH_CM.Service.ExternalEvidence
                         PositionName = positionName,
                         CourseID = courseID,
                         CourseName = courseName,
-                        Level = DTOs.SelectedLevel,
+                        Level = DTOs.SelectedLevel ?? string.Empty,
                         EvidenceFileName = "",
                         Success = false,
                         FeedBackComment = "This record could not be added. Please review it in detail."
@@ -255,7 +278,7 @@ namespace RH_CM.Service.ExternalEvidence
                     PositionName = positionName,
                     CourseID = courseID,
                     CourseName = courseName,
-                    Level = DTOs.SelectedLevel,
+                    Level = DTOs.SelectedLevel ?? string.Empty,
                     EvidenceFileName = evidenceFileName,
                     Success = true,
                     FeedBackComment = "This record was successfully added with the evidence provided."
@@ -275,18 +298,15 @@ namespace RH_CM.Service.ExternalEvidence
             }
             else
             {
-                serviceAnswerAndFeedback.ServiceAnswer = new(true, "SuccessMessage", "The evidence was successfully added to every selected record.");
+                serviceAnswerAndFeedback.ServiceAnswer = new(true, "SuccessMessage", ExternalEvidenceMessages.EvidenceAddedToEverySelectedRecord);
             }
 
             return serviceAnswerAndFeedback;
         }
 
         /// <summary>
-        /// Gets Material byte[] after receiving the ID
+        /// Gets an evidence file's bytes, optionally with its file name (<paramref name="choose"/> = 1).
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="choose"> 0 -> For only byte[] | 1 -> For File name in ServiceAnswer.Message </param>
-        /// <returns></returns>
         public async Task<ServiceAnswerAndFeedbackDTOs> GetEvidenceMaterialAsync(int id, int choose)
         {
 
@@ -326,9 +346,16 @@ namespace RH_CM.Service.ExternalEvidence
                                     FROM [dbo].[SY_EXTERNALEVIDENCE]
                                     WHERE PK_ExternalEvidence = {id}";
 
-            int status = int.Parse(await _unitOfWork.QuerySingleScalarAsync(FirstQuery));
+            string currentValue = await _unitOfWork.QuerySingleScalarAsync(FirstQuery);
+            if (!int.TryParse(currentValue, out int status))
+            {
+                serviceAnswer.Success = false;
+                serviceAnswer.MessageType = "ErrorMessage";
+                serviceAnswer.Message = ExternalEvidenceMessages.RecordNotFound;
+                return serviceAnswer;
+            }
 
-            //Invertimos el estatus actual para el toggle
+            // Flip the current status for the toggle
             if (status == 0)
             {
                 status = 1;
@@ -355,19 +382,19 @@ namespace RH_CM.Service.ExternalEvidence
             {
                 serviceAnswer.Success = true;
                 serviceAnswer.MessageType = "SuccessMessage";
-                serviceAnswer.Message = "Record Toggled successfully";
+                serviceAnswer.Message = ExternalEvidenceMessages.RecordToggledSuccessfully;
             }
             else
             {
                 serviceAnswer.Success = true;
                 serviceAnswer.MessageType = "ErrorMessage";
-                serviceAnswer.Message = "Toggle Failed";
+                serviceAnswer.Message = ExternalEvidenceMessages.ToggleFailed;
             }
 
                 return serviceAnswer;
         }
 
-        public async Task<EditExternalEvidenceDTOs> GetUpdateRecordAsync(int? id)
+        public async Task<EditExternalEvidenceDTOs?> GetUpdateRecordAsync(int? id)
         {
             List<EditExternalEvidenceDTOs> result = new();
 
@@ -412,7 +439,7 @@ namespace RH_CM.Service.ExternalEvidence
             if (!PDFValidation(file))
             {
                 serviceAnswer.MessageType = "ErrorMessage";
-                serviceAnswer.Message = "File Empty or .PDF format not correct";
+                serviceAnswer.Message = ExternalEvidenceMessages.FileEmptyOrPdfFormatNotCorrect;
                 return serviceAnswer;
             }
 
@@ -427,10 +454,10 @@ namespace RH_CM.Service.ExternalEvidence
 
             var parameters = new Dictionary<string, object>
                 {
-                    { "@pPK_ExternalEvidence", PK_ExternalEvidence },
+                    { "@pPK_ExternalEvidence", PK_ExternalEvidence ?? (object)DBNull.Value },
                     { "@pFile", fileBinary },
                     { "@pFileName", fileNamePDF },
-                    { "@pUserName", userName }
+                    { "@pUserName", userName ?? string.Empty }
                 };
 
             string result = await _unitOfWork.ExecuteStoredProcedureScalarAsync("[dbo].[sp_ExternalEvidence_Edit_Post]", parameters);
@@ -438,12 +465,12 @@ namespace RH_CM.Service.ExternalEvidence
             if (result != "Completed")
             {
                 serviceAnswer.MessageType = "ErrorMessage";
-                serviceAnswer.Message = "The record could not be updated. Please try again or contact support.";
+                serviceAnswer.Message = ExternalEvidenceMessages.RecordCouldNotBeUpdatedPleaseTry;
                 return serviceAnswer;
             }
 
             serviceAnswer.MessageType = "SuccessMessage";
-            serviceAnswer.Message = "The evidence was updated successfully.";
+            serviceAnswer.Message = ExternalEvidenceMessages.EvidenceWasUpdatedSuccessfully;
 
             return serviceAnswer;
         }
@@ -459,22 +486,20 @@ namespace RH_CM.Service.ExternalEvidence
             if (answer == "Completed")
             {
                 serviceAnswer.MessageType = ServiceAnswer.MessageType_Success;
-                serviceAnswer.Message = $"Record {id} Successfully Deleted";
+                serviceAnswer.Message = string.Format(ExternalEvidenceMessages.RecordSuccessfullyDeletedFormat, id);
             }
             else
             {
                 serviceAnswer.MessageType = ServiceAnswer.MessageType_Error;
-                serviceAnswer.Message = $"Record could not be deleted";
+                serviceAnswer.Message = ExternalEvidenceMessages.RecordCouldNotBeDeleted;
             }
 
                 return serviceAnswer;
         }
 
         /// <summary>
-        /// Validates IFormFile not empty. And 'PDF' Extension
+        /// Validates that the file is not empty and has a .pdf extension.
         /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
         private bool PDFValidation(IFormFile file)
         {
             //Validations

@@ -95,7 +95,7 @@
         <div class="text-center mb-3">
             @if (Model.HasMaterial && Model.NextCourseId > 0 && Model.NextLevelId > 0)
             {
-                <a class="btn btn-outline-danger me-2" href="@pdfUrl">
+                <a class="btn btn-outline-danger me-2" href="@pdfUrl" title="Review Material (PDF)">
                     <i class="fas fa-file-pdf"></i> Review Material (PDF)
                 </a>
             }
@@ -109,13 +109,13 @@
 
             @if (!passed)
             {
-                <a id="btn-retake" class="btn btn-warning ms-2" href="@retakeUrl">
+                <a id="btn-retake" class="btn btn-warning ms-2" href="@retakeUrl" title="Retake Exam">
                     <i class="fas fa-redo"></i> Retake Exam
                 </a>
             }
             else
             {
-                <a class="btn btn.success ms-2" href="@backUrl">
+                <a class="btn btn.success ms-2" href="@backUrl" title="Back to Learning">
                     <i class="fas fa-check"></i> Back to Learning
                 </a>
             }
@@ -192,27 +192,7 @@
     <script>
         (function () {
 
-            if ('@TempData["SuccessMessage"]' !== '') {
-                window.notyf?.open?.({
-                    type: 'success',
-                    message: '@TempData["SuccessMessage"]',
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-            if ('@TempData["ErrorMessage"]' !== '') {
-                window.notyf?.open?.({
-                    type: 'error',
-                    message: '@TempData["ErrorMessage"]',
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-        })();
+})();
     </script>
 }
 

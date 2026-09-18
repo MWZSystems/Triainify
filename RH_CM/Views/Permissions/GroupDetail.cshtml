@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Group Detail";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewData["BodyClass"] = "page-matrix-position";
+    ViewData["BodyClass"] = "page-permissions";
 }
 
 <div class="row">
@@ -13,7 +13,7 @@
         </h1>
     </div>
     <div class="col-auto">
-        <a asp-action="Index" asp-controller="Permissions" class="btn btn-secondary">
+        <a asp-action="Index" asp-controller="Permissions" class="btn btn-secondary" title="Change Group">
             <i class="fas fa-rotate-left"></i> CHANGE GROUP
         </a>
     </div>
@@ -34,18 +34,18 @@
         </div>
         <div class="card-body">
             <div class="d-flex justify-content-end mb-3">
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addRoleModal">
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addRoleModal" title="Add Role">
                     <i class="fas fa-plus"></i> Add Role
                 </button>
             </div>
             @if (Model != null)
             {
                 <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
-                    <thead class="table-primary">
+                    <thead class="table-accent">
                         <tr>
                             <th>Role ID</th>
                             <th>Role Name</th>
-                            <th>Action</th>
+                            <th data-orderable="false">Action</th>
 
                         </tr>
                     </thead>
@@ -58,7 +58,7 @@
 
                                 <td>
                                     <form asp-action="DeleteRoleFromGroup" asp-route-RoleId="@detail.RoleId" asp-route-GroupId="@Model.GroupId" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this role from this group?');">
-                                        <button type="submit" class="btn btn-danger">
+                                        <button type="submit" class="btn btn-danger" title="Delete">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
@@ -84,16 +84,16 @@
             <form asp-action="AddRoleToGroup" asp-controller="Permissions" method="post">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addRoleModalLabel">Add Role to Group</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" title="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="GroupId" value="@Model.GroupId" />
+                    <input type="hidden" name="GroupId" value="@(Model?.GroupId ?? 0)" />
 
                     <div class="mb-3">
                         <label for="RoleId" class="form-label">Select Role</label>
                         <select id="RoleId" name="RoleId" class="form-select" required>
                             <option value="">-- Choose Role --</option>
-                            @foreach (var role in Model.RolesAvailable)
+                            @foreach (var role in Model?.RolesAvailable ?? Enumerable.Empty<RH_CM.Service.DTOs.Permissions.RolesDTOs>())
                             {
                                 <option value="@role.RoleId">@role.RoleName</option>
                             }
@@ -101,8 +101,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success">Add</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" title="Cancel">Cancel</button>
+                    <button type="submit" class="btn btn-success" title="Add">Add</button>
                 </div>
             </form>
         </div>
@@ -127,26 +127,6 @@
             }
 
             // Solo success y error
-            if ("@TempData["SuccessMessage"]" !== "") {
-                window.notyf?.open?.({
-                    type: 'success',
-                    message: "@TempData["SuccessMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-            if ("@TempData["ErrorMessage"]" !== "") {
-                window.notyf?.open?.({
-                    type: 'error',
-                    message: "@TempData["ErrorMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-        });
+});
     </script>
 }

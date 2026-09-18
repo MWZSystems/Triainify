@@ -1,11 +1,14 @@
 ﻿@model RH_CM.ViewModels.CourseMaterialViewerViewModel
 @{
     ViewBag.HideNavbar = true;
-    ViewData["Title"] = "OpenPdfCourseMaterialByCourseLevel";
+    ViewData["Title"] = "Course Material";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var isPdf = string.Equals(Model?.MaterialType, "PDF", StringComparison.OrdinalIgnoreCase);
     var isVideo = string.Equals(Model?.MaterialType, "VIDEO", StringComparison.OrdinalIgnoreCase);
+    var courseId = Model?.CourseId ?? 0;
+    var levelId = Model?.LevelId ?? 0;
+    var assignmentId = Model?.CourseAssignmentId ?? 0;
 
     string streamUrl = isPdf && !string.IsNullOrWhiteSpace(Model?.StreamUrl)
         ? Model.StreamUrl!.Trim()
@@ -29,16 +32,16 @@
 <div class="row mb-2">
     <div class="col-12 text-center">
         <span class="badge bg-primary me-1">
-            <i class="align-middle fas fa-book me-1"></i> Course ID: @Model.CourseId
+            <i class="align-middle fas fa-book me-1"></i> Course ID: @(Model?.CourseId ?? 0)
         </span>
         <span class="badge bg-info text-dark me-1">
-            <i class="align-middle fas fa-layer-group me-1"></i> Level ID: @Model.LevelId
+            <i class="align-middle fas fa-layer-group me-1"></i> Level ID: @(Model?.LevelId ?? 0)
         </span>
         <span class="badge bg-secondary me-1">
-            <i class="align-middle fas fa-tag me-1"></i> @((Model.MaterialType ?? "—").ToUpperInvariant())
+            <i class="align-middle fas fa-tag me-1"></i> @((Model?.MaterialType ?? "—").ToUpperInvariant())
         </span>
         <span class="badge bg-warning text-dark">
-            <i class="align-middle fas fa-id-badge me-1"></i> Assignment ID: @(Model.CourseAssignmentId > 0 ? Model.CourseAssignmentId.ToString() : "—")
+            <i class="align-middle fas fa-id-badge me-1"></i> Assignment ID: @(assignmentId > 0 ? assignmentId.ToString() : "—")
         </span>
     </div>
 </div>
@@ -59,11 +62,11 @@
                 <div class="border rounded shadow-sm p-2">
                     <component type="typeof(RH_CM.Components.CoursePdfViewer)"
                                render-mode="ServerPrerendered"
-                               param-CourseId="Model.CourseId"
-                               param-LevelId="Model.LevelId"
+                               param-CourseId="courseId"
+                               param-LevelId="levelId"
                                param-StreamUrl="streamUrl"
                                param-ExamUrl="examUrl"
-                               param-CourseAssignmentId="Model.CourseAssignmentId"
+                               param-CourseAssignmentId="assignmentId"
                                param-HeightCss="@("calc(100vh - 180px)")" />
                 </div>
             </div>
@@ -77,14 +80,14 @@ else if (isVideo)
             <div class="border rounded shadow-sm p-4">
                 <div class="d-flex align-items-center mb-3">
                     <i class="fas fa-film fa-lg text-primary me-2"></i>
-                    <h5 class="m-0">Tutorial para abrir el material (VIDEO)</h5>
+                    <h5 class="m-0">Tutorial to open the material (VIDEO)</h5>
                 </div>
 
                 @if (string.IsNullOrWhiteSpace(Model?.UrlPath))
                 {
                     <div class="alert alert-warning">
                         <i class="align-middle fas fa-exclamation-triangle me-2"></i>
-                        No se encontró la ruta del material (<code>UrlPath</code>). Contacta a RH.
+                        The material's path was not found (<code>UrlPath</code>). Please contact HR.
                     </div>
                 }
                 else
@@ -94,9 +97,9 @@ else if (isVideo)
                             <ol class="mb-3">
                                 <li class="mb-2">
                                     <i class="align-middle fas fa-link text-success me-2"></i>
-                                    <strong>Selecciona y copia</strong> la siguiente ruta:
-                                    <button class="btn btn-outline-dark" type="button" onclick="selectUrlPath()">
-                                        <i class="align-middle fas fa-i-cursor me-1"></i> Seleccionar ruta
+                                    <strong>Select and copy</strong> the following path:
+                                    <button class="btn btn-outline-dark" type="button" onclick="selectUrlPath()" title="Select path">
+                                        <i class="align-middle fas fa-i-cursor me-1"></i> Select path
                                     </button>
                                 </li>
                             </ol>
@@ -106,20 +109,20 @@ else if (isVideo)
                                     <i class="align-middle fas fa-folder-open"></i>
                                 </span>
                                 <input id="matUrlPath" class="form-control" readonly value="@Model.UrlPath" onclick="selectUrlPath()" />
-                                <button id="btnCopyPath" class="btn btn-outline-primary" type="button" onclick="copyMatUrlPath()">
-                                    <i class="align-middle fas fa-clipboard me-1"></i> Copiar
+                                <button id="btnCopyPath" class="btn btn-outline-primary" type="button" onclick="copyMatUrlPath()" title="Copy">
+                                    <i class="align-middle fas fa-clipboard me-1"></i> Copy
                                 </button>
                             </div>
 
                             <ol start="2" class="mb-3">
                                 <li class="mb-2">
-                                    <i class="align-middle me-2 fab fa-fw fa-windows"></i>Abre el <strong>Explorador de archivos</strong> de Windows (<kbd>Win</kbd> + <kbd>E</kbd>).
+                                    <i class="align-middle me-2 fab fa-fw fa-windows"></i>Open Windows <strong>File Explorer</strong> (<kbd>Win</kbd> + <kbd>E</kbd>).
                                 </li>
                                 <li class="mb-2">
-                                    <i class="align-middle fas fa-paste me-2"></i>Pega la ruta en la <strong>barra de direcciones</strong> y presiona <kbd>Enter</kbd>.
+                                    <i class="align-middle fas fa-paste me-2"></i>Paste the path in the <strong>address bar</strong> and press <kbd>Enter</kbd>.
                                 </li>
                                 <li class="mb-2">
-                                    <i class="align-middle fas fa-play-circle me-2"></i>Haz doble clic en el archivo <strong>.exe</strong> para ejecutar el material.
+                                    <i class="align-middle fas fa-play-circle me-2"></i>Double-click the <strong>.exe</strong> file to run the material.
                                 </li>
                             </ol>
                         </div>
@@ -128,8 +131,8 @@ else if (isVideo)
                     <div class="alert alert-info d-flex align-items-start">
                         <i class="align-middle fas fa-shield-alt me-2 mt-1"></i>
                         <div>
-                            <strong>Consejo de seguridad:</strong> si Windows muestra SmartScreen,
-                            pulsa <em>Más información</em> &rarr; <em>Ejecutar de todas formas</em> (si confías en el origen).
+                            <strong>Security tip:</strong> if Windows shows SmartScreen,
+                            click <em>More info</em> &rarr; <em>Run anyway</em> (only if you trust the source).
                         </div>
                     </div>
 
@@ -137,16 +140,16 @@ else if (isVideo)
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingOne">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                    <i class="align-middle fas fa-tools me-2"></i> ¿Problemas para abrir la ruta?
+                                    <i class="align-middle fas fa-tools me-2"></i> Trouble opening the path?
                                 </button>
                             </h2>
                             <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#helpAccordion">
                                 <div class="accordion-body">
                                     <ul class="mb-0">
-                                        <li class="mb-1"><i class="fas fa-network-wired me-2"></i> Verifica conexión a la red/VPN si la ruta es <code>\\servidor\...</code>.</li>
-                                        <li class="mb-1"><i class="fas fa-user-shield me-2"></i> Solicita permisos de lectura sobre la carpeta si es necesario.</li>
-                                        <li class="mb-1"><i class="fas fa-folder me-2"></i> Confirma que el archivo <strong>.exe</strong> existe en la ruta indicada.</li>
-                                        <li class="mb-1"><i class="fas fa-sitemap me-2"></i> Si la ruta es local del servidor, pide a IT una ruta UNC compartida.</li>
+                                        <li class="mb-1"><i class="fas fa-network-wired me-2"></i> Check your network/VPN connection if the path is <code>\\server\...</code>.</li>
+                                        <li class="mb-1"><i class="fas fa-user-shield me-2"></i> Request read permissions on the folder if needed.</li>
+                                        <li class="mb-1"><i class="fas fa-folder me-2"></i> Confirm the <strong>.exe</strong> file exists at the given path.</li>
+                                        <li class="mb-1"><i class="fas fa-sitemap me-2"></i> If the path is local to the server, ask IT for a shared UNC path.</li>
                                     </ul>
                                 </div>
                             </div>
@@ -154,8 +157,8 @@ else if (isVideo)
                     </div>
 
                     <div class="mt-4 d-flex gap-2">
-                        <a class="btn btn-outline-secondary" href="@examUrl">
-                            <i class="align-middle fas fa-check-circle me-1"></i> Ir al examen
+                        <a class="btn btn-outline-secondary" href="@examUrl" title="Go to exam">
+                            <i class="align-middle fas fa-check-circle me-1"></i> Go to exam
                         </a>
 
                     </div>
@@ -188,7 +191,7 @@ else if (isVideo)
                 setTimeout(() => btn.innerHTML = old, 1800);
             } else {
                 window.notyf?.open?.({
-                    type: 'error',
+                    type: 'danger',
                     message: 'No se pudo copiar. Selecciona la ruta y presiona Ctrl+C.',
                     duration: 3500
                 });
@@ -208,26 +211,6 @@ else
     @await Html.PartialAsync("_ValidationScriptsPartial")
     <script>
         (function () {
-            if ('@TempData["SuccessMessage"]' !== '') {
-                window.notyf?.open?.({
-                    type: 'success',
-                    message: '@TempData["SuccessMessage"]',
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-            if ('@TempData["ErrorMessage"]' !== '') {
-                window.notyf?.open?.({
-                    type: 'error',
-                    message: '@TempData["ErrorMessage"]',
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-        })();
+})();
     </script>
 }

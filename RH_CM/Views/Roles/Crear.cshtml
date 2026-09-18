@@ -23,7 +23,7 @@
 
                     <div class="row">
                         <div class="col-sm-10 offset-2">
-                            <button type="submit" class="btn btn-success w-75 btn-lg">Create Role <i class="bi bi-arrow-right-circle-fill"></i></button>
+                            <button type="submit" class="btn btn-success w-75 btn-lg" title="Create Role">Create Role <i class="bi bi-arrow-right-circle-fill"></i></button>
                         </div>
                     </div>
                 </div>
@@ -37,7 +37,7 @@
 
     <script>
         $(document).ready(function () {
-            // Inicialización de DataTables (aunque esta vista no parece tener una tabla, se mantiene el script)
+            // DataTables initialization (this view doesn't seem to have a table, but the script is kept)
             $('#datatables-responsive').DataTable({
                 responsive: true,
                 order: [],
@@ -47,30 +47,6 @@
                     });
                 }
             });
-
-            // Notificaciones de éxito (usando "Correcto")
-            if ("@TempData["Correcto"]" !== "") {
-                window.notyf.open({
-                    type: 'success',
-                    message: "@TempData["Correcto"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-
-            // Notificaciones de error (usando "Error")
-            if ("@TempData["Error"]" !== "") {
-                window.notyf.open({
-                    type: 'error',
-                    message: "@TempData["Error"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-        });
+});
     </script>
 }

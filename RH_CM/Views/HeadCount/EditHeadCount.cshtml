@@ -228,10 +228,10 @@
                         </div>
                     </div>
                     <div class="col-12 text-end">
-                        <a asp-action="IndexHeadCount" class="btn btn-secondary" onclick="return confirm('Are you sure you want to cancel without saving changes?')">
-                            <i class="align-middle fas fa-arrow-left"></i> CANCELAR
+                        <a asp-action="IndexHeadCount" class="btn btn-secondary" onclick="return confirm('Are you sure you want to cancel without saving changes?')" title="Cancel">
+                            <i class="align-middle fas fa-arrow-left"></i> CANCEL
                         </a>
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary" title="Edit Onboarding">
                             <i class="align-middle fas fa-edit"></i> EDIT ONBOARDING
                         </button>
                     </div>
@@ -245,28 +245,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
             // Show success or error messages
-            if ("@TempData["SuccessMessage"]" !== "") {
-                window.notyf.open({
-                    type: 'success',
-                    message: "@TempData["SuccessMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-            if ("@TempData["ErrorMessage"]" !== "") {
-                window.notyf.open({
-                    type: 'error',
-                    message: "@TempData["ErrorMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-
-            // Initialize Select2
+// Initialize Select2
             $(".select2").select2({
                 theme: 'bootstrap4',
                 placeholder: 'Select an option',

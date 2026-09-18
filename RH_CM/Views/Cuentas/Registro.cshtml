@@ -17,6 +17,10 @@
     <title>RH - Register</title>
 
     <link rel="stylesheet" href="~/Assets/dist/css/light.css" asp-append-version="true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" />
+    <link rel="stylesheet" href="~/Assets/dist/css/theme-uupm.css" asp-append-version="true" />
     <link rel="shortcut icon" href="~/Assets/dist/img/favicon.ico">
 </head>
 
@@ -111,7 +115,7 @@
 
                                         <div class="row mt-3">
                                             <div class="col-sm-10 offset-sm-2">
-                                                <button type="submit" class="btn btn-success w-75 btn-lg">
+                                                <button type="submit" class="btn btn-success w-75 btn-lg" title="Register">
                                                     Register
                                                 </button>
                                             </div>
@@ -129,7 +133,7 @@
 
     <script src="~/Assets/dist/js/app.js"></script>
 
-    @* Scripts de validación *@
+    @* Validation scripts *@
     <partial name="_ValidationScriptsPartial" />
 
     <script>
@@ -159,7 +163,7 @@
 
             if (window.notyf && errorMessage) {
                 window.notyf.open({
-                    type: 'error',
+                    type: 'danger',
                     message: errorMessage,
                     ripple: true,
                     dismissible: true,

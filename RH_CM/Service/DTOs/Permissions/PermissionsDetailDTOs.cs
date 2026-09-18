@@ -4,7 +4,7 @@
     {
         public int GroupId { get; set; }
         public string? GroupName { get; set; }
-        public List<RolesDTOs>? Roles { get; set; }
-        public List<RolesDTOs>? RolesAvailable { get; set; }
+        public List<RolesDTOs> Roles { get; set; } = new();
+        public List<RolesDTOs> RolesAvailable { get; set; } = new();
     }
 }

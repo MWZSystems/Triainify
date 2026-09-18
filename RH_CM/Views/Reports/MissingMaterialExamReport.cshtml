@@ -2,17 +2,26 @@
 @model IEnumerable<RH_CM.Service.DTOs.MaterialExamDTOs>
 @{
     ViewData["Title"] = "Material vs Exam Missing";
+    ViewData["BodyClass"] = "page-missing-material";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="row">
     <div class="col">
-        <h1 class="h3 mb-3 text-center">
-            <i class="align-middle fas fa-balance-scale"></i> @ViewData["Title"]
-        </h1>
+        <partial name="_PageHeader" model="@(new RH_CM.ViewModels.PageHeaderViewModel
+        {
+            Title = "Material vs Exam Missing",
+            IconClass = "fa-balance-scale",
+            HelpBullets = new List<string>
+            {
+                "Flags course/level combinations that are missing their study material, their test, or both.",
+                "Use this to find gaps before employees run into a course they can't actually complete.",
+                "Click \"Export to Excel\" to share the list with whoever needs to upload the missing content."
+            }
+        })" />
     </div>
     <div class="col-auto">
-        <a class="btn btn-success" asp-action="ExportMissingMaterialExamReport">
+        <a class="btn btn-success" asp-action="ExportMissingMaterialExamReport" title="Export To Excel">
             <i class="align-middle fas fa-file-excel"></i> EXPORT TO EXCEL
         </a>
     </div>
@@ -32,7 +41,7 @@
             @if (Model != null && Model.Any())
             {
                 <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
-                    <thead class="table-primary">
+                    <thead class="table-accent">
                         <tr>
                             <th>#</th>
                             <th>Course Name</th>
@@ -104,7 +113,7 @@
 
     <script>
         $(document).ready(function () {
-            // Inicializar DataTable solo si hay filas
+            // Initialize DataTable only if there are rows
             if (@(Model != null && Model.Any() ? "true" : "false")) {
                 var table = $('#datatables-responsive').DataTable({
                     responsive: true,
@@ -129,7 +138,7 @@
                     }
                 });
             } else {
-                // Si no hay datos, simplemente ocultar loader y mostrar mensaje
+                // If there's no data, simply hide the loader and show the message
                 $('#loader').fadeOut(150, function () {
                     $('#tableContainer').fadeIn(150);
                 });

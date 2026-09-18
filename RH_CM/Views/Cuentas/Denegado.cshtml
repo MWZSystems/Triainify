@@ -12,6 +12,10 @@
     <title>Access Denied</title>
 
     <link rel="stylesheet" href="~/Assets/dist/css/light.css" asp-append-version="true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" />
+    <link rel="stylesheet" href="~/Assets/dist/css/theme-uupm.css" asp-append-version="true" />
 </head>
 
 <body class="d-flex align-items-center justify-content-center min-vh-100 bg-light">
@@ -37,7 +41,7 @@
                         <!-- ✅ Back to Home Page -->
                         <a asp-controller="Home"
                            asp-action="Index"
-                           class="btn btn-primary mt-3 px-4">
+                           class="btn btn-primary mt-3 px-4" title="Back to Home Page">
                             <i class="fas fa-home me-1"></i>
                             Back to Home Page
                         </a>
@@ -59,7 +63,7 @@
 
             if (window.notyf && errorMessage) {
                 window.notyf.open({
-                    type: 'error',
+                    type: 'danger',
                     message: errorMessage,
                     ripple: true,
                     dismissible: true,

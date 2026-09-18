@@ -2,13 +2,21 @@
 
 @{
     ViewData["Title"] = "Role Administrator";
+    ViewData["BodyClass"] = "page-roles";
 }
 
 <div class="row mb-3">
     <div class="col">
-        <h1 class="h3 mb-3 text-center">
-            <i class="fas fa-user-tag"></i> @ViewData["Title"]
-        </h1>
+        <partial name="_PageHeader" model="@(new RH_CM.ViewModels.PageHeaderViewModel
+        {
+            Title = "Role Administrator",
+            IconClass = "fa-user-tag",
+            HelpBullets = new List<string>
+            {
+                "Roles determine what each user can access across the app.",
+                "Click \"Create New Role\" to add one, or use the row actions to rename or delete an existing role."
+            }
+        })" />
     </div>
 
     <div class="col-auto d-flex align-items-center gap-2">
@@ -16,7 +24,7 @@
         <!-- Create new role -->
         <a asp-action="Crear"
            asp-controller="Roles"
-           class="btn btn-primary">
+           class="btn btn-primary" title="Create New Role">
             <i class="align-middle fas fa-plus-square"></i> Create New Role
         </a>
 
@@ -26,7 +34,7 @@
                 data-bs-toggle="collapse"
                 data-bs-target="#infoAlerts"
                 aria-expanded="false"
-                aria-controls="infoAlerts">
+                aria-controls="infoAlerts" title="Actions information">
             <i class="fas fa-info-circle"></i> Actions information
         </button>
 
@@ -44,7 +52,7 @@
 
             <!-- Create Role -->
             <div class="alert alert-primary alert-outline alert-dismissible mb-3" role="alert">
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" title="Close"></button>
                 <div class="alert-icon">
                     <i class="fas fa-plus-square"></i>
                 </div>
@@ -55,7 +63,7 @@
 
             <!-- Edit Role -->
             <div class="alert alert-warning alert-outline alert-dismissible mb-3" role="alert">
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" title="Close"></button>
                 <div class="alert-icon">
                     <i class="fas fa-edit"></i>
                 </div>
@@ -76,11 +84,11 @@
                 @if (Model.Any())
                 {
                     <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
-                        <thead class="table-primary">
+                    <thead class="table-accent">
                             <tr>
                                 <th>Id</th>
                                 <th>Name</th>
-                                <th class="text-center">Actions</th>
+                                <th class="text-center" data-orderable="false">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -146,27 +154,6 @@
                 }
             });
 
-            if ("@TempData["Correcto"]" !== "") {
-                window.notyf.open({
-                    type: 'success',
-                    message: "@TempData["Correcto"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-
-            if ("@TempData["Error"]" !== "") {
-                window.notyf.open({
-                    type: 'error',
-                    message: "@TempData["Error"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-        });
+});
     </script>
 }

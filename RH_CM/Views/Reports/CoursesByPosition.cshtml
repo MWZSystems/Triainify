@@ -2,16 +2,17 @@
 
 @{
     ViewData["Title"] = "Courses by Position";
+    ViewData["BodyClass"] = "page-courses-by-position";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    // Evita NullReference cuando aún no hay selección
+    // Avoids a NullReference before there's a selection
     var data = Model?.ToList() ?? new List<RH_CM.ViewModels.CoursesByPositionViewModel>();
 
     var fkPos = (int)(ViewBag.SelectedFkPosition ?? 0);
     var positions = (IEnumerable<dynamic>)ViewBag.Positions ?? Enumerable.Empty<dynamic>();
     var first = data.FirstOrDefault();
 
-    // Prioriza SIEMPRE NamePosition del combo; si no existe, usa lo que venga del SP; luego "—"
+    // ALWAYS prioritize NamePosition from the combo; if it doesn't exist, use whatever the SP returns; then "—"
     var posName = positions.FirstOrDefault(p => p.PkPosition == fkPos)?.Name
                   ?? first?.PositionName
                   ?? "—";
@@ -66,9 +67,17 @@
 
 <div class="row mb-3">
     <div class="col">
-        <h1 class="h3 mb-0 text-center title-accent">
-            <i class="align-middle fas fa-outdent"></i> @ViewData["Title"]
-        </h1>
+        <partial name="_PageHeader" model="@(new RH_CM.ViewModels.PageHeaderViewModel
+        {
+            Title = "Courses by Position",
+            IconClass = "fa-outdent",
+            HelpBullets = new List<string>
+            {
+                "Pick a position below to see every course required (or optional) for it, broken down by level.",
+                "Green means required, blue means optional, gray means that level doesn't apply to that course.",
+                "Hover a cell to see its delivery mode and validity period."
+            }
+        })" />
     </div>
 </div>
 
@@ -88,7 +97,7 @@
                     </select>
                 </div>
                 <div class="col-md-2 text-end">
-                    <button type="submit" class="btn btn-primary mt-3 mt-md-0 w-100">
+                    <button type="submit" class="btn btn-primary mt-3 mt-md-0 w-100" title="Load">
                         <i class="fas fa-search"></i> Load
                     </button>
                 </div>
@@ -124,7 +133,7 @@
                             @if (data.Any())
                             {
                                 <table id="datatables-responsive" class="table table-striped">
-                                    <thead class="table-primary">
+                    <thead class="table-accent">
                                         <tr>
                                             <th>Course</th>
                                             @foreach (var lm in levelMap)
@@ -207,30 +216,6 @@
                     order: [],
                     pageLength: 50,
                     lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]]
-                });
-            }
-
-            // Notificaciones (como en tus vistas)
-            const successMsg = @Html.Raw(Json.Serialize(TempData["SuccessMessage"]));
-            const errorMsg   = @Html.Raw(Json.Serialize(TempData["ErrorMessage"]));
-            if (successMsg) {
-                window.notyf?.open?.({
-                    type: 'success',
-                    message: successMsg,
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-            if (errorMsg) {
-                window.notyf?.open?.({
-                    type: 'error',
-                    message: errorMsg,
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
                 });
             }
 

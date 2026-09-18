@@ -17,38 +17,38 @@
 
                 <div class="mb-3 col-md-6">
                     <label asp-for="Ntuser" class="form-label"></label>
-                    <input asp-for="Ntuser" class="form-control" placeholder="Ingresa tu nombre" />
+                    <input asp-for="Ntuser" class="form-control" placeholder="Enter your username" />
                     <span asp-validation-for="Ntuser" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3 col-md-6">
                     <label asp-for="EmployeeNumber" class="form-label"></label>
-                    <input asp-for="EmployeeNumber" type="text" class="form-control" placeholder="Numero Empleado">
+                    <input asp-for="EmployeeNumber" type="text" class="form-control" placeholder="Employee Number">
                     <span asp-validation-for="EmployeeNumber" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3 col-md-6">
                     <label asp-for="Names" class="form-label"></label>
-                    <input asp-for="Names" type="text" class="form-control" placeholder="Nombre(s)">
+                    <input asp-for="Names" type="text" class="form-control" placeholder="First Name(s)">
                     <span asp-validation-for="Names" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3 col-md-6">
                     <label asp-for="LastName" class="form-label"></label>
-                    <input asp-for="LastName" type="text" class="form-control" placeholder="Apellidos">
+                    <input asp-for="LastName" type="text" class="form-control" placeholder="Last Name(s)">
                     <span asp-validation-for="LastName" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3 col-md-6">
                     <label asp-for="Email" class="form-label"></label>
-                    <input asp-for="Email" class="form-control" placeholder="Ingresa tu email" />
+                    <input asp-for="Email" class="form-control" placeholder="Enter your email" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm-10 offset-2">
 
-                    <button type="submit" class="btn btn-success w-75 btn-lg"><i class="fas fa-check"></i> Editar </button>
+                    <button type="submit" class="btn btn-success w-75 btn-lg" title="Save"><i class="fas fa-check"></i> Save </button>
                 </div>
             </div>
         </form>

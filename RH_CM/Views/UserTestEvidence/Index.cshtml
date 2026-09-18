@@ -2,16 +2,24 @@
 @{
     ViewData["Title"] = "Evidence By User";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["BodyClass"] = "page-evidence-by-user";
 }
 
 <div class="row">
     <div class="col">
-        <h1 class="h3 mb-3 text-center">
-            <i class="align-middle fas fa-file-archive"></i> @ViewData["Title"]
-        </h1>
+        <partial name="_PageHeader" model="@(new RH_CM.ViewModels.PageHeaderViewModel
+        {
+            Title = "Evidence By User",
+            IconClass = "fa-file-archive",
+            HelpBullets = new List<string>
+            {
+                "Shows each user's diagnostic and exam history, with links to review individual attempts.",
+                "Click \"Export To Excel\" to download the full list."
+            }
+        })" />
     </div>
     <div class="col-auto">
-        <a class="btn btn-success" asp-action="ExportMassiveEvidencesByUser">
+        <a class="btn btn-success" asp-action="ExportMassiveEvidencesByUser" title="Export To Excel">
             <i class="align-middle fas fa-file-excel"></i> EXPORT TO EXCEL
         </a>
     </div>
@@ -31,12 +39,12 @@
             @if (Model != null && Model.Any())
             {
                 <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
-                    <thead class="table-primary">
+                    <thead class="table-accent">
                         <tr>
                             <th>Control Number</th>
                             <th>Full Name</th>
                             <th>Position</th>
-                            <th>Actions</th>
+                            <th data-orderable="false">Actions</th>
                         </tr>
                     </thead>
 
@@ -84,7 +92,7 @@
 
     <script>
         $(document).ready(function () {
-            // Inicializar DataTable solo si hay filas
+            // Initialize DataTable only if there are rows
             if (@(Model != null && Model.Any() ? "true" : "false")) {
                 var table = $('#datatables-responsive').DataTable({
                     responsive: true,
@@ -109,34 +117,14 @@
                     }
                 });
             } else {
-                // Si no hay datos, simplemente ocultar loader y mostrar mensaje
+                // If there's no data, simply hide the loader and show the message
                 $('#loader').fadeOut(150, function () {
                     $('#tableContainer').fadeIn(150);
                 });
             }
 
              // Solo success y error
-            if ("@TempData["SuccessMessage"]" !== "") {
-                window.notyf?.open?.({
-                    type: 'success',
-                    message: "@TempData["SuccessMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-            if ("@TempData["ErrorMessage"]" !== "") {
-                window.notyf?.open?.({
-                    type: 'error',
-                    message: "@TempData["ErrorMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-        });
+});
     </script>
 }
 

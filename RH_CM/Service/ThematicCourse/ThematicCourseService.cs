@@ -2,6 +2,7 @@
 using RH_CM.Service.DTOs;
 using RH_CM.Service.DTOs.ThematicArea;
 using RH_CM.Service.SQLSMS;
+using RH_CM.Messages.ThematicCourse;
 
 namespace RH_CM.Service.ThematicCourse
 {
@@ -29,8 +30,12 @@ namespace RH_CM.Service.ThematicCourse
         {
             ServiceAnswer serviceAnswer = new();
 
-            int pkThematicCode = int.Parse(ThematicArea.Split(" - ")[0]);
-            int pkCourse = int.Parse(Course.Split(" - ")[0]);
+            if (!TryGetSelectedId(ThematicArea, out int pkThematicCode) || !TryGetSelectedId(Course, out int pkCourse))
+            {
+                serviceAnswer.MessageType = ServiceAnswer.MessageType_Error;
+                serviceAnswer.Message = ThematicCourseMessages.SelectAValidThematicAreaAndCourse;
+                return serviceAnswer;
+            }
 
             var parameters = new Dictionary<string, object>
             {
@@ -44,7 +49,7 @@ namespace RH_CM.Service.ThematicCourse
             if (answer == "Completed")
             {
                 serviceAnswer.MessageType = ServiceAnswer.MessageType_Success;
-                serviceAnswer.Message = "Record Successfully Added!";
+                serviceAnswer.Message = ThematicCourseMessages.RecordSuccessfullyAdded;
             }
             else
             {
@@ -81,8 +86,12 @@ namespace RH_CM.Service.ThematicCourse
 
             ServiceAnswer serviceAnswer = new();
 
-            int thematicCode = int.Parse(ThematicArea.Split(" - ")[0]);
-            int pkCourse = int.Parse(Course.Split(" - ")[0]);
+            if (!TryGetSelectedId(ThematicArea, out int thematicCode) || !TryGetSelectedId(Course, out int pkCourse))
+            {
+                serviceAnswer.MessageType = ServiceAnswer.MessageType_Error;
+                serviceAnswer.Message = ThematicCourseMessages.SelectAValidThematicAreaAndCourse;
+                return serviceAnswer;
+            }
 
             var parameters = new Dictionary<string, object>
             {
@@ -97,7 +106,7 @@ namespace RH_CM.Service.ThematicCourse
             if (answer == "Completed")
             {
                 serviceAnswer.MessageType = ServiceAnswer.MessageType_Success;
-                serviceAnswer.Message = "Record Successfully Updated!";
+                serviceAnswer.Message = ThematicCourseMessages.RecordSuccessfullyUpdated;
             }
             else
             {
@@ -126,7 +135,7 @@ namespace RH_CM.Service.ThematicCourse
             if (answer == "Completed")
             {
                 serviceAnswer.MessageType = ServiceAnswer.MessageType_Success;
-                serviceAnswer.Message = "Record Successfully Toggled!";
+                serviceAnswer.Message = ThematicCourseMessages.RecordSuccessfullyToggled;
             }
             else
             {
@@ -153,7 +162,7 @@ namespace RH_CM.Service.ThematicCourse
             if (answer == "Completed")
             {
                 serviceAnswer.MessageType = ServiceAnswer.MessageType_Success;
-                serviceAnswer.Message = "Record Successfully Deleted!";
+                serviceAnswer.Message = ThematicCourseMessages.RecordSuccessfullyDeleted;
             }
             else
             {
@@ -162,6 +171,15 @@ namespace RH_CM.Service.ThematicCourse
             }
 
             return serviceAnswer;
+        }
+
+        /// <summary>
+        /// Parses the "ID - Name" value a dropdown posts back into its leading numeric ID.
+        /// </summary>
+        private static bool TryGetSelectedId(string selectedValue, out int id)
+        {
+            string[] parts = (selectedValue ?? string.Empty).Split(" - ");
+            return int.TryParse(parts[0], out id);
         }
 
     }

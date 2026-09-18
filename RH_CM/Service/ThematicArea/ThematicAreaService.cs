@@ -2,6 +2,7 @@
 using RH_CM.Service.DTOs.OcupationKey;
 using RH_CM.Service.DTOs.ThematicArea;
 using RH_CM.Service.SQLSMS;
+using RH_CM.Messages.ThematicArea;
 
 namespace RH_CM.Service.ThematicArea
 {
@@ -39,7 +40,7 @@ namespace RH_CM.Service.ThematicArea
             if (answer == "Completed")
             {
                 serviceAnswer.MessageType = ServiceAnswer.MessageType_Success;
-                serviceAnswer.Message = "Record Successfully Added!";
+                serviceAnswer.Message = ThematicAreaMessages.RecordSuccessfullyAdded;
             }
             else
             {
@@ -51,7 +52,7 @@ namespace RH_CM.Service.ThematicArea
         }
 
         //EditOcupationCodeAsync
-        public async Task<ThematicAreaDTOs> GetEditThematicAreaAsync(int id)
+        public async Task<ThematicAreaDTOs?> GetEditThematicAreaAsync(int id)
         {
 
             var parameters = new Dictionary<string, object>
@@ -61,11 +62,7 @@ namespace RH_CM.Service.ThematicArea
 
             List<ThematicAreaDTOs> thematicList = await _unitOfWork.ExecuteStoredProcedureToListAsync<ThematicAreaDTOs>("[sp_ThematicArea_EditRecord_Get]", parameters);
 
-
-            ThematicAreaDTOs thematic = thematicList[0];
-
-
-            return thematic;
+            return thematicList.FirstOrDefault();
         }
 
         public async Task<ServiceAnswer> PostEditThematicAreaAsync(ThematicAreaDTOs Answer, string UserName)
@@ -77,7 +74,7 @@ namespace RH_CM.Service.ThematicArea
             var parameters = new Dictionary<string, object>
             {
                 { "@pPK_ThematicArea", Answer.Id },
-                { "@pThematicName", Answer.ThematicName },
+                { "@pThematicName", Answer.ThematicName ?? string.Empty },
                 { "@pThematicCode", Answer.ThematicCode },
                 { "@pUserName", UserName }
             };
@@ -87,7 +84,7 @@ namespace RH_CM.Service.ThematicArea
             if (answer == "Completed")
             {
                 serviceAnswer.MessageType = ServiceAnswer.MessageType_Success;
-                serviceAnswer.Message = "Record Successfully Updated!";
+                serviceAnswer.Message = ThematicAreaMessages.RecordSuccessfullyUpdated;
             }
             else
             {
@@ -116,7 +113,7 @@ namespace RH_CM.Service.ThematicArea
             if (answer == "Completed")
             {
                 serviceAnswer.MessageType = ServiceAnswer.MessageType_Success;
-                serviceAnswer.Message = "Record Successfully Toggled!";
+                serviceAnswer.Message = ThematicAreaMessages.RecordSuccessfullyToggled;
             }
             else
             {
@@ -143,7 +140,7 @@ namespace RH_CM.Service.ThematicArea
             if (answer == "Completed")
             {
                 serviceAnswer.MessageType = ServiceAnswer.MessageType_Success;
-                serviceAnswer.Message = "Record Successfully Deleted!";
+                serviceAnswer.Message = ThematicAreaMessages.RecordSuccessfullyDeleted;
             }
             else
             {

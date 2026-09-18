@@ -1,0 +1,201 @@
+﻿@model RH_CM.ViewModels.TestCreateViewModel
+
+@{
+    ViewData["Title"] = "Edit Test Questions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">EDIT TEST QUESTIONS</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Test Information</h5>
+                <h6 class="card-subtitle text-muted">View-only details. Only text and correct answers can be edited.</h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="EditQuestions" method="post" id="editQuestionsForm">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    @* FIX: these fields are visually read-only (the <input readonly> has no "name"),
+                       so they never traveled back to the server. If validation failed, the
+                       controller returned the view with TestName/FkCourse/FkRequiredCourseLevels
+                       as null/0, showing "N/A" even though the questions had been preserved. With
+                       these hidden inputs the model travels complete on every POST, so the
+                       re-render after an error looks exactly like it did before. *@
+                    <input type="hidden" asp-for="TestName" />
+                    <input type="hidden" asp-for="FkCourse" />
+                    <input type="hidden" asp-for="FkRequiredCourseLevels" />
+
+                    <!-- Read-only Test Info -->
+                    <div class="row">
+                        <div class="mb-3 col-md-4">
+                            <label class="form-label">Test Name</label>
+                            <input class="form-control" value="@Model.TestName" readonly />
+                        </div>
+                        <div class="mb-3 col-md-4">
+                            <label class="form-label">Course</label>
+                            <input class="form-control" value="@(Model.AvailableCourses?.FirstOrDefault(c => c.PkCourse == Model.FkCourse)?.CourseName ?? "N/A")" readonly />
+                        </div>
+                        <div class="mb-3 col-md-4">
+                            <label class="form-label">Course Level</label>
+                            <input class="form-control" value="@(Model.AvailableLevels?.FirstOrDefault(l => l.PkLevelcourse == Model.FkRequiredCourseLevels)?.DescripctionLevel ?? "N/A")" readonly />
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <!-- Editable Questions -->
+                    <div id="questions-container">
+                        @for (int q = 0; q < Model.Questions.Count; q++)
+                        {
+                            var question = Model.Questions[q];
+                            var inputType = question.FkTypeOption == 1 ? "radio" : "checkbox";
+                            var typeLabel = inputType == "radio" ? "Single choice" : "Multiple choice";
+
+                            <div class="card mb-3 question-block border border-primary">
+                                <div class="card-body">
+                                    <h5>Question @(q + 1)</h5>
+
+                                    <!-- Question Text -->
+                                    <div class="mb-2">
+                                        <input name="Questions[@q].QuestionText" class="form-control" value="@question.QuestionText" />
+                                        <input type="hidden" name="Questions[@q].FkTypeOption" value="@question.FkTypeOption" />
+                                    </div>
+
+                                    <!-- Info type -->
+                                    <div class="mb-2 text-muted small fst-italic">
+                                        Option type: @typeLabel
+                                    </div>
+
+                                    <!-- Options -->
+                                    <div class="options-container">
+                                        @for (int o = 0; o < question.Options.Count; o++)
+                                        {
+                                            var opt = question.Options[o];
+
+                                            <div class="input-group mb-2 align-items-center">
+                                                <div class="input-group-text">
+                                                    @if (inputType == "radio")
+                                                    {
+                                                        <!-- Single radio per question -->
+                                                        <input type="radio"
+                                                               name="Questions[@q].SelectedOptionIndex"
+                                                               value="@o"
+                                                        @(opt.IsCorrect ? "checked" : "") />
+
+                                                        <input type="hidden" name="Questions[@q].Options[@o].IsCorrect" value="@(opt.IsCorrect ? "true" : "false")" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <!-- Checkbox individual -->
+                                                        <input type="checkbox"
+                                                               class="option-checkbox"
+                                                               name="Questions[@q].Options[@o].IsCorrect"
+                                                               value="true"
+                                                        @(opt.IsCorrect ? "checked" : "") />
+                                                    }
+                                                </div>
+                                                <input name="Questions[@q].Options[@o].OptionText"
+                                                       class="form-control"
+                                                       value="@opt.OptionText" />
+                                            </div>
+                                        }
+                                    </div>
+                                </div> <!-- /.card-body -->
+                            </div> <!-- /.card -->
+                        }
+                    </div> <!-- /#questions-container -->
+
+                    <hr class="mt-4" />
+
+                    <div class="alert alert-info d-flex align-items-start mb-3" role="alert">
+                        <i class="fas fa-info-circle fa-lg me-2 mt-1"></i>
+                        <div>
+                            <strong>Finished editing?</strong>
+                            <div class="mt-1">Nothing is saved until you click <strong>Save Changes</strong> below, which updates the complete exam with the text and correct answers shown above.</div>
+                        </div>
+                    </div>
+
+                    <div class="text-end">
+                        <a asp-action="IndexTest" class="btn btn-secondary" title="Cancel">
+                            <i class="fas fa-arrow-left"></i> Cancel
+                        </a>
+                        <button type="button" class="btn btn-primary" id="saveChangesBtn" title="Save Changes">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div> <!-- /.card-body -->
+        </div> <!-- /.card -->
+    </div>
+</div>
+
+<!-- Confirmation modal: warns that Save Changes updates the complete exam -->
+<div class="modal fade" id="confirmSaveChangesModal" tabindex="-1" aria-labelledby="confirmSaveChangesModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmSaveChangesModalLabel">
+                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                    Confirm Exam Update
+                </h5>
+                <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close" title="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning mb-0" role="alert">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <i class="fas fa-exclamation-triangle fa-lg text-warning"></i>
+                        </div>
+                        <div>
+                            This will update the <strong>complete exam</strong> with the question text and correct answers shown above. Please review them before continuing.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" title="Cancel">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmSaveChangesBtn" title="Yes, Save Changes">
+                    <i class="fas fa-save"></i> Yes, Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+
+            // Update the hidden radio inputs so only one option ends up true
+            $(document).on("change", "input[type=radio][name^='Questions'][name$='SelectedOptionIndex']", function() {
+                const qIndex = $(this).closest(".question-block").index();
+                const optionIndex = parseInt($(this).val());
+
+                const options = $(this).closest(".options-container").find("input[type=hidden][name$='.IsCorrect']");
+                options.val("false"); // all set to false
+                options.eq(optionIndex).val("true"); // only the selected one set to true
+            });
+
+            // Save Changes: warn the user first, since this updates the whole exam.
+            const confirmSaveChangesModal = new bootstrap.Modal(document.getElementById('confirmSaveChangesModal'));
+
+            $("#saveChangesBtn").click(function () {
+                confirmSaveChangesModal.show();
+            });
+
+            $("#confirmSaveChangesBtn").click(function () {
+                document.getElementById('editQuestionsForm').submit();
+            });
+
+        });
+    </script>
+
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

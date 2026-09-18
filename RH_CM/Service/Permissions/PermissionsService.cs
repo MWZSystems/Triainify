@@ -2,6 +2,7 @@
 using RH_CM.Service.DTOs;
 using RH_CM.Service.DTOs.Permissions;
 using RH_CM.Service.SQLSMS;
+using RH_CM.Messages.Permissions;
 
 namespace RH_CM.Service.Permissions
 {
@@ -27,11 +28,17 @@ namespace RH_CM.Service.Permissions
         public async Task<PermissionsDetailDTOs> GetGroupDetailAsync(string GroupKey)
         {
             PermissionsDetailDTOs permissionsDetail = new();
-            string[] splitGroupKey = GroupKey.Split(" - ");
+            string[] splitGroupKey = (GroupKey ?? string.Empty).Split(" - ");
+
+            if (splitGroupKey.Length < 2 || !int.TryParse(splitGroupKey[0], out int groupId))
+            {
+                // Invalid or tampered GroupKey — return an empty detail instead of crashing.
+                return permissionsDetail;
+            }
 
             var parameters = new Dictionary<string, object>
             {
-                { "@pGroupID", int.Parse(splitGroupKey[0]) }
+                { "@pGroupID", groupId }
             };
 
             List<RolesDTOs> roles = await _unitOfWork.ExecuteStoredProcedureToListAsync<RolesDTOs>("[sp_Permissions_Detail_Get]", parameters);
@@ -40,7 +47,7 @@ namespace RH_CM.Service.Permissions
 
             permissionsDetail.Roles = roles;
 
-            permissionsDetail.GroupId = int.Parse(splitGroupKey[0]);
+            permissionsDetail.GroupId = groupId;
 
             permissionsDetail.GroupName = splitGroupKey[1];
 
@@ -71,12 +78,12 @@ namespace RH_CM.Service.Permissions
             if (result == "Completed")
             {
                 serviceAnswer.MessageType = ServiceAnswer.MessageType_Success;
-                serviceAnswer.Message = "Role successfully added to Group!";
+                serviceAnswer.Message = PermissionsMessages.RoleSuccessfullyAddedToGroup;
             }
             else
             {
                 serviceAnswer.MessageType = ServiceAnswer.MessageType_Error;
-                serviceAnswer.Message = "Role not added. Error";
+                serviceAnswer.Message = PermissionsMessages.RoleNotAddedError;
             }
                 return serviceAnswer;
         }
@@ -105,12 +112,12 @@ namespace RH_CM.Service.Permissions
             if (result == "Completed")
             {
                 serviceAnswer.MessageType = ServiceAnswer.MessageType_Success;
-                serviceAnswer.Message = "Role successfully Delete from Group!";
+                serviceAnswer.Message = PermissionsMessages.RoleSuccessfullyDeleteFromGroup;
             }
             else
             {
                 serviceAnswer.MessageType = ServiceAnswer.MessageType_Error;
-                serviceAnswer.Message = "Role could not be deleted from the group. Error";
+                serviceAnswer.Message = PermissionsMessages.RoleCouldNotBeDeletedFromThe;
             }
             return serviceAnswer;
         }

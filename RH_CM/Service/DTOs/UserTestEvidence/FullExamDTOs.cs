@@ -24,10 +24,10 @@ namespace RH_CM.Service.DTOs.UserTestEvidence
         public string QuestionText { get; set; } = string.Empty;
         public bool IsCorrect { get; set; }
 
-        // Opciones seleccionables
+        // Selectable options
         public List<DiagnosticOption> Options { get; set; } = new();
 
-        // IDs auxiliares para mostrar al final
+        // Auxiliary IDs used for final display
         public List<int> SelectedOptionIds { get; set; } = new();
         public List<int> CorrectOptionIds { get; set; } = new();
     }

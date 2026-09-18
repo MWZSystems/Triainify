@@ -93,10 +93,10 @@
                     <div class="row">
                         <div class="col-12 d-flex justify-content-end gap-2">
                             <a href="@Url.Action("Index", "Usuarios")"
-                               class="btn btn-outline-secondary closeBtn">
+                               class="btn btn-outline-secondary closeBtn" title="Cancel">
                                 Cancel
                             </a>
-                            <button type="submit" class="btn btn-success px-4">
+                            <button type="submit" class="btn btn-success px-4" title="Register">
                                 Register
                             </button>
                         </div>
@@ -122,32 +122,6 @@
             $('#Names, #LastName').on('input', function () {
                 this.value = this.value.toUpperCase();
             });
-
-            // TempData messages (aligned with controller)
-            var successMessage = @Html.Raw(JsonSerializer.Serialize(TempData["SuccessMessage"]));
-            var errorMessage   = @Html.Raw(JsonSerializer.Serialize(TempData["ErrorMessage"]));
-
-            if (window.notyf && successMessage) {
-                window.notyf.open({
-                    type: 'success',
-                    message: successMessage,
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-
-            if (window.notyf && errorMessage) {
-                window.notyf.open({
-                    type: 'error',
-                    message: errorMessage,
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
 
             // Initialize Select2 if there are any .select2 elements
             if ($('.select2').length) {

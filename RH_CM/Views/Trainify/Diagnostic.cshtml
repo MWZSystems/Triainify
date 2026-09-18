@@ -10,7 +10,7 @@
         <h1 class="h3 mb-3 text-center">Diagnostic Exam: @Model.TestName</h1>
 
         <div class="alert alert-info alert-dismissible" role="alert">
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" title="Close"></button>
             <div class="alert-message">
                 NOTA: This is a <strong>Diagnostic Exam</strong> designed to gauge the current knowledge of Century Mold personnel.
                 It does not certify completion on its own.
@@ -19,7 +19,7 @@
             </div>
         </div>
 
-        @* (Opcional) Muestra contexto de curso/nivel/asignación si lo tienes *@
+        @* (Optional) Shows course/level/assignment context if available *@
         @if (Model.NextCourseId > 0 || Model.NextLevelId > 0 || Model.CourseAssignmentId > 0)
         {
             <div class="text-center">
@@ -50,11 +50,11 @@
                     <input type="hidden" asp-for="FkTest" />
                     <input type="hidden" asp-for="NextCourseId" />
                     <input type="hidden" asp-for="NextLevelId" />
-                    <input type="hidden" asp-for="CourseAssignmentId" />   <!-- 👈 preserva el PK entre páginas -->
+                    <input type="hidden" asp-for="CourseAssignmentId" />   <!-- preserves the PK across pages -->
                     @for (int i = 0; i < Model.Questions.Count; i++)
                     {
                         var q = Model.Questions[i];
-                        var inputType = q.IsMultiple ? "checkbox" : "radio"; // (informativo)
+                        var inputType = q.IsMultiple ? "checkbox" : "radio"; // (informational)
                         var groupName = $"q{i}_single"; // agrupar radios por pregunta
 
                         <div class="card mb-3 shadow-sm">
@@ -82,7 +82,7 @@
                                         var o = q.Options[j];
 
                                         <div class="form-check d-flex align-items-center p-2 border rounded">
-                                            @* Hidden para que el binder reciba IsSelected *@
+                                            @* Hidden input so the model binder receives IsSelected *@
                                             <input type="hidden"
                                                    id="isSel_@(i)_@(j)"
                                                    class="is-sel"
@@ -124,10 +124,10 @@
                     }
 
                     <div class="text-end">
-                        <a asp-action="LearningTrainify" asp-controller="Trainify" class="btn btn-secondary">
+                        <a asp-action="LearningTrainify" asp-controller="Trainify" class="btn btn-secondary" title="Cancel">
                             <i class="fas fa-arrow-left"></i> Cancel
                         </a>
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary" title="Submit">
                             <i class="fas fa-paper-plane"></i> Submit
                         </button>
                     </div>
@@ -169,26 +169,6 @@
 
         // Notificaciones (success/error)
         document.addEventListener('DOMContentLoaded', function () {
-            if ('@TempData["SuccessMessage"]' !== '') {
-                window.notyf?.open({
-                    type: 'success',
-                    message: '@TempData["SuccessMessage"]',
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-            if ('@TempData["ErrorMessage"]' !== '') {
-                window.notyf?.open({
-                    type: 'error',
-                    message: '@TempData["ErrorMessage"]',
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-        });
+});
     </script>
 }

@@ -1,0 +1,86 @@
+﻿@model RH_CM.Models.CtTest
+
+@{
+    ViewData["Title"] = "Edit Test";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">EDIT TEST</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Edit Test Details</h5>
+                <h6 class="card-subtitle text-muted">Update the fields below.</h6>
+            </div>
+            <div class="card-body">
+                @* FIX: explicit asp-route-id added. Without it, the POST relied on ASP.NET Core
+                   "inheriting" the id from the current URL as an ambient value, which only works
+                   if that id arrived as a route segment (/EditTest/5) and not as a query string
+                   (/EditTest?id=5). If for whatever reason the id wasn't inherited, the POST
+                   arrived with id=0, didn't match the hidden field's PkTest, and the controller
+                   returned "Test not found.". With asp-route-id the id always travels explicitly,
+                   regardless of how this screen was reached. *@
+                <form asp-action="EditTest" asp-route-id="@Model.PkTest" method="post">
+                    @Html.HiddenFor(m => m.PkTest)
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <!-- Test Name -->
+                    <div class="mb-3">
+                        <label asp-for="TestName" class="form-label">Test Name *</label>
+                        <input asp-for="TestName" class="form-control" />
+                        <span asp-validation-for="TestName" class="text-danger"></span>
+                    </div>
+
+                    <!-- Course -->
+                    <div class="mb-3">
+                        <label asp-for="FkCourse" class="form-label">Course *</label>
+                        <select asp-for="FkCourse" class="form-control select2" asp-items="@(new SelectList(ViewBag.Courses, "PkCourse", "CourseName", Model.FkCourse))">
+                            <option value="">-- Select Course --</option>
+                        </select>
+                        <span asp-validation-for="FkCourse" class="text-danger"></span>
+                    </div>
+
+                    <!-- Course Level -->
+                    <div class="mb-3">
+                        <label asp-for="FkLevelcourse" class="form-label">Course Level <span class="text-danger">*</span></label>
+                        <select asp-for="FkLevelcourse" class="form-control select2"
+                                asp-items="@(new SelectList(ViewBag.AvailableLevels, "PkLevelcourse", "DescripctionLevel", Model.FkLevelcourse))">
+                            <option value="">-- Select Level --</option>
+                        </select>
+                        <span asp-validation-for="FkLevelcourse" class="text-danger"></span>
+                    </div>
+
+                    <div class="text-end">
+                        <a asp-action="IndexTest" class="btn btn-secondary" title="Cancel">
+                            <i class="fas fa-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary" title="Update">
+                            <i class="fas fa-save"></i> Update
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+
+    <script>
+            $(document).ready(function () {
+
+}
+    </script>
+
+    <script>
+        $(".select2").select2({ theme: 'bootstrap4', allowClear: true, width: '100%' });
+    </script>
+}

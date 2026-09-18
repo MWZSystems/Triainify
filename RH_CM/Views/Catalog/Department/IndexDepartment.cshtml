@@ -1,0 +1,162 @@
+﻿@model IEnumerable<RH_CM.Models.CtDepartment>
+
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    ViewData["Title"] = "Departments";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Very important: activates the Departments coral palette
+    ViewData["BodyClass"] = "page-departments";
+}
+
+<div class="row">
+    <div class="col">
+        <partial name="_PageHeader" model="@(new RH_CM.ViewModels.PageHeaderViewModel
+        {
+            Title = "Departments",
+            IconClass = "fa-store-alt",
+            HelpBullets = new List<string>
+            {
+                "The list of departments used to organize positions and employees.",
+                "Click \"Create New Department\" to add one, or use the row actions to rename or enable/disable an existing department."
+            }
+        })" />
+    </div>
+    <div class="col-auto">
+        <a class="btn btn-facebook" asp-action="CreateDepartment" title="Create New Department">
+            <i class="align-middle fas fa-plus-square"></i> CREATE NEW DEPARTMENT
+        </a>
+    </div>
+</div>
+
+<!-- Loader -->
+<div id="loader" class="text-center my-5">
+    <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<!-- Tabla -->
+<div id="tableContainer" style="display:none;">
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table id="datatables-dept" class="table table-striped table-hover align-middle" style="width:100%">
+                        <thead class="table-accent">
+                            <tr>
+                                <th>@Html.DisplayNameFor(m => m.First().NameDeparment)</th>
+                                <th>@Html.DisplayNameFor(m => m.First().Createuser)</th>
+                                <th>@Html.DisplayNameFor(m => m.First().Createdate)</th>
+                                <th>Status</th>
+                                <th data-orderable="false">Actions</th>
+                            </tr>
+                            <!-- Filtros por columna -->
+                            <tr class="table-light">
+                                <th><input class="form-control form-control-sm" placeholder="Department" /></th>
+                                <th><input class="form-control form-control-sm" placeholder="Created by" /></th>
+                                <th><input class="form-control form-control-sm" placeholder="YYYY-MM-DD" /></th>
+                                <th><input class="form-control form-control-sm" placeholder="Enabled / Disabled" /></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.NameDeparment</td>
+                                    <td>@item.Createuser</td>
+                                    <td>@item.Createdate.ToString("yyyy-MM-dd HH:mm")</td>
+                                    <td>
+                                        <span class="badge @(item.Available == 1 ? "bg-success" : "bg-secondary")">
+                                            @(item.Available == 1 ? "Enabled" : "Disabled")
+                                        </span>
+                                    </td>
+                                    <td class="actions text-center">
+                                        <a class="btn btn-warning btn-sm" asp-action="EditDepartment" asp-route-id="@item.PkDepartment" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+
+                                        @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Administrador"))
+                                        {
+                                            <form asp-action="ToggleDepartment" asp-route-id="@item.PkDepartment" method="post" class="d-inline"
+                                                  onsubmit="return confirm('@(item.Available == 1 ? "Disable this department? Active employees must be reassigned first." : "Enable this department?")');">
+                                                <button type="submit" class="btn @(item.Available == 1 ? "btn-success" : "btn-secondary") btn-sm"
+                                                        title="@(item.Available == 1 ? "Disable" : "Enable")">
+                                                    <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
+                                                </button>
+                                            </form>
+                                            <form asp-action="DeleteDepartment" asp-route-id="@item.PkDepartment" method="post" class="d-inline"
+                                                  onsubmit="return confirm('Delete this department permanently? It will be blocked if any employee still references it.');">
+                                                <button type="submit" class="btn btn-danger btn-sm" title="Delete">
+                                                    <i class="align-middle fas fa-trash-alt"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Department</th>
+                                <th>Created by</th>
+                                <th>Created date</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p class="mb-0">No records found</p>
+            }
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        $(document).ready(function () {
+            // Ocultamos tabla y mostramos loader
+            $('#tableContainer').hide();
+            $('#loader').show();
+
+            // Inicializamos DataTable (ahora la 1ª col es Department)
+            const table = $('#datatables-dept').DataTable({
+                responsive: true,
+                order: [],
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                initComplete: function () {
+                    const api = this.api();
+
+                    // Filtros por columnas de texto (3 columnas filtrables)
+                    [0, 1, 2, 3].forEach(function (colIdx) {
+                        $('thead tr:eq(1) th').eq(colIdx).find('input').on('keyup change clear', function () {
+                            if (api.column(colIdx).search() !== this.value) {
+                                api.column(colIdx).search(this.value).draw();
+                            }
+                        });
+                    });
+
+                    // Show the table
+                    $('#loader').fadeOut(200, function () {
+                        $('#tableContainer').fadeIn(200);
+                    });
+                }
+            });
+
+            // Notificaciones
+});
+    </script>
+}

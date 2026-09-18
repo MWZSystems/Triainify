@@ -24,7 +24,8 @@ public class AccessService : IAccessService
 
         List<HasAcessDTOs> hasAcessDTOs = await _UnitOfWork.ExecuteStoredProcedureToListAsync<HasAcessDTOs>("[sp_AccessService_HasAccess]", parameters);
 
-        hasAccess = hasAcessDTOs[0].HasAcess;
+        // No matching permission row (e.g. a controller/action not yet registered) — fail closed instead of crashing.
+        hasAccess = hasAcessDTOs.Count > 0 && hasAcessDTOs[0].HasAcess;
 
         return hasAccess;
     }

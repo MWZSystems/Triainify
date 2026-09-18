@@ -39,7 +39,7 @@
                     <!-- Row: Role -->
                     <div class="form-group">
                         <label asp-for="IdRol" class="form-label"></label>
-                        <select asp-for="IdRol" asp-items="Model.ListaRoles" class="form-control">
+                        <select asp-for="IdRol" asp-items="Model?.ListaRoles" class="form-control">
                             <option value="" disabled selected>--Seleccionar Rol--</option>
                         </select>
                         <span asp-validation-for="IdRol" class="text-danger"></span>
@@ -48,10 +48,10 @@
                     <!-- Actions -->
                     <div class="col-12 text-end">
                         <a asp-action="Index" class="btn btn-secondary"
-                           onclick="return confirm('Are you sure you want to cancel without saving changes?')">
+                           onclick="return confirm('Are you sure you want to cancel without saving changes?')" title="Cancel">
                             <i class="align-middle fas fa-arrow-left"></i> Cancel
                         </a>
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary" title="Save">
                             <i class="align-middle fas fa-save"></i> Save
                         </button>
                     </div>
@@ -66,29 +66,7 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Mensajes de éxito / error
-            if ("@TempData["SuccessMessage"]" !== "") {
-                window.notyf.open({
-                    type: 'success',
-                    message: "@TempData["SuccessMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-
-            if ("@TempData["ErrorMessage"]" !== "") {
-                window.notyf.open({
-                    type: 'error',
-                    message: "@TempData["ErrorMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-        });
+});
     </script>
 }
 

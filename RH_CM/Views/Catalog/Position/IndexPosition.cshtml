@@ -1,0 +1,156 @@
+﻿@model IEnumerable<RH_CM.Models.CtPosition>
+
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    ViewData["Title"] = "Positions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Keep the class to differentiate the page (accent color used only on the table, not the buttons)
+    ViewData["BodyClass"] = "page-positions";
+}
+
+<div class="row">
+    <div class="col">
+        <partial name="_PageHeader" model="@(new RH_CM.ViewModels.PageHeaderViewModel
+        {
+            Title = "Positions",
+            IconClass = "fa-chess-board",
+            HelpBullets = new List<string>
+            {
+                "The list of job positions employees can be assigned to.",
+                "Click \"Create New Position\" to add one, or use the row actions to rename or enable/disable an existing position."
+            }
+        })" />
+    </div>
+    <div class="col-auto">
+        <!-- Blue button, keeping the original color -->
+        <a class="btn btn-primary" asp-action="CreatePosition" title="Create New Position">
+            <i class="align-middle fas fa-plus-square"></i> CREATE NEW POSITION
+        </a>
+    </div>
+</div>
+
+<!-- Loader -->
+<div id="loader" class="text-center my-5">
+    <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<!-- Table -->
+<div id="tableContainer" style="display:none;">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table id="datatables-pos" class="table table-striped table-hover align-middle" style="width:100%">
+                        <thead class="table-accent">
+                            <tr>
+                                <th>@Html.DisplayNameFor(m => m.First().NamePosition)</th>
+                                <th>@Html.DisplayNameFor(m => m.First().NamePositionEnglish)</th>
+                                <th>Status</th>
+                                <th data-orderable="false">Actions</th>
+                            </tr>
+                            <!-- Column filters -->
+                            <tr class="table-light">
+                                <th><input class="form-control form-control-sm" placeholder="Position" /></th>
+                                <th><input class="form-control form-control-sm" placeholder="Position (EN)" /></th>
+                                <th><input class="form-control form-control-sm" placeholder="Enabled / Disabled" /></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.NamePosition</td>
+                                    <td>@item.NamePositionEnglish</td>
+                                    <td>
+                                        <span class="badge @(item.Available == 1 ? "bg-success" : "bg-secondary")">
+                                            @(item.Available == 1 ? "Enabled" : "Disabled")
+                                        </span>
+                                    </td>
+                                    <td class="actions text-center">
+                                        <!-- Buttons stay BLUE/YELLOW/RED as before -->
+                                        <a class="btn btn-warning btn-sm" asp-action="EditPosition" asp-route-id="@item.PkPosition" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+
+                                        @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Administrador"))
+                                        {
+                                            <form asp-action="TogglePosition" asp-route-id="@item.PkPosition" method="post" class="d-inline"
+                                                  onsubmit="return confirm('@(item.Available == 1 ? "Disable this position? Active employees must be reassigned first." : "Enable this position?")');">
+                                                <button type="submit" class="btn @(item.Available == 1 ? "btn-success" : "btn-secondary") btn-sm"
+                                                        title="@(item.Available == 1 ? "Disable" : "Enable")">
+                                                    <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
+                                                </button>
+                                            </form>
+                                            <form asp-action="DeleteConfirmedPosition" asp-route-id="@item.PkPosition" method="post" class="d-inline"
+                                                  onsubmit="return confirm('Delete this position permanently? It will be blocked while employees, assignments, supervisors, or occupation codes reference it.');">
+                                                <button type="submit" class="btn btn-danger btn-sm" title="Delete">
+                                                    <i class="align-middle fas fa-trash-alt"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>Position</th>
+                                <th>Position (EN)</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p class="mb-0">No records found</p>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        $(document).ready(function () {
+            // Ocultamos tabla y mostramos loader
+            $('#tableContainer').hide();
+            $('#loader').show();
+
+            const table = $('#datatables-pos').DataTable({
+                responsive: true,
+                order: [], // Ahora ordena por la columna NamePosition
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]],
+                initComplete: function () {
+                    const api = this.api();
+
+                    // Filtros por texto: Position, Position (EN)
+                    [0, 1, 2].forEach(function (colIdx) {
+                        $('thead tr:eq(1) th').eq(colIdx).find('input').on('keyup change clear', function () {
+                            if (api.column(colIdx).search() !== this.value) {
+                                api.column(colIdx).search(this.value).draw();
+                            }
+                        });
+                    });
+
+                    $('#loader').fadeOut(200, function () {
+                        $('#tableContainer').fadeIn(200);
+                    });
+                }
+            });
+
+            // Notificaciones
+});
+    </script>
+}

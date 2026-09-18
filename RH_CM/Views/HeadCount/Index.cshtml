@@ -2,18 +2,28 @@
 
 @{
     ViewData["Title"] = "Headcount Available";
+    ViewData["BodyClass"] = "page-headcount-available";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="row">
     <div class="col">
-        <h1 class="h3 mb-3 text-center"><i class="align-middle fas fa-user-check"></i> @ViewData["Title"]</h1>
+        <partial name="_PageHeader" model="@(new RH_CM.ViewModels.PageHeaderViewModel
+        {
+            Title = "Headcount Available",
+            IconClass = "fa-user-check",
+            HelpBullets = new List<string>
+            {
+                "The full list of currently active employees in the headcount catalog.",
+                "Use \"Export to Excel\" to download it, or the row actions to view/edit an employee's record."
+            }
+        })" />
     </div>
     <div class="col-auto">
-        <a class="btn btn-facebook" asp-action="CreateHeadCount">
+        <a class="btn btn-facebook" asp-action="CreateHeadCount" title="Create New Onboarding">
             <i class="align-middle fas fa-plus-square"></i> CREATE NEW ONBOARDING
         </a>
-        <a class="btn btn-success" asp-action="ExportHeadCountToExcel">
+        <a class="btn btn-success" asp-action="ExportHeadCountToExcel" title="Export To Excel">
             <i class="align-middle fas fa-file-excel"></i> EXPORT TO EXCEL
         </a>
     </div>
@@ -36,7 +46,7 @@
                     @if (Model.SyHeadCount.Any())
                     {
                         <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
-                            <thead class="table-primary">
+                    <thead class="table-accent">
                                 <tr>
                                     <th>Control Number</th>
                                     <th>Names</th>
@@ -119,11 +129,11 @@
 
     <script>
         $(document).ready(function() {
-            // Ocultar tabla y mostrar loader
+            // Hide the table and show the loader
             $('#tableContainer').hide();
             $('#loader').show();
 
-            // Inicializar DataTable con traducción al español
+            // Initialize DataTable
             $('#datatables-responsive').DataTable({
                 responsive: true,
                 order: [[0, 'asc']],
@@ -134,28 +144,6 @@
                 }
             });
 
-            // Mostrar mensajes de éxito y error
-            if ("@TempData["SuccessMessage"]" !== "") {
-                window.notyf?.open?.({
-                    type: 'success',
-                    message: "@TempData["SuccessMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-
-            if ("@TempData["ErrorMessage"]" !== "") {
-                window.notyf?.open?.({
-                    type: 'error',
-                    message: "@TempData["ErrorMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-        });
+});
     </script>
 }

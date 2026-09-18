@@ -10,15 +10,13 @@ namespace RH_CM.Service.SQLSMS
 
         public UnitOfWork(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("ConexionSQL");
+            _connectionString = configuration.GetConnectionString("ConexionSQL")
+                ?? throw new InvalidOperationException("The 'ConexionSQL' connection string is not configured.");
         }
 
         /// <summary>
-        /// Recibe el query y el Objeto y lo mapea. (Las propiedades del DTOs y las columnas del resultado del query, deben ser iguales.)
+        /// Runs a SQL query and maps each row to <typeparamref name="T"/> by matching column and property names.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sql"></param>
-        /// <returns></returns>
         public async Task<List<T>> QueryListAsync<T>(string sql) where T : new()
         {
             var list = new List<T>();
@@ -49,26 +47,23 @@ namespace RH_CM.Service.SQLSMS
         }
 
         /// <summary>
-        /// Devuelve un Datatable construido de la consulta SQL senviada.
+        /// Runs a SQL query and returns the result as a <see cref="DataTable"/>.
         /// </summary>
-        /// <param name="sql"></param>
-        /// <returns></returns>
         public async Task<DataTable> QueryDataTableAsync(string sql)
         {
             var dt = new DataTable();
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand(sql, conn);
-            using var adapter = new SqlDataAdapter(cmd);
-            adapter.Fill(dt);
+            await conn.OpenAsync();
+
+            using var reader = await cmd.ExecuteReaderAsync();
+            dt.Load(reader);
             return dt;
         }
 
         /// <summary>
-        /// Recibe el query y el tipo de dato, y devuelve una lista. Para consultas de una sola columna (llenar combobox ETC)
+        /// Runs a single-column SQL query and returns the values as a list (e.g. to fill a combobox).
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sql"></param>
-        /// <returns></returns>
         public async Task<List<T>> QuerySingleColumnAsync<T>(string sql)
         {
             var list = new List<T>();
@@ -82,8 +77,10 @@ namespace RH_CM.Service.SQLSMS
             while (await reader.ReadAsync())
             {
                 // Obtiene la primera columna de cada fila y la convierte a T
-                var value = reader.IsDBNull(0) ? default : (T)reader.GetValue(0);
-                list.Add(value);
+                if (!reader.IsDBNull(0))
+                {
+                    list.Add((T)reader.GetValue(0));
+                }
             }
 
             return list;
@@ -92,26 +89,30 @@ namespace RH_CM.Service.SQLSMS
 
 
         /// <summary>
-        /// Ejecuta un query que devuelve un solo valor y lo retorna como string.
+        /// Runs a single-row, single-column SQL query and returns the value as a string, or null if there's no result.
         /// </summary>
-        /// <param name="sql">Consulta SQL que devuelve una sola columna y una sola fila.</param>
-        /// <returns>Valor como string, o null si no hay resultados.</returns>
-        public async Task<string> QuerySingleScalarAsync(string sql)
+        public async Task<string> QuerySingleScalarAsync(string sql, Dictionary<string, object>? parameters = null)
         {
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand(sql, conn);
+
+            if (parameters != null)
+            {
+                foreach (var param in parameters)
+                {
+                    cmd.Parameters.AddWithValue(param.Key, param.Value ?? DBNull.Value);
+                }
+            }
+
             await conn.OpenAsync();
 
             var result = await cmd.ExecuteScalarAsync();
-            return result?.ToString();
+            return result?.ToString() ?? string.Empty;
         }
 
         /// <summary>
-        /// Ejecuta un Stored Procedure con parámetros y devuelve un mensaje o valor scalar.
+        /// Executes a stored procedure with parameters and returns its scalar result (e.g. "completed").
         /// </summary>
-        /// <param name="storedProcedureName">Nombre del SP</param>
-        /// <param name="parameters">Diccionario con nombre de parámetro y valor</param>
-        /// <returns>Valor scalar devuelto por el SP (por ejemplo, 'completed')</returns>
         public async Task<string> ExecuteStoredProcedureScalarAsync(string storedProcedureName, Dictionary<string, object>? parameters = null)
         {
             using var conn = new SqlConnection(_connectionString);
@@ -128,18 +129,16 @@ namespace RH_CM.Service.SQLSMS
 
             await conn.OpenAsync();
 
-            // ExecuteScalarAsync devuelve el primer valor de la primera fila
+            // ExecuteScalarAsync returns the first value of the first row
             var result = await cmd.ExecuteScalarAsync();
 
-            // Convertir a string (o null si no devuelve nada)
-            return result?.ToString();
+            // Convert to string (or null if nothing is returned)
+            return result?.ToString() ?? string.Empty;
         }
 
         /// <summary>
-        /// Ejecuta un query que devuelve un solo valor VARBINARY y lo retorna como byte[].
+        /// Runs a single-row, single-column SQL query and returns the VARBINARY value as a byte array, or null if there's no result.
         /// </summary>
-        /// <param name="sql">Consulta SQL que devuelve una sola columna y una sola fila.</param>
-        /// <returns>Valor como byte[], o null si no hay resultados.</returns>
         public async Task<byte[]> QuerySingleBinaryAsync(string sql)
         {
             using var conn = new SqlConnection(_connectionString);
@@ -148,7 +147,7 @@ namespace RH_CM.Service.SQLSMS
 
             var result = await cmd.ExecuteScalarAsync();
             if (result == DBNull.Value || result == null)
-                return null;
+                return Array.Empty<byte>();
 
             return (byte[])result;
         }
@@ -204,13 +203,8 @@ namespace RH_CM.Service.SQLSMS
         //}
 
         /// <summary>
-        /// Ejecuta un Stored Procedure y devuelve una lista de objetos del tipo T.
-        /// Las columnas del resultado deben coincidir con los nombres de las propiedades de T.
+        /// Executes a stored procedure and maps each result row to <typeparamref name="T"/> by matching column and property names.
         /// </summary>
-        /// <typeparam name="T">Clase destino</typeparam>
-        /// <param name="storedProcedureName">Nombre del Stored Procedure</param>
-        /// <param name="parameters">Diccionario con parámetros</param>
-        /// <returns>Lista de objetos del tipo T</returns>
         public async Task<List<T>> ExecuteStoredProcedureToListAsync<T>(
             string storedProcedureName,
             Dictionary<string, object>? parameters = null) where T : new()
@@ -248,15 +242,15 @@ namespace RH_CM.Service.SQLSMS
 
                     try
                     {
-                        // Conversión automática de tipos
+                        // Automatic type conversion
                         var safeValue = Convert.ChangeType(value, targetType);
                         prop.SetValue(obj, safeValue);
                     }
                     catch
                     {
-                        // Si no se puede convertir, se deja valor por defecto
-                        // Aquí podrías loggear si quieres saber cuál falló
-                        // Console.WriteLine($"No se pudo mapear {prop.Name} con valor {value}");
+                        // If it can't be converted, the default value is left in place
+                        // You could log here if you want to know which one failed
+                        // Console.WriteLine($"Could not map {prop.Name} with value {value}");
                     }
                 }
 
@@ -271,7 +265,7 @@ namespace RH_CM.Service.SQLSMS
 
 
 
-    // Extensión para verificar si la columna existe
+    // Extension to check whether the column exists
     public static class SqlDataReaderExtensions
     {
         public static bool HasColumn(this SqlDataReader reader, string columnName)

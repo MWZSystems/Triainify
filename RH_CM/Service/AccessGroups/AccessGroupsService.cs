@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using RH_CM.Service.DTOs;
 using RH_CM.Service.SQLSMS;
+using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
 
@@ -60,10 +61,10 @@ namespace RH_CM.Service.AccessGroups
             _unitOfWork = unitOfWork;
         }
 
-        private ClaimsPrincipal UserPrincipal => _httpContextAccessor.HttpContext?.User;
+        private ClaimsPrincipal? UserPrincipal => _httpContextAccessor.HttpContext?.User;
 
 
-        public async Task<IdentityUser> GetCurrentUserAsync()
+        public async Task<IdentityUser?> GetCurrentUserAsync()
         {
             return await _userManager.GetUserAsync(UserPrincipal);
         }
@@ -71,6 +72,10 @@ namespace RH_CM.Service.AccessGroups
         public async Task<IList<string>> GetUserRolesAsync()
         {
             var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return Array.Empty<string>();
+            }
             return await _userManager.GetRolesAsync(user);
         }
 
@@ -79,7 +84,18 @@ namespace RH_CM.Service.AccessGroups
         public async Task<GroupsAccessDTOs> GetMenusToShow()
         {
             var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                // Not authenticated (or the user record was deleted) — no menus to show.
+                return new GroupsAccessDTOs();
+            }
+
             var roles = await _userManager.GetRolesAsync(user);
+            if (roles == null || roles.Count == 0)
+            {
+                // User has no role assigned — no menus to show instead of crashing on roles[0].
+                return new GroupsAccessDTOs();
+            }
 
             var parameters = new Dictionary<string, object>
             {
@@ -88,7 +104,8 @@ namespace RH_CM.Service.AccessGroups
 
             List<GroupsAccessDTOs> result = await _unitOfWork.ExecuteStoredProcedureToListAsync<GroupsAccessDTOs>("[sp_AcessGroupService_GetAccess]", parameters);
 
-            GroupsAccessDTOs groupsAccess = result[0];
+            // The role might not have a matching row in the access-groups table.
+            GroupsAccessDTOs groupsAccess = result.FirstOrDefault() ?? new GroupsAccessDTOs();
 
             if (groupsAccess.OnBoarding == true ||
                 groupsAccess.Offboarding == true ||

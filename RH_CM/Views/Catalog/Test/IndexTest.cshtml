@@ -1,0 +1,127 @@
+﻿@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Tests";
+    ViewData["BodyClass"] = "page-tests";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <partial name="_PageHeader" model="@(new RH_CM.ViewModels.PageHeaderViewModel
+        {
+            Title = "Tests",
+            IconClass = "fa-clipboard-list",
+            HelpBullets = new List<string>
+            {
+                "The diagnostic/exam question bank for each course and level.",
+                "Click \"Create New Test\" to write questions and options for a course/level that doesn't have one yet.",
+                "A test that has already been answered by users can't be edited or deleted — disable it and create a new one instead."
+            }
+        })" />
+    </div>
+    <div class="col-auto">
+        <a class="btn btn-facebook" asp-action="CreateQuestions" title="Create New Test">
+            <i class="fas fa-plus-square"></i> CREATE NEW TEST
+        </a>
+    </div>
+</div>
+
+<!-- Loader -->
+<div id="loader" class="text-center my-5">
+    <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<!-- Table container -->
+<div id="tableContainer" style="display:none;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
+                            <thead class="table-accent">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Test Name</th>
+                                    <th>Course</th>
+                                    <th>Level</th>
+                                    <th data-orderable="false">Actions</th>
+                                    @* <th>Created</th> *@
+                                    @* <th>Actions</th> *@
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.Test.PkTest</td>
+                                        <td>@item.Test.TestName</td>
+                                        <td>@item.CourseName</td>
+                                        <td>@item.LevelDescription</td>
+                                        @* <td>@(item.Test.Available == 1 ? "Enabled" : "Disabled")</td> *@
+                                        @* <td>@item.Test.Createdate.ToString("dd/MM/yyyy")</td> *@
+                                        <td>
+
+                                            <form asp-action="ToggleTest" asp-route-id="@item.Test.PkTest" method="post" style="display:inline;">
+                                                <button type="submit"
+                                                        onclick="return confirm('Are you sure you want to toggle availability of this Test?')"
+                                                        class="btn @(item.Test.Available == 1 ? "btn-success" : "btn-secondary")"
+                                                        title="Toggle availability">
+                                                    <i class="fas @(item.Test.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
+                                                </button>
+                                            </form>
+
+                                            <a class="btn btn-warning" asp-action="EditTest" asp-route-id="@item.Test.PkTest" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            
+                                            <a class="btn btn-info" asp-action="EditQuestions" asp-route-id="@item.Test.PkTest" title="Edit questions">
+                                                <i class="fas fa-tasks"></i> 
+                                            </a>
+
+                                            <form asp-action="DeleteTest" asp-route-id="@item.Test.PkTest" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this test and all its questions and options?');">
+                                                <button type="submit" class="btn btn-danger" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p>No tests found.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        $(document).ready(function () {
+            $('#tableContainer').hide();
+            $('#loader').show();
+
+            $('#datatables-responsive').DataTable({
+                responsive: true,
+                order: [],
+                initComplete: function () {
+                    $('#loader').fadeOut(200, function () {
+                        $('#tableContainer').fadeIn(200);
+                    });
+                }
+            });
+
+});
+    </script>
+}

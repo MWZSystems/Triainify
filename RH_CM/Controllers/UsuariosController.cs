@@ -8,6 +8,7 @@ using RH_CM.Models;
 using System.Security.Claims;
 using RH_CM.Claims;
 using static RH_CM.ViewModels.ClaimsUsuarioViewModel;
+using RH_CM.Messages.Identity;
 
 
 namespace RH_CM.Controllers
@@ -26,9 +27,9 @@ namespace RH_CM.Controllers
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Index()
         {
-            var usuarios = await _contexto.AppUsuario.ToListAsync();
-            var rolesUsuario = await _contexto.UserRoles.ToListAsync();
-            var roles = await _contexto.Roles.ToListAsync();
+            var usuarios = await _contexto.AppUsuario.AsNoTracking().ToListAsync();
+            var rolesUsuario = await _contexto.UserRoles.AsNoTracking().ToListAsync();
+            var roles = await _contexto.Roles.AsNoTracking().ToListAsync();
             foreach (var usuario in usuarios)
             {
                 var rol = rolesUsuario.FirstOrDefault(u => u.UserId == usuario.Id);
@@ -72,14 +73,14 @@ namespace RH_CM.Controllers
         {
             if (string.IsNullOrWhiteSpace(id))
             {
-                TempData["Error"] = "Invalid request: user id is required.";
+                TempData["ErrorMessage"] = UsuariosMessages.InvalidRequestUserIdIsRequired;
                 return RedirectToAction(nameof(Index));
             }
 
             var usuario = await GetUserWithRoleAsync(id);
             if (usuario == null)
             {
-                TempData["Error"] = "User not found.";
+                TempData["ErrorMessage"] = UsuariosMessages.UserNotFound;
                 return RedirectToAction(nameof(Index));
             }
 
@@ -110,58 +111,58 @@ namespace RH_CM.Controllers
         {
             if (!ModelState.IsValid)
             {
-                TempData["Error"] = "Invalid request: please review the submitted data.";
+                TempData["ErrorMessage"] = UsuariosMessages.InvalidRequestPleaseReviewTheSubmittedData;
                 return RedirectToAction(nameof(Crear));
             }
 
             if (usuario == null)
             {
-                TempData["Error"] = "Invalid request: user data is empty.";
+                TempData["ErrorMessage"] = UsuariosMessages.InvalidRequestUserDataIsEmpty;
                 return RedirectToAction(nameof(Crear));
             }
 
             if (string.IsNullOrWhiteSpace(usuario.UserName))
             {
-                TempData["Error"] = "Username is required.";
+                TempData["ErrorMessage"] = UsuariosMessages.UsernameIsRequired;
                 return RedirectToAction(nameof(Crear));
             }
 
             if (string.IsNullOrWhiteSpace(usuario.Email))
             {
-                TempData["Error"] = "Email is required.";
+                TempData["ErrorMessage"] = UsuariosMessages.EmailIsRequired;
                 return RedirectToAction(nameof(Crear));
             }
 
             if (string.IsNullOrWhiteSpace(usuario.Names) || string.IsNullOrWhiteSpace(usuario.LastName))
             {
-                TempData["Error"] = "First name and last name are required.";
+                TempData["ErrorMessage"] = UsuariosMessages.FirstNameAndLastNameAreRequired;
                 return RedirectToAction(nameof(Crear));
             }
 
             if (string.IsNullOrWhiteSpace(usuario.IdRol))
             {
-                TempData["Error"] = "You must select a role to continue.";
+                TempData["ErrorMessage"] = UsuariosMessages.YouMustSelectARoleToContinue;
                 return RedirectToAction(nameof(Crear));
             }
 
             var rol = await _contexto.Roles.FirstOrDefaultAsync(r => r.Id == usuario.IdRol);
             if (rol == null)
             {
-                TempData["Error"] = "The selected role does not exist.";
+                TempData["ErrorMessage"] = UsuariosMessages.SelectedRoleDoesNotExist;
                 return RedirectToAction(nameof(Crear));
             }
 
             var existeUserName = await _userManager.FindByNameAsync(usuario.UserName);
             if (existeUserName != null)
             {
-                TempData["Error"] = "This username already exists. Please choose another one.";
+                TempData["ErrorMessage"] = UsuariosMessages.UsernameAlreadyExistsPleaseChooseAnotherOne;
                 return RedirectToAction(nameof(Crear));
             }
 
             var existeEmail = await _userManager.FindByEmailAsync(usuario.Email);
             if (existeEmail != null)
             {
-                TempData["Error"] = "This email is already in use.";
+                TempData["ErrorMessage"] = UsuariosMessages.EmailIsAlreadyInUse;
                 return RedirectToAction(nameof(Crear));
             }
 
@@ -180,7 +181,7 @@ namespace RH_CM.Controllers
             if (!createResult.Succeeded)
             {
                 var errores = string.Join(" | ", createResult.Errors.Select(e => e.Description));
-                TempData["Error"] = $"Could not create the user: {errores}";
+                TempData["ErrorMessage"] = string.Format(UsuariosMessages.CouldNotCreateTheUserFormat, errores);
                 return RedirectToAction(nameof(Crear));
             }
 
@@ -189,13 +190,13 @@ namespace RH_CM.Controllers
             {
                 await _userManager.DeleteAsync(nuevoUsuario);
                 var errores = string.Join(" | ", addRoleResult.Errors.Select(e => e.Description));
-                TempData["Error"] = $"Could not assign the selected role: {errores}";
+                TempData["ErrorMessage"] = string.Format(UsuariosMessages.CouldNotAssignTheSelectedRoleFormat, errores);
                 return RedirectToAction(nameof(Crear));
             }
 
             await _contexto.SaveChangesAsync();
 
-            TempData["Correcto"] = "User created and role assigned successfully.";
+            TempData["SuccessMessage"] = UsuariosMessages.UserCreatedAndRoleAssignedSuccessfully;
             return RedirectToAction(nameof(Index));
         }
 
@@ -205,14 +206,14 @@ namespace RH_CM.Controllers
         {
             if (string.IsNullOrWhiteSpace(id))
             {
-                TempData["Error"] = "Invalid request: user id is required.";
+                TempData["ErrorMessage"] = UsuariosMessages.InvalidRequestUserIdIsRequired;
                 return RedirectToAction(nameof(Index));
             }
 
             var usuarioBD = await _contexto.AppUsuario.FirstOrDefaultAsync(u => u.Id == id);
             if (usuarioBD == null)
             {
-                TempData["Error"] = "User not found.";
+                TempData["ErrorMessage"] = UsuariosMessages.UserNotFound;
                 return RedirectToAction(nameof(Index));
             }
 
@@ -244,33 +245,33 @@ namespace RH_CM.Controllers
         {
             if (!ModelState.IsValid)
             {
-                TempData["Error"] = "Invalid request: please review the submitted data.";
+                TempData["ErrorMessage"] = UsuariosMessages.InvalidRequestPleaseReviewTheSubmittedData;
                 return RedirectToAction(nameof(Editar), new { id = usuario?.Id });
             }
 
             if (usuario == null || string.IsNullOrWhiteSpace(usuario.Id))
             {
-                TempData["Error"] = "Invalid request: incomplete user data.";
+                TempData["ErrorMessage"] = UsuariosMessages.InvalidRequestIncompleteUserData;
                 return RedirectToAction(nameof(Index));
             }
 
             if (string.IsNullOrWhiteSpace(usuario.IdRol))
             {
-                TempData["Error"] = "You must select a role to continue.";
+                TempData["ErrorMessage"] = UsuariosMessages.YouMustSelectARoleToContinue;
                 return RedirectToAction(nameof(Editar), new { id = usuario.Id });
             }
 
             var usuarioBD = await _contexto.AppUsuario.FirstOrDefaultAsync(u => u.Id == usuario.Id);
             if (usuarioBD == null)
             {
-                TempData["Error"] = "User not found.";
+                TempData["ErrorMessage"] = UsuariosMessages.UserNotFound;
                 return RedirectToAction(nameof(Index));
             }
 
             var nuevoRol = await _contexto.Roles.FirstOrDefaultAsync(r => r.Id == usuario.IdRol);
             if (nuevoRol == null)
             {
-                TempData["Error"] = "The selected role does not exist.";
+                TempData["ErrorMessage"] = UsuariosMessages.SelectedRoleDoesNotExist;
                 return RedirectToAction(nameof(Editar), new { id = usuario.Id });
             }
 
@@ -290,7 +291,7 @@ namespace RH_CM.Controllers
                         if (!removeResult.Succeeded)
                         {
                             var errores = string.Join(" | ", removeResult.Errors.Select(e => e.Description));
-                            TempData["Error"] = $"Could not remove the current role: {errores}";
+                            TempData["ErrorMessage"] = string.Format(UsuariosMessages.CouldNotRemoveTheCurrentRoleFormat, errores);
                             return RedirectToAction(nameof(Editar), new { id = usuario.Id });
                         }
                     }
@@ -300,17 +301,17 @@ namespace RH_CM.Controllers
                 if (!addResult.Succeeded)
                 {
                     var errores = string.Join(" | ", addResult.Errors.Select(e => e.Description));
-                    TempData["Error"] = $"Could not assign the new role: {errores}";
+                    TempData["ErrorMessage"] = string.Format(UsuariosMessages.CouldNotAssignTheNewRoleFormat, errores);
                     return RedirectToAction(nameof(Editar), new { id = usuario.Id });
                 }
 
                 await _contexto.SaveChangesAsync();
-                TempData["Correcto"] = "Changes saved successfully.";
+                TempData["SuccessMessage"] = UsuariosMessages.ChangesSavedSuccessfully;
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                TempData["Error"] = $"An error occurred while saving changes: {ex.Message}";
+                TempData["ErrorMessage"] = string.Format(UsuariosMessages.ErrorOccurredWhileSavingChangesFormat, ex.Message);
                 return RedirectToAction(nameof(Editar), new { id = usuario.Id });
             }
         }
@@ -322,7 +323,7 @@ namespace RH_CM.Controllers
         {
             if (string.IsNullOrWhiteSpace(idUsuario))
             {
-                TempData["Error"] = "Invalid request: user id is required.";
+                TempData["ErrorMessage"] = UsuariosMessages.InvalidRequestUserIdIsRequired;
                 return RedirectToAction(nameof(Index));
             }
 
@@ -335,12 +336,12 @@ namespace RH_CM.Controllers
             if (usuariBD.LockoutEnd != null && usuariBD.LockoutEnd > DateTime.Now)
             {
                 usuariBD.LockoutEnd = DateTime.Now;
-                TempData["Correcto"] = "User unlocked successfully.";
+                TempData["SuccessMessage"] = UsuariosMessages.UserUnlockedSuccessfully;
             }
             else
             {
                 usuariBD.LockoutEnd = DateTime.Now.AddYears(100);
-                TempData["Error"] = "User locked successfully.";
+                TempData["SuccessMessage"] = UsuariosMessages.UserLockedSuccessfully;
             }
 
             await _contexto.SaveChangesAsync();
@@ -354,7 +355,7 @@ namespace RH_CM.Controllers
         {
             if (string.IsNullOrWhiteSpace(idUsuario))
             {
-                TempData["Error"] = "Invalid request: user id is required.";
+                TempData["ErrorMessage"] = UsuariosMessages.InvalidRequestUserIdIsRequired;
                 return RedirectToAction(nameof(Index));
             }
 
@@ -366,7 +367,7 @@ namespace RH_CM.Controllers
 
             _contexto.AppUsuario.Remove(usuariBD);
             await _contexto.SaveChangesAsync();
-            TempData["Correcto"] = "User deleted successfully.";
+            TempData["SuccessMessage"] = UsuariosMessages.UserDeletedSuccessfully;
             return RedirectToAction(nameof(Index));
         }
 
@@ -479,7 +480,7 @@ namespace RH_CM.Controllers
             {
                 return View(cuViewModel);
             }
-            TempData["Correcto"] = "Changes saved successfully.";
+            TempData["SuccessMessage"] = UsuariosMessages.ChangesSavedSuccessfully;
             return RedirectToAction(nameof(Index));
         }
 
@@ -490,7 +491,7 @@ namespace RH_CM.Controllers
         {
             if (string.IsNullOrWhiteSpace(idUsuario))
             {
-                TempData["Error"] = "Invalid request: user id is required.";
+                TempData["ErrorMessage"] = UsuariosMessages.InvalidRequestUserIdIsRequired;
                 return RedirectToAction(nameof(Index));
             }
 
@@ -506,11 +507,11 @@ namespace RH_CM.Controllers
 
             if (usuarioBD.Available == 1)
             {
-                TempData["Correcto"] = "User marked as available.";
+                TempData["SuccessMessage"] = UsuariosMessages.UserMarkedAsAvailable;
             }
             else
             {
-                TempData["Correcto"] = "User marked as unavailable.";
+                TempData["SuccessMessage"] = UsuariosMessages.UserMarkedAsUnavailable;
             }
 
             return RedirectToAction(nameof(Index));

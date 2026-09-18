@@ -58,9 +58,9 @@
                         <span asp-validation-for="IdRol" class="text-danger"></span>
                     </div>
 
-                    @* 
-                       Si vas a crear con contraseña, descomenta este bloque y añade los campos
-                       correspondientes en tu ViewModel o usa un modelo auxiliar.
+                    @*
+                       If you're going to create with a password, uncomment this block and add the
+                       corresponding fields to your ViewModel or use an auxiliary model.
                     <div class="row mt-3">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Password</label>
@@ -76,10 +76,10 @@
                     <!-- Actions -->
                     <div class="col-12 text-end">
                         <a asp-action="Index" class="btn btn-secondary"
-                           onclick="return confirm('Are you sure you want to cancel without saving changes?')">
+                           onclick="return confirm('Are you sure you want to cancel without saving changes?')" title="Cancel">
                             <i class="align-middle fas fa-arrow-left"></i> Cancel
                         </a>
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary" title="Save">
                             <i class="align-middle fas fa-save"></i> Save
                         </button>
                     </div>
@@ -92,33 +92,4 @@
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Lee ambos esquemas de TempData por compatibilidad
-            var ok = "@(TempData["SuccessMessage"] ?? TempData["Correcto"])";
-            var err = "@(TempData["ErrorMessage"] ?? TempData["Error"])";
-
-            if (ok && ok !== "") {
-                window.notyf.open({
-                    type: 'success',
-                    message: ok,
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-
-            if (err && err !== "") {
-                window.notyf.open({
-                    type: 'error',
-                    message: err,
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-        });
-    </script>
 }

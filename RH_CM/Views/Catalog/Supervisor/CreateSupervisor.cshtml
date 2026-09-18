@@ -1,0 +1,89 @@
+﻿@model RH_CM.Models.CtSupervisor
+
+@{
+    ViewData["Title"] = "Create Supervisor";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">CREATE SUPERVISOR</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Create New Supervisor by Position</h5>
+                <h6 class="card-subtitle text-muted">Fill in the fields below. Fields marked with an asterisk (*) are required.</h6>
+                <h6 class="card-subtitle text-muted">You need to add the employee to the headcount first</h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="CreateSupervisor" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="row">
+                        <!-- Headcount -->
+                        <div class="mb-3 col-md-6">
+                            <label asp-for="FkHeadcount" class="form-label">Headcount <span class="text-danger">*</span></label>
+                            <select asp-for="FkHeadcount" class="form-control select2" data-placeholder="-- Select Headcount --">
+                                <option></option>
+                                @foreach (var h in ViewBag.Headcount)
+                                {
+                                    <option value="@h.PkHeadcount">(@h.ControlNumber) @h.Names @h.LastName</option>
+                                }
+                            </select>
+                            <span asp-validation-for="FkHeadcount" class="text-danger"></span>
+                        </div>
+
+                        <!-- Department -->
+                        <div class="mb-3 col-md-6">
+                            <label asp-for="FkDepartment" class="form-label">Department <span class="text-danger">*</span></label>
+                            <select asp-for="FkDepartment" class="form-control select2" data-placeholder="-- Select Department --" asp-items="@(new SelectList(ViewBag.Departments, "PkDepartment", "NameDeparment"))">
+                                <option></option>
+                            </select>
+                            <span asp-validation-for="FkDepartment" class="text-danger"></span>
+                        </div>
+
+                        <!-- Position -->
+                        <div class="mb-3 col-md-6">
+                            <label asp-for="FkPosition" class="form-label">Position <span class="text-danger">*</span></label>
+                            <select asp-for="FkPosition" class="form-control select2" data-placeholder="-- Select Position --" asp-items="@(new SelectList(ViewBag.Positions, "PkPosition", "NamePosition"))">
+                                <option></option>
+                            </select>
+                            <span asp-validation-for="FkPosition" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Submit and Cancel Buttons -->
+                    <div class="row">
+                        <div class="col-12 text-end">
+                            <a asp-action="IndexSupervisor" class="btn btn-secondary" title="Cancel">
+                                <i class="fas fa-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary" title="Create">
+                                <i class="align-middle fas fa-plus-square"></i> CREATE
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        $(document).ready(function () {
+// Initialize Select2
+            $(".select2").select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
+}

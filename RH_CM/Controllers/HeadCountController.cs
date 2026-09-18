@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using RH_CM.Data;
 using RH_CM.Models;
 using RH_CM.ViewModels;
+using RH_CM.Messages.HeadCount;
 
 namespace RH_CM.Controllers
 {
@@ -25,10 +26,11 @@ namespace RH_CM.Controllers
         [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> Index()
         {
-            var departments = await _context.CtDepartments.ToListAsync();
-            var positions = await _context.CtPositions.ToListAsync();
+            var departments = await _context.CtDepartments.AsNoTracking().ToListAsync();
+            var positions = await _context.CtPositions.AsNoTracking().ToListAsync();
             var syHeadCounts = await _context.SyHeadcounts
-                .Where(hc => hc.Available == 1) 
+                .AsNoTracking()
+                .Where(hc => hc.Available == 1)
                 .ToListAsync();
 
             var headCountAges = syHeadCounts.ToDictionary(
@@ -41,7 +43,7 @@ namespace RH_CM.Controllers
                 Departments = departments,
                 Positions = positions,
                 SyHeadCount = syHeadCounts,
-                HeadCountAges = headCountAges 
+                HeadCountAges = headCountAges
             };
 
             return View(model);
@@ -58,12 +60,12 @@ namespace RH_CM.Controllers
         [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> ExportHeadCountToExcel()
         {
-            var departments = await _context.CtDepartments.ToListAsync();
-            var positions = await _context.CtPositions.ToListAsync();
+            var departments = await _context.CtDepartments.AsNoTracking().ToListAsync();
+            var positions = await _context.CtPositions.AsNoTracking().ToListAsync();
             var syHeadCounts = await _context.SyHeadcounts
                                 .Where(h => h.Available == 1)
                                 .ToListAsync();
-            var supervisors = await _context.CtSupervisors.ToListAsync();
+            var supervisors = await _context.CtSupervisors.AsNoTracking().ToListAsync();
 
             var headCountAges = syHeadCounts.ToDictionary(
                 hc => hc.PkHeadcount,
@@ -182,10 +184,11 @@ namespace RH_CM.Controllers
         [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> HeadCountUnavailable()
         {
-            var departments = await _context.CtDepartments.ToListAsync();
-            var positions = await _context.CtPositions.ToListAsync();
+            var departments = await _context.CtDepartments.AsNoTracking().ToListAsync();
+            var positions = await _context.CtPositions.AsNoTracking().ToListAsync();
             var syHeadCounts = await _context.SyHeadcounts
-                .Where(hc => hc.Available == 0) 
+                .AsNoTracking()
+                .Where(hc => hc.Available == 0)
                 .ToListAsync();
 
             var headCountAges = syHeadCounts.ToDictionary(
@@ -198,18 +201,19 @@ namespace RH_CM.Controllers
                 Departments = departments,
                 Positions = positions,
                 SyHeadCount = syHeadCounts,
-                HeadCountAges = headCountAges 
+                HeadCountAges = headCountAges
             };
 
             return View(model);
         }
 
-        [Authorize(Policy = "ViewAccess")] 
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> IndexHeadCount()
         {
-            var departments = await _context.CtDepartments.ToListAsync();
-            var positions = await _context.CtPositions.ToListAsync();
+            var departments = await _context.CtDepartments.AsNoTracking().ToListAsync();
+            var positions = await _context.CtPositions.AsNoTracking().ToListAsync();
             var syHeadCounts = await _context.SyHeadcounts
+                .AsNoTracking()
                 .Where(h => h.Available == 1)
                 .ToListAsync();
 
@@ -224,12 +228,13 @@ namespace RH_CM.Controllers
         }
 
 
-        [Authorize(Policy = "ViewAccess")] 
+        [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> IndexOFFBoarding()
         {
-            var departments = await _context.CtDepartments.ToListAsync();
-            var positions = await _context.CtPositions.ToListAsync();
+            var departments = await _context.CtDepartments.AsNoTracking().ToListAsync();
+            var positions = await _context.CtPositions.AsNoTracking().ToListAsync();
             var syHeadCounts = await _context.SyHeadcounts
+                .AsNoTracking()
                 .Where(h => h.Available == 0)
                 .ToListAsync();
 
@@ -245,12 +250,12 @@ namespace RH_CM.Controllers
 
         private async Task<CreateHeadCountViewModel> InitializeCreateHeadCountAsync()
         {
-            var departments = await _context.CtDepartments.ToListAsync();
-            var positions = await _context.CtPositions.ToListAsync();
+            var departments = await _context.CtDepartments.AsNoTracking().ToListAsync();
+            var positions = await _context.CtPositions.AsNoTracking().ToListAsync();
 
             var supervisors = await (
-                from s in _context.CtSupervisors
-                join h in _context.SyHeadcounts
+                from s in _context.CtSupervisors.AsNoTracking()
+                join h in _context.SyHeadcounts.AsNoTracking()
                     on s.FkHeadcount equals h.PkHeadcount
                 where s.Available == 1 && h.Available == 1
                 select new SupervisorDisplayViewModel
@@ -288,11 +293,11 @@ namespace RH_CM.Controllers
         {
             async Task ReloadViewDataAsync()
             {
-                model.Departments = await _context.CtDepartments.ToListAsync();
-                model.Position = await _context.CtPositions.ToListAsync();
+                model.Departments = await _context.CtDepartments.AsNoTracking().ToListAsync();
+                model.Position = await _context.CtPositions.AsNoTracking().ToListAsync();
                 model.Supervisors = await (
-                    from s in _context.CtSupervisors
-                    join h in _context.SyHeadcounts
+                    from s in _context.CtSupervisors.AsNoTracking()
+                    join h in _context.SyHeadcounts.AsNoTracking()
                         on s.FkHeadcount equals h.PkHeadcount
                     where s.Available == 1 && h.Available == 1
                     select new SupervisorDisplayViewModel
@@ -382,22 +387,22 @@ namespace RH_CM.Controllers
                     Ntuser = model.Ntuser
                 };
 
-                var resultado = await _userManager.CreateAsync(usuario, "Temp12345!"); 
+                var resultado = await _userManager.CreateAsync(usuario, "Temp12345!");
 
                 if (resultado.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(usuario, "Empleado");
 
-                    TempData["SuccessMessage"] = "Head count created successfully.";
+                    TempData["SuccessMessage"] = HeadCountMessages.HeadCountCreatedSuccessfully;
                     return RedirectToAction(nameof(IndexHeadCount));
                 }
 
-                TempData["ErrorMessage"] = "HeadCount Added, but user could not be created.";
+                TempData["ErrorMessage"] = HeadCountMessages.HeadCountAddedButUserCouldNotBe;
                 return RedirectToAction(nameof(IndexHeadCount));
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"An error occurred while creating the head count: {ex.Message}";
+                TempData["ErrorMessage"] = string.Format(HeadCountMessages.ErrorOccurredWhileCreatingTheHeadCountFormat, ex.Message);
                 await ReloadViewDataAsync();
                 return View(model);
             }
@@ -434,11 +439,11 @@ namespace RH_CM.Controllers
                 FkPosition = headCount.FkPosition,
                 ZipCodesat = headCount.ZipCodesat,
                 FkSupervisorId = headCount.FkSupervisorId,
-                Departments = await _context.CtDepartments.ToListAsync(),
-                Position = await _context.CtPositions.ToListAsync(),
+                Departments = await _context.CtDepartments.AsNoTracking().ToListAsync(),
+                Position = await _context.CtPositions.AsNoTracking().ToListAsync(),
                 Supervisors = await (
-                    from supervisor in _context.CtSupervisors
-                    join sHead in _context.SyHeadcounts
+                    from supervisor in _context.CtSupervisors.AsNoTracking()
+                    join sHead in _context.SyHeadcounts.AsNoTracking()
                         on supervisor.FkHeadcount equals sHead.PkHeadcount
                     where supervisor.Available == 1 && sHead.Available == 1
                     select new SupervisorDisplayViewModel
@@ -458,40 +463,44 @@ namespace RH_CM.Controllers
         [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> EditHeadCount(int id)
         {
-            if (!ModelState.IsValid || id <= 0)
-            {
-                return NotFound();
-            }
-
-            var headCount = await _context.SyHeadcounts.FindAsync(id);
-            if (headCount == null)
-            {
-                return NotFound();
-            }
-
-            var viewModel = await BuildHeadCountViewModelAsync(headCount);
-
-            return View(viewModel);
+            return await ShowHeadCountViewAsync(id, nameof(EditHeadCount));
         }
 
         [HttpGet]
         [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> DetailHeadCount(int id)
         {
+            return await ShowHeadCountViewAsync(id, nameof(DetailHeadCount));
+        }
+
+        private async Task<IActionResult> ShowHeadCountViewAsync(int id, string viewName)
+        {
             if (!ModelState.IsValid || id <= 0)
             {
                 return NotFound();
             }
 
-            var headCount = await _context.SyHeadcounts.FindAsync(id);
-            if (headCount == null)
+            var viewModel = await LoadHeadCountViewModelAsync(id);
+            if (viewModel == null)
             {
                 return NotFound();
             }
 
-            var viewModel = await BuildHeadCountViewModelAsync(headCount);
+            return View(viewName, viewModel);
+        }
 
-            return View(viewModel);
+        /// <summary>
+        /// Loads the headcount and builds its view model, shared by EditHeadCount and DetailHeadCount.
+        /// </summary>
+        private async Task<EditHeadCountViewModel?> LoadHeadCountViewModelAsync(int id)
+        {
+            var headCount = await _context.SyHeadcounts.FindAsync(id);
+            if (headCount == null)
+            {
+                return null;
+            }
+
+            return await BuildHeadCountViewModelAsync(headCount);
         }
 
         [HttpPost]
@@ -501,11 +510,11 @@ namespace RH_CM.Controllers
         {
             async Task ReloadViewDataAsync()
             {
-                viewModel.Departments = await _context.CtDepartments.ToListAsync();
-                viewModel.Position = await _context.CtPositions.ToListAsync();
+                viewModel.Departments = await _context.CtDepartments.AsNoTracking().ToListAsync();
+                viewModel.Position = await _context.CtPositions.AsNoTracking().ToListAsync();
                 viewModel.Supervisors = await (
-                    from supervisor in _context.CtSupervisors
-                    join sHead in _context.SyHeadcounts
+                    from supervisor in _context.CtSupervisors.AsNoTracking()
+                    join sHead in _context.SyHeadcounts.AsNoTracking()
                         on supervisor.FkHeadcount equals sHead.PkHeadcount
                     where supervisor.Available == 1 && sHead.Available == 1
                     select new SupervisorDisplayViewModel
@@ -532,7 +541,7 @@ namespace RH_CM.Controllers
                 var headCount = await _context.SyHeadcounts.FindAsync(viewModel.PkHeadcount);
                 if (headCount == null)
                 {
-                    TempData["ErrorMessage"] = "The record was not found.";
+                    TempData["ErrorMessage"] = HeadCountMessages.RecordWasNotFound;
                     return RedirectToAction(nameof(IndexHeadCount));
                 }
 
@@ -580,12 +589,12 @@ namespace RH_CM.Controllers
                 _context.Update(headCount);
                 await _context.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "The record has been successfully updated.";
+                TempData["SuccessMessage"] = HeadCountMessages.RecordHasBeenSuccessfullyUpdated;
                 return RedirectToAction(nameof(IndexHeadCount));
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"An error occurred while updating the head count: {ex.Message}";
+                TempData["ErrorMessage"] = string.Format(HeadCountMessages.ErrorOccurredWhileUpdatingTheHeadCountFormat, ex.Message);
                 await ReloadViewDataAsync();
                 return View(viewModel);
             }
@@ -598,21 +607,40 @@ namespace RH_CM.Controllers
         {
             if (!ModelState.IsValid || id <= 0)
             {
-                TempData["ErrorMessage"] = "Invalid head count identifier.";
+                TempData["ErrorMessage"] = HeadCountMessages.InvalidHeadCountIdentifier;
                 return RedirectToAction(nameof(IndexHeadCount));
             }
 
             var headCount = await _context.SyHeadcounts.FindAsync(id);
             if (headCount != null)
             {
-                _context.SyHeadcounts.Remove(headCount);
-                await _context.SaveChangesAsync();
+                var hasDependencies = await _context.SyCoursemovements.AsNoTracking().AnyAsync(x => x.FkHeadcount == id)
+                    || await _context.SyCoursecompleteds.AsNoTracking().AnyAsync(x => x.FkHeadcount == id)
+                    || await _context.SyUserAnswers.AsNoTracking().AnyAsync(x => x.FkHeadcount == id)
+                    || await _context.SyUserDiagnostics.AsNoTracking().AnyAsync(x => x.FkHeadcount == id)
+                    || await _context.CtSupervisors.AsNoTracking().AnyAsync(x => x.FkHeadcount == id)
+                    || await _context.AspNetUsers.AsNoTracking().AnyAsync(x => x.EmployeeNumber == headCount.ControlNumber.ToString());
 
-                TempData["SuccessMessage"] = "Head count deleted successfully.";
+                if (hasDependencies)
+                {
+                    TempData["ErrorMessage"] = "This employee cannot be deleted because identity or training history references the record. Use Offboarding to disable the employee instead.";
+                    return RedirectToAction(nameof(IndexHeadCount));
+                }
+
+                try
+                {
+                    _context.SyHeadcounts.Remove(headCount);
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = HeadCountMessages.HeadCountDeletedSuccessfully;
+                }
+                catch (DbUpdateException)
+                {
+                    TempData["ErrorMessage"] = "The employee became referenced by another record and was not deleted. Use Offboarding instead.";
+                }
             }
             else
             {
-                TempData["ErrorMessage"] = "Head count not found.";
+                TempData["ErrorMessage"] = HeadCountMessages.HeadCountNotFound;
             }
             return RedirectToAction(nameof(IndexHeadCount));
         }
@@ -624,14 +652,14 @@ namespace RH_CM.Controllers
         {
             if (!ModelState.IsValid || id <= 0)
             {
-                TempData["ErrorMessage"] = "Invalid head count identifier.";
+                TempData["ErrorMessage"] = HeadCountMessages.InvalidHeadCountIdentifier;
                 return RedirectToAction(nameof(IndexHeadCount));
             }
 
             var headCount = await _context.SyHeadcounts.FindAsync(id);
             if (headCount == null)
             {
-                TempData["ErrorMessage"] = "Head count not found.";
+                TempData["ErrorMessage"] = HeadCountMessages.HeadCountNotFound;
                 return RedirectToAction(nameof(IndexHeadCount));
             }
 
@@ -651,11 +679,11 @@ namespace RH_CM.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                TempData["ErrorMessage"] = "Concurrency error while updating the head count.";
+                TempData["ErrorMessage"] = HeadCountMessages.ConcurrencyErrorWhileUpdatingTheHeadCount;
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Unexpected error while updating the head count: {ex.Message}";
+                TempData["ErrorMessage"] = string.Format(HeadCountMessages.UnexpectedErrorWhileUpdatingTheHeadCountFormat, ex.Message);
             }
 
             return RedirectToAction(nameof(IndexHeadCount));

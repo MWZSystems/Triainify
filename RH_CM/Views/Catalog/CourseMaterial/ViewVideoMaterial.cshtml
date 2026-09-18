@@ -1,0 +1,99 @@
+﻿@model RH_CM.Models.CtCoursematerial
+
+@{
+    ViewData["Title"] = "View Video Material";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var assignedCourses = ViewBag.AssignedCourses as IEnumerable<string>
+        ?? Enumerable.Empty<string>();
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">
+            VIEW VIDEO MATERIAL - ID: @Model.PkCoursematerial
+        </h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Video Material Details</h5>
+                <h6 class="card-subtitle text-muted">
+                    The information shown below is read-only.
+                </h6>
+            </div>
+
+            <div class="card-body">
+
+                <div class="mb-3">
+                    <label asp-for="NameMaterial" class="form-label">
+                        Material Name
+                    </label>
+
+                    <input asp-for="NameMaterial"
+                           class="form-control"
+                           readonly />
+                </div>
+
+                <div class="mb-3">
+
+                    <div id="assignedCoursesLabel"
+                         class="form-label fw-semibold">
+                        Assigned Courses
+                    </div>
+
+                    @if (assignedCourses.Any())
+                    {
+                        <div class="form-control bg-light"
+                             role="group"
+                             aria-labelledby="assignedCoursesLabel"
+                             style="min-height:42px;">
+
+                            @foreach (var courseName in assignedCourses)
+                            {
+                                <span class="badge bg-primary me-1 mb-1">
+                                    @courseName
+                                </span>
+                            }
+
+                        </div>
+                    }
+                    else
+                    {
+                        <input id="assignedCourses"
+                               class="form-control"
+                               value="Not Assigned"
+                               aria-labelledby="assignedCoursesLabel"
+                               readonly />
+                    }
+
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="UrlPath" class="form-label">
+                        Video Path
+                    </label>
+
+                    <textarea asp-for="UrlPath"
+                              class="form-control"
+                              rows="3"
+                              readonly></textarea>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-12 text-end">
+                        <a asp-action="IndexCourseMaterial"
+                           class="btn btn-secondary" title="Back">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </a>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -8,9 +8,16 @@
 
 <div class="row">
     <div class="col">
-        <h1 class="h3 mb-3 text-center title-accent">
-            <i class="align-middle fas fa-user-minus"></i> @ViewData["Title"]
-        </h1>
+        <partial name="_PageHeader" model="@(new RH_CM.ViewModels.PageHeaderViewModel
+        {
+            Title = "Offboarding",
+            IconClass = "fa-user-minus",
+            HelpBullets = new List<string>
+            {
+                "Employees who have been offboarded (deactivated) from the headcount catalog.",
+                "To reactivate someone, open their record from \"Headcount Unavailable\" and toggle availability back on."
+            }
+        })" />
     </div>
 </div>
 
@@ -32,7 +39,7 @@
                             <th>Name</th>
                             <th>Department</th>
                             <th>Position</th>
-                            <th>Actions</th>
+                            <th data-orderable="false">Actions</th>
                         </tr>
                         <tr class="filter-row">
                             <th><input class="form-control form-control-sm" placeholder="Control Number" /></th>
@@ -58,7 +65,7 @@
                                           asp-route-id="@item.PkHeadcount"
                                           method="post" class="d-inline"
                                           onsubmit="return confirm('Are you sure you want to toggle the availability of this head count?');">
-                                        <button type="submit" class="btn @(item.Available == 1 ? "btn-success" : "btn-secondary")">
+                                        <button type="submit" class="btn @(item.Available == 1 ? "btn-success" : "btn-secondary")" title="Toggle availability">
                                             <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
                                         </button>
                                     </form>
@@ -110,12 +117,6 @@
                 }
             });
 
-            if ("@TempData["SuccessMessage"]" !== "") {
-                window.notyf?.open?.({ type: 'success', message: "@TempData["SuccessMessage"]", duration: 5000, position: { x: 'center', y: 'top' } });
-            }
-            if ("@TempData["ErrorMessage"]" !== "") {
-                window.notyf?.open?.({ type: 'error', message: "@TempData["ErrorMessage"]", duration: 5000, position: { x: 'center', y: 'top' } });
-            }
-        });
+});
     </script>
 }

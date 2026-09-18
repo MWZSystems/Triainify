@@ -16,7 +16,7 @@
         </h1>
     </div>
     <div class="col-auto d-flex gap-2">
-        <a asp-action="CreateCourseCompleted" class="btn btn-primary">
+        <a asp-action="CreateCourseCompleted" class="btn btn-primary" title="Create New Course Completed">
             <i class="fas fa-plus"></i> CREATE NEW COURSE COMPLETED
         </a>
     </div>
@@ -37,7 +37,7 @@
             @if (Model != null && Model.Any())
             {
                 <table id="tbl-coursecompleted" class="table table-striped table-hover" style="width:100%">
-                    <thead class="table-primary">
+                    <thead class="table-accent">
                         <tr>
                             <th>#</th>
                             <th>Assignment</th>
@@ -47,7 +47,7 @@
                             <th>Control #</th>
                             <th>Created</th>
                             <th>Updated</th>
-                            <th>Actions</th>
+                            <th data-orderable="false">Actions</th>
                         </tr>
                     </thead>
 
@@ -82,7 +82,7 @@
                                     <a asp-action="EditCourseCompleted" asp-route-id="@x.PkCourseCompleted" class="btn btn-warning btn-sm" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    @if (User.Identity.IsAuthenticated && User.IsInRole("Administrador"))
+                                    @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Administrador"))
                                     {
                                         <form asp-action="DeleteCourseCompleted" asp-route-id="@x.PkCourseCompleted" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this course completion?');">
                                             <button type="submit" class="btn btn-danger btn-sm" title="Delete">
@@ -110,7 +110,7 @@
 
     <script>
         $(document).ready(function () {
-            // Ocultar tabla y mostrar loader
+            // Hide the table and show the loader
             $('#tableContainer').hide();
             $('#loader').show();
 
@@ -118,61 +118,42 @@
             // Índices: 0:#, 1:Assignment, 2:Status, 3:Delivery Mode, 4:Employee, 5:Control #, 6:Created, 7:Updated, 8:Actions
             $('#tbl-coursecompleted tfoot th').each(function (i) {
                 switch (i) {
-                    case 1: // Assignment (texto)
-                    case 4: // Employee (texto)
-                    case 5: // Control # (texto)
+                    case 1: // Assignment (text)
+                    case 4: // Employee (text)
+                    case 5: // Control # (text)
                         $(this).html('<input type="text" class="form-control form-control-sm" placeholder="Filter ' + $('thead th').eq(i).text() + '" />');
                         break;
 
-                    case 2: // Status (select dinámico)
+                    case 2: // Status (dynamic select)
                         $(this).html('<select id="statusFilter" class="form-select form-select-sm"><option value="">(All)</option></select>');
                         break;
 
-                    case 3: // Delivery Mode (select dinámico)
+                    case 3: // Delivery Mode (dynamic select)
                         $(this).html('<select id="deliveryFilter" class="form-select form-select-sm"><option value="">(All)</option></select>');
                         break;
 
-                    // Opcional: filtros de fecha con texto libre (puedes reemplazar por datepickers si quieres)
+                    // Optional: free-text date filters (can be swapped for datepickers if needed)
                     case 6: // Created
                     case 7: // Updated
                         $(this).html('<input type="text" class="form-control form-control-sm" placeholder="YYYY-MM-DD" />');
                         break;
 
-                    default: // # y Actions sin filtro
+                    default: // # and Actions, no filter
                         $(this).html('');
                         break;
                 }
             });
 
-            // Inicializar DataTable
+            // Initialize DataTable (English, consistent with the rest of the app)
             var table = $('#tbl-coursecompleted').DataTable({
                 responsive: true,
                 order: [[0, 'desc']],
                 pageLength: 25,
                 lengthMenu: [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]],
-                language: {
-                    "decimal": "",
-                    "emptyTable": "No hay información",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
-                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
-                    "thousands": ",",
-                    "lengthMenu": "Mostrar _MENU_ Entradas",
-                    "loadingRecords": "Cargando...",
-                    "processing": "Procesando...",
-                    "search": "Buscar:",
-                    "zeroRecords": "Sin resultados encontrados",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    }
-                },
                 initComplete: function () {
                     var api = this.api();
 
-                    // 1) Inputs de texto (Assignment, Employee, Control #)
+                    // 1) Text inputs (Assignment, Employee, Control #)
                     [1, 4, 5].forEach(function (colIdx) {
                         $('tfoot th').eq(colIdx).find('input').on('keyup change clear', function () {
                             if (api.column(colIdx).search() !== this.value) {
@@ -181,16 +162,16 @@
                         });
                     });
 
-                    // 2) Filtros de fecha (texto libre, coincide por prefijo YYYY-MM-DD)
+                    // 2) Date filters (free text, matches by YYYY-MM-DD prefix)
                     [6, 7].forEach(function (colIdx) {
                         $('tfoot th').eq(colIdx).find('input').on('keyup change clear', function () {
                             var val = this.value;
-                            // Búsqueda simple por prefijo de fecha "YYYY-MM-DD"
+                            // Simple search by "YYYY-MM-DD" date prefix
                             api.column(colIdx).search(val).draw();
                         });
                     });
 
-                    // 3) Select dinámico para Status (exact match)
+                    // 3) Dynamic select for Status (exact match)
                     var statusColumn = api.column(2);
                     var $statusSelect = $('#statusFilter');
                     var statusValues = [];
@@ -205,7 +186,7 @@
                         statusColumn.search(this.value, true, false).draw();
                     });
 
-                    // 4) Select dinámico para Delivery Mode (exact match)
+                    // 4) Dynamic select for Delivery Mode (exact match)
                     var deliveryColumn = api.column(3);
                     var $deliverySelect = $('#deliveryFilter');
                     var deliveryValues = [];
@@ -220,7 +201,7 @@
                         deliveryColumn.search(this.value, true, false).draw();
                     });
 
-                    // Ocultar loader y mostrar tabla cuando DataTable está listo
+                    // Hide the loader and show the table once DataTable is ready
                     $('#loader').fadeOut(150, function () {
                         $('#tableContainer').fadeIn(150);
                     });
@@ -228,26 +209,6 @@
             });
 
             // Notificaciones
-            if ("@TempData["SuccessMessage"]" !== "") {
-                window.notyf?.open?.({
-                    type: 'success',
-                    message: "@TempData["SuccessMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-            if ("@TempData["ErrorMessage"]" !== "") {
-                window.notyf?.open?.({
-                    type: 'error',
-                    message: "@TempData["ErrorMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-        });
+});
     </script>
 }

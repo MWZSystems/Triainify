@@ -1,0 +1,63 @@
+﻿@model RH_CM.Models.CtPosition
+
+@{
+    ViewData["Title"] = "Create Position";
+}
+
+<h1 class="h3 mb-3 text-center">@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Create Position</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="CreatePosition">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <!-- Row for NamePosition and NamePositionEnglish -->
+                    <div class="row">
+                        <!-- Position Name -->
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NamePosition" class="form-label">Position Name <span class="text-danger">*</span></label>
+                            <input asp-for="NamePosition" class="form-control" />
+                            <span asp-validation-for="NamePosition" class="text-danger"></span>
+                        </div>
+
+                        <!-- Position Name (English) -->
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NamePositionEnglish" class="form-label">Position Name (English) <span class="text-danger">*</span></label>
+                            <input asp-for="NamePositionEnglish" class="form-control" />
+                            <span asp-validation-for="NamePositionEnglish" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="col-12 text-end">
+                        <a asp-action="IndexPosition" class="btn btn-secondary" onclick="return confirm('Are you sure you want to cancel without saving changes?')" title="Cancel">
+                            <i class="align-middle fas fa-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary" title="Create">
+                            <i class="align-middle fas fa-plus-square"></i> Create
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+// Initialize Select2
+        $(".select2").each(function () {
+            $(this)
+                .wrap("<div class=\"position-relative\"></div>")
+                .select2({
+                    placeholder: "Select value",
+                    dropdownParent: $(this).parent()
+                });
+        });
+    });
+</script>

@@ -5,6 +5,6 @@
         public string? ControlNumber { get; set; }
         public string? FullName { get; set; }
         public string? Position { get; set; }
-        public List<DetailUserExamDTOs>? Details {  get; set; }
+        public List<DetailUserExamDTOs> Details { get; set; } = new();
     }
 }

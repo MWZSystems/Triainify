@@ -1,0 +1,236 @@
+﻿@{
+    ViewData["Title"] = "Create Course Completed (Bulk)";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var headcounts = (IEnumerable<dynamic>)ViewBag.Headcounts;   // filtrados por fkCourse + fkLevel
+    var courses = (IEnumerable<dynamic>)ViewBag.Courses;
+    var levels = (IEnumerable<dynamic>)ViewBag.Levels;
+
+    int selectedFkCourse = (int)(ViewBag.SelectedFkCourse ?? 0);
+    int selectedFkLevel = (int)(ViewBag.SelectedFkLevel ?? 0);
+
+    bool lockFilters = selectedFkCourse > 0 && selectedFkLevel > 0;
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">CREATE COURSE COMPLETED (BULK)</h1>
+    </div>
+</div>
+
+<!-- Filtros: Curso + Nivel (GET) -->
+<div class="row mb-3">
+    <div class="col-md-10 offset-md-1">
+        <form method="get" asp-action="CreateCourseCompletedBulk" class="card card-body">
+            <div class="row align-items-end g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Course <span class="text-danger">*</span></label>
+                    <select class="form-control select2" name="FkCourse" id="FkCourse" required @(lockFilters ? "disabled" : "")>
+                        <option value="">-- Select Course --</option>
+                        @foreach (var c in courses)
+                        {
+                            <option value="@c.PkCourse" selected="@(c.PkCourse == selectedFkCourse)">@c.CourseName</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Required Level <span class="text-danger">*</span></label>
+                    <select class="form-control select2" name="FkLevel" id="FkLevel" required @(lockFilters ? "disabled" : "")>
+                        <option value="">-- Select Level --</option>
+                        @foreach (var l in levels)
+                        {
+                            <option value="@l.PkLevelcourse" selected="@(l.PkLevelcourse == selectedFkLevel)">@l.DescripctionLevel</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-2 text-end">
+                    @if (!lockFilters)
+                    {
+                        <button type="submit" class="btn btn-primary mt-3 mt-md-0 w-100" title="Load">
+                            <i class="fas fa-sync-alt"></i> Load
+                        </button>
+                    }
+                    else
+                    {
+                        <div class="d-grid gap-2 mt-3 mt-md-0">
+                            <a href="@Url.Action("CreateCourseCompletedBulk")" class="btn btn-outline-secondary" title="Change Filters">
+                                <i class="fas fa-undo"></i> Change Filters
+                            </a>
+                            <a href="@Url.Action("CreateCourseCompletedBulk")" class="btn btn-outline-primary" title="New Search">
+                                <i class="fas fa-search"></i> New Search
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @if (lockFilters)
+            {
+                <div class="alert alert-warning d-flex align-items-center gap-2 mt-3 mb-0" role="alert">
+                    <i class="fas fa-lock"></i>
+                    <div>
+                        Filters are <strong>locked</strong> to prevent assigning outside the chosen Course/Level.
+                        Use <em>Change Filters</em> or <em>New Search</em> to search again.
+                    </div>
+                </div>
+            }
+            else
+            {
+                <small class="text-muted">The list of people is filtered by <strong>position</strong>, <strong>course</strong>, and <strong>required level</strong> (available only).</small>
+            }
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Course Completed Details (Bulk)</h5>
+                <div class="card-subtitle text-muted">
+                    Select multiple <strong>Headcounts</strong>. The <em>Course Assignment</em> is resolved by position + course + level.
+                    <br />
+                    <span class="text-success">Note: the Score is automatically set to 100 in the SP.</span>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <form asp-action="CreateCourseCompletedBulk" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <!-- Send the selected course and level to the POST -->
+                    <input type="hidden" name="FkCourse" value="@selectedFkCourse" />
+                    <input type="hidden" name="FkRequiredCourseLevels" value="@selectedFkLevel" />
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="row">
+                        <!-- HEADCOUNTS -->
+                        <div class="mb-3 col-md-8">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label fw-bold mb-0">Headcounts <span class="text-danger">*</span></label>
+                                <div class="d-flex gap-2">
+                                    <input id="searchHeadcounts" class="form-control form-control-sm" placeholder="Search" style="max-width: 200px;" />
+                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="toggleAll('SelectedHeadcounts', true)" title="Select All">Select All</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="toggleAll('SelectedHeadcounts', false)" title="Clear">Clear</button>
+                                </div>
+                            </div>
+
+                            <div id="hcWrapper" class="border rounded p-2" style="max-height: 360px; overflow:auto">
+                                @if (headcounts?.Any() == true)
+                                {
+                                    foreach (var h in headcounts)
+                                    {
+                                        <div class="form-check">
+                                            <input class="form-check-input sel-hc" type="checkbox" name="SelectedHeadcounts" value="@h.PkHeadcount" id="hc_@h.PkHeadcount" />
+                                            <label class="form-check-label" for="hc_@h.PkHeadcount">
+                                                @h.Display
+                                                @if (h.GetType().GetProperty("CourseAssignmentId") != null)
+                                                {
+                                                    <small class="text-muted"> (CA: @h.CourseAssignmentId)</small>
+                                                }
+                                            </label>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="text-muted">No people found for that position/course/level (or none available).</div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Counter -->
+                    <div class="row mb-2">
+                        <div class="col-md-12">
+                            <span class="badge bg-info text-dark me-2" id="badge-count-hc">Headcounts selected: 0</span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 text-end">
+                            <a asp-action="IndexCourseCompleted" class="btn btn-secondary" title="Cancel">
+                                <i class="fas fa-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary" @(headcounts?.Any() == true ? "" : "disabled") title="Create Bulk">
+                                <i class="align-middle fas fa-plus-square"></i> CREATE BULK
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card-footer text-muted small">
+                Tip: the search ignores accents and treats <code>ñ</code> differently from <code>n</code>.
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        // Select/Deselect all
+        function toggleAll(name, check) {
+            document.querySelectorAll(`input[name='${name}']`).forEach(el => { el.checked = check; });
+            updateCounts();
+        }
+
+        // Selected-items counter
+        function updateCounts() {
+            const countHc = document.querySelectorAll("input[name='SelectedHeadcounts']:checked").length;
+            const badge = document.getElementById('badge-count-hc');
+            if (badge) badge.textContent = `Headcounts selected: ${countHc}`;
+        }
+
+        // Normalize text (ignores accents; keeps ñ)
+        function foldEs(str) {
+            return (str ?? '')
+                .toString()
+                .toLocaleLowerCase('es')
+                .normalize('NFD')
+                .replace(/n\u0303/g, 'ñ')
+                .replace(/[\u0300-\u036f]/g, '');
+        }
+
+        // Client-side filter for the headcounts list
+        function attachFilter(inputId, wrapperSelector) {
+            const input = document.getElementById(inputId);
+            const wrapper = document.querySelector(wrapperSelector);
+            if (!input || !wrapper) return;
+
+            input.addEventListener('input', () => {
+                const q = foldEs(input.value);
+                wrapper.querySelectorAll('.form-check').forEach(row => {
+                    const label = row.querySelector('label');
+                    const txt = foldEs(label ? label.textContent : '');
+                    row.style.display = txt.includes(q) ? '' : 'none';
+                });
+            });
+        }
+
+        attachFilter('searchHeadcounts', '#hcWrapper');
+
+        document.addEventListener('change', (e) => {
+            if (e.target && e.target.name === 'SelectedHeadcounts') updateCounts();
+        });
+
+        $(document).ready(function () {
+            updateCounts();
+
+            // Select2
+            $('.select2').select2({ theme: 'bootstrap4', placeholder: 'Select an option', allowClear: true });
+
+            // Reflect the lock state on the select2 controls (valid boolean in JS)
+            const locked = @Json.Serialize(lockFilters);
+            if (locked) {
+                $('#FkCourse').prop('disabled', true).trigger('change.select2');
+                $('#FkLevel').prop('disabled', true).trigger('change.select2');
+            }
+        });
+    </script>
+}

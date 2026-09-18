@@ -1,0 +1,312 @@
+﻿@model RH_CM.ViewModels.TestCreateViewModel
+
+@{
+    ViewData["Title"] = "Create Test with Questions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="h3 mb-3 text-center">CREATE TEST WITH QUESTIONS</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Test Details</h5>
+                <h6 class="card-subtitle text-muted">Fill out the test information and add questions below.</h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="CreateQuestions" method="post" id="createQuestionsForm">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="row">
+                        <div class="mb-3 col-md-4">
+                            <label asp-for="TestName" class="form-label">Test Name <span class="text-danger">*</span></label>
+                            <input asp-for="TestName" class="form-control" />
+                            <span asp-validation-for="TestName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3 col-md-4">
+                            <label asp-for="FkCourse" class="form-label">Course <span class="text-danger">*</span></label>
+                            <select asp-for="FkCourse" class="form-control select2"
+                                    asp-items="@(new SelectList(Model.AvailableCourses, "PkCourse", "CourseName"))">
+                                <option value="">-- Select Course --</option>
+                            </select>
+                            <span asp-validation-for="FkCourse" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3 col-md-4">
+                            <label asp-for="FkRequiredCourseLevels" class="form-label">Required Course Level <span class="text-danger">*</span></label>
+                            <select asp-for="FkRequiredCourseLevels" class="form-control select2"
+                                    asp-items="@(new SelectList(Model.AvailableLevels, "PkLevelcourse", "DescripctionLevel"))">
+                                <option value="">-- Select Level --</option>
+                            </select>
+                            <span asp-validation-for="FkRequiredCourseLevels" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <!-- Input to create new question -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <input type="text" id="newQuestionText" class="form-control" placeholder="Enter question text" />
+                        </div>
+                        <div class="col-md-3">
+                            <select id="newQuestionType" class="form-select">
+                                @foreach (var type in Model.AvailableOptionTypes)
+                                {
+                                    <option value="@type.PkOptiontype">@type.DescriptionOptiontype</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-success" id="add-question-btn" title="Add Question">
+                                Add Question
+                            </button>
+                        </div>
+                    </div>
+
+                    @* FIX: if we're coming back from a POST that failed validation (TempData["ErrorMessage"]),
+                       Model.Questions already carries everything the user had built (ASP.NET's model binding
+                       reconstructs the list from the "Questions[i].*" inputs the form sends).
+                       This div used to always render empty because only JS filled it, so a failed validation
+                       lost everything. Now we rebuild here, server-side, the same HTML the JS would generate,
+                       so the user gets back exactly what they had. *@
+                    <div id="questions-container">
+                        @if (Model.Questions != null)
+                        {
+                            for (int qIndex = 0; qIndex < Model.Questions.Count; qIndex++)
+                            {
+                                var q = Model.Questions[qIndex];
+                                var typeDesc = Model.AvailableOptionTypes
+                                    .FirstOrDefault(t => t.PkOptiontype == q.FkTypeOption)?.DescriptionOptiontype ?? "";
+                                var inputType = typeDesc.ToLower().Contains("checkbox") ? "checkbox" : "radio";
+                                var options = q.Options ?? new List<RH_CM.ViewModels.OptionCreateViewModel>();
+
+                                <div class="card mb-3 question-block border border-primary" data-question-type="@typeDesc">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h5>Question @(qIndex + 1): @q.QuestionText</h5>
+                                            <button type="button" class="btn btn-sm btn-outline-danger remove-question-btn" title="Remove Question">
+                                                <i class="fas fa-trash"></i> Remove Question
+                                            </button>
+                                        </div>
+                                        <input type="hidden" name="Questions[@qIndex].QuestionText" value="@q.QuestionText" />
+                                        <input type="hidden" name="Questions[@qIndex].FkTypeOption" value="@q.FkTypeOption" />
+                                        <div class="options-container">
+                                            @for (int oIndex = 0; oIndex < options.Count; oIndex++)
+                                            {
+                                                var o = options[oIndex];
+
+                                                <div class="input-group mb-2 align-items-center">
+                                                    <div class="input-group-text">
+                                                        <input type="@inputType" class="option-correct-input"
+                                                               name="question-@(qIndex)-correct"
+                                                        @(o.IsCorrect ? "checked" : "") />
+                                                    </div>
+                                                    <input type="hidden" name="Questions[@qIndex].Options[@oIndex].OptionText" value="@o.OptionText" />
+                                                    <input type="hidden" name="Questions[@qIndex].Options[@oIndex].IsCorrect" value="@(o.IsCorrect ? "true" : "false")" />
+                                                    <span class="form-control bg-light">@o.OptionText</span>
+                                                    <button type="button" class="btn btn-outline-danger remove-option-btn" title="Cancel">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="input-group mt-2">
+                                            <input type="text" class="form-control option-text-input" placeholder="Enter option text">
+                                            <button type="button" class="btn btn-primary add-option-confirm-btn" title="Confirm Option">Confirm Option</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+
+                    <hr class="mt-4" />
+
+                    <div class="alert alert-info d-flex align-items-start mb-3" role="alert">
+                        <i class="fas fa-info-circle fa-lg me-2 mt-1"></i>
+                        <div>
+                            <strong>Finished adding questions?</strong>
+                            <div class="mt-1">The buttons above only add a question or option to this form. Nothing is saved until you click <strong>Create Exam</strong> below, which generates the complete exam with everything you've added.</div>
+                        </div>
+                    </div>
+
+                    <div class="text-end">
+                        <a asp-action="IndexTest" class="btn btn-secondary" title="Cancel">
+                            <i class="fas fa-arrow-left"></i> Cancel
+                        </a>
+                        <button type="button" class="btn btn-primary" id="createExamBtn" title="Create Exam">
+                            <i class="fas fa-plus-square"></i> CREATE EXAM
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation modal: warns that Create Exam generates the complete exam, not just the current question -->
+<div class="modal fade" id="confirmCreateExamModal" tabindex="-1" aria-labelledby="confirmCreateExamModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmCreateExamModalLabel">
+                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                    Confirm Exam Creation
+                </h5>
+                <button type="button" class="close btn-close" data-bs-dismiss="modal" aria-label="Close" title="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning mb-0" role="alert">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3">
+                            <i class="fas fa-exclamation-triangle fa-lg text-warning"></i>
+                        </div>
+                        <div>
+                            This will generate the <strong>complete exam</strong>, including the test details and every question and option added above. Please review them before continuing.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" title="Cancel">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmCreateExamBtn" title="Yes, Create Exam">
+                    <i class="fas fa-plus-square"></i> Yes, Create Exam
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        $(document).ready(function() {
+
+// Select2 initialization
+            $(".select2").select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                width: '100%'
+            });
+
+            // Variables and events for adding questions and options
+            // FIX: start the index after the questions already rendered from the
+            // server (see the Razor block above), so new questions you add don't
+            // collide with the indexes of the restored ones.
+            let questionIndex = @(Model.Questions?.Count ?? 0);
+
+            $("#add-question-btn").click(function() {
+                const text = $("#newQuestionText").val().trim();
+                const typeId = $("#newQuestionType").val();
+                const typeText = $("#newQuestionType option:selected").text();
+
+                if (!text) {
+                    alert("Please enter the question text.");
+                    return;
+                }
+
+                const questionHtml = `
+                            <div class="card mb-3 question-block border border-primary" data-question-type="${typeText}">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5>Question ${questionIndex + 1}: ${text}</h5>
+                                        <button type="button" class="btn btn-sm btn-outline-danger remove-question-btn" title="Remove Question">
+                                            <i class="fas fa-trash"></i> Remove Question
+                                        </button>
+                                    </div>
+                                    <input type="hidden" name="Questions[${questionIndex}].QuestionText" value="${text}" />
+                                    <input type="hidden" name="Questions[${questionIndex}].FkTypeOption" value="${typeId}" />
+                                    <div class="options-container"></div>
+                                    <div class="input-group mt-2">
+                                        <input type="text" class="form-control option-text-input" placeholder="Enter option text">
+                                        <button type="button" class="btn btn-primary add-option-confirm-btn" title="Confirm Option">Confirm Option</button>
+                                    </div>
+                                </div>
+                            </div>`;
+
+                $("#questions-container").append(questionHtml);
+                $("#newQuestionText").val('');
+                questionIndex++;
+            });
+
+            $(document).on("click", ".add-option-confirm-btn", function() {
+                const cardBody = $(this).closest(".card-body");
+                const qIndex = $(".question-block").index($(this).closest(".question-block"));
+                const typeText = $(this).closest(".question-block").attr("data-question-type");
+                const optionTextInput = cardBody.find(".option-text-input");
+                const text = optionTextInput.val().trim();
+
+                if (!text) {
+                    alert("Please enter the option text.");
+                    return;
+                }
+
+                const container = cardBody.find(".options-container");
+                const oIndex = container.children().length;
+
+                let inputType = "radio";
+                if (typeText.toLowerCase().includes("checkbox")) inputType = "checkbox";
+
+                const optionHtml = `
+                            <div class="input-group mb-2 align-items-center">
+                                <div class="input-group-text">
+                                    <input type="${inputType}" class="option-correct-input" name="question-${qIndex}-correct" />
+                                </div>
+                                <input type="hidden" name="Questions[${qIndex}].Options[${oIndex}].OptionText" value="${text}" />
+                                <input type="hidden" name="Questions[${qIndex}].Options[${oIndex}].IsCorrect" value="false" />
+                                <span class="form-control bg-light">${text}</span>
+                                <button type="button" class="btn btn-outline-danger remove-option-btn" title="Cancel">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>`;
+
+                container.append(optionHtml);
+                optionTextInput.val('');
+            });
+
+            $(document).on("change", ".option-correct-input", function() {
+                const group = $(this).closest(".options-container");
+                const isCheckbox = $(this).attr("type") === "checkbox";
+
+                if (!isCheckbox) {
+                    group.find(".option-correct-input").prop("checked", false);
+                    group.find("input[type=hidden][name$='.IsCorrect']").val("false");
+
+                    $(this).prop("checked", true);
+                    $(this).closest(".input-group").find("input[type=hidden][name$='.IsCorrect']").val("true");
+                } else {
+                    const hiddenInput = $(this).closest(".input-group").find("input[type=hidden][name$='.IsCorrect']");
+                    hiddenInput.val(this.checked ? "true" : "false");
+                }
+            });
+
+            $(document).on("click", ".remove-option-btn", function() {
+                $(this).closest(".input-group").remove();
+            });
+
+            $(document).on("click", ".remove-question-btn", function() {
+                $(this).closest(".question-block").remove();
+            });
+
+            // Create Exam: warn the user first, since this generates the whole exam,
+            // not just the question/option they were last working on.
+            const confirmCreateExamModal = new bootstrap.Modal(document.getElementById('confirmCreateExamModal'));
+
+            $("#createExamBtn").click(function () {
+                confirmCreateExamModal.show();
+            });
+
+            $("#confirmCreateExamBtn").click(function () {
+                document.getElementById('createQuestionsForm').submit();
+            });
+
+        });
+    </script>
+}

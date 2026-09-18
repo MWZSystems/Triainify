@@ -64,7 +64,9 @@ namespace RH_CM.Data
                     .AddJsonFile("appsettings.json")
                     .Build();
 
-                optionsBuilder.UseSqlServer(configuration.GetConnectionString("ConexionSQL"));
+                var connectionString = configuration.GetConnectionString("ConexionSQL")
+                    ?? throw new InvalidOperationException("The 'ConexionSQL' connection string is not configured.");
+                optionsBuilder.UseSqlServer(connectionString);
             }
         }
 

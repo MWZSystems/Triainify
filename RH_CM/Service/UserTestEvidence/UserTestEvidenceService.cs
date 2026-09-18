@@ -11,10 +11,12 @@ using RH_CM.Models;
 using RH_CM.Service.DTOs;
 using RH_CM.Service.DTOs.UserTestEvidence;
 using RH_CM.Service.SQLSMS;
+using RH_CM.Service.Trainify;
 using RH_CM.ViewModels;
 using System.Data;
 using System.Security.Claims;
 using static RH_CM.ViewModels.ViewModels;
+using RH_CM.Messages.UserTestEvidence;
 
 namespace RH_CM.Service.UserTestEvidence
 {
@@ -36,9 +38,9 @@ namespace RH_CM.Service.UserTestEvidence
             _httpContextAccessor = httpContextAccessor;
         }
 
-        private ClaimsPrincipal UserPrincipal => _httpContextAccessor.HttpContext?.User;
+        private ClaimsPrincipal? UserPrincipal => _httpContextAccessor.HttpContext?.User;
 
-        public async Task<IdentityUser> GetCurrentUserAsync()
+        public async Task<IdentityUser?> GetCurrentUserAsync()
         {
             return await _userManager.GetUserAsync(UserPrincipal);
         }
@@ -46,31 +48,45 @@ namespace RH_CM.Service.UserTestEvidence
         public async Task<IList<string>> GetUserRolesAsync()
         {
             var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return Array.Empty<string>();
+            }
             return await _userManager.GetRolesAsync(user);
         }
 
         public async Task<List<UserDTOs>> GetIndexAsync()
         {
-            List<UserDTOs> users = new List<UserDTOs>();
             var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return new List<UserDTOs>();
+            }
+
             var roles = await _userManager.GetRolesAsync(user);
-            string ControlNumber = "";
 
+            List<UserDTOs> users = await _unitOfWork.ExecuteStoredProcedureToListAsync<UserDTOs>("[sp_UserTestEvidenceService_Index_Get]");
 
-            if (roles[0] == "Administrador")
+            if (roles.Contains("Administrador"))
             {
                 //If its an Admin brings everything
-                users = await _unitOfWork.ExecuteStoredProcedureToListAsync<UserDTOs>("[sp_UserTestEvidenceService_Index_Get]");
+                return users;
             }
-            else
+
+            // Non-Admin user: they can only see their own history.
+            string query = "SELECT TOP 1 EmployeeNumber FROM [AspNetUsers] WHERE Ntuser = @pNtuser";
+            string controlNumber = await _unitOfWork.QuerySingleScalarAsync(query, new Dictionary<string, object>
             {
-                //si es un usuario no Admin. Solo podra ver su propio historico.
-                string query = $"SELECT TOP 1 EmployeeNumber  FROM [AspNetUsers] WHERE Ntuser = '{user}'";
-                ControlNumber = await _unitOfWork.QuerySingleScalarAsync(query);
-                users = await _unitOfWork.ExecuteStoredProcedureToListAsync<UserDTOs>("[sp_UserTestEvidenceService_Index_Get]");
-                users = users.Where(u => u.ControlNumber == int.Parse(ControlNumber)).ToList();
+                { "@pNtuser", user.UserName ?? string.Empty }
+            });
+
+            if (!int.TryParse(controlNumber, out int parsedControlNumber))
+            {
+                // No matching AspNetUsers record for this account — nothing to show instead of crashing.
+                return new List<UserDTOs>();
             }
-            return users;
+
+            return users.Where(u => u.ControlNumber == parsedControlNumber).ToList();
         }
 
         public async Task<DetailDTOs> GetDetailUserAsync(string ControlNumber)
@@ -89,8 +105,13 @@ namespace RH_CM.Service.UserTestEvidence
 
             detailDTOs.ControlNumber = ControlNumber;
 
+            if (!int.TryParse(ControlNumber, out int parsedControlNumber))
+            {
+                return detailDTOs;
+            }
+
             detailDTOs.FullName = await _context.SyHeadcounts
-                                    .Where(h => h.ControlNumber == int.Parse(ControlNumber))
+                                    .Where(h => h.ControlNumber == parsedControlNumber)
                                     .Select(h =>
                                         h.Names
                                         + " " + (h.LastName ?? "")
@@ -99,7 +120,7 @@ namespace RH_CM.Service.UserTestEvidence
                                     .FirstOrDefaultAsync();
 
             detailDTOs.Position = await _context.SyHeadcounts
-                            .Where(h => h.ControlNumber == int.Parse(ControlNumber))
+                            .Where(h => h.ControlNumber == parsedControlNumber)
                             .Join(
                                 _context.CtPositions,
                                 h => h.FkPosition,
@@ -111,11 +132,15 @@ namespace RH_CM.Service.UserTestEvidence
             return detailDTOs;
         }
 
-        public async Task<FullExamDTOs> GetDiagnosticExamAsync(int examID)
+        public async Task<FullExamDTOs?> GetDiagnosticExamAsync(int examID, int controlNumber)
         {
-            int fk_headcount = await _context.SyUserAnswers
-                .Where(ua => ua.CodeExam == examID)
-                .Select(ua => ua.FkHeadcount).FirstOrDefaultAsync();
+            int fk_headcount = await _context.SyHeadcounts
+                .Where(h => h.ControlNumber == controlNumber)
+                .Select(h => h.PkHeadcount)
+                .FirstOrDefaultAsync();
+
+            if (fk_headcount == 0)
+                return null;
             
             int ControlNumber = await _context.SyHeadcounts
                 .Where(hc => hc.PkHeadcount == fk_headcount)
@@ -123,26 +148,27 @@ namespace RH_CM.Service.UserTestEvidence
 
 
             int PkTest = await _context.SyUserAnswers
-                                    .Where(ua => ua.CodeExam == examID)
+                                    .Where(ua => ua.CodeExam == examID && ua.FkHeadcount == fk_headcount)
                                     .Select(ua => ua.FkTest)
                                     .FirstOrDefaultAsync();
 
-            CtTest test = await _context.CtTests
+            CtTest? test = await _context.CtTests
                                      .SingleOrDefaultAsync(t => t.PkTest == PkTest);
 
 
-            VwUserDiagnosticResume diagnosticResume = await _context.VwUserDiagnosticResumes
-                                                         .Where(dr => dr.CodeExam == examID)
-                                                         .FirstOrDefaultAsync();
-
+            if (test == null)
+            {
+                // No diagnostic exam found for this examID (bad/stale link) — nothing to show.
+                return null;
+            }
 
             List<SyUserDiagnostic> userDiagnostic = await _context.SyUserDiagnostics
-                                                         .Where(ud => ud.CodeExam == examID)
+                                                         .Where(ud => ud.CodeExam == examID && ud.FkHeadcount == fk_headcount)
                                                          .ToListAsync();
 
             List<CtQuestion> questionList = await _context.CtQuestions
                                                        .Where(q => _context.SyUserDiagnostics
-                                                        .Where(d => d.CodeExam == examID)
+                                                        .Where(d => d.CodeExam == examID && d.FkHeadcount == fk_headcount)
                                                         .Select(d => d.FkQuestions)
                                                         .Contains(q.PkQuestions))
                                                     .ToListAsync();
@@ -152,7 +178,7 @@ namespace RH_CM.Service.UserTestEvidence
                             on q.PkQuestions equals o.FkQuestions into optionsGroup
                         from o in optionsGroup.DefaultIfEmpty() // LEFT JOIN
                         where _context.SyUserDiagnostics
-                                      .Where(d => d.CodeExam == examID)
+                                      .Where(d => d.CodeExam == examID && d.FkHeadcount == fk_headcount)
                                       .Select(d => d.FkQuestions)
                                       .Contains(q.PkQuestions)
                         select new
@@ -162,18 +188,24 @@ namespace RH_CM.Service.UserTestEvidence
                         };
 
             int totalQuestions = await _context.SyUserDiagnostics
-                                .Where(d => d.CodeExam == examID)
+                                .Where(d => d.CodeExam == examID && d.FkHeadcount == fk_headcount)
                                 .CountAsync();
 
             int correctAnswers = await _context.SyUserDiagnostics
-                                    .Where(d => d.CodeExam == examID && d.FkOptionSelected == d.FkOptionCorrected)
+                                    .Where(d => d.CodeExam == examID && d.FkHeadcount == fk_headcount && d.FkOptionSelected == d.FkOptionCorrected)
                                     .CountAsync();
+
+            // The join of all the exam's questions/options is materialized once,
+            // instead of repeating the query for every question inside the foreach below.
+            var rows = await query.ToListAsync();
+            Dictionary<int, List<CtOption>> optionsByQuestion =
+                GroupOptionsByQuestion(rows.Select(x => (x.Question, x.Option)));
 
             var model = new FullExamDTOs
             {
                 TestName = "Diagnostic " + test.TestName,
                 ControlNumber = ControlNumber,
-                Score = Math.Round((double)diagnosticResume.Score, 2),
+                Score = DiagnosticExamService.CalculateScore(correctAnswers, totalQuestions),
                 CorrectCount = correctAnswers,
                 TotalQuestions = totalQuestions,
                 HasMaterial = true,
@@ -197,12 +229,11 @@ namespace RH_CM.Service.UserTestEvidence
 
                 List<DiagnosticOption> optionResults = new List<DiagnosticOption>();
 
-                var options = await query
-                        .Where(x => x.Question.PkQuestions == q.FkQuestions)
-                        .Select(x => x.Option)
-                        .ToListAsync();
+                var options = optionsByQuestion.TryGetValue(q.FkQuestions, out var opts)
+                    ? opts
+                    : new List<CtOption>();
 
-                foreach (var opt in options.Where(o => o != null))
+                foreach (var opt in options)
                 {
                     bool elegido = selectedIds.Contains(opt.PkOptions);
 
@@ -217,7 +248,7 @@ namespace RH_CM.Service.UserTestEvidence
 
                 model.Questions.Add(new DiagnosticQuestion
                     {
-                        QuestionText = questionList.FirstOrDefault(d => d.PkQuestions == q.FkQuestions)?.Question,
+                        QuestionText = questionList.FirstOrDefault(d => d.PkQuestions == q.FkQuestions)?.Question ?? string.Empty,
                         IsCorrect = correctOrNot,
                         SelectedOptionIds = selectedIds,
                         CorrectOptionIds = correctIds,
@@ -229,11 +260,15 @@ namespace RH_CM.Service.UserTestEvidence
             return model;
         }
 
-        public async Task<FullExamDTOs> GetExamAsync(int examID)
+        public async Task<FullExamDTOs?> GetExamAsync(int examID, int controlNumber)
         {
-            int fk_headcount = await _context.SyUserAnswers
-                .Where(ua => ua.CodeExam == examID)
-                .Select(ua => ua.FkHeadcount).FirstOrDefaultAsync();
+            int fk_headcount = await _context.SyHeadcounts
+                .Where(h => h.ControlNumber == controlNumber)
+                .Select(h => h.PkHeadcount)
+                .FirstOrDefaultAsync();
+
+            if (fk_headcount == 0)
+                return null;
 
             int ControlNumber = await _context.SyHeadcounts
                 .Where(hc => hc.PkHeadcount == fk_headcount)
@@ -241,26 +276,27 @@ namespace RH_CM.Service.UserTestEvidence
 
 
             int PkTest = await _context.SyUserAnswers
-                                    .Where(ua => ua.CodeExam == examID)
+                                    .Where(ua => ua.CodeExam == examID && ua.FkHeadcount == fk_headcount)
                                     .Select(ua => ua.FkTest)
                                     .FirstOrDefaultAsync();
 
-            CtTest test = await _context.CtTests
+            CtTest? test = await _context.CtTests
                                      .SingleOrDefaultAsync(t => t.PkTest == PkTest);
 
 
-            VwUserAnswersResume answerResume = await _context.VwUserAnswersResumes
-                                                         .Where(dr => dr.CodeExam == examID)
-                                                         .FirstOrDefaultAsync();
-
+            if (test == null)
+            {
+                // No exam found for this examID (bad/stale link) — nothing to show.
+                return null;
+            }
 
             List<SyUserAnswer> userAnswer = await _context.SyUserAnswers
-                                                         .Where(ud => ud.CodeExam == examID)
+                                                         .Where(ud => ud.CodeExam == examID && ud.FkHeadcount == fk_headcount)
                                                          .ToListAsync();
 
             List<CtQuestion> questionList = await _context.CtQuestions
                                                        .Where(q => _context.SyUserAnswers
-                                                        .Where(d => d.CodeExam == examID)
+                                                        .Where(d => d.CodeExam == examID && d.FkHeadcount == fk_headcount)
                                                         .Select(d => d.FkQuestions)
                                                         .Contains(q.PkQuestions))
                                                     .ToListAsync();
@@ -270,7 +306,7 @@ namespace RH_CM.Service.UserTestEvidence
                             on q.PkQuestions equals o.FkQuestions into optionsGroup
                         from o in optionsGroup.DefaultIfEmpty() // LEFT JOIN
                         where _context.SyUserAnswers
-                                      .Where(d => d.CodeExam == examID)
+                                      .Where(d => d.CodeExam == examID && d.FkHeadcount == fk_headcount)
                                       .Select(d => d.FkQuestions)
                                       .Contains(q.PkQuestions)
                         select new
@@ -280,18 +316,24 @@ namespace RH_CM.Service.UserTestEvidence
                         };
 
             int totalQuestions = await _context.SyUserAnswers
-                                .Where(d => d.CodeExam == examID)
+                                .Where(d => d.CodeExam == examID && d.FkHeadcount == fk_headcount)
                                 .CountAsync();
 
             int correctAnswers = await _context.SyUserAnswers
-                                    .Where(d => d.CodeExam == examID && d.FkOptionSelected == d.FkOptionCorrected)
+                                    .Where(d => d.CodeExam == examID && d.FkHeadcount == fk_headcount && d.FkOptionSelected == d.FkOptionCorrected)
                                     .CountAsync();
+
+            // The join of all the exam's questions/options is materialized once,
+            // instead of repeating the query for every question inside the foreach below.
+            var rows = await query.ToListAsync();
+            Dictionary<int, List<CtOption>> optionsByQuestion =
+                GroupOptionsByQuestion(rows.Select(x => (x.Question, x.Option)));
 
             var model = new FullExamDTOs
             {
                 TestName = test.TestName,
                 ControlNumber = ControlNumber,
-                Score = Math.Round((double)answerResume.Score, 2),
+                Score = DiagnosticExamService.CalculateScore(correctAnswers, totalQuestions),
                 CorrectCount = correctAnswers,
                 TotalQuestions = totalQuestions,
                 HasMaterial = true,
@@ -315,12 +357,11 @@ namespace RH_CM.Service.UserTestEvidence
 
                 List<DiagnosticOption> optionResults = new List<DiagnosticOption>();
 
-                var options = await query
-                        .Where(x => x.Question.PkQuestions == q.FkQuestions)
-                        .Select(x => x.Option)
-                        .ToListAsync();
+                var options = optionsByQuestion.TryGetValue(q.FkQuestions, out var opts)
+                    ? opts
+                    : new List<CtOption>();
 
-                foreach (var opt in options.Where(o => o != null))
+                foreach (var opt in options)
                 {
                     bool elegido = selectedIds.Contains(opt.PkOptions);
 
@@ -335,7 +376,7 @@ namespace RH_CM.Service.UserTestEvidence
 
                 model.Questions.Add(new DiagnosticQuestion
                 {
-                    QuestionText = questionList.FirstOrDefault(d => d.PkQuestions == q.FkQuestions)?.Question,
+                    QuestionText = questionList.FirstOrDefault(d => d.PkQuestions == q.FkQuestions)?.Question ?? string.Empty,
                     IsCorrect = correctOrNot,
                     SelectedOptionIds = selectedIds,
                     CorrectOptionIds = correctIds,
@@ -347,31 +388,105 @@ namespace RH_CM.Service.UserTestEvidence
             return model;
         }
 
-        public async Task<ServiceAnswer> DeleteExamAsync(int ExamID)
+        /// <summary>
+        /// Groups a Question-Option LEFT JOIN's rows by PkQuestions, discarding rows with no option.
+        /// </summary>
+        public static Dictionary<int, List<CtOption>> GroupOptionsByQuestion(
+            IEnumerable<(CtQuestion Question, CtOption Option)> rows)
         {
-            ServiceAnswer serviceAnswer = new();
+            return rows
+                .Where(x => x.Option != null)
+                .GroupBy(x => x.Question.PkQuestions)
+                .ToDictionary(g => g.Key, g => g.Select(x => x.Option).ToList());
+        }
 
+        public async Task<ServiceAnswer> DeleteExamAsync(int ExamID, int controlNumber)
+        {
+            var headcountId = await _context.SyHeadcounts
+                .Where(x => x.ControlNumber == controlNumber)
+                .Select(x => x.PkHeadcount)
+                .FirstOrDefaultAsync();
 
-            var parameters = new Dictionary<string, object>
+            if (headcountId == 0)
+                return new ServiceAnswer(false, ServiceAnswer.MessageType_Error, UserTestEvidenceMessages.ExamNotFound);
+
+            var movements = await _context.SyCoursemovements
+                .Where(x => x.CodeExam == ExamID && x.FkHeadcount == headcountId)
+                .ToListAsync();
+
+            if (movements.Count == 0)
             {
-                { "@pExamCode", ExamID }
-            };
-
-            string result = await _unitOfWork.ExecuteStoredProcedureScalarAsync("[sp_UserTestEvidenceService_IndexDelete_Post]", parameters);
-
-            if (result == "Completed")
-            {
-                serviceAnswer.Message = ServiceAnswer.MessageType_Success;
-                serviceAnswer.Message = "Exams Successfully Deleted";
+                return new ServiceAnswer(false, ServiceAnswer.MessageType_Error, UserTestEvidenceMessages.ExamNotFound);
             }
-            else
+
+            var assignmentId = movements[0].FkCourseAssignment;
+
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                serviceAnswer.Message = ServiceAnswer.MessageType_Error;
-                serviceAnswer.Message = "Exams Successfully Deleted";
+                var answers = await _context.SyUserAnswers.Where(x => x.CodeExam == ExamID && x.FkHeadcount == headcountId).ToListAsync();
+                var diagnostics = await _context.SyUserDiagnostics.Where(x => x.CodeExam == ExamID && x.FkHeadcount == headcountId).ToListAsync();
+
+                _context.SyUserAnswers.RemoveRange(answers);
+                _context.SyUserDiagnostics.RemoveRange(diagnostics);
+                _context.SyCoursemovements.RemoveRange(movements);
+
+                // Only a genuinely completed movement may back the completion summary.
+                // A PENDING/failed retry must never make a course appear completed.
+                var previousCompletion = await _context.SyCoursemovements
+                    .AsNoTracking()
+                    .Where(x => x.CodeExam != ExamID &&
+                                x.FkCourseAssignment == assignmentId &&
+                                x.FkHeadcount == headcountId &&
+                                x.FkCourseStatus == 1 &&
+                                x.Avaialble == 1)
+                    .OrderByDescending(x => x.CreateDate)
+                    .ThenByDescending(x => x.PkMovementCourse)
+                    .FirstOrDefaultAsync();
+
+                var completionRows = await _context.SyCoursecompleteds
+                    .Where(x => x.FkCourseAssignment == assignmentId && x.FkHeadcount == headcountId)
+                    .ToListAsync();
+
+                if (previousCompletion == null)
+                {
+                    _context.SyCoursecompleteds.RemoveRange(completionRows);
+                }
+                else
+                {
+                    var completion = completionRows.FirstOrDefault();
+                    if (completion == null)
+                    {
+                        completion = new SyCoursecompleted
+                        {
+                            FkCourseAssignment = assignmentId,
+                            FkHeadcount = headcountId,
+                            CreateUser = previousCompletion.CreateUser,
+                            CreateDate = previousCompletion.CreateDate
+                        };
+                        _context.SyCoursecompleteds.Add(completion);
+                    }
+
+                    completion.FkCourseStatus = 1;
+                    completion.FkDeliveryMode = previousCompletion.FkDeliveryMode;
+                    completion.Score = previousCompletion.Score;
+                    completion.LastUpdateUser = previousCompletion.LastUpdateUser;
+                    completion.LastUpdateDate = previousCompletion.LastUpdateDate;
+                    completion.Avaialble = 1;
+
+                    if (completionRows.Count > 1)
+                        _context.SyCoursecompleteds.RemoveRange(completionRows.Skip(1));
+                }
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return new ServiceAnswer(true, ServiceAnswer.MessageType_Success, UserTestEvidenceMessages.ExamsSuccessfullyDeleted);
             }
-
-
-                return serviceAnswer;
+            catch
+            {
+                await transaction.RollbackAsync();
+                return new ServiceAnswer(false, ServiceAnswer.MessageType_Error, UserTestEvidenceMessages.ExamCouldNotBeDeleted);
+            }
         }
 
         public async Task<ExcelExportDTOs> ExportExcelAsync(int ControlNumber)
@@ -393,7 +508,7 @@ namespace RH_CM.Service.UserTestEvidence
 
         public async Task<ExcelExportDTOs> ExportExcelAsync()
         {
-            //Esto se agrego a peticion de emmanuel, para ya no moverle a ld BD, pongo el query tal cual. fmarquez
+            // Added at Emmanuel's request, to avoid touching the DB further — query left as-is. fmarquez
             string query = @"	   	   SELECT 
 			CAST(HC.CONTROL_NUMBER AS VARCHAR(MAX))							[ControlNumber]
 			,HC.NAMES + ' ' + HC.LAST_NAME + ' ' + HC.SECOND_NAME  AS		[FullName]
@@ -437,14 +552,10 @@ namespace RH_CM.Service.UserTestEvidence
 
 
         /// <summary>
-        /// Recibe Datatable y devuelve el archivo Excel.
+        /// Builds an Excel file from the exam detail rows.
         /// </summary>
-        /// <param name="dataTable"></param>
-        /// <returns></returns>
         private byte[] ObjetctListToStream(List<DetailMassiveExamDTOs> items)
         {
-            byte[] content = null;
-
             //Crear Excel
             using var wb = new XLWorkbook();
             var ws = wb.Worksheets.Add("UserExamsEvidences");
@@ -470,16 +581,16 @@ namespace RH_CM.Service.UserTestEvidence
             int row = 2;
             foreach (var linea in items)
             {
-                ws.Cell(row, 1).Value = linea.ControlNumber.ToString();
-                ws.Cell(row, 2).Value = linea.FullName.ToString();
-                ws.Cell(row, 3).Value = linea.Position.ToString();
-                ws.Cell(row, 4).Value = linea.Course.ToString();
-                ws.Cell(row, 5).Value = linea.Level.ToString();
-                ws.Cell(row, 6).Value = linea.Delivery.ToString();
-                ws.Cell(row, 7).Value = linea.DiagnosticScore.ToString();
-                ws.Cell(row, 8).Value = linea.FinalExamScore.ToString();
-                ws.Cell(row, 9).Value = linea.CompletedDate.ToString();
-                ws.Cell(row, 10).Value = linea.ExamsID.ToString();
+                ws.Cell(row, 1).Value = linea.ControlNumber ?? string.Empty;
+                ws.Cell(row, 2).Value = linea.FullName ?? string.Empty;
+                ws.Cell(row, 3).Value = linea.Position ?? string.Empty;
+                ws.Cell(row, 4).Value = linea.Course ?? string.Empty;
+                ws.Cell(row, 5).Value = linea.Level ?? string.Empty;
+                ws.Cell(row, 6).Value = linea.Delivery ?? string.Empty;
+                ws.Cell(row, 7).Value = linea.DiagnosticScore ?? string.Empty;
+                ws.Cell(row, 8).Value = linea.FinalExamScore ?? string.Empty;
+                ws.Cell(row, 9).Value = linea.CompletedDate ?? string.Empty;
+                ws.Cell(row, 10).Value = linea.ExamsID ?? string.Empty;
                 row++;
             }
 
@@ -501,16 +612,12 @@ namespace RH_CM.Service.UserTestEvidence
             wb.SaveAs(stream);
 
 
-            content = stream.ToArray();
-
-            return content;
+            return stream.ToArray();
         }
 
 
         private byte[] ObjetctListToStream(DetailDTOs items)
         {
-            byte[] content = null;
-
             //Crear Excel
             using var wb = new XLWorkbook();
             var ws = wb.Worksheets.Add("UserExamsEvidences");
@@ -534,18 +641,18 @@ namespace RH_CM.Service.UserTestEvidence
 
             // 2) Datos
             int row = 2;
-            foreach (var linea in items.Details)
+            foreach (var linea in items.Details ?? Enumerable.Empty<DetailUserExamDTOs>())
             {
-                ws.Cell(row, 1).Value = items.ControlNumber.ToString();
-                ws.Cell(row, 2).Value = items.FullName.ToString();
-                ws.Cell(row, 3).Value = items.Position.ToString();
-                ws.Cell(row, 4).Value = linea.Course.ToString();
-                ws.Cell(row, 5).Value = linea.Level.ToString();
-                ws.Cell(row, 6).Value = linea.Delivery.ToString();
-                ws.Cell(row, 7).Value = linea.DiagnosticScore.ToString();
-                ws.Cell(row, 8).Value = linea.FinalExamScore.ToString();
-                ws.Cell(row, 9).Value = linea.CompletedDate.ToString();
-                ws.Cell(row, 10).Value = linea.ExamsID.ToString();
+                ws.Cell(row, 1).Value = items.ControlNumber ?? string.Empty;
+                ws.Cell(row, 2).Value = items.FullName ?? string.Empty;
+                ws.Cell(row, 3).Value = items.Position ?? string.Empty;
+                ws.Cell(row, 4).Value = linea.Course ?? string.Empty;
+                ws.Cell(row, 5).Value = linea.Level ?? string.Empty;
+                ws.Cell(row, 6).Value = linea.Delivery ?? string.Empty;
+                ws.Cell(row, 7).Value = linea.DiagnosticScore ?? string.Empty;
+                ws.Cell(row, 8).Value = linea.FinalExamScore ?? string.Empty;
+                ws.Cell(row, 9).Value = linea.CompletedDate ?? string.Empty;
+                ws.Cell(row, 10).Value = linea.ExamsID ?? string.Empty;
                 row++;
             }
 
@@ -567,9 +674,7 @@ namespace RH_CM.Service.UserTestEvidence
             wb.SaveAs(stream);
 
 
-            content = stream.ToArray();
-
-            return content;
+            return stream.ToArray();
         }
 
 

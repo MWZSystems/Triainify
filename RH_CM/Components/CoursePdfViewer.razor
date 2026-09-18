@@ -111,8 +111,8 @@ else
         var abs = Uri.TryCreate(raw, UriKind.Absolute, out var uAbs) ? uAbs : new Uri(baseUri, raw);
 
         // Asegura que tenga courseId/levelId; si ya vienen, los respeta.
-        var dict = QueryHelpers.ParseQuery(abs.Query)
-                               .ToDictionary(k => k.Key, v => v.Value.ToString());
+        IDictionary<string, string?> dict = QueryHelpers.ParseQuery(abs.Query)
+            .ToDictionary(k => k.Key, v => (string?)v.Value.ToString());
 
         if (!dict.ContainsKey("courseId")) dict["courseId"] = CourseId.ToString();
         if (!dict.ContainsKey("levelId")) dict["levelId"] = LevelId.ToString();

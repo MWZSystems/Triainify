@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Edit Ocupation Code";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewData["BodyClass"] = "page-matrix-position";
+    ViewData["BodyClass"] = "page-occupation-key";
 }
 
 <div class="row">
@@ -13,7 +13,7 @@
         </h1>
     </div>
    @*  <div class="col-auto">
-        <a asp-action="Index" asp-controller="Permissions" class="btn btn-secondary">
+        <a asp-action="Index" asp-controller="Permissions" class="btn btn-secondary" title="Change Group">
             <i class="fas fa-rotate-left"></i> CHANGE GROUP
         </a>
     </div> *@
@@ -51,10 +51,10 @@
                     <!-- Submit and Cancel Buttons -->
                     <div class="row">
                         <div class="col-12 text-end">
-                            <a asp-action="Index" class="btn btn-secondary">
+                            <a asp-action="Index" class="btn btn-secondary" title="Cancel">
                                 <i class="fas fa-arrow-left"></i> Cancel
                             </a>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" title="Update">
                                 <i class="fas fa-save"></i> Update
                             </button>
                         </div>
@@ -82,26 +82,6 @@
             }
 
             // Solo success y error
-            if ("@TempData["SuccessMessage"]" !== "") {
-                window.notyf?.open?.({
-                    type: 'success',
-                    message: "@TempData["SuccessMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-            if ("@TempData["ErrorMessage"]" !== "") {
-                window.notyf?.open?.({
-                    type: 'error',
-                    message: "@TempData["ErrorMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-        });
+});
     </script>
 }

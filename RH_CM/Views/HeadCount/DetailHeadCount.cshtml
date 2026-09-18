@@ -192,7 +192,7 @@
                     </div>
                 </div>
                 <div class="col-12 text-end">
-                    <a asp-action="IndexHeadCount" class="btn btn-secondary">
+                    <a asp-action="IndexHeadCount" class="btn btn-secondary" title="Back">
                         <i class="align-middle fas fa-arrow-left"></i> BACK
                     </a>
                 </div>
@@ -205,25 +205,5 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
             // Show success or error messages
-            if ("@TempData["SuccessMessage"]" !== "") {
-                window.notyf?.open?.({
-                    type: 'success',
-                    message: "@TempData["SuccessMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-            if ("@TempData["ErrorMessage"]" !== "") {
-                window.notyf?.open?.({
-                    type: 'error',
-                    message: "@TempData["ErrorMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-    });
+});
 </script>

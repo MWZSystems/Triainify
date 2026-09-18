@@ -10,7 +10,7 @@
 
         <div class="card border shadow-sm">
 
-            <!-- Header claro con ícono, mismo estilo que los otros módulos -->
+            <!-- Light header with icon, same style as the other modules -->
             <div class="card-header bg-light border-bottom">
                 <h3 class="card-title mb-0 fw-bold text-dark">
                     <i class="fas fa-user-shield me-2 text-secondary"></i>
@@ -40,7 +40,7 @@
                         </select>
                     </div>
 
-                    <button type="submit" class="btn btn-primary px-4">
+                    <button type="submit" class="btn btn-primary px-4" title="Continue">
                         Continue
                     </button>
 
@@ -64,29 +64,6 @@
                 width: '100%'
             });
 
-            // Mostrar mensajes de éxito
-            if ('@TempData["SuccessMessage"]' !== '') {
-                window.notyf.open({
-                    type: 'success',
-                    message: '@TempData["SuccessMessage"]',
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-
-            // Mostrar mensajes de error
-            if ('@TempData["ErrorMessage"]' !== '') {
-                window.notyf.open({
-                    type: 'error',
-                    message: '@TempData["ErrorMessage"]',
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-        });
+});
     </script>
 }

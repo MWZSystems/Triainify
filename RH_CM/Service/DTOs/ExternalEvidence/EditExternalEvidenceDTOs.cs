@@ -5,7 +5,7 @@ namespace RH_CM.Service.DTOs
 {
     public class EditExternalEvidenceDTOs
     {
-        [Required(ErrorMessage = "El identificador del registro es requerido.")]
+        [Required(ErrorMessage = "The record identifier is required.")]
         public int? PK_ExternalEvidence { get; set; }
 
         // Not [Required]: the Edit Evidence form only shows this as read-only text (no input
@@ -21,7 +21,7 @@ namespace RH_CM.Service.DTOs
         // Not [Required]: this field isn't collected on the Edit Evidence form (no input for it)
         // and isn't sent to the update stored procedure — marking it Required made every
         // submission of this form fail ModelState validation with no way for the user to fix it.
-        [Range(0, 100, ErrorMessage = "La calificación debe estar entre 0 y 100.")]
+        [Range(0, 100, ErrorMessage = "Score must be between 0 and 100.")]
         public decimal? Score { get; set; }
 
         public string? UserName { get; set; }

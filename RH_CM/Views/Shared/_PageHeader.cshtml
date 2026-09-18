@@ -1,0 +1,9 @@
+@model RH_CM.ViewModels.PageHeaderViewModel
+<div class="page-header-accent mb-3">
+    <h1 class="h3 mb-0 title-accent">
+        <i class="align-middle fas @Model.IconClass"></i> @Model.Title
+        <partial name="_PageHelpButton" model="Model" />
+    </h1>
+</div>
+
+<partial name="_PageHelpModal" model="Model" />

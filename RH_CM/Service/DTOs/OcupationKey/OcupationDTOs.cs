@@ -4,8 +4,8 @@ namespace RH_CM.Service.DTOs.OcupationKey
 {
     public class OcupationDTOs
     {
-        public List<OcupationsList>? OcupationsLists {  get; set; }
-        public List<Positions>? PositionsList { get; set; }
+        public List<OcupationsList> OcupationsLists { get; set; } = new();
+        public List<Positions> PositionsList { get; set; } = new();
 
     }
 

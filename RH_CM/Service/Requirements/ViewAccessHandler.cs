@@ -62,7 +62,7 @@ public class ViewAccessHandler : AuthorizationHandler<ViewAccessRequirement>
         string action = "";
         string userId = context.User.Identity?.Name ?? "";
 
-        // Intentar obtener controller/action dependiendo del tipo
+        // Try to get controller/action depending on the resource type
         switch (context.Resource)
         {
             case AuthorizationFilterContext mvcContext:
@@ -76,7 +76,7 @@ public class ViewAccessHandler : AuthorizationHandler<ViewAccessRequirement>
                 break;
 
             default:
-                // No se puede determinar la vista → negar acceso
+                // Can't determine the view → deny access
                 context.Fail();
                 return;
         }

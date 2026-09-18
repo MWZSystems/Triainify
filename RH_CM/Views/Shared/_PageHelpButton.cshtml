@@ -1,0 +1,13 @@
+@model RH_CM.ViewModels.PageHeaderViewModel
+
+@if (Model.HelpBullets.Any())
+{
+    <button type="button"
+            class="btn btn-sm btn-outline-secondary rounded-circle page-help-btn"
+            data-bs-toggle="modal"
+            data-bs-target="#pageHelpModal"
+            title="Help"
+            aria-label="Help for this page">
+        <i class="fas fa-question-circle"></i>
+    </button>
+}

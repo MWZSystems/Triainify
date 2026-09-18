@@ -4,22 +4,29 @@
     ViewData["Title"] = "Onboarding";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    // BodyClass para diferenciar esta pantalla (cian)
+    // BodyClass to differentiate this screen (cyan)
     ViewData["BodyClass"] = "page-headcounts";
 }
 
 <div class="row">
     <div class="col">
-        <h1 class="h3 mb-3 text-center title-accent">
-            <i class="align-middle fas fa-user-plus"></i> @ViewData["Title"]
-        </h1>
+        <partial name="_PageHeader" model="@(new RH_CM.ViewModels.PageHeaderViewModel
+        {
+            Title = "Onboarding",
+            IconClass = "fa-user-plus",
+            HelpBullets = new List<string>
+            {
+                "Employees currently going through onboarding — newly registered headcount records.",
+                "Click \"Create New Onboarding\" to register a new employee, or \"Export to Excel\" to download the list."
+            }
+        })" />
     </div>
     <div class="col-auto">
-        <!-- Botón AZUL (sin cambios) -->
-        <a class="btn btn-facebook" asp-action="CreateHeadCount">
+        <!-- Blue button (unchanged) -->
+        <a class="btn btn-facebook" asp-action="CreateHeadCount" title="Create New Onboarding">
             <i class="align-middle fas fa-plus-square"></i> CREATE NEW ONBOARDING
         </a>
-        <a class="btn btn-success" asp-action="ExportHeadCountToExcel">
+        <a class="btn btn-success" asp-action="ExportHeadCountToExcel" title="Export To Excel">
             <i class="align-middle fas fa-file-excel"></i> EXPORT TO EXCEL
         </a>
     </div>
@@ -45,7 +52,7 @@
                             <th>Name</th>
                             <th>Department</th>
                             <th>Position</th>
-                            <th>Actions</th>
+                            <th data-orderable="false">Actions</th>
                         </tr>
                         <!-- Filtros por columna -->
                         <tr class="table-light">
@@ -70,7 +77,7 @@
                                 <td class="text-center">
                                     <form asp-action="ToggleAvailabilityHeadCount" asp-route-id="@item.PkHeadcount" method="post" class="d-inline"
                                           onsubmit="return confirm('Are you sure you want to toggle the availability of this head count?');">
-                                        <button type="submit" class="btn @(item.Available == 1 ? "btn-success" : "btn-secondary")">
+                                        <button type="submit" class="btn @(item.Available == 1 ? "btn-success" : "btn-secondary")" title="Toggle availability">
                                             <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
                                         </button>
                                     </form>
@@ -79,13 +86,13 @@
                                         <i class="fas fa-eye"></i>
                                     </a>
 
-                                    <a class="btn btn-warning" asp-action="EditHeadCount" asp-route-id="@item.PkHeadcount">
+                                    <a class="btn btn-warning" asp-action="EditHeadCount" asp-route-id="@item.PkHeadcount" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
 
                                     @* <form asp-action="DeleteHeadCount" asp-route-id="@item.PkHeadcount" method="post" class="d-inline"
                                           onsubmit="return confirm('Are you sure you want to delete this item?');">
-                                        <button type="submit" class="btn btn-danger">
+                                        <button type="submit" class="btn btn-danger" title="Delete">
                                             <i class="align-middle fas fa-window-close"></i>
                                         </button>
                                     </form> *@
@@ -142,12 +149,6 @@
             });
 
             // Notificaciones
-            if ("@TempData["SuccessMessage"]" !== "") {
-                window.notyf?.open?.({ type: 'success', message: "@TempData["SuccessMessage"]", duration: 5000, position: { x: 'center', y: 'top' } });
-            }
-            if ("@TempData["ErrorMessage"]" !== "") {
-                window.notyf?.open?.({ type: 'error', message: "@TempData["ErrorMessage"]", duration: 5000, position: { x: 'center', y: 'top' } });
-            }
-        });
+});
     </script>
 }

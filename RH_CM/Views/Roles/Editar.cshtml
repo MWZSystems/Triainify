@@ -49,7 +49,7 @@
 
                             <div class="d-flex justify-content-end mt-4">
                                 <button type="submit"
-                                        class="btn btn-primary px-4">
+                                        class="btn btn-primary px-4" title="Save Changes">
                                     <i class="fas fa-save me-1"></i>
                                     Save Changes
                                 </button>
@@ -72,34 +72,4 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
-    <script>
-        $(document).ready(function () {
-
-            var ok = "@(TempData["Correcto"] ?? "")";
-            var err = "@(TempData["Error"] ?? "")";
-
-            if (ok && ok !== "") {
-                window.notyf.open({
-                    type: 'success',
-                    message: ok,
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-
-            if (err && err !== "") {
-                window.notyf.open({
-                    type: 'error',
-                    message: err,
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-
-        });
-    </script>
 }

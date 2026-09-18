@@ -41,10 +41,10 @@
                     <!-- Buttons -->
                     <div class="row">
                         <div class="col-12 text-end">
-                            <a href="javascript:history.back()" class="btn btn-secondary">
+                            <a href="javascript:history.back()" class="btn btn-secondary" title="Cancel">
                                 <i class="fas fa-arrow-left"></i> Cancel
                             </a>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" title="Continue">
                                 <i class="align-middle fas fa-check-circle"></i> Continue
                             </button>
                         </div>
@@ -61,48 +61,7 @@
     <script>
         $(document).ready(function () {
             // Notificaciones (Notyf)
-            if ("@TempData["SuccessMessage"]" !== "") {
-                window.notyf?.open({
-                    type: 'success',
-                    message: "@TempData["SuccessMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-            if ("@TempData["ErrorMessage"]" !== "") {
-                window.notyf?.open({
-                    type: 'error',
-                    message: "@TempData["ErrorMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-            if ("@TempData["WarningMessage"]" !== "") {
-                window.notyf?.open({
-                    type: 'warning',
-                    message: "@TempData["WarningMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-            if ("@TempData["InfoMessage"]" !== "") {
-                window.notyf?.open({
-                    type: 'info',
-                    message: "@TempData["InfoMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-
-            // Inicializa Select2
+// Inicializa Select2
             $(".select2").select2({
                 theme: 'bootstrap4',
                 allowClear: true,

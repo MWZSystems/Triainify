@@ -5,25 +5,33 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- 👇 MUY IMPORTANTE para Blazor: fija las rutas a la raíz del sitio -->
+    <!-- VERY IMPORTANT for Blazor: pins routes to the site root -->
     <base href="~/" />
 
     <title>@ViewData["Title"] - RH</title>
 
-    <!-- Estilos base del tema -->
+    <!-- Base theme styles -->
     <link rel="stylesheet" href="~/Assets/dist/css/light.css" asp-append-version="true" />
     <link rel="shortcut icon" href="~/Assets/favicon.ico" />
+
+    <!-- Typography (visual reference: uupm.cc) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" />
 
     <!-- Select2 (global) -->
     <link rel="stylesheet" href="~/Assets/dist/css/select2.css" asp-append-version="true" />
 
-    <!-- CSS de BootstrapBlazor (desde NuGet) -->
+    <!-- BootstrapBlazor CSS (from NuGet) -->
     @* <link rel="stylesheet" href="~/_content/BootstrapBlazor/css/bootstrap.blazor.bundle.min.css" /> *@
 
     @RenderSection("head", required: false)
 
-    <!-- Paletas/acentos por página -->
+    <!-- Per-page palettes/accents -->
     <link rel="stylesheet" href="~/Assets/dist/css/bodyclass.css" asp-append-version="true" />
+
+    <!-- Brand tokens (primary color, typography, buttons/badges) -->
+    <link rel="stylesheet" href="~/Assets/dist/css/theme-uupm.css" asp-append-version="true" />
 </head>
 
 <body class="@(ViewData["BodyClass"] as string ?? "")"
@@ -31,7 +39,7 @@
       data-sidebar-position="left" data-sidebar-behavior="sticky">
 
     @{
-        // Leer versión desde appsettings y exponerla a las vistas/partials
+        // Read the version from appsettings and expose it to views/partials
         var appVersion = Configuration["AppSettings:ApplicationVersion"];
         ViewBag.AppVersion = appVersion;
     }
@@ -63,10 +71,13 @@
     <!-- JS base -->
     <script src="~/Assets/dist/js/app.js" asp-append-version="true"></script>
     <!-- Select2 (global) -->
-    <script src="~/Assets/dist/js/select2.js" asp-append-version="true"></script>
+    <script src="~/Assets/dist/js/select2.min.js" asp-append-version="true"></script>
 
     <!-- Blazor Server runtime (requerido para componentes interactivos) -->
     <script src="~/_framework/blazor.server.js"></script>
+
+    <!-- Notificaciones estandarizadas (SuccessMessage/ErrorMessage/WarningMessage/InfoMessage) -->
+    <partial name="_ToastNotifications" />
 
     @RenderSection("Scripts", required: false)
 </body>

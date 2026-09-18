@@ -25,16 +25,12 @@ namespace RH_CM.Service.DC3Service
         {
             ExcelExportDTOs excelExport = new();
 
-
-            string[]? date = CompletedDate.Split(' ');
-
-
+            string[] date = (CompletedDate ?? string.Empty).Split(' ');
+            if (date.Length < 3 || !int.TryParse(date[1], out int day) || !int.TryParse(date[2], out int year))
+            {
+                return excelExport;
+            }
             string month = date[0];
-            int day = int.Parse(date[1]);
-            int year = int.Parse(date[2]);
-
-
-
 
             var parameters = new Dictionary<string, object>
             {
@@ -44,7 +40,11 @@ namespace RH_CM.Service.DC3Service
 
             List<DC3DTOs> answer = await _unitOfWork.ExecuteStoredProcedureToListAsync<DC3DTOs>("[sp_DC3Service_Get]", parameters);
 
-            DC3DTOs dC3DTOs = answer[0];
+            DC3DTOs? dC3DTOs = answer.FirstOrDefault();
+            if (dC3DTOs == null)
+            {
+                return excelExport;
+            }
 
             string templatePath = System.IO.Path.Combine(AppContext.BaseDirectory, "Resources", "TemplateDC3.pdf");
 

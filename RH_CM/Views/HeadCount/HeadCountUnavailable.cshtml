@@ -1,19 +1,30 @@
 ﻿@model RH_CM.ViewModels.IndexHeadCountListViewModel
 
 @{
-    ViewData["Title"] = "Headcount Unvailable";
+    ViewData["Title"] = "Headcount Unavailable";
+    ViewData["BodyClass"] = "page-headcount-unavailable";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="row">
     <div class="col">
-        <h1 class="h3 mb-3 text-center"><i class="align-middle fas fa-user-times"></i> @ViewData["Title"]</h1>
+        <partial name="_PageHeader" model="@(new RH_CM.ViewModels.PageHeaderViewModel
+        {
+            Title = "Headcount Unavailable",
+            IconClass = "fa-user-times",
+            HelpBullets = new List<string>
+            {
+                "Lists employees marked as unavailable (offboarded/inactive) in the headcount catalog.",
+                "Use \"Export to Excel\" to download the full list.",
+                "To reactivate someone, edit their record and toggle availability back on."
+            }
+        })" />
     </div>
     <div class="col-auto">
-        <a class="btn btn-facebook" asp-action="CreateHeadCount">
+        <a class="btn btn-facebook" asp-action="CreateHeadCount" title="Create New Onboarding">
             <i class="align-middle fas fa-plus-square"></i> CREATE NEW ONBOARDING
         </a>
-        <a class="btn btn-success" asp-action="ExportHeadCountToExcel">
+        <a class="btn btn-success" asp-action="ExportHeadCountToExcel" title="Export To Excel">
             <i class="align-middle fas fa-file-excel"></i> EXPORT TO EXCEL
         </a>
     </div>
@@ -27,7 +38,7 @@
                 @if (Model.SyHeadCount.Any())
                 {
                     <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
-                        <thead class="table-primary">
+                    <thead class="table-accent">
                             <tr>
                                 <th>Control Number</th>
                                 <th>Names</th>
@@ -116,59 +127,12 @@
 
     <script>
         $(document).ready(function () {
-            // Inicializar DataTable con traducción al español
+            // Initialize DataTable (English, consistent with the rest of the app)
             $('#datatables-responsive').DataTable({
                 responsive: true,
-                order: [[0, 'asc']], // Ordenar por 'Control Number' (índice 0) de forma ascendente
-                language: {
-                    "decimal": "",
-                    "emptyTable": "No hay información",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 Entradas",
-                    "infoFiltered": "(Filtrado de _MAX_ total entradas)",
-                    "thousands": ",",
-                    "lengthMenu": "Mostrar _MENU_ Entradas",
-                    "loadingRecords": "Cargando...",
-                    "processing": "Procesando...",
-                    "search": "Buscar:",
-                    "zeroRecords": "Sin resultados encontrados",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    }
-                }
+                order: [[0, 'asc']] // Sort by 'Control Number' (index 0) ascending
             });
 
-            // Mostrar mensajes de éxito y error
-            if ("@TempData["SuccessMessage"]" !== "") {
-                window.notyf.open({
-                    type: 'success',
-                    message: "@TempData["SuccessMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: {
-                        x: 'center',
-                        y: 'top'
-                    },
-                    duration: 5000
-                });
-            }
-
-            if ("@TempData["ErrorMessage"]" !== "") {
-                window.notyf.open({
-                    type: 'error',
-                    message: "@TempData["ErrorMessage"]",
-                    ripple: true,
-                    dismissible: true,
-                    position: {
-                        x: 'center',
-                        y: 'top'
-                    },
-                    duration: 5000
-                });
-            }
-        });
+});
     </script>
 }

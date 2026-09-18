@@ -9,6 +9,7 @@ using RH_CM.Service.DTOs;
 using RH_CM.Service.DTOs.UserTestEvidence;
 using RH_CM.Service.ExternalEvidence;
 using RH_CM.Service.UserTestEvidence;
+using RH_CM.Messages.UserTestEvidence;
 
 namespace RH_CM.Controllers
 {
@@ -26,7 +27,9 @@ namespace RH_CM.Controllers
             _dC3Service = dC3Service;
         }
 
-        // GET: UserTestEvidenceController
+        /// <summary>
+        /// Displays the list of users with test evidence.
+        /// </summary>
         [Authorize(Policy = "ViewAccess")]
         public async Task<ActionResult> Index()
         {
@@ -34,7 +37,9 @@ namespace RH_CM.Controllers
             return View(users);
         }
 
-        // GET: UserTestEvidenceController/Details/5
+        /// <summary>
+        /// Displays a user's test evidence details.
+        /// </summary>
         [Authorize(Policy = "ViewAccess")]
         public async Task<ActionResult> DetailUser(string id)
         {
@@ -42,29 +47,55 @@ namespace RH_CM.Controllers
             return View(detailDTOs);
         }
         [Authorize(Policy = "ViewAccess")]
-        public async Task<ActionResult> DiagnosticExamReview(int id)
+        public async Task<ActionResult> DiagnosticExamReview(int id, int controlNumber)
         {
-            FullExamDTOs fullExam = await _userTestEvidenceService.GetDiagnosticExamAsync(id);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            FullExamDTOs? fullExam = await _userTestEvidenceService.GetDiagnosticExamAsync(id, controlNumber);
+
+            if (fullExam == null)
+            {
+                TempData["ErrorMessage"] = UserTestEvidenceMessages.DiagnosticExamNotFound;
+                return RedirectToAction(nameof(Index));
+            }
 
             return View(fullExam);
         }
         [Authorize(Policy = "ViewAccess")]
-        public async Task<ActionResult> ExamReview(int id)
+        public async Task<ActionResult> ExamReview(int id, int controlNumber)
         {
-            FullExamDTOs fullExam = await _userTestEvidenceService.GetExamAsync(id);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            FullExamDTOs? fullExam = await _userTestEvidenceService.GetExamAsync(id, controlNumber);
+
+            if (fullExam == null)
+            {
+                TempData["ErrorMessage"] = UserTestEvidenceMessages.ExamNotFound;
+                return RedirectToAction(nameof(Index));
+            }
 
             return View(fullExam);
         }
         [Authorize(Policy = "ViewAccess")]
         public async Task<ActionResult> EvidenceReview(int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
             var externalEvidence = await _context.SyExternalevidences
                 .Where(ev => ev.FkMovementCourse == id)
                 .FirstOrDefaultAsync();
 
 
-            if (externalEvidence == null)
+            if (externalEvidence?.EvidenceFile == null)
                 return NotFound();
 
             return File(externalEvidence.EvidenceFile, "application/pdf");
@@ -73,11 +104,16 @@ namespace RH_CM.Controllers
 
         [HttpPost]
         [Authorize(Policy = "ViewAccess")]
-        public async Task<ActionResult> DeleteExams(int id)
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteExams(int id, int controlNumber)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            ServiceAnswer serviceAnswer = await _userTestEvidenceService.DeleteExamAsync(id);
-            TempData[serviceAnswer.MessageType] = serviceAnswer.Message;
+            ServiceAnswer serviceAnswer = await _userTestEvidenceService.DeleteExamAsync(id, controlNumber);
+            TempData[serviceAnswer.MessageType ?? ServiceAnswer.MessageType_Error] = serviceAnswer.Message;
 
             return RedirectToAction(nameof(Index));
 
@@ -86,10 +122,20 @@ namespace RH_CM.Controllers
         [Authorize(Policy = "ViewAccess")]
         public async Task<ActionResult> ExportEvidencesByUser(int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
             ExcelExportDTOs answerFile = await _userTestEvidenceService.ExportExcelAsync(id);
 
-            string fullName = answerFile.FullName;
+            if (answerFile?.File == null || answerFile.File.Length == 0)
+            {
+                TempData["ErrorMessage"] = UserTestEvidenceMessages.NoDataAvailableToExport;
+                return RedirectToAction(nameof(Index));
+            }
+
+            string fullName = answerFile.FullName ?? string.Empty;
             string controlNumbr = answerFile.ControlNumber.ToString();
 
 
@@ -109,7 +155,11 @@ namespace RH_CM.Controllers
 
             ExcelExportDTOs answerFile = await _userTestEvidenceService.ExportExcelAsync();
 
-
+            if (answerFile?.File == null || answerFile.File.Length == 0)
+            {
+                TempData["ErrorMessage"] = UserTestEvidenceMessages.NoDataAvailableToExport;
+                return RedirectToAction(nameof(Index));
+            }
 
             string fechaActual = DateTime.Now.ToString("yyyyMMdd");
             return File(
@@ -124,10 +174,20 @@ namespace RH_CM.Controllers
         //DC3PdfDownload
         public async Task<ActionResult> DC3PdfDownload(int ControlNumber, string Course, string CompletedDate, string bywho)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
             ExcelExportDTOs answerFile = await _dC3Service.GetDC3File(ControlNumber, Course, CompletedDate, bywho);
 
-            string fullName = answerFile.FullName;
+            if (answerFile?.File == null || answerFile.File.Length == 0)
+            {
+                TempData["ErrorMessage"] = UserTestEvidenceMessages.Dc3CertificateCouldNotBeGeneratedFor;
+                return RedirectToAction(nameof(Index));
+            }
+
+            string fullName = answerFile.FullName ?? string.Empty;
             string controlNumbr = ControlNumber.ToString();
 
 

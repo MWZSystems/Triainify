@@ -4,7 +4,8 @@
 @inject UserManager<IdentityUser> UserManager
 
 @{
-    ViewData["Title"] = "learning";
+    ViewData["Title"] = "My Learning";
+    ViewData["BodyClass"] = "page-learning";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var first = Model?.FirstOrDefault();
@@ -18,20 +19,22 @@
         "ALL" => "All",
         _ => "Required"
     };
+    var pageHelp = new RH_CM.ViewModels.PageHeaderViewModel
+    {
+        Title = "My Learning",
+        HelpBullets = new List<string>
+        {
+            "Lists the courses assigned to you, filtered by Required / Not Required / All using the \"Filter Courses\" button.",
+            "Click the play button on a row to start that course — it opens the diagnostic test, the material, and the final exam in order.",
+            "The \"Learning information\" panel below explains what each column means in more detail."
+        }
+    };
 }
-
-<div class="row mb-3">
-    <div class="col">
-        <h1 class="h3 mb-3 text-center">
-            <i class="align-middle fas fa-graduation-cap"></i> @ViewData["Title"]
-        </h1>
-    </div>
-</div>
 
 <div class="row mb-2 mb-xl-3">
     <div class="col-auto ms-auto text-end mt-n1">
         <div class="dropdown me-2 d-inline-block">
-            <a class="btn btn-light bg-white shadow-sm dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-display="static">
+            <a class="btn btn-light bg-white shadow-sm dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-display="static" title="Filter Courses">
                 <i class="align-middle mt-n1" data-feather="filter"></i> Filter Courses
             </a>
             <div class="dropdown-menu dropdown-menu-end">
@@ -55,6 +58,12 @@
         <div class="card">
 
             <div class="card-header bg-light border-bottom">
+                <div class="d-flex align-items-center justify-content-center pt-2">
+                    <h4 class="fw-bold title-accent mb-0">
+                        <i class="fas fa-graduation-cap me-2"></i>My Learning
+                    </h4>
+                    <partial name="_PageHelpButton" model="pageHelp" />
+                </div>
                 @if (first != null)
                 {
                     <div class="d-flex flex-column align-items-center text-center py-2">
@@ -95,13 +104,15 @@
                 }
             </div>
 
+            <partial name="_PageHelpModal" model="pageHelp" />
+
             <div class="px-3 pt-2 d-flex justify-content-end">
                 <button class="btn btn-outline-info btn-sm"
                         type="button"
                         data-bs-toggle="collapse"
                         data-bs-target="#learningInfoAlerts"
                         aria-expanded="false"
-                        aria-controls="learningInfoAlerts">
+                        aria-controls="learningInfoAlerts" title="Learning information">
                     <i class="fas fa-info-circle"></i> Learning information
                 </button>
             </div>
@@ -117,7 +128,7 @@
                     <div class="card-body">
 
                         <div class="alert alert-success alert-outline alert-dismissible mb-3" role="alert">
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" title="Close"></button>
                             <div class="alert-icon">
                                 <i class="fas fa-list-alt"></i>
                             </div>
@@ -128,7 +139,7 @@
                         </div>
 
                         <div class="alert alert-primary alert-outline alert-dismissible mb-0" role="alert">
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" title="Close"></button>
                             <div class="alert-icon">
                                 <i class="fas fa-play"></i>
                             </div>
@@ -147,7 +158,7 @@
                 @if (Model != null && Model.Any())
                 {
                     <table id="datatables-learning" class="table table-striped table-hover" style="width:100%">
-                        <thead class="table-primary">
+                    <thead class="table-accent">
                             <tr>
                                 <th># Assign.</th>
                                 <th># Course</th>
@@ -158,7 +169,7 @@
                                 <th>Validity (days)</th>
                                 <th>Status</th>
                                 <th>Last update</th>
-                                <th>Actions</th>
+                                <th data-orderable="false">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -215,27 +226,6 @@
                 ]
             });
 
-            if ('@TempData["SuccessMessage"]' !== '') {
-                window.notyf?.open?.({
-                    type: 'success',
-                    message: '@TempData["SuccessMessage"]',
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-
-            if ('@TempData["ErrorMessage"]' !== '') {
-                window.notyf?.open?.({
-                    type: 'error',
-                    message: '@TempData["ErrorMessage"]',
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-        });
+});
     </script>
 }

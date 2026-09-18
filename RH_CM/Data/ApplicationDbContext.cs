@@ -11,7 +11,7 @@ namespace RH_CM.Data
 
         }
         
-        public DbSet<AppUsuario> AppUsuario { get; set; }
+        public DbSet<AppUsuario> AppUsuario { get; set; } = null!;
 
     }
 }

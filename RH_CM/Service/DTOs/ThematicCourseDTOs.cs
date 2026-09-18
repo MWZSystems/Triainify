@@ -2,9 +2,9 @@
 {
     public class ThematicCourseDTOs
     {
-        public List<ThematicCourseList>? ThematicCourses {  get; set; }
-        public List<Course>? Courses { get; set; }
-        public List<Thematic>? Thematics { get; set; }
+        public List<ThematicCourseList> ThematicCourses { get; set; } = new();
+        public List<Course> Courses { get; set; } = new();
+        public List<Thematic> Thematics { get; set; } = new();
     }
 
     public class ThematicCourseList 

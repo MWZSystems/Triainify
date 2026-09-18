@@ -15,6 +15,10 @@
 
     <title>Trainify Login</title>
     <link rel="stylesheet" href="~/Assets/dist/css/light.css" asp-append-version="true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" />
+    <link rel="stylesheet" href="~/Assets/dist/css/theme-uupm.css" asp-append-version="true" />
     <link rel="shortcut icon" href="~/Assets/favicon.ico">
 
     <style>
@@ -99,7 +103,7 @@
 
                                 <!-- Button -->
                                 <div class="d-grid mt-3">
-                                    <button class="btn btn-primary btn-lg">
+                                    <button class="btn btn-primary btn-lg" title="Login">
                                         <i class="fas fa-sign-in-alt me-1"></i>
                                         Login
                                     </button>
@@ -133,7 +137,7 @@
             document.addEventListener("DOMContentLoaded", function () {
                 if (window.notyf) {
                     window.notyf.open({
-                        type: 'error',
+                        type: 'danger',
                         message: 'Session has expired. Please Log In.',
                         position: { x: 'center', y: 'top' },
                         duration: 6000
@@ -162,7 +166,7 @@
 
             if (window.notyf && errorMessage) {
                 window.notyf.open({
-                    type: 'error',
+                    type: 'danger',
                     message: errorMessage,
                     ripple: true,
                     dismissible: true,

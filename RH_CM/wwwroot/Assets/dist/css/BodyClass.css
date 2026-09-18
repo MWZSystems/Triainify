@@ -17,6 +17,36 @@
 .title-accent {
 }
 
+/* Franja de color detrás del encabezado de cada página (ver Views/Shared/_PageHeader.cshtml).
+   Cada bloque body.page-* de abajo solo define background-color/border-left-color;
+   el resto de la forma vive aquí, una sola vez. */
+.page-header-accent {
+    padding: .65rem 1.1rem;
+    border-radius: .375rem;
+    border-left: 4px solid transparent;
+    background-color: transparent;
+    text-align: center;
+}
+
+/* Keep every page title, its icon, and the contextual help button centered as one unit. */
+.page-header-accent .title-accent {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+}
+
+.page-help-btn {
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    line-height: 1.75rem;
+    font-size: .8rem;
+    vertical-align: middle;
+    margin-left: 0;
+    flex: 0 0 auto;
+}
+
 /* Encabezados DataTables comunes */
 #datatables-pos thead th,
 #datatables-dept thead th,
@@ -90,6 +120,11 @@ body.page-departments .title-accent {
     color: #7f2900; /* coral oscuro para el título */
 }
 
+body.page-departments .page-header-accent {
+    background-color: #ffe4d6;
+    border-left-color: #7f2900;
+}
+
 
 
 /* ======================================
@@ -103,6 +138,11 @@ body.page-positions .title-accent {
     color: #0f5132;
 }
 
+body.page-positions .page-header-accent {
+    background-color: #d1e7dd;
+    border-left-color: #0f5132;
+}
+
 /* ======================================
    ======= Supervisors: Morado =======
    ====================================== */
@@ -114,6 +154,11 @@ body.page-supervisors .title-accent {
     color: #3d2466;
 }
 
+body.page-supervisors .page-header-accent {
+    background-color: #e2d9f3;
+    border-left-color: #3d2466;
+}
+
 /* ======================================
    ======= Headcounts / Onboarding: Cian =======
    ====================================== */
@@ -123,6 +168,11 @@ body.page-headcounts .table thead.table-accent {
 
 body.page-headcounts .title-accent {
     color: #055160;
+}
+
+body.page-headcounts .page-header-accent {
+    background-color: #cff4fc;
+    border-left-color: #055160;
 }
 
 /* ===========================
@@ -139,6 +189,11 @@ body.page-offboarding .title-accent {
     color: #343a40; /* gris muy oscuro */
 }
 
+body.page-offboarding .page-header-accent {
+    background-color: #e1e5ea;
+    border-left-color: #343a40;
+}
+
 /* ======================================
    ======= Courses: Ámbar =======
    ====================================== */
@@ -148,6 +203,11 @@ body.page-courses .table thead.table-accent {
 
 body.page-courses .title-accent {
     color: #664d03; /* warning-emphasis */
+}
+
+body.page-courses .page-header-accent {
+    background-color: #ffe69c;
+    border-left-color: #664d03;
 }
 
 /* ======================================
@@ -161,6 +221,11 @@ body.page-course-materials .title-accent {
     color: #842029; /* rojo intenso tipo danger-emphasis */
 }
 
+body.page-course-materials .page-header-accent {
+    background-color: #f8d7da;
+    border-left-color: #842029;
+}
+
 /* ======================================
    ======= Course Completed Summary: Azul Petróleo =======
    ====================================== */
@@ -170,6 +235,11 @@ body.page-coursecompleted-summary .table thead.table-accent {
 
 body.page-coursecompleted-summary .title-accent {
     color: #004d4a; /* Azul petróleo intenso para el título */
+}
+
+body.page-coursecompleted-summary .page-header-accent {
+    background-color: #d6f2f0;
+    border-left-color: #004d4a;
 }
 
 /* ======================================
@@ -183,6 +253,11 @@ body.page-course-assignments .title-accent {
     color: #a61b6a; /* fucsia intenso para títulos */
 }
 
+body.page-course-assignments .page-header-accent {
+    background-color: #fde2f3;
+    border-left-color: #a61b6a;
+}
+
 /* ======================================
    ======= Matrix by Position: Índigo =======
    ====================================== */
@@ -192,6 +267,425 @@ body.page-matrix-position .table thead.table-accent {
 
 body.page-matrix-position .title-accent {
     color: #3730a3; /* índigo intenso para el título */
+}
+
+body.page-matrix-position .page-header-accent {
+    background-color: #e0e7ff;
+    border-left-color: #3730a3;
+}
+
+/* ======================================
+   ======= Course Level Material: Turquesa =======
+   ====================================== */
+body.page-course-level-material .table thead.table-accent {
+    background-color: #cceeee;
+}
+
+body.page-course-level-material .title-accent {
+    color: #0a5c5c;
+}
+
+body.page-course-level-material .page-header-accent {
+    background-color: #cceeee;
+    border-left-color: #0a5c5c;
+}
+
+/* ======================================
+   ======= Tests: Azul =======
+   ====================================== */
+body.page-tests .table thead.table-accent {
+    background-color: #cfe2ff;
+}
+
+body.page-tests .title-accent {
+    color: #084298;
+}
+
+body.page-tests .page-header-accent {
+    background-color: #cfe2ff;
+    border-left-color: #084298;
+}
+
+/* ======================================
+   ======= External Evidence: Marrón =======
+   ====================================== */
+body.page-external-evidence .table thead.table-accent {
+    background-color: #e8dcd0;
+}
+
+body.page-external-evidence .title-accent {
+    color: #5c3a21;
+}
+
+body.page-external-evidence .page-header-accent {
+    background-color: #e8dcd0;
+    border-left-color: #5c3a21;
+}
+
+/* ======================================
+   ======= Course Completed (Detail): Verde Lima =======
+   ====================================== */
+body.page-coursecompleted-detail .table thead.table-accent {
+    background-color: #e2f0cb;
+}
+
+body.page-coursecompleted-detail .title-accent {
+    color: #3f5c1a;
+}
+
+body.page-coursecompleted-detail .page-header-accent {
+    background-color: #e2f0cb;
+    border-left-color: #3f5c1a;
+}
+
+/* ======================================
+   ======= Headcount Available: Azul Cielo =======
+   ====================================== */
+body.page-headcount-available .table thead.table-accent {
+    background-color: #d3e9ff;
+}
+
+body.page-headcount-available .title-accent {
+    color: #084b8a;
+}
+
+body.page-headcount-available .page-header-accent {
+    background-color: #d3e9ff;
+    border-left-color: #084b8a;
+}
+
+/* ======================================
+   ======= Headcount Unavailable: Rosa Apagado =======
+   ====================================== */
+body.page-headcount-unavailable .table thead.table-accent {
+    background-color: #f3d9e0;
+}
+
+body.page-headcount-unavailable .title-accent {
+    color: #7a2439;
+}
+
+body.page-headcount-unavailable .page-header-accent {
+    background-color: #f3d9e0;
+    border-left-color: #7a2439;
+}
+
+/* ======================================
+   ======= Learning (Trainify): Verde Esmeralda =======
+   ====================================== */
+body.page-learning .table thead.table-accent {
+    background-color: #c8f0da;
+}
+
+body.page-learning .title-accent {
+    color: #0d5c3b;
+}
+
+body.page-learning .page-header-accent {
+    background-color: #c8f0da;
+    border-left-color: #0d5c3b;
+}
+
+/* ======================================
+   ======= Matrix by Employee (Trainify): Violeta =======
+   ====================================== */
+body.page-matrix-employee .table thead.table-accent {
+    background-color: #ebdcf5;
+}
+
+body.page-matrix-employee .title-accent {
+    color: #5a2a7a;
+}
+
+body.page-matrix-employee .page-header-accent {
+    background-color: #ebdcf5;
+    border-left-color: #5a2a7a;
+}
+
+/* ======================================
+   ======= Courses by Position (Reports): Naranja =======
+   ====================================== */
+body.page-courses-by-position .table thead.table-accent {
+    background-color: #ffe0c2;
+}
+
+body.page-courses-by-position .title-accent {
+    color: #7a3e00;
+}
+
+body.page-courses-by-position .page-header-accent {
+    background-color: #ffe0c2;
+    border-left-color: #7a3e00;
+}
+
+/* ======================================
+   ======= Missing Material/Exam (Reports): Rojo Vino =======
+   ====================================== */
+body.page-missing-material .table thead.table-accent {
+    background-color: #f0d0d6;
+}
+
+body.page-missing-material .title-accent {
+    color: #6e1423;
+}
+
+body.page-missing-material .page-header-accent {
+    background-color: #f0d0d6;
+    border-left-color: #6e1423;
+}
+
+/* ======================================
+   ======= Completed by Department (Reports): Verde Oliva =======
+   ====================================== */
+body.page-completed-department .table thead.table-accent {
+    background-color: #e3e8c8;
+}
+
+body.page-completed-department .title-accent {
+    color: #4a5416;
+}
+
+body.page-completed-department .page-header-accent {
+    background-color: #e3e8c8;
+    border-left-color: #4a5416;
+}
+
+/* ======================================
+   ======= Matrix by Supervisor (Reports): Azul Acero =======
+   ====================================== */
+body.page-matrix-supervisor .table thead.table-accent {
+    background-color: #d6e4f0;
+}
+
+body.page-matrix-supervisor .title-accent {
+    color: #1f3a5c;
+}
+
+body.page-matrix-supervisor .page-header-accent {
+    background-color: #d6e4f0;
+    border-left-color: #1f3a5c;
+}
+
+/* ======================================
+   ======= Users: Azul Cobalto =======
+   ====================================== */
+body.page-users .table thead.table-accent {
+    background-color: #d9e0f2;
+}
+
+body.page-users .title-accent {
+    color: #24345c;
+}
+
+body.page-users .page-header-accent {
+    background-color: #d9e0f2;
+    border-left-color: #24345c;
+}
+
+/* ======================================
+   ======= Roles: Ocre Dorado =======
+   ====================================== */
+body.page-roles .table thead.table-accent {
+    background-color: #f0e2b8;
+}
+
+body.page-roles .title-accent {
+    color: #6b4f00;
+}
+
+body.page-roles .page-header-accent {
+    background-color: #f0e2b8;
+    border-left-color: #6b4f00;
+}
+
+/* ======================================
+   ======= Evidence By User: Vino =======
+   ====================================== */
+body.page-evidence-by-user .table thead.table-accent {
+    background-color: #ecd7dc;
+}
+
+body.page-evidence-by-user .title-accent {
+    color: #6b1f35;
+}
+
+body.page-evidence-by-user .page-header-accent {
+    background-color: #ecd7dc;
+    border-left-color: #6b1f35;
+}
+
+/* ================================================================
+   Tablas: acciones consistentes y controles de orden discretos
+   ================================================================ */
+
+/* Evita que los botones de una misma fila se encimen o se apilen sin
+   separación cuando DataTables calcula una columna Actions estrecha. */
+.table tbody td:has(> .btn, > a.btn, > form .btn) {
+    min-width: 10.25rem;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.table tbody td:has(> .btn, > a.btn, > form .btn) > form {
+    display: inline-flex !important;
+    margin: .18rem;
+    vertical-align: middle;
+}
+
+.table tbody td:has(> .btn, > a.btn, > form .btn) > .btn,
+.table tbody td:has(> .btn, > a.btn, > form .btn) > a.btn {
+    margin: .18rem;
+    vertical-align: middle;
+}
+
+.table tbody td:has(> .btn, > a.btn, > form .btn) > form .btn,
+.table tbody td:has(> .btn, > a.btn, > form .btn) > .btn,
+.table tbody td:has(> .btn, > a.btn, > form .btn) > a.btn {
+    display: inline-flex;
+    width: 2.35rem;
+    height: 2.35rem;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+/* DataTables trae dos flechas grandes una junto a otra. Se sustituyen por
+   dos triángulos finos, apilados y alineados al extremo derecho del th. */
+table.dataTable > thead > tr > th:not(.sorting_disabled),
+table.dataTable > thead > tr > td:not(.sorting_disabled) {
+    padding-right: 1.85rem !important;
+}
+
+table.dataTable > thead .sorting::before,
+table.dataTable > thead .sorting::after,
+table.dataTable > thead .sorting_asc::before,
+table.dataTable > thead .sorting_asc::after,
+table.dataTable > thead .sorting_desc::before,
+table.dataTable > thead .sorting_desc::after,
+table.dataTable > thead .sorting_asc_disabled::before,
+table.dataTable > thead .sorting_asc_disabled::after,
+table.dataTable > thead .sorting_desc_disabled::before,
+table.dataTable > thead .sorting_desc_disabled::after {
+    content: "" !important;
+    position: absolute;
+    right: .7rem !important;
+    bottom: auto !important;
+    width: 0;
+    height: 0;
+    font-size: 0;
+    opacity: .28;
+}
+
+table.dataTable > thead .sorting::before,
+table.dataTable > thead .sorting_asc::before,
+table.dataTable > thead .sorting_desc::before,
+table.dataTable > thead .sorting_asc_disabled::before,
+table.dataTable > thead .sorting_desc_disabled::before {
+    top: calc(50% - 6px);
+    border-right: 3px solid transparent;
+    border-bottom: 4px solid currentColor;
+    border-left: 3px solid transparent;
+}
+
+table.dataTable > thead .sorting::after,
+table.dataTable > thead .sorting_asc::after,
+table.dataTable > thead .sorting_desc::after,
+table.dataTable > thead .sorting_asc_disabled::after,
+table.dataTable > thead .sorting_desc_disabled::after {
+    top: calc(50% + 2px);
+    border-top: 4px solid currentColor;
+    border-right: 3px solid transparent;
+    border-left: 3px solid transparent;
+}
+
+table.dataTable > thead .sorting_asc::before,
+table.dataTable > thead .sorting_desc::after {
+    opacity: .95;
+}
+
+table.dataTable > thead .sorting_asc::after,
+table.dataTable > thead .sorting_desc::before {
+    opacity: .14;
+}
+
+/* ================================================================
+   Catálogos que antes compartían el mismo índigo de Matrix Position
+   ================================================================ */
+
+/* Thematic Area: verde bosque */
+body.page-thematic-area {
+    --interface-accent: #166534;
+    --interface-accent-hover: #14532d;
+    --interface-soft: #dcfce7;
+}
+
+/* Thematic Course: violeta intenso */
+body.page-thematic-course {
+    --interface-accent: #6d28d9;
+    --interface-accent-hover: #5b21b6;
+    --interface-soft: #ede9fe;
+}
+
+/* Occupation Key: naranja quemado */
+body.page-occupation-key {
+    --interface-accent: #c2410c;
+    --interface-accent-hover: #9a3412;
+    --interface-soft: #ffedd5;
+}
+
+/* Permissions: azul cian oscuro */
+body.page-permissions {
+    --interface-accent: #0e7490;
+    --interface-accent-hover: #155e75;
+    --interface-soft: #cffafe;
+}
+
+body.page-thematic-area .table thead.table-accent,
+body.page-thematic-course .table thead.table-accent,
+body.page-occupation-key .table thead.table-accent,
+body.page-permissions .table thead.table-accent {
+    background-color: var(--interface-soft);
+    color: var(--interface-accent-hover);
+}
+
+body.page-thematic-area .title-accent,
+body.page-thematic-course .title-accent,
+body.page-occupation-key .title-accent,
+body.page-permissions .title-accent {
+    color: var(--interface-accent-hover);
+}
+
+body.page-thematic-area .page-header-accent,
+body.page-thematic-course .page-header-accent,
+body.page-occupation-key .page-header-accent,
+body.page-permissions .page-header-accent {
+    background-color: var(--interface-soft);
+    border-left-color: var(--interface-accent);
+}
+
+body.page-thematic-area .btn-primary,
+body.page-thematic-course .btn-primary,
+body.page-occupation-key .btn-primary,
+body.page-permissions .btn-primary,
+body.page-thematic-area .page-item.active .page-link,
+body.page-thematic-course .page-item.active .page-link,
+body.page-occupation-key .page-item.active .page-link,
+body.page-permissions .page-item.active .page-link {
+    background-color: var(--interface-accent);
+    border-color: var(--interface-accent);
+}
+
+body.page-thematic-area .btn-primary:hover,
+body.page-thematic-area .btn-primary:focus,
+body.page-thematic-course .btn-primary:hover,
+body.page-thematic-course .btn-primary:focus,
+body.page-occupation-key .btn-primary:hover,
+body.page-occupation-key .btn-primary:focus,
+body.page-permissions .btn-primary:hover,
+body.page-permissions .btn-primary:focus {
+    background-color: var(--interface-accent-hover);
+    border-color: var(--interface-accent-hover);
 }
 
 

@@ -4,18 +4,17 @@ using Microsoft.AspNetCore.Mvc;
 using RH_CM.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using RH_CM.Messages.Identity;
 
 namespace RH_CM.Controllers
 {
     public class RolesController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ApplicationDbContext _contexto;
 
-        public RolesController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, ApplicationDbContext contexto)
+        public RolesController(RoleManager<IdentityRole> roleManager, ApplicationDbContext contexto)
         {
-            _userManager = userManager;
             _roleManager = roleManager;
             _contexto = contexto;
         }
@@ -40,18 +39,21 @@ namespace RH_CM.Controllers
         [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> Crear(IdentityRole rol)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             if (await _roleManager.RoleExistsAsync(rol.Name!))
             {
-                // Mensaje original: "El rol ya existe"
-                TempData["Error"] = "The role already exists";
+                TempData["ErrorMessage"] = RolesMessages.RoleAlreadyExists;
                 return RedirectToAction(nameof(Index));
             }
 
-            //Se crea el rol
+            // Create the role
             await _roleManager.CreateAsync(new IdentityRole() { Name = rol.Name });
 
-            // Mensaje original: "Rol creado correctamente"
-            TempData["Correcto"] = "Role created successfully";
+            TempData["SuccessMessage"] = RolesMessages.RoleCreatedSuccessfully;
             return RedirectToAction(nameof(Index));
         }
 
@@ -65,7 +67,7 @@ namespace RH_CM.Controllers
             }
             else
             {
-                //Actualizar el rol
+                // Load the role to edit
                 var rolBD = _contexto.Roles.FirstOrDefault(r => r.Id == id);
                 return View(rolBD);
             }
@@ -77,9 +79,14 @@ namespace RH_CM.Controllers
         [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> Editar(IdentityRole rol)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             if (rol == null || string.IsNullOrWhiteSpace(rol.Id))
             {
-                TempData["Error"] = "Invalid request.";
+                TempData["ErrorMessage"] = RolesMessages.InvalidRequest;
                 return RedirectToAction(nameof(Index));
             }
 
@@ -87,7 +94,7 @@ namespace RH_CM.Controllers
             var rolBD = await _roleManager.FindByIdAsync(rol.Id);
             if (rolBD == null)
             {
-                TempData["Error"] = "The role does not exist";
+                TempData["ErrorMessage"] = RolesMessages.RoleDoesNotExist;
                 return RedirectToAction(nameof(Index));
             }
 
@@ -95,7 +102,7 @@ namespace RH_CM.Controllers
             if (!string.Equals(rolBD.Name, rol.Name, StringComparison.OrdinalIgnoreCase)
                 && await _roleManager.RoleExistsAsync(rol.Name!))
             {
-                TempData["Error"] = "The role already exists";
+                TempData["ErrorMessage"] = RolesMessages.RoleAlreadyExists;
                 return RedirectToAction(nameof(Index));
             }
 
@@ -107,11 +114,11 @@ namespace RH_CM.Controllers
             if (!result.Succeeded)
             {
                 var errors = string.Join(" | ", result.Errors.Select(e => e.Description));
-                TempData["Error"] = $"Error updating role: {errors}";
+                TempData["ErrorMessage"] = string.Format(RolesMessages.ErrorUpdatingRoleFormat, errors);
                 return RedirectToAction(nameof(Index));
             }
 
-            TempData["Correcto"] = "Role edited successfully";
+            TempData["SuccessMessage"] = RolesMessages.RoleEditedSuccessfully;
             return RedirectToAction(nameof(Index));
         }
 
@@ -124,23 +131,20 @@ namespace RH_CM.Controllers
             var rolBD = _contexto.Roles.FirstOrDefault(r => r.Id == id);
             if (rolBD == null)
             {
-                // Mensaje original: "No existe el rol"
-                TempData["Error"] = "The role does not exist";
+                TempData["ErrorMessage"] = RolesMessages.RoleDoesNotExist;
                 return RedirectToAction(nameof(Index));
             }
 
-            var usuariosParaEsteRol = _contexto.UserRoles.Where(u => u.RoleId == id).Count();
+            var usuariosParaEsteRol = _contexto.UserRoles.Count(u => u.RoleId == id);
             if (usuariosParaEsteRol > 0)
             {
-                // Mensaje original: "El rol tiene usuarios, no se puede borrar"
-                TempData["Error"] = "The role has users assigned, it cannot be deleted";
+                TempData["ErrorMessage"] = RolesMessages.RoleHasUsersAssignedItCannotBe;
                 return RedirectToAction(nameof(Index));
             }
 
             await _roleManager.DeleteAsync(rolBD);
 
-            // Mensaje original: "Rol borrado correctamente"
-            TempData["Correcto"] = "Role deleted successfully";
+            TempData["SuccessMessage"] = RolesMessages.RoleDeletedSuccessfully;
             return RedirectToAction(nameof(Index));
         }
     }

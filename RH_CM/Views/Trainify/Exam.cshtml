@@ -109,10 +109,10 @@
                     }
 
                     <div class="text-end">
-                        <a asp-action="LearningTrainify" asp-controller="Trainify" class="btn btn-secondary">
+                        <a asp-action="LearningTrainify" asp-controller="Trainify" class="btn btn-secondary" title="Cancel">
                             <i class="fas fa-arrow-left"></i> Cancel
                         </a>
-                        <button id="btnSubmit" type="submit" class="btn btn-primary">
+                        <button id="btnSubmit" type="submit" class="btn btn-primary" title="Submit">
                             <i class="fas fa-paper-plane"></i> Submit
                         </button>
                     </div>
@@ -125,7 +125,7 @@
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
     <script>
-        // Mantiene sincronía de hidden IsSelected (tu lógica existente)
+        // Keeps the hidden IsSelected fields in sync (existing logic)
         document.addEventListener('change', function (e) {
             if (e.target && e.target.classList.contains('opt-checkbox')) {
                 const q = e.target.getAttribute('data-q');
@@ -144,16 +144,16 @@
             }
         });
 
-        // ===== Validación: cada pregunta debe tener al menos una selección =====
+        // ===== Validation: every question must have at least one selection =====
         (function () {
             const form = document.getElementById('examForm');
             const submitBtn = document.getElementById('btnSubmit');
 
             function isQuestionAnswered(qIndex) {
-                // radios del grupo
+                // radios in the group
                 const radioChecked = document.querySelector(`input.opt-radio[name="q${qIndex}_single"]:checked`);
                 if (radioChecked) return true;
-                // checkboxes con data-q
+                // checkboxes with data-q
                 const anyCheckboxChecked = document.querySelector(`input.opt-checkbox[data-q="${qIndex}"]:checked`);
                 if (anyCheckboxChecked) return true;
                 return false;
@@ -171,7 +171,7 @@
                 if (fb) fb.style.display = 'block';
             }
 
-            // Al cambiar una opción, limpiar el error de esa pregunta si ya quedó respondida
+            // When an option changes, clear that question's error if it's now answered
             document.addEventListener('change', function (e) {
                 const card = e.target.closest('.question-card');
                 if (!card) return;
@@ -205,13 +205,17 @@
 
                     // Opcional: toast/alert general
                     window.notyf?.open?.({
-                        type: 'error',
+                        type: 'danger',
                         message: 'Please answer every question before submitting.',
                         ripple: true,
                         dismissible: true,
                         position: { x: 'center', y: 'top' },
                         duration: 4000
                     });
+                } else {
+                    // Prevent accidental double submissions while the atomic server-side save runs.
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Recording...';
                 }
             });
         })();

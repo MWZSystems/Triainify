@@ -7,13 +7,21 @@
 @{
     ViewData["Title"] = "User administrator";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["BodyClass"] = "page-users";
 }
 
 <div class="row mb-3">
     <div class="col">
-        <h1 class="h3 mb-3 text-center">
-            <i class="align-middle fas fa-users-cog"></i> @ViewData["Title"]
-        </h1>
+        <partial name="_PageHeader" model="@(new RH_CM.ViewModels.PageHeaderViewModel
+        {
+            Title = "User Administrator",
+            IconClass = "fa-users-cog",
+            HelpBullets = new List<string>
+            {
+                "The list of user accounts that can log in to Trainify.",
+                "Click \"Create New User\" to register one, or use the row actions to view details, edit, manage permissions, or lock/unlock an account."
+            }
+        })" />
     </div>
 
     <div class="col-auto d-flex align-items-center gap-2">
@@ -21,7 +29,7 @@
         <!-- Create new user -->
         <a class="btn btn-facebook"
            asp-controller="Usuarios"
-           asp-action="Crear">
+           asp-action="Crear" title="Create New User">
             <i class="align-middle fas fa-user-plus"></i> CREATE NEW USER
         </a>
 
@@ -31,7 +39,7 @@
                 data-bs-toggle="collapse"
                 data-bs-target="#infoAlerts"
                 aria-expanded="false"
-                aria-controls="infoAlerts">
+                aria-controls="infoAlerts" title="Actions information">
             <i class="fas fa-info-circle"></i> Actions information
         </button>
 
@@ -50,7 +58,7 @@
 
             <!-- Create User -->
             <div class="alert alert-primary alert-outline alert-dismissible mb-3" role="alert">
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" title="Close"></button>
                 <div class="alert-icon">
                     <i class="fas fa-user-plus"></i>
                 </div>
@@ -61,7 +69,7 @@
 
             <!-- Edit User -->
             <div class="alert alert-warning alert-outline alert-dismissible mb-3" role="alert">
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" title="Close"></button>
                 <div class="alert-icon">
                     <i class="fas fa-edit"></i>
                 </div>
@@ -72,7 +80,7 @@
 
             <!-- Claims / Permissions -->
             <div class="alert alert-success alert-outline alert-dismissible mb-3" role="alert">
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" title="Close"></button>
                 <div class="alert-icon">
                     <i class="fas fa-user-shield"></i>
                 </div>
@@ -83,7 +91,7 @@
 
             <!-- Lock User -->
             <div class="alert alert-secondary alert-outline alert-dismissible mb-3" role="alert">
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" title="Close"></button>
                 <div class="alert-icon">
                     <i class="fas fa-user-lock"></i>
                 </div>
@@ -94,7 +102,7 @@
 
             <!-- Unlock User -->
             <div class="alert alert-warning alert-outline alert-dismissible mb-3" role="alert">
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" title="Close"></button>
                 <div class="alert-icon">
                     <i class="fas fa-unlock"></i>
                 </div>
@@ -105,7 +113,7 @@
 
             <!-- Toggle Available -->
             <div class="alert alert-info alert-outline alert-dismissible mb-3" role="alert">
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" title="Close"></button>
                 <div class="alert-icon">
                     <i class="fas fa-toggle-on"></i>
                 </div>
@@ -135,13 +143,13 @@
                     @if (Model != null && Model.Any())
                     {
                         <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
-                            <thead class="table-primary">
+                    <thead class="table-accent">
                                 <tr>
                                     <th>@Html.DisplayNameFor(m => m.First().UserName)</th>
                                     @* <th>@Html.DisplayNameFor(m => m.First().Email)</th> *@
                                     <th>Full Name</th>
                                     <th>@Html.DisplayNameFor(m => m.First().Rol)</th>
-                                    <th>Action</th>
+                                    <th data-orderable="false">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -233,7 +241,7 @@
                                                     @* Delete button hidden as requested
                                                     <button type="submit"
                                                             onclick="return confirm('Are you sure you want to delete this record?')"
-                                                            class="btn btn-danger">
+                                                            class="btn btn-danger" title="Delete">
                                                         <i class="align-middle fas fa-trash-alt"></i>
                                                     </button>
                                                     *@
@@ -278,32 +286,6 @@
                     });
                 }
             });
-
-            // Notifications (Success and Error)
-            var ok = "@(TempData["Correcto"] ?? TempData["SuccessMessage"])";
-            var err = "@(TempData["Error"] ?? TempData["ErrorMessage"])";
-
-            if (ok && ok !== "") {
-                window.notyf.open({
-                    type: 'success',
-                    message: ok,
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-
-            if (err && err !== "") {
-                window.notyf.open({
-                    type: 'error',
-                    message: err,
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
 
         });
     </script>

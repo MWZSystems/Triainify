@@ -10,6 +10,7 @@ using RH_CM.Data;
 using RH_CM.Models;
 using RH_CM.ViewModels;
 using System.Text.Encodings.Web;
+using RH_CM.Messages.Identity;
 
 namespace RH_CM.Controllers
 {
@@ -91,7 +92,7 @@ namespace RH_CM.Controllers
                         // Auto login
                         await _signInManager.SignInAsync(usuario, isPersistent: false);
 
-                        TempData["SuccessMessage"] = "User registered successfully.";
+                        TempData["SuccessMessage"] = CuentasMessages.UserRegisteredSuccessfully;
                         return RedirectToAction("Index", "Home");
                     }
 
@@ -101,25 +102,22 @@ namespace RH_CM.Controllers
                 {
                     _logger.LogError(ex, "SQL error: missing table during user registration.");
 
-                    TempData["ErrorMessage"] = "There is a problem with the database structure (missing table). Please contact IT support.";
-                    ModelState.AddModelError(string.Empty,
-                        "There is a problem with the database structure (missing table). Please contact IT support.");
+                    TempData["ErrorMessage"] = CuentasMessages.ThereIsAProblemWithTheDatabase;
+                    ModelState.AddModelError(string.Empty, CuentasMessages.ThereIsAProblemWithTheDatabase);
                 }
                 catch (SqlException ex)
                 {
                     _logger.LogError(ex, "SQL connection error during user registration.");
 
-                    TempData["ErrorMessage"] = "Unable to connect to the database. Please try again later or contact IT support.";
-                    ModelState.AddModelError(string.Empty,
-                        "Unable to connect to the database. Please try again later or contact IT support.");
+                    TempData["ErrorMessage"] = CuentasMessages.UnableToConnectToTheDatabasePlease;
+                    ModelState.AddModelError(string.Empty, CuentasMessages.UnableToConnectToTheDatabasePlease);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "General error during user registration.");
 
-                    TempData["ErrorMessage"] = "An unexpected error occurred while registering the user. If the problem persists, please contact IT support.";
-                    ModelState.AddModelError(string.Empty,
-                        "An unexpected error occurred while registering the user. If the problem persists, please contact IT support.");
+                    TempData["ErrorMessage"] = CuentasMessages.UnexpectedErrorOccurredWhileRegisteringTheUser;
+                    ModelState.AddModelError(string.Empty, CuentasMessages.UnexpectedErrorOccurredWhileRegisteringTheUser);
                 }
             }
 
@@ -167,7 +165,7 @@ namespace RH_CM.Controllers
                         // Auto login
                         await _signInManager.SignInAsync(usuario, isPersistent: false);
 
-                        TempData["SuccessMessage"] = "Employee user created successfully.";
+                        TempData["SuccessMessage"] = CuentasMessages.EmployeeUserCreatedSuccessfully;
                         return RedirectToAction("Index", "Home");
                     }
 
@@ -177,25 +175,22 @@ namespace RH_CM.Controllers
                 {
                     _logger.LogError(ex, "SQL error: missing table during admin registration.");
 
-                    TempData["ErrorMessage"] = "There is a problem with the database structure (missing table). Please contact IT support.";
-                    ModelState.AddModelError(string.Empty,
-                        "There is a problem with the database structure (missing table). Please contact IT support.");
+                    TempData["ErrorMessage"] = CuentasMessages.ThereIsAProblemWithTheDatabase;
+                    ModelState.AddModelError(string.Empty, CuentasMessages.ThereIsAProblemWithTheDatabase);
                 }
                 catch (SqlException ex)
                 {
                     _logger.LogError(ex, "SQL connection error during admin registration.");
 
-                    TempData["ErrorMessage"] = "Unable to connect to the database. Please try again later or contact IT support.";
-                    ModelState.AddModelError(string.Empty,
-                        "Unable to connect to the database. Please try again later or contact IT support.");
+                    TempData["ErrorMessage"] = CuentasMessages.UnableToConnectToTheDatabasePlease;
+                    ModelState.AddModelError(string.Empty, CuentasMessages.UnableToConnectToTheDatabasePlease);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "General error during admin registration.");
 
-                    TempData["ErrorMessage"] = "An unexpected error occurred while registering the user. If the problem persists, please contact IT support.";
-                    ModelState.AddModelError(string.Empty,
-                        "An unexpected error occurred while registering the user. If the problem persists, please contact IT support.");
+                    TempData["ErrorMessage"] = CuentasMessages.UnexpectedErrorOccurredWhileRegisteringTheUser;
+                    ModelState.AddModelError(string.Empty, CuentasMessages.UnexpectedErrorOccurredWhileRegisteringTheUser);
                 }
             }
 
@@ -231,51 +226,38 @@ namespace RH_CM.Controllers
                 var canConnect = await _contexto.Database.CanConnectAsync();
                 if (!canConnect)
                 {
-                    TempData["ErrorMessage"] =
-                        "The application could not establish a connection to the database. " +
-                        "Please try again later or contact IT support.";
+                    TempData["ErrorMessage"] = CuentasMessages.ApplicationCouldNotConnectToTheDatabase;
                 }
             }
             catch (SqlException ex) when (ex.Number == 53)
             {
                 _logger.LogError(ex, "SQL server not reachable when loading login page.");
 
-                TempData["ErrorMessage"] =
-                    "The database server could not be found or is not reachable (SQL error 53). " +
-                    "Please verify the SQL Server instance or contact IT support.";
+                TempData["ErrorMessage"] = CuentasMessages.DatabaseServerNotReachableVerifyInstance;
             }
             catch (SqlException ex) when (ex.Number == 18456 || ex.Number == 18452)
             {
                 _logger.LogError(ex, "Login failed for configured database account when loading login page.");
 
-                TempData["ErrorMessage"] =
-                    "The account configured for the database connection (IIS application pool identity " +
-                    "or the user in the 'ConexionSQL' connection string) does not have permission to access the database " +
-                    $"or the credentials are invalid (SQL error {ex.Number}). Please verify the database login configuration or contact IT support.";
+                TempData["ErrorMessage"] = string.Format(CuentasMessages.DatabaseAccountNoPermissionDetailedFormat, ex.Number);
             }
             catch (SqlException ex) when (ex.Number == 4060)
             {
                 _logger.LogError(ex, "Database not found or not accessible when loading login page.");
 
-                TempData["ErrorMessage"] =
-                    "The configured database could not be found or opened (SQL error 4060). " +
-                    "Please verify the database name and that the configured account has access to it, or contact IT support.";
+                TempData["ErrorMessage"] = CuentasMessages.ConfiguredDatabaseNotFoundVerifyNameSqlError4060;
             }
             catch (SqlException ex)
             {
                 _logger.LogError(ex, "SQL error when loading login page.");
 
-                TempData["ErrorMessage"] =
-                    $"A database error occurred while loading the login page (SQL error {ex.Number}). " +
-                    "Please try again later or contact IT support.";
+                TempData["ErrorMessage"] = string.Format(CuentasMessages.DatabaseErrorLoadingTheLoginPageFormat, ex.Number);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "General error when loading login page.");
 
-                TempData["ErrorMessage"] =
-                    "An unexpected error occurred while loading the login page. " +
-                    "If the problem persists, please contact IT support.";
+                TempData["ErrorMessage"] = CuentasMessages.UnexpectedErrorOccurredWhileLoadingTheLoginPage;
             }
 
             return View();
@@ -302,85 +284,66 @@ namespace RH_CM.Controllers
 
                 if (resultado.Succeeded)
                 {
-                    TempData["SuccessMessage"] = "Login successful. Welcome back!";
+                    TempData["SuccessMessage"] = CuentasMessages.LoginSuccessfulWelcomeBack;
                     return RedirectToAction("Index", "Home");
                 }
 
                 if (resultado.IsLockedOut)
                 {
-                    TempData["ErrorMessage"] = "Your account is locked. Please contact IT support.";
+                    TempData["ErrorMessage"] = CuentasMessages.AccountIsLockedPleaseContactItSupport;
                     return View("Bloqueado");
                 }
 
-                TempData["ErrorMessage"] = "Invalid username or password.";
-                ModelState.AddModelError(string.Empty, "Invalid username or password.");
+                TempData["ErrorMessage"] = CuentasMessages.InvalidUsernameOrPassword;
+                ModelState.AddModelError(string.Empty, CuentasMessages.InvalidUsernameOrPassword);
                 return View(accViewModel);
             }
             catch (SqlException ex) when (ex.Number == 208) // Invalid object name (missing table)
             {
                 _logger.LogError(ex, "SQL error: missing table during login.");
 
-                TempData["ErrorMessage"] =
-                    "There is a problem with the database structure (missing table, SQL error 208). " +
-                    "Please contact IT support.";
-                ModelState.AddModelError(string.Empty,
-                    "There is a problem with the database structure (missing table, SQL error 208). Please contact IT support.");
+                TempData["ErrorMessage"] = CuentasMessages.ThereIsAProblemWithTheDatabaseStructureSqlError208;
+                ModelState.AddModelError(string.Empty, CuentasMessages.ThereIsAProblemWithTheDatabaseStructureSqlError208);
                 return View(accViewModel);
             }
             catch (SqlException ex) when (ex.Number == 53)
             {
                 _logger.LogError(ex, "SQL server not reachable during login.");
 
-                TempData["ErrorMessage"] =
-                    "The database server could not be found or is not reachable (SQL error 53). " +
-                    "Please verify the SQL Server instance or contact IT support.";
-                ModelState.AddModelError(string.Empty,
-                    "The database server could not be found or is not reachable (SQL error 53). Please try again later or contact IT support.");
+                TempData["ErrorMessage"] = CuentasMessages.DatabaseServerNotReachableVerifyInstance;
+                ModelState.AddModelError(string.Empty, CuentasMessages.DatabaseServerCouldNotBeFoundOrIsNotReachable);
                 return View(accViewModel);
             }
             catch (SqlException ex) when (ex.Number == 18456 || ex.Number == 18452)
             {
                 _logger.LogError(ex, "Login failed for configured database account during login.");
 
-                TempData["ErrorMessage"] =
-                    "The account configured for the database connection (IIS application pool identity " +
-                    "or the user in the 'ConexionSQL' connection string) does not have permission to access the database " +
-                    $"or the credentials are invalid (SQL error {ex.Number}). Please verify the database login configuration or contact IT support.";
-                ModelState.AddModelError(string.Empty,
-                    "The configured database account does not have permission to access the database or the credentials are invalid. Please contact IT support.");
+                TempData["ErrorMessage"] = string.Format(CuentasMessages.DatabaseAccountNoPermissionDetailedFormat, ex.Number);
+                ModelState.AddModelError(string.Empty, CuentasMessages.ConfiguredDatabaseAccountDoesNotHavePermission);
                 return View(accViewModel);
             }
             catch (SqlException ex) when (ex.Number == 4060)
             {
                 _logger.LogError(ex, "Database not found or not accessible during login.");
 
-                TempData["ErrorMessage"] =
-                    "The configured database could not be found or opened (SQL error 4060). " +
-                    "Please verify the database exists and that the configured account has access to it, or contact IT support.";
-                ModelState.AddModelError(string.Empty,
-                    "The configured database could not be found or opened (SQL error 4060). Please contact IT support.");
+                TempData["ErrorMessage"] = CuentasMessages.ConfiguredDatabaseNotFoundVerifyExistsSqlError4060;
+                ModelState.AddModelError(string.Empty, CuentasMessages.ConfiguredDatabaseCouldNotBeFoundOrOpened);
                 return View(accViewModel);
             }
             catch (SqlException ex)
             {
                 _logger.LogError(ex, "SQL connection error during login.");
 
-                TempData["ErrorMessage"] =
-                    $"Unable to connect to the database (SQL error {ex.Number}). " +
-                    "Please try again later or contact IT support.";
-                ModelState.AddModelError(string.Empty,
-                    "Unable to connect to the database. Please try again later or contact IT support.");
+                TempData["ErrorMessage"] = string.Format(CuentasMessages.UnableToConnectToTheDatabaseSqlErrorFormat, ex.Number);
+                ModelState.AddModelError(string.Empty, CuentasMessages.UnableToConnectToTheDatabasePlease);
                 return View(accViewModel);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "General error during login.");
 
-                TempData["ErrorMessage"] =
-                    "An unexpected error occurred while trying to sign in. " +
-                    "If the problem persists, please contact IT support.";
-                ModelState.AddModelError(string.Empty,
-                    "An unexpected error occurred while trying to sign in. If the problem persists, please contact IT support.");
+                TempData["ErrorMessage"] = CuentasMessages.UnexpectedErrorOccurredWhileTryingToSignIn;
+                ModelState.AddModelError(string.Empty, CuentasMessages.UnexpectedErrorOccurredWhileTryingToSignIn);
                 return View(accViewModel);
             }
         }
@@ -396,7 +359,7 @@ namespace RH_CM.Controllers
         public async Task<IActionResult> SalirAplicacion()
         {
             await _signInManager.SignOutAsync();
-            TempData["SuccessMessage"] = "You have been signed out.";
+            TempData["SuccessMessage"] = CuentasMessages.YouHaveBeenSignedOut;
             return RedirectToAction("Acceso", "Cuentas");
         }
 
@@ -426,8 +389,8 @@ namespace RH_CM.Controllers
                 var usuario = await _userManager.FindByNameAsync(rpViewModel.UserName);
                 if (usuario == null)
                 {
-                    TempData["ErrorMessage"] = "User does not exist.";
-                    ModelState.AddModelError(string.Empty, "User does not exist.");
+                    TempData["ErrorMessage"] = CuentasMessages.UserDoesNotExist;
+                    ModelState.AddModelError(string.Empty, CuentasMessages.UserDoesNotExist);
                     return View(rpViewModel);
                 }
 
@@ -438,7 +401,7 @@ namespace RH_CM.Controllers
                 var resultado = await _userManager.ResetPasswordAsync(usuario, token, rpViewModel.Password);
                 if (resultado.Succeeded)
                 {
-                    TempData["SuccessMessage"] = "Password changed successfully.";
+                    TempData["SuccessMessage"] = CuentasMessages.PasswordChangedSuccessfully;
                     return RedirectToAction("ResetPassword");
                 }
 
@@ -451,25 +414,22 @@ namespace RH_CM.Controllers
             {
                 _logger.LogError(ex, "SQL error: missing table during password reset.");
 
-                TempData["ErrorMessage"] = "There is a problem with the database structure (missing table). Please contact IT support.";
-                ModelState.AddModelError(string.Empty,
-                    "There is a problem with the database structure (missing table). Please contact IT support.");
+                TempData["ErrorMessage"] = CuentasMessages.ThereIsAProblemWithTheDatabase;
+                ModelState.AddModelError(string.Empty, CuentasMessages.ThereIsAProblemWithTheDatabase);
             }
             catch (SqlException ex)
             {
                 _logger.LogError(ex, "SQL connection error during password reset.");
 
-                TempData["ErrorMessage"] = "Unable to connect to the database. Please try again later or contact IT support.";
-                ModelState.AddModelError(string.Empty,
-                    "Unable to connect to the database. Please try again later or contact IT support.");
+                TempData["ErrorMessage"] = CuentasMessages.UnableToConnectToTheDatabasePlease;
+                ModelState.AddModelError(string.Empty, CuentasMessages.UnableToConnectToTheDatabasePlease);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "General error during password reset.");
 
-                TempData["ErrorMessage"] = "An unexpected error occurred while trying to reset the password. If the problem persists, please contact IT support.";
-                ModelState.AddModelError(string.Empty,
-                    "An unexpected error occurred while trying to reset the password. If the problem persists, please contact IT support.");
+                TempData["ErrorMessage"] = CuentasMessages.UnexpectedErrorOccurredWhileTryingToReset;
+                ModelState.AddModelError(string.Empty, CuentasMessages.UnexpectedErrorOccurredWhileTryingToReset);
             }
 
             return View(rpViewModel);
@@ -481,11 +441,11 @@ namespace RH_CM.Controllers
         [HttpGet]
         [Authorize(Policy = "ViewAccess")]
         [AllowAnonymous]
-        public IActionResult Denegado(string returnurl = null)
+        public IActionResult Denegado(string? returnurl = null)
         {
-            // Mensaje genérico si no se recibió uno desde otra página
+            // Generic message when none was passed in from another page
             if (TempData["ErrorMessage"] == null)
-                TempData["ErrorMessage"] = "You do not have permission to access this section.";
+                TempData["ErrorMessage"] = CuentasMessages.YouDoNotHavePermissionToAccess;
 
             ViewData["ReturnUrl"] = returnurl ?? Url.Content("~/");
 

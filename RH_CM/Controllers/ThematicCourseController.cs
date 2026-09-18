@@ -4,9 +4,12 @@ using RH_CM.Service.DTOs;
 using RH_CM.Service.DTOs.ThematicArea;
 using RH_CM.Service.ThematicArea;
 using RH_CM.Service.ThematicCourse;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RH_CM.Controllers
 {
+    [Authorize(Policy = "ViewAccess")]
+    [AutoValidateAntiforgeryToken]
     public class ThematicCourseController : Controller
     {
         private readonly ThematicCourseService _thematicCourseService;
@@ -26,11 +29,16 @@ namespace RH_CM.Controllers
         [HttpPost]
         public async Task<IActionResult> AddThematicCourse(string ThematicArea, string Course)
         {
-            string userName = User?.Identity?.Name;
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            string userName = User?.Identity?.Name ?? "system";
 
             ServiceAnswer serviceAnswer = await _thematicCourseService.AddThematicCourseAsync(ThematicArea, Course, userName);
 
-            TempData[serviceAnswer.MessageType] = serviceAnswer.Message;
+            TempData[serviceAnswer.MessageType ?? ServiceAnswer.MessageType_Error] = serviceAnswer.Message;
 
             return RedirectToAction("Index");
         }
@@ -40,6 +48,11 @@ namespace RH_CM.Controllers
         [HttpGet]
         public async Task<IActionResult> EditThematicCourse(int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             ThematicCourseDTOs thematicCourseDTOs = await _thematicCourseService.GetEditThematicCourseAsync(id);
 
             return View(thematicCourseDTOs);
@@ -49,11 +62,16 @@ namespace RH_CM.Controllers
         [HttpPost]
         public async Task<IActionResult> EditThematicCourse(int id, string ThematicArea, string Course)
         {
-            string? userName = User?.Identity?.Name;
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            string userName = User?.Identity?.Name ?? "system";
 
             ServiceAnswer serviceAnswer = await _thematicCourseService.PostEditThematicCourseAsync(id, ThematicArea, Course, userName);
 
-            TempData[serviceAnswer.MessageType] = serviceAnswer.Message;
+            TempData[serviceAnswer.MessageType ?? ServiceAnswer.MessageType_Error] = serviceAnswer.Message;
 
             return RedirectToAction("Index");
         }
@@ -61,9 +79,14 @@ namespace RH_CM.Controllers
         [HttpPost]
         public async Task<IActionResult> ToggleThematicCourse(int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             ServiceAnswer serviceAnswer = await _thematicCourseService.PostToggleThematicCourseAsync(id);
 
-            TempData[serviceAnswer.MessageType] = serviceAnswer.Message;
+            TempData[serviceAnswer.MessageType ?? ServiceAnswer.MessageType_Error] = serviceAnswer.Message;
 
             return RedirectToAction("Index");
         }
@@ -72,9 +95,14 @@ namespace RH_CM.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteThematicCourse(int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             ServiceAnswer serviceAnswer = await _thematicCourseService.PostDeleteThematicCourseAsync(id);
 
-            TempData[serviceAnswer.MessageType] = serviceAnswer.Message;
+            TempData[serviceAnswer.MessageType ?? ServiceAnswer.MessageType_Error] = serviceAnswer.Message;
 
             return RedirectToAction("Index");
         }

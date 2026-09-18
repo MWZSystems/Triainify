@@ -38,9 +38,14 @@ namespace RH_CM.Controllers
         //[Authorize(Policy = "ViewAccess")]
         public async Task<ActionResult> AddRoleToGroup(int GroupId, string RoleId)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             ServiceAnswerPermissionsAdd answer = await _permissionsService.PostAddRoleToGroup(GroupId, RoleId);
 
-            TempData[answer.MessageType] = answer.Message;
+            TempData[answer.MessageType ?? ServiceAnswer.MessageType_Error] = answer.Message;
 
             return RedirectToAction(nameof(GroupDetail), new { SelectedGroup = answer.GroupKey });
         }
@@ -49,10 +54,14 @@ namespace RH_CM.Controllers
         [Authorize(Policy = "ViewAccess")]
         public async Task<ActionResult> DeleteRoleFromGroup(int GroupId, string RoleId)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
             ServiceAnswerPermissionsAdd answer = await _permissionsService.PostDeleteRoleFromGroup(GroupId, RoleId);
 
-            TempData[answer.MessageType] = answer.Message;
+            TempData[answer.MessageType ?? ServiceAnswer.MessageType_Error] = answer.Message;
 
             return RedirectToAction(nameof(GroupDetail), new { SelectedGroup = answer.GroupKey });
         }

@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Completed by Department";
+    ViewData["BodyClass"] = "page-completed-department";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     var labels = Model.Rows.Select(r => r.Department).ToList();
@@ -20,9 +21,16 @@
 
 <div class="row">
     <div class="col">
-        <h1 class="h3 mb-1 text-center title-accent">
-            <i class="align-middle fas fa-chart-pie"></i> @ViewData["Title"]
-        </h1>
+        <partial name="_PageHeader" model="@(new RH_CM.ViewModels.PageHeaderViewModel
+        {
+            Title = "Completed by Department",
+            IconClass = "fa-chart-pie",
+            HelpBullets = new List<string>
+            {
+                "Shows the percentage of required training completed vs. pending, per department.",
+                "Use the management-system filter to narrow the chart to a specific system, or leave it on \"All\"."
+            }
+        })" />
         <p class="text-center text-muted">
             Filter: <span class="badge bg-info">@msBadge</span>
         </p>
@@ -32,7 +40,7 @@
 <div class="row mb-2 mb-xl-3">
     <div class="col-auto ms-auto text-end mt-n1">
         <div class="dropdown me-2 d-inline-block">
-            <a class="btn btn-light bg-white shadow-sm dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-display="static">
+            <a class="btn btn-light bg-white shadow-sm dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-display="static" title="Filter by Management System">
                 <i class="align-middle mt-n1" data-feather="filter"></i> Filter by Management System
             </a>
             <div class="dropdown-menu dropdown-menu-end">
@@ -228,31 +236,10 @@
 </script>
 
 <script>
-    $(document).ready(function () {
+    document.addEventListener("DOMContentLoaded", function () {
         $('#datatables-responsive').DataTable?.({
             responsive: true,
             order: []
         });
-
-        if ('@TempData["SuccessMessage"]' !== '') {
-            window.notyf?.open({
-                type: 'success',
-                message: '@TempData["SuccessMessage"]',
-                ripple: true,
-                dismissible: true,
-                position: { x: 'center', y: 'top' },
-                duration: 5000
-            });
-        }
-        if ('@TempData["ErrorMessage"]' !== '') {
-            window.notyf?.open({
-                type: 'error',
-                message: '@TempData["ErrorMessage"]',
-                ripple: true,
-                dismissible: true,
-                position: { x: 'center', y: 'top' },
-                duration: 5000
-            });
-        }
     });
 </script>

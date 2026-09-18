@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- El proyecto de test corre en net8.0 aunque RH_CM (la app) sigue en net6.0: esta máquina
+         solo tiene el SDK de .NET 10 instalado y el tooling de test moderno (Microsoft.NET.Test.Sdk,
+         xunit.runner.visualstudio) no soporta bien net6.0 en ese SDK. .NET garantiza compatibilidad
+         hacia adelante para ensamblados administrados, así que un test host net8.0 puede cargar y
+         ejecutar RH_CM.dll (net6.0) sin problema vía WebApplicationFactory. -->
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.11" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RH_CM\RH_CM.csproj" />
+  </ItemGroup>
+
+</Project>

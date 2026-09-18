@@ -1,0 +1,91 @@
+﻿@model IEnumerable<RH_CM.ViewModels.CourseCompletedSummaryItemViewModel>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    ViewData["Title"] = "Course Completed (Summary)";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    // Specific class to activate the petrol-blue theme
+    ViewData["BodyClass"] = "page-coursecompleted-summary";
+}
+
+<div class="row mb-3">
+    <div class="col">
+        <partial name="_PageHeader" model="@(new RH_CM.ViewModels.PageHeaderViewModel
+        {
+            Title = "Course Completed (Summary)",
+            IconClass = "fa-check-circle",
+            HelpBullets = new List<string>
+            {
+                "Shows how many people have completed each course/level/delivery-mode combination, in a summarized view.",
+                "\"Create Bulk\" marks a course as completed for several employees at once; \"Delete Bulk\" removes multiple completion records.",
+                "For a row-by-row list instead of a summary, see \"Course Completed\" under Catalog."
+            }
+        })" />
+    </div>
+    <div class="col-auto d-flex gap-2 header-actions">
+        <a class="btn btn-primary" asp-action="CreateCourseCompletedBulk" title="Create Bulk">
+            <i class="align-middle fas fa-layer-group"></i> CREATE BULK
+        </a>
+        <a class="btn btn-danger" asp-action="DeleteCourseCompletedBulk" title="Delete Bulk">
+            <i class="align-middle fas fa-trash-alt"></i> DELETE BULK
+        </a>
+        <a class="btn btn-success" asp-action="ExportCourseCompletedToExcel" title="Export To Excel">
+            <i class="align-middle fas fa-file-excel"></i> EXPORT TO EXCEL
+        </a>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-responsive">
+                <table id="tbl-coursecompleted" class="table table-hover align-middle table-bordered" style="width:100%">
+                    <thead class="table-accent">
+                        <tr>
+                            <th>Course</th>
+                            <th>Level</th>
+                            <th>Delivery</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var x in Model)
+                        {
+                            <tr>
+                                <td class="col-course">@x.CourseName</td>
+                                <td>@x.LevelName</td>
+                                <td>@x.DeliveryModeName</td>
+                                <td>@x.Course_Status</td>
+                                <td class="col-total">@x.TotalCompletions</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="mb-0 text-muted">No records found</p>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        $(function () {
+            $('#tbl-coursecompleted').DataTable({
+                responsive: true,
+                order: [[0, 'asc'], [1, 'asc'], [2, 'asc'], [3, 'asc']],
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]]
+            });
+
+});
+    </script>
+}

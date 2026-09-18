@@ -32,15 +32,16 @@
             <!-- START TRAINING -->
             <a asp-controller="Trainify"
                asp-action="LearningTrainify"
-               class="btn btn-primary btn-lg px-4">
+               class="btn btn-primary btn-lg px-4" title="Start my training">
                 <i class="fas fa-graduation-cap me-2"></i>
                 Start my training
             </a>
 
             <!-- VIEW TRAINING MATRIX -->
             <a asp-controller="Trainify"
-               asp-action="MatrizbyEmployee"
-               class="btn btn-outline-secondary btn-lg px-4">
+               asp-action="MatrixByEmployee"
+               asp-route-mode="EMPLOYEE"
+               class="btn btn-outline-secondary btn-lg px-4" title="Matrix by Employee">
                 <i class="fas fa-id-card-alt me-2"></i>
                 Matrix by Employee
             </a>
@@ -99,36 +100,13 @@
 
     <script>
         $(document).ready(function () {
-            // Inicializa Select2
+            // Initialize Select2
             $(".select2").select2({
                 theme: 'bootstrap4',
                 allowClear: true,
                 width: '100%'
             });
 
-            // Mostrar mensajes de éxito
-            if ('@TempData["SuccessMessage"]' !== '') {
-                window.notyf.open({
-                    type: 'success',
-                    message: '@TempData["SuccessMessage"]',
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-
-            // Mostrar mensajes de error
-            if ('@TempData["ErrorMessage"]' !== '') {
-                window.notyf.open({
-                    type: 'error',
-                    message: '@TempData["ErrorMessage"]',
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 5000
-                });
-            }
-        });
+});
     </script>
 }

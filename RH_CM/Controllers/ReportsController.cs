@@ -2,7 +2,6 @@
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
@@ -14,21 +13,19 @@ using RH_CM.Service.SQLSMS;
 using RH_CM.ViewModels;
 using System.Data;
 using System.Globalization;
+using RH_CM.Messages.Reports;
 
 namespace RH_CM.Controllers
 {
     public class ReportsController : Controller
     {
         private readonly db_abcd61_rhchdbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
         private readonly UnitOfWork _unitOfWork;
 
-        public ReportsController(db_abcd61_rhchdbContext context, 
-                                UserManager<IdentityUser> userManager,
+        public ReportsController(db_abcd61_rhchdbContext context,
                                 UnitOfWork unitOfWork)
         {
             _context = context;
-            _userManager = userManager;
             _unitOfWork = unitOfWork;
         }
 
@@ -88,9 +85,16 @@ namespace RH_CM.Controllers
         [Authorize(Policy = "ViewAccess")]
         public async Task<IActionResult> MatrizbySupervisorSelect(SelectSupervisorViewModel vm, string? managementSystem)
         {
+            if (!ModelState.IsValid)
+            {
+                vm.Supervisors = await GetSupervisorsAsync();
+                ViewBag.ManagementSystem = managementSystem;
+                return View(vm);
+            }
+
             if (!vm.SelectedSupervisorId.HasValue || vm.SelectedSupervisorId.Value <= 0)
             {
-                TempData["ErrorMessage"] = "Select a valid supervisor";
+                TempData["ErrorMessage"] = ReportsMessages.SelectAValidSupervisor;
                 vm.Supervisors = await GetSupervisorsAsync();
                 ViewBag.ManagementSystem = managementSystem;
                 return View(vm);
@@ -107,11 +111,16 @@ namespace RH_CM.Controllers
         [HttpGet]
         public async Task<IActionResult> MatrizbySupervisor(int supervisorId, string? managementSystem)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var result = new List<MatrizBySupervisorViewModel>();
 
             if (supervisorId <= 0)
             {
-                TempData["ErrorMessage"] = "Please select a valid supervisor first.";
+                TempData["ErrorMessage"] = ReportsMessages.SelectAValidSupervisorFirst;
                 return RedirectToAction(nameof(MatrizbySupervisorSelect));
             }
 
@@ -141,41 +150,23 @@ namespace RH_CM.Controllers
 
                 await using var reader = await command.ExecuteReaderAsync();
 
-                int Ord(string n) => reader.GetOrdinal(n);
-                bool IsNull(string n) => reader.IsDBNull(Ord(n));
-
                 while (await reader.ReadAsync())
                 {
-                    result.Add(new MatrizBySupervisorViewModel
-                    {
-                        PK_HEADCOUNT = IsNull("PK_HEADCOUNT") ? 0 : reader.GetInt32(Ord("PK_HEADCOUNT")),
-                        UserName = IsNull("UserName") ? null : reader.GetString(Ord("UserName")),
-                        CONTROL_NUMBER = IsNull("CONTROL_NUMBER") ? null : reader["CONTROL_NUMBER"]?.ToString(),
-                        NAMES = IsNull("NAMES") ? null : reader["NAMES"]?.ToString(),
-                        LAST_NAME = IsNull("LAST_NAME") ? null : reader["LAST_NAME"]?.ToString(),
-                        SECOND_NAME = IsNull("SECOND_NAME") ? null : reader["SECOND_NAME"]?.ToString(),
-                        FK_Position = IsNull("FK_Position") ? 0 : Convert.ToInt32(reader["FK_Position"]),
-                        NAME_POSITION_ENGLISH = IsNull("NAME_POSITION_ENGLISH") ? null : reader["NAME_POSITION_ENGLISH"]?.ToString(),
-                        Completed = IsNull("Completed") ? 0 : Convert.ToInt32(reader["Completed"]),
-                        Pending = IsNull("Pending") ? 0 : Convert.ToInt32(reader["Pending"]),
-                        ExpiringSoon = IsNull("Expiring Soon") ? 0 : Convert.ToInt32(reader["Expiring Soon"]),
-                        Permanent = IsNull("Permanent") ? 0 : Convert.ToInt32(reader["Permanent"]),
-                        Scheduled = IsNull("Scheduled") ? 0 : Convert.ToInt32(reader["Scheduled"])
-                    });
+                    result.Add(MapSupervisorRow(reader));
                 }
 
                 if (result.Count == 0)
-                    TempData["ErrorMessage"] = $"No employees were found for supervisor {supervisorId}.";
+                    TempData["ErrorMessage"] = string.Format(ReportsMessages.NoEmployeesWereFoundForSupervisorFormat, supervisorId);
                 else
-                    TempData["SuccessMessage"] = $"{result.Count} employees were found for supervisor {supervisorId}.";
+                    TempData["SuccessMessage"] = string.Format(ReportsMessages.EmployeesWereFoundForSupervisorFormat, result.Count, supervisorId);
             }
             catch (SqlException ex)
             {
-                TempData["ErrorMessage"] = $"SQL Error: {ex.Message}";
+                TempData["ErrorMessage"] = string.Format(ReportsMessages.SqlErrorFormat, ex.Message);
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error: {ex.Message}";
+                TempData["ErrorMessage"] = string.Format(ReportsMessages.ErrorFormat, ex.Message);
             }
 
             ViewBag.SupervisorId = supervisorId;
@@ -183,21 +174,47 @@ namespace RH_CM.Controllers
 
             return View(result);
         }
-        public async Task <ActionResult> MissingMaterialExamReport()
+
+        /// <summary>
+        /// Maps the current row of a sp_GetMatrizbySupervisorCourseAssignments reader to a view model.
+        /// </summary>
+        private static MatrizBySupervisorViewModel MapSupervisorRow(SqlDataReader reader)
+        {
+            int Ord(string n) => reader.GetOrdinal(n);
+            bool IsNull(string n) => reader.IsDBNull(Ord(n));
+
+            return new MatrizBySupervisorViewModel
+            {
+                PK_HEADCOUNT = IsNull("PK_HEADCOUNT") ? 0 : reader.GetInt32(Ord("PK_HEADCOUNT")),
+                UserName = IsNull("UserName") ? null : reader.GetString(Ord("UserName")),
+                CONTROL_NUMBER = IsNull("CONTROL_NUMBER") ? null : reader["CONTROL_NUMBER"]?.ToString(),
+                NAMES = IsNull("NAMES") ? null : reader["NAMES"]?.ToString(),
+                LAST_NAME = IsNull("LAST_NAME") ? null : reader["LAST_NAME"]?.ToString(),
+                SECOND_NAME = IsNull("SECOND_NAME") ? null : reader["SECOND_NAME"]?.ToString(),
+                FK_Position = IsNull("FK_Position") ? 0 : Convert.ToInt32(reader["FK_Position"]),
+                NAME_POSITION_ENGLISH = IsNull("NAME_POSITION_ENGLISH") ? null : reader["NAME_POSITION_ENGLISH"]?.ToString(),
+                Completed = IsNull("Completed") ? 0 : Convert.ToInt32(reader["Completed"]),
+                Pending = IsNull("Pending") ? 0 : Convert.ToInt32(reader["Pending"]),
+                ExpiringSoon = IsNull("Expiring Soon") ? 0 : Convert.ToInt32(reader["Expiring Soon"]),
+                Permanent = IsNull("Permanent") ? 0 : Convert.ToInt32(reader["Permanent"]),
+                Scheduled = IsNull("Scheduled") ? 0 : Convert.ToInt32(reader["Scheduled"])
+            };
+        }
+        public async Task<ActionResult> MissingMaterialExamReport()
         {
             List<MaterialExamDTOs> result = await _unitOfWork.ExecuteStoredProcedureToListAsync<MaterialExamDTOs>("sp_MissingMaterialExam");
 
             return View(result);
         }
 
-        // =============================
-        // EXPORTAR A EXCEL
-        // =============================
+        /// <summary>
+        /// Exports the missing-material exam report to an Excel file.
+        /// </summary>
         [Authorize(Policy = "ViewAccess")]
         [HttpGet]
         public async Task<IActionResult> ExportMissingMaterialExamReport()
         {
-            //Aqui lo tuve que modificar porque usaba los constrains del sql server, al borrar las ligas entre las tablas tuve que armar el query
+            // Had to rework this: it used to rely on SQL Server FK constraints, but after removing the table links this query has to be built manually.
             List<MaterialExamDTOs> data = await _unitOfWork.ExecuteStoredProcedureToListAsync<MaterialExamDTOs>("sp_MissingMaterialExam");
 
             using var wb = new XLWorkbook();
