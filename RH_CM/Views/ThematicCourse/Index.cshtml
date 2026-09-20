@@ -35,7 +35,10 @@
             </div>
         </div> *@
         <div class="card-body">
-            <div class="d-flex justify-content-end mb-3">
+            <div class="d-flex justify-content-end gap-2 mb-3">
+                <a class="btn btn-outline-success" asp-action="ExportThematicCourseFullData" title="Export the complete database data for this catalog, for validation purposes">
+                    <i class="align-middle fas fa-database"></i> EXPORT FULL DATA
+                </a>
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addThematicCourse" title="Add Thematic - Course">
                     <i class="align-middle fas fa-plus-square"></i> Add Thematic - Course
                 </button>
@@ -45,43 +48,48 @@
                 <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
                     <thead class="table-accent">
                         <tr>
+                            <th data-orderable="false" class="no-export">Actions</th>
                             <th>ID</th>
                             <th>Thematic Name</th>
                             <th>Thematic Code</th>
                             <th>Course</th>
-                            <th data-orderable="false">Actions</th>
-
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var detail in Model.ThematicCourses)
                         {
                             <tr>
+                                <td>
+                                    <div class="dropdown row-actions-menu">
+                                        <button class="btn btn-sm btn-outline-secondary btn-row-actions dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Actions">
+                                            <i class="fas fa-ellipsis-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <form asp-action="EditThematicCourse" asp-route-Id="@detail.Id" method="get">
+                                                    <button type="submit" class="dropdown-item text-warning"><i class="align-middle fas fa-edit me-2"></i>Edit</button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form asp-action="ToggleThematicCourse" asp-route-id="@detail.Id" method="post" class="js-confirm-submit" data-confirm-message="Are you sure you want to toggle availability?">
+                                                    <button type="submit" class="dropdown-item @(detail.Available == 1 ? "text-success" : "text-secondary")">
+                                                        <i class="align-middle fas @(detail.Available == 1 ? "fa-toggle-on" : "fa-toggle-off") me-2"></i>Toggle availability
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <form asp-action="DeleteThematicCourse" asp-route-Id="@detail.Id" method="post" class="js-confirm-submit" data-confirm-message="Are you sure you want to delete this Thematic Course link?">
+                                                    <button type="submit" class="dropdown-item text-danger"><i class="align-middle fas fa-window-close me-2"></i>Delete</button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
                                 <td>@detail.Id</td>
                                 <td>@detail.ThematicName</td>
                                 <td>@detail.ThematicCode</td>
                                 <td>@detail.CourseName</td>
-
-                                <td>
-                                    <form asp-action="ToggleThematicCourse" asp-route-id="@detail.Id" method="post" class="d-inline" onsubmit=" return confirm('Are you sure you want to toggle availability?')">
-                                        <button type="submit" class="btn @(detail.Available == 1 ? "btn-success" : "btn-secondary")" title="Toggle availability">
-                                            <i class="align-middle fas @(detail.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
-                                        </button>
-                                    </form>
-
-                                    <form asp-action="EditThematicCourse" asp-route-Id="@detail.Id" method="get" class="d-inline">
-                                        <button type="submit" class="btn btn-warning" title="Edit">
-                                            <i class="align-middle fas fa-edit"></i>
-                                        </button>
-                                    </form>
-
-                                    <form asp-action="DeleteThematicCourse" asp-route-Id="@detail.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this Thematic Course link?');">
-                                        <button type="submit" class="btn btn-danger" title="Delete">
-                                            <i class="align-middle fas fa-window-close"></i>
-                                        </button>
-                                    </form>
-
-                                </td>
                             </tr>
                         }
                     </tbody>
@@ -156,7 +164,10 @@
                     responsive: true,
                     order: [],
                     pageLength: 50,
-                    lengthMenu: [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]]
+                    lengthMenu: [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]],
+                    stateSave: true,
+                    dom: window.dtButtonsDom,
+                    buttons: window.dtExportButtons()
                 });
             }
 

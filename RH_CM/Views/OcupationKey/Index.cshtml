@@ -26,7 +26,10 @@
     <div class="card">
 
         <div class="card-body">
-            <div class="d-flex justify-content-end mb-3">
+            <div class="d-flex justify-content-end gap-2 mb-3">
+                <a class="btn btn-outline-success" asp-action="ExportOcupationCodeFullData" title="Export the complete database data for this catalog, for validation purposes">
+                    <i class="align-middle fas fa-database"></i> EXPORT FULL DATA
+                </a>
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addOcupationCode" title="Add Ocupation">
                     <i class="align-middle fas fa-plus-square"></i>  Add Ocupation
 
@@ -37,41 +40,46 @@
                 <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
                     <thead class="table-accent">
                         <tr>
+                            <th data-orderable="false" class="no-export">Actions</th>
                             <th>ID</th>
                             <th>Position Name</th>
                             <th>Ocupation Code</th>
-                            <th data-orderable="false">Actions</th>
-
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var detail in Model.OcupationsLists)
                         {
                             <tr>
+                                <td>
+                                    <div class="dropdown row-actions-menu">
+                                        <button class="btn btn-sm btn-outline-secondary btn-row-actions dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Actions">
+                                            <i class="fas fa-ellipsis-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <form asp-action="EditOcupationCode" asp-route-Id="@detail.Id" method="get">
+                                                    <button type="submit" class="dropdown-item text-warning"><i class="align-middle fas fa-edit me-2"></i>Edit</button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form asp-action="ToggleOcupationCode" asp-route-id="@detail.Id" method="post" class="js-confirm-submit" data-confirm-message="Are you sure you want to toggle availability?">
+                                                    <button type="submit" class="dropdown-item @(detail.Available == 1 ? "text-success" : "text-secondary")">
+                                                        <i class="align-middle fas @(detail.Available == 1 ? "fa-toggle-on" : "fa-toggle-off") me-2"></i>Toggle availability
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <form asp-action="DeleteOcupationcode" asp-route-Id="@detail.Id" method="post" class="js-confirm-submit" data-confirm-message="Are you sure you want to delete this Ocupation Code?">
+                                                    <button type="submit" class="dropdown-item text-danger"><i class="align-middle fas fa-window-close me-2"></i>Delete</button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
                                 <td>@detail.Id</td>
                                 <td>@detail.PositionName</td>
                                 <td>@detail.OcupationCode</td>
-
-                                <td>
-                                    <form asp-action="ToggleOcupationCode" asp-route-id="@detail.Id" method="post" class="d-inline" onsubmit=" return confirm('Are you sure you want to toggle availability?')">
-                                        <button type="submit" class="btn @(detail.Available == 1 ? "btn-success" : "btn-secondary")" title="Toggle availability">
-                                            <i class="align-middle fas @(detail.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
-                                            </button>
-                                        </form>
-
-                                    <form asp-action="EditOcupationCode" asp-route-Id="@detail.Id" method="get" class="d-inline">
-                                        <button type="submit" class="btn btn-warning" title="Edit">
-                                            <i class="align-middle fas fa-edit"></i>
-                                        </button>
-                                    </form>
-
-                                    <form asp-action="DeleteOcupationcode" asp-route-Id="@detail.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this Ocupation Code?');">
-                                        <button type="submit" class="btn btn-danger" title="Delete">
-                                            <i class="align-middle fas fa-window-close"></i>
-                                        </button>
-                                    </form>
-
-                                </td>
                             </tr>
                         }
                     </tbody>
@@ -141,7 +149,10 @@
                     responsive: true,
                     order: [],
                     pageLength: 50,
-                    lengthMenu: [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]]
+                    lengthMenu: [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]],
+                    stateSave: true,
+                    dom: window.dtButtonsDom,
+                    buttons: window.dtExportButtons()
                 });
             }
 

@@ -55,8 +55,8 @@
 
                         <div class="col-12 text-end mt-3">
                             <a asp-action="IndexCourseMaterial"
-                               class="btn btn-secondary"
-                               onclick="return confirm('Are you sure you want to cancel without saving changes?')" title="Cancel">
+                               class="btn btn-secondary js-confirm-link"
+                               data-confirm-message="Are you sure you want to cancel without saving changes?" title="Cancel">
                                 <i class="align-middle fas fa-arrow-left"></i>
                                 CANCEL
                             </a>
@@ -148,8 +148,8 @@ else
 
                         <div class="col-12 text-end mt-3">
                             <a asp-action="IndexCourseMaterial"
-                               class="btn btn-secondary"
-                               onclick="return confirm('Are you sure you want to cancel without saving changes?')" title="Cancel">
+                               class="btn btn-secondary js-confirm-link"
+                               data-confirm-message="Are you sure you want to cancel without saving changes?" title="Cancel">
                                 <i class="align-middle fas fa-arrow-left"></i>
                                 CANCEL
                             </a>

@@ -239,7 +239,10 @@
     document.addEventListener("DOMContentLoaded", function () {
         $('#datatables-responsive').DataTable?.({
             responsive: true,
-            order: []
+            order: [],
+            stateSave: true,
+            dom: window.dtButtonsDom,
+            buttons: window.dtExportButtons()
         });
     });
 </script>

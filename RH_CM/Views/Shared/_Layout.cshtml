@@ -32,11 +32,23 @@
 
     <!-- Brand tokens (primary color, typography, buttons/badges) -->
     <link rel="stylesheet" href="~/Assets/dist/css/theme-uupm.css" asp-append-version="true" />
+
+    <!-- Loading overlay -->
+    <link rel="stylesheet" href="~/Assets/dist/css/LoadingOverlay.css" asp-append-version="true" />
+
+    <!-- Barra de botones propia para DataTables (exportar/imprimir/columnas), global para todas las tablas -->
+    <link rel="stylesheet" href="~/Assets/dist/css/DatatableExtras.css" asp-append-version="true" />
 </head>
 
 <body class="@(ViewData["BodyClass"] as string ?? "")"
       data-theme="default" data-layout="fluid"
       data-sidebar-position="left" data-sidebar-behavior="sticky">
+
+    <div id="pageLoadingOverlay" class="page-loading-overlay" aria-hidden="true">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 
     @{
         // Read the version from appsettings and expose it to views/partials
@@ -68,10 +80,24 @@
     <!-- JS de BootstrapBlazor (desde NuGet) -->
     @* <script src="~/_content/BootstrapBlazor/js/bootstrap.blazor.bundle.min.js"></script> *@
 
+    <!-- JSZip: requerido por el botón "Excel" de DataTables Buttons (empaquetado en app.js) -->
+    <script src="~/lib/jszip/jszip.min.js" asp-append-version="true"></script>
+
     <!-- JS base -->
     <script src="~/Assets/dist/js/app.js" asp-append-version="true"></script>
+
+    <!-- Barra de botones propia para DataTables (exportar/imprimir/columnas), global para todas las tablas -->
+    <script src="~/Assets/dist/js/datatable-extras.js" asp-append-version="true"></script>
+
     <!-- Select2 (global) -->
     <script src="~/Assets/dist/js/select2.min.js" asp-append-version="true"></script>
+
+    <!-- Loading overlay (shown on every page navigation and AJAX call) -->
+    <script src="~/Assets/dist/js/loading-overlay.js" asp-append-version="true"></script>
+
+    <!-- SweetAlert2 (global messages/confirmations) -->
+    <script src="~/lib/sweetalert2/sweetalert2.all.min.js" asp-append-version="true"></script>
+    <script src="~/Assets/dist/js/sweetalert-helpers.js" asp-append-version="true"></script>
 
     <!-- Blazor Server runtime (requerido para componentes interactivos) -->
     <script src="~/_framework/blazor.server.js"></script>

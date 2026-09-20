@@ -9,6 +9,7 @@ using System.Security.Claims;
 using RH_CM.Claims;
 using static RH_CM.ViewModels.ClaimsUsuarioViewModel;
 using RH_CM.Messages.Identity;
+using RH_CM.Service.Export;
 
 
 namespace RH_CM.Controllers
@@ -44,6 +45,20 @@ namespace RH_CM.Controllers
             }
 
             return View(usuarios);
+        }
+
+        /// <summary>
+        /// Raw export of every column in AppUsuario, with no joins or translations, so staff
+        /// can cross-check the data behind the Users catalog. Credential/security columns
+        /// (password hash, security stamp, concurrency stamp) are always excluded.
+        /// </summary>
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> ExportUsuariosFullData()
+        {
+            var data = await _contexto.AppUsuario.AsNoTracking().ToListAsync();
+            var bytes = RawExcelExportHelper.ExportFullData(data, "Users",
+                excludeProperties: new[] { "PasswordHash", "SecurityStamp", "ConcurrencyStamp" });
+            return File(bytes, RawExcelExportHelper.ExcelContentType, RawExcelExportHelper.BuildFileName("Users"));
         }
 
         private async Task<AppUsuario?> GetUserWithRoleAsync(string id)
@@ -241,7 +256,7 @@ namespace RH_CM.Controllers
         [HttpPost]
         [Authorize(Roles = "Administrador")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Editar(AppUsuario usuario)
+        public async Task<IActionResult> Editar(EditUserRoleViewModel usuario)
         {
             if (!ModelState.IsValid)
             {

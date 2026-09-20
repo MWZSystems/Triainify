@@ -19,6 +19,11 @@
             }
         })" />
     </div>
+    <div class="col-auto">
+        <a class="btn btn-outline-success" asp-action="ExportHeadCountFullData" title="Export the complete database data for this catalog, for validation purposes">
+            <i class="align-middle fas fa-database"></i> EXPORT FULL DATA
+        </a>
+    </div>
 </div>
 
 <div class="card shadow-sm">
@@ -35,18 +40,18 @@
                 <table id="datatables-hc" class="table table-striped table-hover align-middle" style="width:100%">
                     <thead class="table-accent">
                         <tr>
+                            <th data-orderable="false" class="no-export">Actions</th>
                             <th>Control Number</th>
                             <th>Name</th>
                             <th>Department</th>
                             <th>Position</th>
-                            <th data-orderable="false">Actions</th>
                         </tr>
                         <tr class="filter-row">
+                            <th></th>
                             <th><input class="form-control form-control-sm" placeholder="Control Number" /></th>
                             <th><input class="form-control form-control-sm" placeholder="Name" /></th>
                             <th><input class="form-control form-control-sm" placeholder="Department" /></th>
                             <th><input class="form-control form-control-sm" placeholder="Position" /></th>
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -56,30 +61,30 @@
                             var posName = Model.Positions.FirstOrDefault(p => p.PkPosition == item.FkPosition)?.NamePosition;
 
                             <tr>
-                                <td>@item.ControlNumber</td>
-                                <td>@item.Names @item.LastName @item.SecondName</td>
-                                <td>@deptName</td>
-                                <td>@posName</td>
                                 <td class="text-center">
                                     <form asp-action="ToggleAvailabilityHeadCount"
                                           asp-route-id="@item.PkHeadcount"
-                                          method="post" class="d-inline"
-                                          onsubmit="return confirm('Are you sure you want to toggle the availability of this head count?');">
+                                          method="post" class="d-inline js-confirm-submit"
+                                          data-confirm-message="Are you sure you want to toggle the availability of this head count?">
                                         <button type="submit" class="btn @(item.Available == 1 ? "btn-success" : "btn-secondary")" title="Toggle availability">
                                             <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
                                         </button>
                                     </form>
                                 </td>
+                                <td>@item.ControlNumber</td>
+                                <td>@item.Names @item.LastName @item.SecondName</td>
+                                <td>@deptName</td>
+                                <td>@posName</td>
                             </tr>
                         }
                     </tbody>
                     <tfoot>
                         <tr>
+                            <th></th>
                             <th>Control Number</th>
                             <th>Name</th>
                             <th>Department</th>
                             <th>Position</th>
-                            <th></th>
                         </tr>
                     </tfoot>
                 </table>
@@ -98,12 +103,15 @@
         $(function () {
             const table = $('#datatables-hc').DataTable({
                 responsive: true,
-                order: [[0, 'asc']],
+                order: [[1, 'asc']],
                 pageLength: 25,
                 lengthMenu: [[10,25,50,100,-1],[10,25,50,100,"All"]],
+                stateSave: true,
+                dom: window.dtButtonsDom,
+                buttons: window.dtExportButtons(),
                 initComplete: function () {
                     const api = this.api();
-                    [0,1,2,3].forEach(function (colIdx) {
+                    [1,2,3,4].forEach(function (colIdx) {
                         $('thead tr:eq(1) th').eq(colIdx).find('input')
                             .on('keyup change clear', function () {
                                 if (api.column(colIdx).search() !== this.value) {

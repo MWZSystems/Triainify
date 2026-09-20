@@ -35,6 +35,9 @@
         <a class="btn btn-success" asp-action="ExportCourseCompletedToExcel" title="Export To Excel">
             <i class="align-middle fas fa-file-excel"></i> EXPORT TO EXCEL
         </a>
+        <a class="btn btn-outline-success" asp-action="ExportCourseCompletedFullData" title="Export the complete database data for this catalog, for validation purposes">
+            <i class="align-middle fas fa-database"></i> EXPORT FULL DATA
+        </a>
     </div>
 </div>
 
@@ -83,7 +86,10 @@
                 responsive: true,
                 order: [[0, 'asc'], [1, 'asc'], [2, 'asc'], [3, 'asc']],
                 pageLength: 25,
-                lengthMenu: [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]]
+                lengthMenu: [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]],
+                stateSave: true,
+                dom: window.dtButtonsDom,
+                buttons: window.dtExportButtons()
             });
 
 });

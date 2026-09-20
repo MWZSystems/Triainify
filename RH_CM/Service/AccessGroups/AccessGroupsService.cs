@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Identity;
 using RH_CM.Service.DTOs;
+using RH_CM.Service.Requirements;
 using RH_CM.Service.SQLSMS;
 using System.Linq;
 using System.Reflection;
@@ -13,6 +14,7 @@ namespace RH_CM.Service.AccessGroups
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UnitOfWork _unitOfWork;
+        private readonly IAccessService _accessService;
 
         /*
         Lista de menus
@@ -54,14 +56,34 @@ namespace RH_CM.Service.AccessGroups
 
         public AccessGroupsService(UserManager<IdentityUser> userManager,
                                     IHttpContextAccessor httpContextAccessor,
-                                    UnitOfWork unitOfWork)
+                                    UnitOfWork unitOfWork,
+                                    IAccessService accessService)
         {
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _unitOfWork = unitOfWork;
+            _accessService = accessService;
         }
 
         private ClaimsPrincipal? UserPrincipal => _httpContextAccessor.HttpContext?.User;
+
+        /// <summary>
+        /// For NEW menu items only: checks the same CT_PERMISSION-backed access check used by
+        /// the "ViewAccess" authorization policy (ViewAccessHandler/AccessService), so a new
+        /// screen's menu link is guaranteed to agree with whether the user can actually open it
+        /// — without needing a new column/table for the old GroupsAccessDTOs/session-cached
+        /// menu system. Existing menu items keep using GetMenusToShow(); this is additive.
+        /// </summary>
+        public async Task<bool> HasControllerActionAccessAsync(string controller, string action)
+        {
+            string userName = UserPrincipal?.Identity?.Name ?? string.Empty;
+            if (string.IsNullOrEmpty(userName))
+            {
+                return false;
+            }
+
+            return await _accessService.HasAccessAsync(userName, controller, action);
+        }
 
 
         public async Task<IdentityUser?> GetCurrentUserAsync()

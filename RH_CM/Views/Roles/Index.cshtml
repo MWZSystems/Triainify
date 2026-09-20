@@ -28,6 +28,10 @@
             <i class="align-middle fas fa-plus-square"></i> Create New Role
         </a>
 
+        <a class="btn btn-outline-success" asp-action="ExportRolesFullData" title="Export the complete database data for this catalog, for validation purposes">
+            <i class="align-middle fas fa-database"></i> EXPORT FULL DATA
+        </a>
+
         <!-- Toggle button to show/hide actions information -->
         <button class="btn btn-outline-info btn-sm"
                 type="button"
@@ -86,17 +90,15 @@
                     <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
                     <thead class="table-accent">
                             <tr>
+                                <th class="text-center no-export" data-orderable="false">Actions</th>
                                 <th>Id</th>
                                 <th>Name</th>
-                                <th class="text-center" data-orderable="false">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var item in Model)
                             {
                                 <tr>
-                                    <td>@item.Id</td>
-                                    <td>@item.Name</td>
                                     <td class="text-center">
 
                                         <div class="d-flex justify-content-center gap-2">
@@ -124,6 +126,8 @@
                                         </div>
 
                                     </td>
+                                    <td>@item.Id</td>
+                                    <td>@item.Name</td>
                                 </tr>
                             }
                         </tbody>
@@ -147,6 +151,9 @@
             $('#datatables-responsive').DataTable({
                 responsive: true,
                 order: [],
+                stateSave: true,
+                dom: window.dtButtonsDom,
+                buttons: window.dtExportButtons(),
                 initComplete: function () {
                     $('#loader').fadeOut(200, function () {
                         $('#tableContainer').fadeIn(200);

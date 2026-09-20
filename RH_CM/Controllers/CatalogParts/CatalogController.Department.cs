@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RH_CM.Models;
 using RH_CM.Messages.Catalog;
+using RH_CM.Service.Export;
 
 namespace RH_CM.Controllers
 {
@@ -20,6 +21,18 @@ namespace RH_CM.Controllers
                 .ToListAsync();
 
             return View("Department/IndexDepartment", departments);
+        }
+
+        /// <summary>
+        /// Raw export of every column in CtDepartments, with no joins or translations,
+        /// so staff can cross-check the data behind the Departments catalog.
+        /// </summary>
+        [Authorize(Policy = "ViewAccess")]
+        public async Task<IActionResult> ExportDepartmentFullData()
+        {
+            var data = await _context.CtDepartments.AsNoTracking().ToListAsync();
+            var bytes = RawExcelExportHelper.ExportFullData(data, "Departments");
+            return File(bytes, RawExcelExportHelper.ExcelContentType, RawExcelExportHelper.BuildFileName("Departments"));
         }
 
         public IActionResult CreateDepartment() => View("Department/CreateDepartment");

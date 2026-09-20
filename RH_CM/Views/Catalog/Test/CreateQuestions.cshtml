@@ -208,7 +208,7 @@
                 const typeText = $("#newQuestionType option:selected").text();
 
                 if (!text) {
-                    alert("Please enter the question text.");
+                    window.swalAlert ? window.swalAlert("Please enter the question text.") : alert("Please enter the question text.");
                     return;
                 }
 
@@ -244,7 +244,7 @@
                 const text = optionTextInput.val().trim();
 
                 if (!text) {
-                    alert("Please enter the option text.");
+                    window.swalAlert ? window.swalAlert("Please enter the option text.") : alert("Please enter the option text.");
                     return;
                 }
 

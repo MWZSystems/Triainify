@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RH_CM.Models;
 using RH_CM.Messages.Catalog;
+using RH_CM.Service.Export;
 
 namespace RH_CM.Controllers
 {
@@ -23,6 +24,18 @@ namespace RH_CM.Controllers
                 .ToListAsync();
 
             return View("Position/IndexPosition", positions);
+        }
+
+        /// <summary>
+        /// Raw export of every column in CtPositions, with no joins or translations,
+        /// so staff can cross-check the data behind the Positions catalog.
+        /// </summary>
+        [Authorize(Policy = "ViewAccess")]
+        public async Task<IActionResult> ExportPositionFullData()
+        {
+            var data = await _context.CtPositions.AsNoTracking().ToListAsync();
+            var bytes = RawExcelExportHelper.ExportFullData(data, "Positions");
+            return File(bytes, RawExcelExportHelper.ExcelContentType, RawExcelExportHelper.BuildFileName("Positions"));
         }
 
         /// <summary>

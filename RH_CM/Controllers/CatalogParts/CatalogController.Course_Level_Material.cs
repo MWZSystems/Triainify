@@ -7,6 +7,7 @@ using ClosedXML.Excel;
 using System.Data;
 using System.Threading.Tasks;
 using RH_CM.Messages.Catalog;
+using RH_CM.Service.Export;
 
 namespace RH_CM.Controllers
 {
@@ -178,6 +179,18 @@ namespace RH_CM.Controllers
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 $"CourseLevelMaterial_{DateTime.Now:yyyyMMdd}.xlsx"
             );
+        }
+
+        /// <summary>
+        /// Raw export of every column in CtCourseLevelMaterials, with no joins or translations,
+        /// so staff can cross-check the data behind the Course Level Material links.
+        /// </summary>
+        [Authorize(Policy = "ViewAccess")]
+        public async Task<IActionResult> ExportCourseLevelMaterialFullData()
+        {
+            var data = await _context.CtCourseLevelMaterials.AsNoTracking().ToListAsync();
+            var bytes = RawExcelExportHelper.ExportFullData(data, "CourseLevelMaterial");
+            return File(bytes, RawExcelExportHelper.ExcelContentType, RawExcelExportHelper.BuildFileName("CourseLevelMaterial"));
         }
 
 

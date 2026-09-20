@@ -7,6 +7,7 @@ using RH_CM.Models;
 using RH_CM.ViewModels;
 using System.Data;
 using RH_CM.Messages.Catalog;
+using RH_CM.Service.Export;
 
 namespace RH_CM.Controllers
 {
@@ -166,6 +167,18 @@ namespace RH_CM.Controllers
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 $"CourseAssignments_{fechaActual}.xlsx"
             );
+        }
+
+        /// <summary>
+        /// Raw export of every column in CtCourseassignments, with no joins or translations,
+        /// so staff can cross-check the data behind the Course Assignments catalog.
+        /// </summary>
+        [Authorize(Policy = "ViewAccess")]
+        public async Task<IActionResult> ExportCourseAssignmentsFullData()
+        {
+            var data = await _context.CtCourseassignments.AsNoTracking().ToListAsync();
+            var bytes = RawExcelExportHelper.ExportFullData(data, "CourseAssignments");
+            return File(bytes, RawExcelExportHelper.ExcelContentType, RawExcelExportHelper.BuildFileName("CourseAssignments"));
         }
 
         private void LoadCourseAssignmentViewBags()

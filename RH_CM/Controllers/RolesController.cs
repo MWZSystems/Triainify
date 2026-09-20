@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RH_CM.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using RH_CM.Messages.Identity;
+using RH_CM.Service.Export;
 
 namespace RH_CM.Controllers
 {
@@ -25,6 +27,18 @@ namespace RH_CM.Controllers
         {
             var roles = _contexto.Roles.ToList();
             return View(roles);
+        }
+
+        /// <summary>
+        /// Raw export of every column in AspNetRoles, with no joins or translations,
+        /// so staff can cross-check the data behind the Roles catalog.
+        /// </summary>
+        [HttpGet]
+        public IActionResult ExportRolesFullData()
+        {
+            var data = _contexto.Roles.AsNoTracking().ToList();
+            var bytes = RawExcelExportHelper.ExportFullData(data, "Roles");
+            return File(bytes, RawExcelExportHelper.ExcelContentType, RawExcelExportHelper.BuildFileName("Roles"));
         }
 
         [HttpGet]

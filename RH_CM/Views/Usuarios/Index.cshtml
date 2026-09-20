@@ -33,6 +33,10 @@
             <i class="align-middle fas fa-user-plus"></i> CREATE NEW USER
         </a>
 
+        <a class="btn btn-outline-success" asp-action="ExportUsuariosFullData" title="Export the complete database data for this catalog, for validation purposes (excludes password/security columns)">
+            <i class="align-middle fas fa-database"></i> EXPORT FULL DATA
+        </a>
+
         <!-- Toggle button to show/hide actions information -->
         <button class="btn btn-outline-info btn-sm"
                 type="button"
@@ -145,109 +149,62 @@
                         <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
                     <thead class="table-accent">
                                 <tr>
+                                    <th data-orderable="false" class="no-export">Action</th>
                                     <th>@Html.DisplayNameFor(m => m.First().UserName)</th>
                                     @* <th>@Html.DisplayNameFor(m => m.First().Email)</th> *@
                                     <th>Full Name</th>
                                     <th>@Html.DisplayNameFor(m => m.First().Rol)</th>
-                                    <th data-orderable="false">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var item in Model)
                                 {
                                     <tr>
+                                        <td>
+                                            <div class="dropdown row-actions-menu">
+                                                <button class="btn btn-sm btn-outline-secondary btn-row-actions dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Actions">
+                                                    <i class="fas fa-ellipsis-vertical"></i>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    <li><a class="dropdown-item text-info" asp-controller="Usuarios" asp-action="UserDetail" asp-route-id="@item.Id"><i class="fas fa-eye me-2"></i>View details</a></li>
+                                                    <li><a class="dropdown-item text-warning" asp-controller="Usuarios" asp-action="Editar" asp-route-id="@item.Id"><i class="fas fa-edit me-2"></i>Edit user</a></li>
+                                                    <li><a class="dropdown-item text-success" asp-controller="Usuarios" asp-action="AdministrarClaimsUsuario" asp-route-idUsuario="@item.Id"><i class="fas fa-user-shield me-2"></i>Manage permissions</a></li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li>
+                                                        <form asp-controller="Usuarios" asp-action="Borrar" asp-route-idUsuario="@item.Id" method="post">
+                                                            @if (item.LockoutEnd == null || item.LockoutEnd < DateTime.Now)
+                                                            {
+                                                                <button asp-controller="Usuarios" asp-action="BloquearDesbloquear" asp-route-idUsuario="@item.Id" type="submit" class="dropdown-item text-secondary">
+                                                                    <i class="fas fa-user-lock me-2"></i>Lock user
+                                                                </button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button asp-controller="Usuarios" asp-action="BloquearDesbloquear" asp-route-idUsuario="@item.Id" type="submit" class="dropdown-item text-warning">
+                                                                    <i class="fas fa-unlock me-2"></i>Unlock user
+                                                                </button>
+                                                            }
+                                                            @if (item.Available == 1)
+                                                            {
+                                                                <button asp-controller="Usuarios" asp-action="ToggleAvailable" asp-route-idUsuario="@item.Id" type="submit" class="dropdown-item text-success">
+                                                                    <i class="fas fa-toggle-on me-2"></i>Mark as unavailable
+                                                                </button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button asp-controller="Usuarios" asp-action="ToggleAvailable" asp-route-idUsuario="@item.Id" type="submit" class="dropdown-item text-secondary">
+                                                                    <i class="fas fa-toggle-off me-2"></i>Mark as available
+                                                                </button>
+                                                            }
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td>
                                         <td>@Html.DisplayFor(_ => item.UserName)</td>
                                         @* <td>@Html.DisplayFor(_ => item.Email)</td> *@
                                         <td>@($"{item.Names} {item.LastName}")</td>
                                         <td>@Html.DisplayFor(_ => item.Rol)</td>
-                                        <td>
-                                            <div class="text-center">
-                                                <form asp-controller="Usuarios" asp-action="Borrar" asp-route-idUsuario="@item.Id" method="post" style="display:inline;">
-
-                                                    <!-- View details -->
-                                                    <a class="btn btn-info"
-                                                       asp-controller="Usuarios"
-                                                       asp-action="UserDetail"
-                                                       asp-route-id="@item.Id"
-                                                       title="View details">
-                                                        <i class="fas fa-eye"></i>
-                                                    </a>
-
-                                                    <!-- Edit user -->
-                                                    <a class="btn btn-warning"
-                                                       asp-controller="Usuarios"
-                                                       asp-action="Editar"
-                                                       asp-route-id="@item.Id"
-                                                       title="Edit user">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-
-                                                    <!-- Assign claims -->
-                                                    <a class="btn btn-success"
-                                                       asp-controller="Usuarios"
-                                                       asp-action="AdministrarClaimsUsuario"
-                                                       asp-route-idUsuario="@item.Id"
-                                                       style="cursor:pointer;"
-                                                       title="Manage permissions / claims">
-                                                        <i class="fas fa-user-shield"></i>
-                                                    </a>
-
-                                                    <!-- Lock / Unlock -->
-                                                    @if (item.LockoutEnd == null || item.LockoutEnd < DateTime.Now)
-                                                    {
-                                                        <!-- Lock -->
-                                                        <button asp-controller="Usuarios"
-                                                                asp-action="BloquearDesbloquear"
-                                                                asp-route-idUsuario="@item.Id"
-                                                                class="btn btn-light"
-                                                                title="Lock user">
-                                                            <i class="fas fa-user-lock"></i>
-                                                        </button>
-                                                    }
-                                                    else
-                                                    {
-                                                        <!-- Unlock -->
-                                                        <button asp-controller="Usuarios"
-                                                                asp-action="BloquearDesbloquear"
-                                                                asp-route-idUsuario="@item.Id"
-                                                                class="btn btn-warning"
-                                                                title="Unlock user">
-                                                            <i class="fas fa-unlock"></i>
-                                                        </button>
-                                                    }
-
-                                                    <!-- Toggle Available -->
-                                                    @if (item.Available == 1)
-                                                    {
-                                                        <button asp-controller="Usuarios"
-                                                                asp-action="ToggleAvailable"
-                                                                asp-route-idUsuario="@item.Id"
-                                                                class="btn btn-outline-success"
-                                                                title="Mark as unavailable">
-                                                            <i class="fas fa-toggle-on"></i>
-                                                        </button>
-                                                    }
-                                                    else
-                                                    {
-                                                        <button asp-controller="Usuarios"
-                                                                asp-action="ToggleAvailable"
-                                                                asp-route-idUsuario="@item.Id"
-                                                                class="btn btn-outline-secondary"
-                                                                title="Mark as available">
-                                                            <i class="fas fa-toggle-off"></i>
-                                                        </button>
-                                                    }
-
-                                                    @* Delete button hidden as requested
-                                                    <button type="submit"
-                                                            onclick="return confirm('Are you sure you want to delete this record?')"
-                                                            class="btn btn-danger" title="Delete">
-                                                        <i class="align-middle fas fa-trash-alt"></i>
-                                                    </button>
-                                                    *@
-                                                </form>
-                                            </div>
-                                        </td>
                                     </tr>
                                 }
                             </tbody>
@@ -279,6 +236,9 @@
             $('#datatables-responsive').DataTable({
                 responsive: true,
                 order: [], // keeps server order
+                stateSave: true,
+                dom: window.dtButtonsDom,
+                buttons: window.dtExportButtons(),
 
                 initComplete: function () {
                     $('#loader').fadeOut(200, function () {

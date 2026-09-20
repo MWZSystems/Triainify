@@ -1,0 +1,64 @@
+/* Los botones de exportar/imprimir de DataTables se agrupan en un .btn-group de
+   Bootstrap, que por defecto estira cada .btn a "flex: 1 1 auto" (para grupos tipo
+   segmented control). Aquí eso los hace ocupar todo el ancho disponible en vez de
+   su tamaño natural, así que se restaura el ancho automático solo para este grupo. */
+div.dt-buttons.btn-group {
+    flex-wrap: wrap;
+    gap: .35rem;
+    margin-bottom: .5rem;
+}
+
+div.dt-buttons.btn-group > .btn {
+    flex: 0 0 auto;
+    width: auto;
+    border-radius: .375rem !important;
+}
+
+/* Menú de acciones por fila (icono de 3 puntos): evita que el botón se estire dentro
+   de celdas con d-flex y da un ancho de menú consistente. */
+.row-actions-menu .dropdown-menu {
+    min-width: 12rem;
+}
+
+.row-actions-menu .btn-row-actions {
+    width: 2.25rem;
+}
+
+/* Colores/iconos de los botones de la barra de tablas (Excel/Print vienen del Buttons
+   empaquetado en app.js con la clase base btn-secondary; se sobreescribe por su clase
+   semántica propia. "Columns" es nuestro botón custom, con su propia clase). */
+div.dt-buttons.btn-group > .btn.buttons-excel {
+    background-color: #1e7145;
+    border-color: #1e7145;
+    color: #fff;
+}
+div.dt-buttons.btn-group > .btn.buttons-excel:hover,
+div.dt-buttons.btn-group > .btn.buttons-excel:focus {
+    background-color: #175934;
+    border-color: #175934;
+    color: #fff;
+}
+
+div.dt-buttons.btn-group > .btn.buttons-print {
+    background-color: #3f80ea;
+    border-color: #3f80ea;
+    color: #fff;
+}
+div.dt-buttons.btn-group > .btn.buttons-print:hover,
+div.dt-buttons.btn-group > .btn.buttons-print:focus {
+    background-color: #2f6bd1;
+    border-color: #2f6bd1;
+    color: #fff;
+}
+
+.btn-dt-colvis {
+    background-color: #7952b3;
+    border-color: #7952b3;
+    color: #fff;
+}
+.btn-dt-colvis:hover,
+.btn-dt-colvis:focus {
+    background-color: #64409a;
+    border-color: #64409a;
+    color: #fff;
+}

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RH_CM.Messages.ExternalEvidence;
 using RH_CM.Service.DTOs;
+using RH_CM.Service.Export;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,6 +20,34 @@ namespace RH_CM.Controllers
         {
             List<ExternalEvidenceDTOs> result = await _externalEvidenceService.GetIndexAsync();
             return View("ExternalEvidence/IndexExternalEvidence", result);
+        }
+
+        /// <summary>
+        /// Raw export of every column in SyExternalevidences (except the binary "EvidenceFile"
+        /// column, which is excluded so the query doesn't have to pull every PDF's contents
+        /// over the wire), with no joins or translations, so staff can cross-check the data
+        /// behind the External Evidence catalog.
+        /// </summary>
+        [HttpGet]
+        [Authorize(Policy = "ViewAccess")]
+        public async Task<IActionResult> ExportExternalEvidenceFullData()
+        {
+            var data = await _context.SyExternalevidences.AsNoTracking()
+                .Select(e => new
+                {
+                    e.PkExternalEvidence,
+                    e.FkMovementCourse,
+                    e.EvidenceFileName,
+                    e.Score,
+                    e.CreateUser,
+                    e.CreateDate,
+                    e.LastUpdateUser,
+                    e.LastUpdateDate,
+                    e.Available
+                })
+                .ToListAsync();
+            var bytes = RawExcelExportHelper.ExportFullData(data, "ExternalEvidence");
+            return File(bytes, RawExcelExportHelper.ExcelContentType, RawExcelExportHelper.BuildFileName("ExternalEvidence"));
         }
 
         [HttpGet]
@@ -46,7 +76,6 @@ namespace RH_CM.Controllers
             else
             {
                 string extension = Path.GetExtension(model.UploadedFile.FileName).ToLowerInvariant();
-                const long maxSizeBytes = 10 * 1024 * 1024;
 
                 if (extension != ".pdf")
                 {
@@ -55,10 +84,6 @@ namespace RH_CM.Controllers
                 else if (model.UploadedFile.Length == 0)
                 {
                     ModelState.AddModelError(nameof(model.UploadedFile), ExternalEvidenceMessages.AttachedFileIsEmpty);
-                }
-                else if (model.UploadedFile.Length > maxSizeBytes)
-                {
-                    ModelState.AddModelError(nameof(model.UploadedFile), ExternalEvidenceMessages.FileSizeMustNotExceed10Mb);
                 }
             }
 
@@ -192,7 +217,6 @@ namespace RH_CM.Controllers
             else
             {
                 string extension = Path.GetExtension(uploadedFile.FileName).ToLowerInvariant();
-                const long maxSizeBytes = 10 * 1024 * 1024;
 
                 if (extension != ".pdf")
                 {
@@ -201,10 +225,6 @@ namespace RH_CM.Controllers
                 else if (uploadedFile.Length == 0)
                 {
                     ModelState.AddModelError(nameof(uploadedFile), ExternalEvidenceMessages.AttachedFileIsEmpty);
-                }
-                else if (uploadedFile.Length > maxSizeBytes)
-                {
-                    ModelState.AddModelError(nameof(uploadedFile), ExternalEvidenceMessages.FileSizeMustNotExceed10Mb);
                 }
             }
 

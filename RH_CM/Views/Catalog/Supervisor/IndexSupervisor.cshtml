@@ -30,6 +30,9 @@
         <a class="btn btn-primary" asp-action="CreateSupervisor" title="Create New Supervisor">
             <i class="align-middle fas fa-plus-square"></i> CREATE NEW SUPERVISOR
         </a>
+        <a class="btn btn-outline-success" asp-action="ExportSupervisorFullData" title="Export the complete database data for this catalog, for validation purposes">
+            <i class="align-middle fas fa-database"></i> EXPORT FULL DATA
+        </a>
     </div>
 </div>
 
@@ -50,61 +53,67 @@
                     <table id="datatables-sup" class="table table-striped table-hover align-middle" style="width:100%">
                         <thead class="table-accent">
                             <tr>
+                                <th data-orderable="false" class="no-export">Actions</th>
                                 <th>Control Number</th>
                                 <th>Full Name</th>
                                 <th>Department</th>
                                 <th>Position</th>
-                                <th data-orderable="false">Actions</th>
                             </tr>
                             <!-- Filtros por columna -->
                             <tr class="table-light">
+                                <th></th>
                                 <th><input class="form-control form-control-sm" placeholder="Control Number" /></th>
                                 <th><input class="form-control form-control-sm" placeholder="Full Name" /></th>
                                 <th><input class="form-control form-control-sm" placeholder="Department" /></th>
                                 <th><input class="form-control form-control-sm" placeholder="Position" /></th>
-                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var item in Model)
                             {
                                 <tr>
+                                    <td class="text-center">
+                                        <div class="dropdown row-actions-menu">
+                                            <button class="btn btn-sm btn-outline-secondary btn-row-actions dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Actions">
+                                                <i class="fas fa-ellipsis-vertical"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li>
+                                                    <form asp-action="ToggleSupervisor" asp-route-id="@item.PkSupervisorId" method="post" class="js-confirm-submit"
+                                                          data-confirm-message="Are you sure you want to toggle availability of this supervisor?">
+                                                        <button type="submit" class="dropdown-item @(item.Available == 1 ? "text-success" : "text-secondary")">
+                                                            <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off") me-2"></i>Toggle availability
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                                <li><a class="dropdown-item text-warning" asp-action="EditSupervisor" asp-route-id="@item.PkSupervisorId"><i class="fas fa-edit me-2"></i>Edit</a></li>
+                                                @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Administrador"))
+                                                {
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li>
+                                                        <form asp-action="DeleteSupervisor" asp-route-id="@item.PkSupervisorId" method="post" class="js-confirm-submit"
+                                                              data-confirm-message="Are you sure you want to delete this supervisor?">
+                                                            <button type="submit" class="dropdown-item text-danger"><i class="align-middle fas fa-trash-alt me-2"></i>Delete</button>
+                                                        </form>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </td>
                                     <td>@item.ControlNumber</td>
                                     <td>@item.FullName</td>
                                     <td>@item.DepartmentName</td>
                                     <td>@item.PositionName</td>
-                                    <td class="text-center">
-                                        <form asp-action="ToggleSupervisor" asp-route-id="@item.PkSupervisorId" method="post" class="d-inline"
-                                              onsubmit="return confirm('Are you sure you want to toggle availability of this supervisor?');">
-                                            <button type="submit" class="btn btn-sm @(item.Available == 1 ? "btn-success" : "btn-secondary")" title="Toggle availability">
-                                                <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
-                                            </button>
-                                        </form>
-
-                                        <a class="btn btn-warning btn-sm" asp-action="EditSupervisor" asp-route-id="@item.PkSupervisorId" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-
-                                        @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Administrador"))
-                                        {
-                                            <form asp-action="DeleteSupervisor" asp-route-id="@item.PkSupervisorId" method="post" class="d-inline"
-                                                  onsubmit="return confirm('Are you sure you want to delete this supervisor?');">
-                                                <button type="submit" class="btn btn-danger btn-sm" title="Delete">
-                                                    <i class="align-middle fas fa-trash-alt"></i>
-                                                </button>
-                                            </form>
-                                        }
-                                    </td>
                                 </tr>
                             }
                         </tbody>
                         <tfoot>
                             <tr>
+                                <th></th>
                                 <th>Control Number</th>
                                 <th>Full Name</th>
                                 <th>Department</th>
                                 <th>Position</th>
-                                <th></th>
                             </tr>
                         </tfoot>
                     </table>
@@ -131,11 +140,14 @@
                 order: [],
                 pageLength: 25,
                 lengthMenu: [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]],
+                stateSave: true,
+                dom: window.dtButtonsDom,
+                buttons: window.dtExportButtons(),
                 initComplete: function () {
                     const api = this.api();
 
                     // Filtros de texto: Control Number, Full Name, Department, Position
-                    [0, 1, 2, 3].forEach(function (colIdx) {
+                    [1, 2, 3, 4].forEach(function (colIdx) {
                         $('thead tr:eq(1) th').eq(colIdx).find('input')
                             .on('keyup change clear', function () {
                                 if (api.column(colIdx).search() !== this.value) {

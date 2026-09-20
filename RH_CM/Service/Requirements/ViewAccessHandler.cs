@@ -87,6 +87,15 @@ public class ViewAccessHandler : AuthorizationHandler<ViewAccessRequirement>
             return;
         }
 
+        // Administrador always has access. Without this, a brand-new controller/action with
+        // no CT_PERMISSION row yet would lock out even the highest-trust role, including the
+        // person who needs to go grant that very permission.
+        if (context.User.IsInRole("Administrador"))
+        {
+            context.Succeed(requirement);
+            return;
+        }
+
         bool hasAccess = await _accessService.HasAccessAsync(userId, controller, action);
 
         if (hasAccess)

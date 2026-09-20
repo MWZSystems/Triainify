@@ -4,6 +4,9 @@ using RH_CM.Service.DTOs;
 using RH_CM.Service.DTOs.ThematicArea;
 using RH_CM.Service.ThematicArea;
 using RH_CM.Service.ThematicCourse;
+using RH_CM.Service.Export;
+using RH_CM.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 
 namespace RH_CM.Controllers
@@ -13,9 +16,11 @@ namespace RH_CM.Controllers
     public class ThematicCourseController : Controller
     {
         private readonly ThematicCourseService _thematicCourseService;
-        public ThematicCourseController(ThematicCourseService thematicCourseService) 
+        private readonly db_abcd61_rhchdbContext _context;
+        public ThematicCourseController(ThematicCourseService thematicCourseService, db_abcd61_rhchdbContext context)
         {
             _thematicCourseService = thematicCourseService;
+            _context = context;
         }
 
 
@@ -24,6 +29,18 @@ namespace RH_CM.Controllers
         {
             ThematicCourseDTOs result = await _thematicCourseService.IndexGet_async();
             return View(result);
+        }
+
+        /// <summary>
+        /// Raw export of every column in CtThematiccourses, with no joins or translations,
+        /// so staff can cross-check the data behind the Thematic Course links.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> ExportThematicCourseFullData()
+        {
+            var data = await _context.CtThematiccourses.AsNoTracking().ToListAsync();
+            var bytes = RawExcelExportHelper.ExportFullData(data, "ThematicCourses");
+            return File(bytes, RawExcelExportHelper.ExcelContentType, RawExcelExportHelper.BuildFileName("ThematicCourses"));
         }
 
         [HttpPost]

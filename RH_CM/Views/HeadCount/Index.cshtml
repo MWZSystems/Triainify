@@ -137,6 +137,9 @@
             $('#datatables-responsive').DataTable({
                 responsive: true,
                 order: [[0, 'asc']],
+                stateSave: true,
+                dom: window.dtButtonsDom,
+                buttons: window.dtExportButtons(),
                 initComplete: function() {
                     $('#loader').fadeOut(200, function() {
                         $('#tableContainer').fadeIn(200);

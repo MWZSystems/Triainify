@@ -20,7 +20,6 @@ namespace RH_CM.Messages.ExternalEvidence
         public const string MustAttachAnEvidenceFile = "You must attach an evidence file.";
         public const string FileMustBeInPdfFormat = "The file must be in PDF format.";
         public const string AttachedFileIsEmpty = "The attached file is empty.";
-        public const string FileSizeMustNotExceed10Mb = "The file size must not exceed 10 MB.";
         public const string EvidenceIdentifierIsNotValid = "The evidence identifier is not valid.";
     }
 }

@@ -36,16 +36,19 @@
                     <a asp-action="IndexCourseassignments" class="btn btn-primary" title="Back To Course Assignments">
                         <i class="align-middle fas fa-outdent"></i> BACK TO COURSE ASSIGNMENTS
                     </a>
+                    <a class="btn btn-outline-success" asp-action="ExportCourseAssignmentsFullData" title="Export the complete database data for this catalog, for validation purposes">
+                        <i class="align-middle fas fa-database"></i> EXPORT FULL DATA
+                    </a>
                 </div>
             </div>
 
             <div class="card-body">
-                <form asp-action="DeleteCourseAssignmentsBulk" method="post" id="bulkDeleteForm">
+                <form asp-action="DeleteCourseAssignmentsBulk" method="post" id="bulkDeleteForm" class="js-confirm-submit" data-confirm-message="Delete the selected records?">
                     @Html.AntiForgeryToken()
 
                     <div class="d-flex flex-wrap gap-2 mb-3">
                         <button type="submit" class="btn btn-danger" id="btnDelete"
-                                onclick="return confirm('Delete the selected records?');" disabled title="Delete selected">
+                                disabled title="Delete selected">
                             <i class="fas fa-trash-alt"></i> Delete selected
                             <span class="badge bg-light text-dark ms-2" id="selectedCount">0</span>
                         </button>

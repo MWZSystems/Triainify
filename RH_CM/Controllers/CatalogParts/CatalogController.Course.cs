@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using RH_CM.Models;
 using RH_CM.Messages.Catalog;
+using RH_CM.Service.Export;
 
 namespace RH_CM.Controllers
 {
@@ -20,6 +21,18 @@ namespace RH_CM.Controllers
                 .ToListAsync();
 
             return View("Course/IndexCourse", courses);
+        }
+
+        /// <summary>
+        /// Raw export of every column in CtCourses, with no joins or translations,
+        /// so staff can cross-check the data behind the Courses catalog.
+        /// </summary>
+        [Authorize(Policy = "ViewAccess")]
+        public async Task<IActionResult> ExportCourseFullData()
+        {
+            var data = await _context.CtCourses.AsNoTracking().ToListAsync();
+            var bytes = RawExcelExportHelper.ExportFullData(data, "Courses");
+            return File(bytes, RawExcelExportHelper.ExcelContentType, RawExcelExportHelper.BuildFileName("Courses"));
         }
 
         /// <summary>

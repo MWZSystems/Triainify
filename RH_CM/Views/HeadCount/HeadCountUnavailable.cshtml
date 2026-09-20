@@ -130,7 +130,10 @@
             // Initialize DataTable (English, consistent with the rest of the app)
             $('#datatables-responsive').DataTable({
                 responsive: true,
-                order: [[0, 'asc']] // Sort by 'Control Number' (index 0) ascending
+                order: [[0, 'asc']], // Sort by 'Control Number' (index 0) ascending
+                stateSave: true,
+                dom: window.dtButtonsDom,
+                buttons: window.dtExportButtons()
             });
 
 });

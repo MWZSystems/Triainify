@@ -15,6 +15,7 @@ using RH_CM.ViewModels;
 using System.Data;
 using static RH_CM.ViewModels.ViewModels;
 using RH_CM.Messages.Trainify;
+using RH_CM.Service.Export;
 
 namespace RH_CM.Controllers
 {
@@ -261,6 +262,17 @@ namespace RH_CM.Controllers
 
             var data = await query.ToListAsync();
             return View(data);
+        }
+
+        /// <summary>
+        /// Raw export of every column in SyCoursecompleteds, with no joins or translations,
+        /// so staff can cross-check the data behind the Course Completed list.
+        /// </summary>
+        public async Task<IActionResult> ExportCourseCompletedFullData()
+        {
+            var data = await _context.SyCoursecompleteds.AsNoTracking().ToListAsync();
+            var bytes = RawExcelExportHelper.ExportFullData(data, "CourseCompleted");
+            return File(bytes, RawExcelExportHelper.ExcelContentType, RawExcelExportHelper.BuildFileName("CourseCompleted"));
         }
 
         public async Task<IActionResult> CreateCourseCompleted()

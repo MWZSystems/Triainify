@@ -8,6 +8,7 @@ using RH_CM.Data;
 using RH_CM.Models;
 using RH_CM.ViewModels;
 using RH_CM.Messages.HeadCount;
+using RH_CM.Service.Export;
 
 namespace RH_CM.Controllers
 {
@@ -179,6 +180,57 @@ namespace RH_CM.Controllers
                     return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "HeadCountList.xlsx");
                 }
             }
+        }
+
+        /// <summary>
+        /// Raw export of every column in SyHeadcounts (all records, active or not, except the
+        /// binary "Photo" column, which is excluded so the query doesn't have to pull every
+        /// employee's photo over the wire), with no joins or translations, so staff can
+        /// cross-check the data behind the Head Count catalog.
+        /// </summary>
+        [Authorize(Policy = "ViewAccess")]
+        public async Task<IActionResult> ExportHeadCountFullData()
+        {
+            var data = await _context.SyHeadcounts.AsNoTracking()
+                .Select(h => new
+                {
+                    h.PkHeadcount,
+                    h.ControlNumber,
+                    h.Names,
+                    h.LastName,
+                    h.SecondName,
+                    h.LevelEmployee,
+                    h.ShiftWork,
+                    h.StarDate,
+                    h.Layoffday,
+                    h.Curp,
+                    h.Rfc,
+                    h.SocialSecurity,
+                    h.Birthdate,
+                    h.Sex,
+                    h.MaritalStatus,
+                    h.Street,
+                    h.Neighborhood,
+                    h.City,
+                    h.ZipCode,
+                    h.Phone1,
+                    h.Phone2,
+                    h.Email,
+                    h.EducationLevel,
+                    h.Specialization,
+                    h.FkDepartment,
+                    h.FkPosition,
+                    h.ZipCodesat,
+                    h.FkSupervisorId,
+                    h.Createuser,
+                    h.Lastuser,
+                    h.Createdate,
+                    h.Lastupdate,
+                    h.Available
+                })
+                .ToListAsync();
+            var bytes = RawExcelExportHelper.ExportFullData(data, "HeadCount");
+            return File(bytes, RawExcelExportHelper.ExcelContentType, RawExcelExportHelper.BuildFileName("HeadCount"));
         }
 
         [Authorize(Policy = "ViewAccess")]

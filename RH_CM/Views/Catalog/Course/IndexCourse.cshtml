@@ -28,6 +28,9 @@
         <a class="btn btn-facebook" asp-action="CreateCourse" title="Create New Course">
             <i class="align-middle fas fa-plus-square"></i> CREATE NEW COURSE
         </a>
+        <a class="btn btn-outline-success" asp-action="ExportCourseFullData" title="Export the complete database data for this catalog, for validation purposes">
+            <i class="align-middle fas fa-database"></i> EXPORT FULL DATA
+        </a>
     </div>
 </div>
 
@@ -46,20 +49,20 @@
                     <table id="datatables-course" class="table table-striped table-hover align-middle" style="width:100%">
                         <thead class="table-accent">
                             <tr>
+                                <th data-orderable="false" class="no-export">Actions</th>
                                 <th>@Html.DisplayNameFor(m => m.First().ManagementSystem)</th>
                                 <th>Course</th>
                                 <th>@Html.DisplayNameFor(m => m.First().CourseName)</th>
                                 <th>@Html.DisplayNameFor(m => m.First().CourseValidityDays)</th>
                                 <th>Status</th>
-                                <th data-orderable="false">Actions</th>
                             </tr>
                             <tr class="table-light">
+                                <th></th>
                                 <th><input class="form-control form-control-sm" placeholder="Management System" /></th>
                                 <th><input class="form-control form-control-sm" placeholder="Course ID" /></th>
                                 <th><input class="form-control form-control-sm" placeholder="Course Name" /></th>
                                 <th><input class="form-control form-control-sm" placeholder="Validity (days)" /></th>
                                 <th><input class="form-control form-control-sm" placeholder="Available / Unavailable" /></th>
-                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -69,6 +72,38 @@
                                 var actionText = item.Available == 1 ? "Disable" : "Enable";
 
                                 <tr>
+                                    <td class="text-center">
+                                        <div class="dropdown row-actions-menu">
+                                            <button class="btn btn-sm btn-outline-secondary btn-row-actions dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Actions">
+                                                <i class="fas fa-ellipsis-vertical"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li><a class="dropdown-item text-warning" asp-action="EditCourse" asp-route-id="@item.PkCourse"><i class="fas fa-edit me-2"></i>Edit</a></li>
+                                                @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Administrador"))
+                                                {
+                                                    <li>
+                                                        <button type="button"
+                                                                class="dropdown-item open-toggle-modal @(item.Available == 1 ? "text-success" : "text-secondary")"
+                                                                data-course-id="@item.PkCourse"
+                                                                data-course-name="@item.CourseName"
+                                                                data-course-code="@item.Idcourse"
+                                                                data-current-available="@item.Available"
+                                                                data-next-available="@nextAvailable">
+                                                            <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off") me-2"></i>@actionText
+                                                        </button>
+                                                    </li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li>
+                                                        <form asp-action="DeleteCourse" asp-route-id="@item.PkCourse" method="post" class="js-confirm-submit"
+                                                              data-confirm-message="Are you sure you want to delete this course?">
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="dropdown-item text-danger"><i class="align-middle fas fa-trash-alt me-2"></i>Delete</button>
+                                                        </form>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </td>
                                     <td>@item.ManagementSystem</td>
                                     <td>@item.Idcourse</td>
                                     <td>@item.CourseName</td>
@@ -83,47 +118,17 @@
                                             <span class="badge bg-secondary">Unavailable</span>
                                         }
                                     </td>
-                                    <td class="text-center">
-                                        @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Administrador"))
-                                        {
-                                            <button type="button"
-                                                    class="btn btn-sm @(item.Available == 1 ? "btn-success" : "btn-secondary") open-toggle-modal"
-                                                    title="@actionText availability"
-                                                    data-course-id="@item.PkCourse"
-                                                    data-course-name="@item.CourseName"
-                                                    data-course-code="@item.Idcourse"
-                                                    data-current-available="@item.Available"
-                                                    data-next-available="@nextAvailable">
-                                                <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
-                                            </button>
-                                        }
-
-                                        <a class="btn btn-warning btn-sm" asp-action="EditCourse" asp-route-id="@item.PkCourse" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-
-                                        @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Administrador"))
-                                        {
-                                            <form asp-action="DeleteCourse" asp-route-id="@item.PkCourse" method="post" class="d-inline"
-                                                  onsubmit="return confirm('Are you sure you want to delete this course?');">
-                                                @Html.AntiForgeryToken()
-                                                <button type="submit" class="btn btn-danger btn-sm" title="Delete">
-                                                    <i class="align-middle fas fa-trash-alt"></i>
-                                                </button>
-                                            </form>
-                                        }
-                                    </td>
                                 </tr>
                             }
                         </tbody>
                         <tfoot>
                             <tr>
+                                <th></th>
                                 <th>Management System</th>
                                 <th>Course ID</th>
                                 <th>Course Name</th>
                                 <th>Validity (days)</th>
                                 <th>Status</th>
-                                <th></th>
                             </tr>
                         </tfoot>
                     </table>
@@ -231,10 +236,13 @@
                 order: [],
                 pageLength: 25,
                 lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                stateSave: true,
+                dom: window.dtButtonsDom,
+                buttons: window.dtExportButtons(),
                 initComplete: function () {
                     const api = this.api();
 
-                    [0, 1, 2, 3, 4].forEach(function (colIdx) {
+                    [1, 2, 3, 4, 5].forEach(function (colIdx) {
                         $('thead tr:eq(1) th').eq(colIdx).find('input')
                             .on('keyup change clear', function () {
                                 if (api.column(colIdx).search() !== this.value) {

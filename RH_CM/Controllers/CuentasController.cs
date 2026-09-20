@@ -435,6 +435,53 @@ namespace RH_CM.Controllers
             return View(rpViewModel);
         }
 
+        // =========================
+        //  UNLOCK ACCOUNT
+        // =========================
+
+        [HttpGet]
+        [Authorize(Policy = "ViewAccess")]
+        public IActionResult UnlockAccount()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Policy = "ViewAccess")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UnlockAccount(UnlockAccountViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            try
+            {
+                var usuario = await _userManager.FindByNameAsync(model.UserName);
+                if (usuario == null)
+                {
+                    TempData["ErrorMessage"] = CuentasMessages.UserDoesNotExist;
+                    ModelState.AddModelError(string.Empty, CuentasMessages.UserDoesNotExist);
+                    return View(model);
+                }
+
+                await _userManager.SetLockoutEndDateAsync(usuario, null);
+                await _userManager.ResetAccessFailedCountAsync(usuario);
+
+                TempData["SuccessMessage"] = CuentasMessages.AccountUnlockedSuccessfully;
+                return RedirectToAction(nameof(UnlockAccount));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "General error while unlocking an account.");
+
+                TempData["ErrorMessage"] = CuentasMessages.UnexpectedErrorOccurredWhileTryingToUnlock;
+                ModelState.AddModelError(string.Empty, CuentasMessages.UnexpectedErrorOccurredWhileTryingToUnlock);
+                return View(model);
+            }
+        }
+
         // =================
         //  ACCESS DENIED
         // =================

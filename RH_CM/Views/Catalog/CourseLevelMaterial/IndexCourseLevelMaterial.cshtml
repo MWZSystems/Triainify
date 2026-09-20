@@ -31,6 +31,9 @@
         <a class="btn btn-success" asp-action="ExportCourseLevelMaterialToExcel" title="Export To Excel">
             <i class="align-middle fas fa-file-excel"></i> EXPORT TO EXCEL
         </a>
+        <a class="btn btn-outline-success" asp-action="ExportCourseLevelMaterialFullData" title="Export the complete database data for this catalog, for validation purposes">
+            <i class="align-middle fas fa-database"></i> EXPORT FULL DATA
+        </a>
     </div>
 </div>
 
@@ -50,24 +53,24 @@
                 <table id="datatables-responsive" class="table table-striped table-hover" style="width:100%">
                     <thead class="table-accent">
                         <tr>
+                            <th data-orderable="false" class="no-export">Actions</th>
                             <th>#</th>
                             <th>Course</th>
                             <th>Level</th>
                             <th>Material</th>
                             <th>Available</th>
-                            <th data-orderable="false">Actions</th>
                         </tr>
                     </thead>
 
                     <!-- Filtros por columna -->
                     <tfoot>
                         <tr>
+                            <th></th>
                             <th>#</th>
                             <th>Course</th>
                             <th>Level</th>
                             <th>Material</th>
                             <th>Available</th>
-                            <th></th>
                         </tr>
                     </tfoot>
 
@@ -75,6 +78,32 @@
                         @foreach (var item in Model)
                         {
                             <tr>
+                                <td>
+                                    <div class="dropdown row-actions-menu">
+                                        <button class="btn btn-sm btn-outline-secondary btn-row-actions dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Actions">
+                                            <i class="fas fa-ellipsis-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <form asp-action="ToggleCourseLevelMaterial" asp-route-id="@item.PkCourseLevelMaterial" method="post" class="js-confirm-submit" data-confirm-message="Are you sure you want to toggle availability?">
+                                                    <button type="submit" class="dropdown-item @(item.Available == 1 ? "text-success" : "text-secondary")">
+                                                        <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off") me-2"></i>Toggle availability
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li><a class="dropdown-item text-warning" asp-action="EditCourseLevelMaterial" asp-route-id="@item.PkCourseLevelMaterial"><i class="fas fa-edit me-2"></i>Edit</a></li>
+                                            @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Administrador"))
+                                            {
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li>
+                                                    <form asp-action="DeleteCourseLevelMaterial" asp-route-id="@item.PkCourseLevelMaterial" method="post" class="js-confirm-submit" data-confirm-message="Are you sure you want to delete this link?">
+                                                        <button type="submit" class="dropdown-item text-danger"><i class="align-middle fas fa-trash-alt me-2"></i>Delete</button>
+                                                    </form>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </td>
                                 <td>@item.PkCourseLevelMaterial</td>
                                 <td>@item.CourseName</td>
                                 <td>@item.LevelDescription</td>
@@ -84,28 +113,6 @@
                                         string availabilityText = item.Available == 1 ? "Yes" : "No";
                                     }
                                     @availabilityText
-                                </td>
-                                <td>
-                                    <div class="d-flex justify-content-center gap-1">
-                                        <form asp-action="ToggleCourseLevelMaterial" asp-route-id="@item.PkCourseLevelMaterial" method="post" onsubmit="return confirm('Are you sure you want to toggle availability?')">
-                                            <button type="submit" class="btn btn-sm @(item.Available == 1 ? "btn-success" : "btn-secondary")" title="Toggle availability">
-                                                <i class="align-middle fas @(item.Available == 1 ? "fa-toggle-on" : "fa-toggle-off")"></i>
-                                            </button>
-                                        </form>
-
-                                        <a class="btn btn-sm btn-warning" asp-action="EditCourseLevelMaterial" asp-route-id="@item.PkCourseLevelMaterial" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-
-                                        @if (User.Identity?.IsAuthenticated == true && User.IsInRole("Administrador"))
-                                        {
-                                            <form asp-action="DeleteCourseLevelMaterial" asp-route-id="@item.PkCourseLevelMaterial" method="post" onsubmit="return confirm('Are you sure you want to delete this link?')">
-                                                <button type="submit" class="btn btn-sm btn-danger" title="Delete">
-                                                    <i class="align-middle fas fa-trash-alt"></i>
-                                                </button>
-                                            </form>
-                                        }
-                                    </div>
                                 </td>
                             </tr>
                         }
@@ -130,15 +137,15 @@
             $('#loader').show();
 
             // Put inputs/selects in the footer before initializing DataTable
-            // Indexes: 0:#, 1:Course, 2:Level, 3:Material, 4:Available, 5:Actions
+            // Indexes: 0:Actions, 1:#, 2:Course, 3:Level, 4:Material, 5:Available
             $('#datatables-responsive tfoot th').each(function (i) {
                 switch (i) {
-                    case 1: // Course
-                    case 2: // Level
-                    case 3: // Material
+                    case 2: // Course
+                    case 3: // Level
+                    case 4: // Material
                         $(this).html('<input type="text" class="form-control form-control-sm" placeholder="Filter ' + $('thead th').eq(i).text() + '" />');
                         break;
-                    case 4: // Available (exact Yes/No)
+                    case 5: // Available (exact Yes/No)
                         $(this).html(
                             '<select class="form-select form-select-sm">' +
                             '<option value="">(All)</option>' +
@@ -157,11 +164,14 @@
             var table = $('#datatables-responsive').DataTable({
                 responsive: true,
                 order: [],
+                stateSave: true,
+                dom: window.dtButtonsDom,
+                buttons: window.dtExportButtons(),
                 initComplete: function () {
                     var api = this.api();
 
                     // Inputs de texto: Course, Level, Material
-                    [1, 2, 3].forEach(function (colIdx) {
+                    [2, 3, 4].forEach(function (colIdx) {
                         $('tfoot th').eq(colIdx).find('input').on('keyup change clear', function () {
                             if (api.column(colIdx).search() !== this.value) {
                                 api.column(colIdx).search(this.value).draw();
@@ -170,8 +180,8 @@
                     });
 
                     // Exact Yes/No select for Available
-                    $('tfoot th').eq(4).find('select').on('change', function () {
-                        api.column(4).search(this.value, true, false).draw(); // regex=true, smart=false
+                    $('tfoot th').eq(5).find('select').on('change', function () {
+                        api.column(5).search(this.value, true, false).draw(); // regex=true, smart=false
                     });
 
                     // Mostrar la tabla y ocultar el loader

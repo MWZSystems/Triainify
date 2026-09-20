@@ -5,16 +5,25 @@
     ViewData["BodyClass"] = "page-coursecompleted-detail";
 }
 
-<partial name="_PageHeader" model="@(new RH_CM.ViewModels.PageHeaderViewModel
-{
-    Title = "Course Completed (Detail)",
-    IconClass = "fa-tasks",
-    HelpBullets = new List<string>
-    {
-        "A row-by-row list of every course-completion record, with its status, delivery mode, and score.",
-        "For a summarized, filterable view instead, see \"Course Completed\" (Summary) under Catalog."
-    }
-})" />
+<div class="row">
+    <div class="col">
+        <partial name="_PageHeader" model="@(new RH_CM.ViewModels.PageHeaderViewModel
+        {
+            Title = "Course Completed (Detail)",
+            IconClass = "fa-tasks",
+            HelpBullets = new List<string>
+            {
+                "A row-by-row list of every course-completion record, with its status, delivery mode, and score.",
+                "For a summarized, filterable view instead, see \"Course Completed\" (Summary) under Catalog."
+            }
+        })" />
+    </div>
+    <div class="col-auto">
+        <a class="btn btn-outline-success" asp-action="ExportCourseCompletedFullData" title="Export the complete database data for this catalog, for validation purposes">
+            <i class="align-middle fas fa-database"></i> EXPORT FULL DATA
+        </a>
+    </div>
+</div>
 
 <table class="table table-bordered table-striped">
     <thead>

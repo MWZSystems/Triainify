@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RH_CM.Models;
 using RH_CM.Messages.Catalog;
+using RH_CM.Service.Export;
 
 namespace RH_CM.Controllers
 {
@@ -44,6 +45,18 @@ namespace RH_CM.Controllers
                 .ToListAsync();
 
             return View("Supervisor/IndexSupervisor", supervisors);
+        }
+
+        /// <summary>
+        /// Raw export of every column in CtSupervisors, with no joins or translations,
+        /// so staff can cross-check the data behind the Supervisors catalog.
+        /// </summary>
+        [Authorize(Policy = "ViewAccess")]
+        public async Task<IActionResult> ExportSupervisorFullData()
+        {
+            var data = await _context.CtSupervisors.AsNoTracking().ToListAsync();
+            var bytes = RawExcelExportHelper.ExportFullData(data, "Supervisors");
+            return File(bytes, RawExcelExportHelper.ExcelContentType, RawExcelExportHelper.BuildFileName("Supervisors"));
         }
 
         /// <summary>

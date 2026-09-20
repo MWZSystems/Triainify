@@ -7,6 +7,9 @@ using RH_CM.Service.OcupationKey;
 using RH_CM.Service.ThematicArea;
 using RH_CM.Messages.ThematicArea;
 using RH_CM.Service.Catalog;
+using RH_CM.Service.Export;
+using RH_CM.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 
 namespace RH_CM.Controllers
@@ -18,11 +21,13 @@ namespace RH_CM.Controllers
     {
         private readonly ThematicAreaService _thematicAreaService;
         private readonly CatalogIntegrityService _catalogIntegrityService;
+        private readonly db_abcd61_rhchdbContext _context;
 
-        public ThematicAreaController(ThematicAreaService thematicAreaService, CatalogIntegrityService catalogIntegrityService)
+        public ThematicAreaController(ThematicAreaService thematicAreaService, CatalogIntegrityService catalogIntegrityService, db_abcd61_rhchdbContext context)
         {
             _thematicAreaService = thematicAreaService;
             _catalogIntegrityService = catalogIntegrityService;
+            _context = context;
         }
 
         [HttpGet]
@@ -30,6 +35,18 @@ namespace RH_CM.Controllers
         {
             List<ThematicAreaDTOs> result = await _thematicAreaService.IndexGet_async();
             return View(result);
+        }
+
+        /// <summary>
+        /// Raw export of every column in CtThematicareas, with no joins or translations,
+        /// so staff can cross-check the data behind the Thematic Areas catalog.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> ExportThematicAreaFullData()
+        {
+            var data = await _context.CtThematicareas.AsNoTracking().ToListAsync();
+            var bytes = RawExcelExportHelper.ExportFullData(data, "ThematicAreas");
+            return File(bytes, RawExcelExportHelper.ExcelContentType, RawExcelExportHelper.BuildFileName("ThematicAreas"));
         }
 
         [HttpPost]

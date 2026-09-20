@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RH_CM.Models;
 using RH_CM.Messages.Catalog;
+using RH_CM.Service.Export;
 
 namespace RH_CM.Controllers
 {
@@ -248,6 +249,33 @@ namespace RH_CM.Controllers
             ).ToList();
 
             return View("CourseMaterial/IndexCourseMaterial", materials);
+        }
+
+        /// <summary>
+        /// Raw export of every column in CtCoursematerials (except the binary "File" column,
+        /// which is excluded so the query doesn't have to pull every material's file contents
+        /// over the wire), with no joins or translations, so staff can cross-check the data
+        /// behind the Course Materials catalog.
+        /// </summary>
+        [Authorize(Policy = "ViewAccess")]
+        public async Task<IActionResult> ExportCourseMaterialFullData()
+        {
+            var data = await _context.CtCoursematerials.AsNoTracking()
+                .Select(m => new
+                {
+                    m.PkCoursematerial,
+                    m.NameMaterial,
+                    m.MaterialType,
+                    m.UrlPath,
+                    m.CreateUser,
+                    m.CreateDate,
+                    m.LastUpdateUser,
+                    m.LastUpdateDate,
+                    m.Available
+                })
+                .ToListAsync();
+            var bytes = RawExcelExportHelper.ExportFullData(data, "CourseMaterials");
+            return File(bytes, RawExcelExportHelper.ExcelContentType, RawExcelExportHelper.BuildFileName("CourseMaterials"));
         }
 
         [HttpGet]

@@ -181,20 +181,12 @@ else if (isVideo)
             const ok = document.execCommand('copy');
             const btn = document.getElementById('btnCopyPath');
             if (ok) {
-                window.notyf?.open?.({
-                    type: 'success',
-                    message: 'Ruta copiada al portapapeles.',
-                    duration: 2500
-                });
+                window.swalToast?.('Ruta copiada al portapapeles.', 'success');
                 const old = btn.innerHTML;
                 btn.innerHTML = '<i class="fas fa-check me-1"></i> Copiado';
                 setTimeout(() => btn.innerHTML = old, 1800);
             } else {
-                window.notyf?.open?.({
-                    type: 'danger',
-                    message: 'No se pudo copiar. Selecciona la ruta y presiona Ctrl+C.',
-                    duration: 3500
-                });
+                window.swalToast?.('No se pudo copiar. Selecciona la ruta y presiona Ctrl+C.', 'danger');
             }
         }
     </script>

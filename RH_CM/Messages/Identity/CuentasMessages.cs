@@ -31,5 +31,7 @@ namespace RH_CM.Messages.Identity
         public const string UnexpectedErrorOccurredWhileLoadingTheLoginPage = "An unexpected error occurred while loading the login page. If the problem persists, please contact IT support.";
         public const string ConfiguredDatabaseNotFoundVerifyExistsSqlError4060 = "The configured database could not be found or opened (SQL error 4060). Please verify the database exists and that the configured account has access to it, or contact IT support.";
         public const string UnableToConnectToTheDatabaseSqlErrorFormat = "Unable to connect to the database (SQL error {0}). Please try again later or contact IT support.";
+        public const string AccountUnlockedSuccessfully = "Account unlocked successfully.";
+        public const string UnexpectedErrorOccurredWhileTryingToUnlock = "An unexpected error occurred while trying to unlock the account. If the problem persists, please contact IT support.";
     }
 }

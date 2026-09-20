@@ -2,7 +2,7 @@
 
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
-@* @inject RH_CM.Service.AccessGroups.AccessGroupsService _accessGroups *@
+@inject RH_CM.Service.AccessGroups.AccessGroupsService AccessGroups
 
 @inject IHttpContextAccessor HttpContextAccessor
 @using Newtonsoft.Json
@@ -15,6 +15,19 @@
     {
         accesos = JsonConvert.DeserializeObject<GroupsAccessDTOs>(accesosJson) ?? new GroupsAccessDTOs();
     }
+
+    // HOW TO ADD A NEW MENU ITEM (without any database change):
+    //   1) In Permissions > Create New Group, register the new screen's controller name and
+    //      assign it to the roles that should see it. This writes to CT_PERMISSIONSGROUPS /
+    //      CT_PERMISSION, the same tables the existing "ViewAccess" policy already reads.
+    //   2) Add one block right where the link should appear:
+    //        @if (await AccessGroups.HasControllerActionAccessAsync("YourController", "YourAction"))
+    //        {
+    //            <a class="dropdown-item" asp-controller="YourController" asp-action="YourAction">...</a>
+    //        }
+    //   This calls the exact same check used to authorize the action itself, so the link and
+    //   the actual access can never disagree. It does NOT touch the accesos.* flags below —
+    //   those keep working exactly as before for every existing item.
 }
 
 <nav class="navbar navbar-expand navbar-light navbar-bg">
@@ -359,9 +372,12 @@
                             </a>
                         }
 
-                        <a class="dropdown-item" asp-controller="Cuentas" asp-action="UnlockAccount">
-                            <i class="fas fa-retweet"></i> Unlock Account
-                        </a>
+                        @if (accesos.Resetpassword)
+                        {
+                            <a class="dropdown-item" asp-controller="Cuentas" asp-action="UnlockAccount">
+                                <i class="fas fa-retweet"></i> Unlock Account
+                            </a>
+                        }
                     }
 
                     <form id="logoutForm"

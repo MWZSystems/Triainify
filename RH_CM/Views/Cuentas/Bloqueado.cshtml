@@ -16,9 +16,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" />
     <link rel="stylesheet" href="~/Assets/dist/css/theme-uupm.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Assets/dist/css/LoadingOverlay.css" asp-append-version="true" />
 </head>
 
 <body class="d-flex align-items-center justify-content-center min-vh-100 bg-light">
+
+    <div id="pageLoadingOverlay" class="page-loading-overlay" aria-hidden="true">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 
     <div class="container">
         <div class="row justify-content-center mt-4">
@@ -59,6 +66,9 @@
     </div>
 
     <script src="~/Assets/dist/js/app.js"></script>
+    <script src="~/Assets/dist/js/loading-overlay.js"></script>
+    <script src="~/lib/sweetalert2/sweetalert2.all.min.js"></script>
+    <script src="~/Assets/dist/js/sweetalert-helpers.js"></script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -66,15 +76,8 @@
             // Optional warning message from TempData
             var warningMessage = @Html.Raw(JsonSerializer.Serialize(TempData["WarningMessage"]));
 
-            if (window.notyf && warningMessage) {
-                window.notyf.open({
-                    type: 'warning',
-                    message: warningMessage,
-                    ripple: true,
-                    dismissible: true,
-                    position: { x: 'center', y: 'top' },
-                    duration: 6000
-                });
+            if (window.swalToast && warningMessage) {
+                window.swalToast(warningMessage, 'warning');
             }
         });
     </script>

@@ -1,19 +1,14 @@
 @using System.Text.Json
 @{
-    // The only place in the app that reads TempData and fires the toasts (Notyf). Every view
-    // used to copy its own version of this block (~80 files, in several different and
-    // inconsistent shapes). Serialized with JsonSerializer so a message with quotes or
-    // apostrophes doesn't break the generated script.
-    //
-    // IMPORTANT: the types actually registered in Notyf (see wwwroot/Assets/dist/js/app.js)
-    // are "default", "success", "warning" and "danger" — the "error" type that almost every
-    // view used to use does NOT exist, so those toasts rendered with the generic style instead of red.
-    var toasts = new (string? Message, string Type, int DurationMs)[]
+    // The only place in the app that reads TempData and fires the SweetAlert2 toasts.
+    // Serialized with JsonSerializer so a message with quotes or apostrophes doesn't break
+    // the generated script.
+    var toasts = new (string? Message, string Type)[]
     {
-        (TempData["SuccessMessage"] as string, "success", 5000),
-        (TempData["ErrorMessage"] as string, "danger", 7000),
-        (TempData["WarningMessage"] as string, "warning", 6000),
-        (TempData["InfoMessage"] as string, "default", 5000),
+        (TempData["SuccessMessage"] as string, "success"),
+        (TempData["ErrorMessage"] as string, "danger"),
+        (TempData["WarningMessage"] as string, "warning"),
+        (TempData["InfoMessage"] as string, "default"),
     };
 }
 
@@ -21,21 +16,14 @@
 {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            if (!window.notyf) { return; }
+            if (!window.swalToast) { return; }
 
             @foreach (var toast in toasts)
             {
                 if (!string.IsNullOrWhiteSpace(toast.Message))
                 {
                     <text>
-                    window.notyf.open({
-                        type: @Html.Raw(JsonSerializer.Serialize(toast.Type)),
-                        message: @Html.Raw(JsonSerializer.Serialize(toast.Message)),
-                        ripple: true,
-                        dismissible: true,
-                        position: { x: 'center', y: 'top' },
-                        duration: @toast.DurationMs
-                    });
+                    window.swalToast(@Html.Raw(JsonSerializer.Serialize(toast.Message)), @Html.Raw(JsonSerializer.Serialize(toast.Type)));
                     </text>
                 }
             }

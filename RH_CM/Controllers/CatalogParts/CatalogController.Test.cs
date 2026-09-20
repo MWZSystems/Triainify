@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RH_CM.ViewModels;
 using RH_CM.Messages.Catalog;
+using RH_CM.Service.Export;
 
 namespace RH_CM.Controllers
 {
@@ -32,6 +33,18 @@ namespace RH_CM.Controllers
                 .ToListAsync();
 
             return View("Test/IndexTest", tests);
+        }
+
+        /// <summary>
+        /// Raw export of every column in CtTests, with no joins or translations,
+        /// so staff can cross-check the data behind the Tests catalog.
+        /// </summary>
+        [Authorize(Policy = "ViewAccess")]
+        public async Task<IActionResult> ExportTestFullData()
+        {
+            var data = await _context.CtTests.AsNoTracking().ToListAsync();
+            var bytes = RawExcelExportHelper.ExportFullData(data, "Tests");
+            return File(bytes, RawExcelExportHelper.ExcelContentType, RawExcelExportHelper.BuildFileName("Tests"));
         }
 
         [HttpPost]
