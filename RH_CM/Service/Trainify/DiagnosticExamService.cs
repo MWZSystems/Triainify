@@ -5,6 +5,7 @@ using RH_CM.Models;
 using RH_CM.ViewModels;
 using static RH_CM.ViewModels.ViewModels;
 using RH_CM.Messages.Trainify;
+using RH_CM.Service.Shared;
 
 namespace RH_CM.Service.Trainify
 {
@@ -558,7 +559,7 @@ FROM
             catch (Exception ex)
             {
                 await tx.RollbackAsync();
-                return new DiagnosticSubmissionOutcome { ErrorMessage = string.Format(TrainifyMessages.ErrorSavingDiagnosticFormat, ex.Message) };
+                return new DiagnosticSubmissionOutcome { ErrorMessage = string.Format(TrainifyMessages.ErrorSavingDiagnosticFormat, ExceptionHelper.GetRootErrorMessage(ex)) };
             }
 
             resultVm.TotalQuestions = resultVm.Questions.Count;
@@ -846,7 +847,7 @@ FROM
                 return new ExamSubmissionOutcome
                 {
                     ReshowExamForm = true,
-                    ReshowMessage = string.Format(TrainifyMessages.ErrorSavingExamFormat, ex.Message)
+                    ReshowMessage = string.Format(TrainifyMessages.ErrorSavingExamFormat, ExceptionHelper.GetRootErrorMessage(ex))
                 };
             }
 

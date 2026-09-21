@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "TrainifyRH_CM",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "RH_CM/RH_CM.csproj", "--launch-profile", "RH_CM"],
+      "port": 57854
+    }
+  ]
+}

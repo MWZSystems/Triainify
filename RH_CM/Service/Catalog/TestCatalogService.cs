@@ -3,6 +3,7 @@ using RH_CM.Data;
 using RH_CM.Models;
 using RH_CM.ViewModels;
 using RH_CM.Messages.Catalog;
+using RH_CM.Service.Shared;
 
 namespace RH_CM.Service.Catalog
 {
@@ -115,7 +116,7 @@ namespace RH_CM.Service.Catalog
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                return new OperationResult { Success = false, Message = string.Format(TestCatalogMessages.ErrorDeletingTestFormat, ex.Message) };
+                return new OperationResult { Success = false, Message = string.Format(TestCatalogMessages.ErrorDeletingTestFormat, ExceptionHelper.GetRootErrorMessage(ex)) };
             }
         }
 
@@ -434,7 +435,7 @@ namespace RH_CM.Service.Catalog
             {
                 await transaction.RollbackAsync();
                 await PopulateTestFormOptionsAsync(model);
-                return new CreateQuestionsOutcome { Success = false, Message = string.Format(TestCatalogMessages.ErrorSavingDataFormat, ex.Message), Model = model };
+                return new CreateQuestionsOutcome { Success = false, Message = string.Format(TestCatalogMessages.ErrorSavingDataFormat, ExceptionHelper.GetRootErrorMessage(ex)), Model = model };
             }
         }
 
@@ -565,7 +566,7 @@ namespace RH_CM.Service.Catalog
             {
                 await transaction.RollbackAsync();
                 await PopulateTestFormOptionsAsync(model);
-                return new EditQuestionsOutcome { Message = string.Format(TestCatalogMessages.ErrorUpdatingQuestionsFormat, ex.Message), Model = model };
+                return new EditQuestionsOutcome { Message = string.Format(TestCatalogMessages.ErrorUpdatingQuestionsFormat, ExceptionHelper.GetRootErrorMessage(ex)), Model = model };
             }
         }
     }
