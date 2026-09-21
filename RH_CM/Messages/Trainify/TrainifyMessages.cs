@@ -39,5 +39,8 @@ namespace RH_CM.Messages.Trainify
         public const string MinimumScoreAttemptRecordedFormat = "Minimum score is {0}. This exam attempt was recorded as PENDING; the course was not marked as completed.";
         public const string MissingCourseAssignmentPleaseContactYourProvider = "Missing course assignment. Please contact your provider or IT support.";
         public const string ErrorSavingExamFormat = "Error saving exam: {0}";
+        public const string OnlyAdministratorsCanLookUpAnotherEmployeesMatrix = "Only administrators can look up another employee's matrix.";
+        public const string PleaseEnterAnEmployeeNumberToSearch = "Please enter an employee number to search.";
+        public const string NoUserFoundForThatEmployeeNumberFormat = "No user found for employee number '{0}'.";
     }
 }

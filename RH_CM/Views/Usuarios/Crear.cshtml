@@ -52,7 +52,7 @@
                     <!-- Role (form-group como en tu ejemplo) -->
                     <div class="form-group">
                         <label asp-for="IdRol" class="form-label"></label>
-                        <select asp-for="IdRol" asp-items="Model.ListaRoles" class="form-control">
+                        <select asp-for="IdRol" asp-items="Model.ListaRoles" class="form-control select2">
                             <option value="" disabled selected>--Seleccionar Rol--</option>
                         </select>
                         <span asp-validation-for="IdRol" class="text-danger"></span>
@@ -92,4 +92,13 @@
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
 
+    <script>
+        $(document).ready(function () {
+            $(".select2").select2({
+                theme: 'bootstrap4',
+                placeholder: 'Select an option',
+                allowClear: true
+            });
+        });
+    </script>
 }

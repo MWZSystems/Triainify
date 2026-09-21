@@ -28,7 +28,7 @@
                             <label asp-for="FkCourseAssignment" class="form-label">
                                 Course Assignment <span class="text-danger">*</span>
                             </label>
-                            <select asp-for="FkCourseAssignment" class="form-select" asp-items="Model.CourseAssignments"></select>
+                            <select asp-for="FkCourseAssignment" class="form-select select2" asp-items="Model.CourseAssignments"></select>
                             <span asp-validation-for="FkCourseAssignment" class="text-danger"></span>
                         </div>
 
@@ -36,13 +36,13 @@
                             <label asp-for="FkCourseStatus" class="form-label">
                                 Course Status <span class="text-danger">*</span>
                             </label>
-                            <select asp-for="FkCourseStatus" class="form-select" asp-items="Model.CourseStatuses"></select>
+                            <select asp-for="FkCourseStatus" class="form-select select2" asp-items="Model.CourseStatuses"></select>
                             <span asp-validation-for="FkCourseStatus" class="text-danger"></span>
                         </div>
 
                         <div class="col-md-6">
                             <label asp-for="FkDeliveryMode" class="form-label">Delivery Mode</label>
-                            <select asp-for="FkDeliveryMode" class="form-select" asp-items="Model.DeliveryModes"></select>
+                            <select asp-for="FkDeliveryMode" class="form-select select2" asp-items="Model.DeliveryModes"></select>
                             <small class="form-text text-muted">Use "Not Assigned" if unknown.</small>
                         </div>
 
@@ -50,7 +50,7 @@
                             <label asp-for="FkHeadcount" class="form-label">
                                 Employee (Headcount) <span class="text-danger">*</span>
                             </label>
-                            <select asp-for="FkHeadcount" class="form-select" asp-items="Model.Headcounts"></select>
+                            <select asp-for="FkHeadcount" class="form-select select2" asp-items="Model.Headcounts"></select>
                             <span asp-validation-for="FkHeadcount" class="text-danger"></span>
                         </div>
                     </div>
@@ -73,4 +73,14 @@
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        $(document).ready(function () {
+            $(".select2").select2({
+                theme: 'bootstrap4',
+                placeholder: 'Select an option',
+                allowClear: true
+            });
+        });
+    </script>
 }

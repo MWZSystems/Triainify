@@ -255,6 +255,13 @@ namespace RH_CM.Service.ExternalEvidence
 
                 if (result != "Completed")
                 {
+                    // The stored procedure prefixes a caught SQL error with "Failed: " (see its
+                    // CATCH block) so a real reason reaches the user instead of a dead end.
+                    const string FailedPrefix = "Failed: ";
+                    string detail = result.StartsWith(FailedPrefix)
+                        ? $"This record could not be added: {result[FailedPrefix.Length..]}"
+                        : "This record could not be added. Please review it in detail.";
+
                     feedbackItems.Add(new ExternalEvidenceFeedbackItemDTOs
                     {
                         ControlNumber = controlNumber,
@@ -265,7 +272,7 @@ namespace RH_CM.Service.ExternalEvidence
                         Level = DTOs.SelectedLevel ?? string.Empty,
                         EvidenceFileName = "",
                         Success = false,
-                        FeedBackComment = "This record could not be added. Please review it in detail."
+                        FeedBackComment = detail
                     });
                     feedBackRequired = true;
                     continue;

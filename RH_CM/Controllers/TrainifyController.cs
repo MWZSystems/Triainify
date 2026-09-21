@@ -23,13 +23,16 @@ namespace RH_CM.Controllers
     {
         private readonly db_abcd61_rhchdbContext _context;
         private readonly DiagnosticExamService _diagnosticExamService;
+        private readonly ApplicationDbContext _identityContext;
 
         public TrainifyController(
             db_abcd61_rhchdbContext context,
-            DiagnosticExamService diagnosticExamService)
+            DiagnosticExamService diagnosticExamService,
+            ApplicationDbContext identityContext)
         {
             _context = context;
             _diagnosticExamService = diagnosticExamService;
+            _identityContext = identityContext;
         }
 
         // Helper: positions dropdown
@@ -49,7 +52,7 @@ namespace RH_CM.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> MatrixByEmployee(string? mode = "EMPLOYEE", int? fkPosition = null, string? userName = null)
+        public async Task<IActionResult> MatrixByEmployee(string? mode = "EMPLOYEE", int? fkPosition = null, string? userName = null, string? employeeNumber = null)
         {
             if (!ModelState.IsValid)
             {
@@ -60,7 +63,7 @@ namespace RH_CM.Controllers
             var normalizedMode = string.IsNullOrWhiteSpace(mode) ? "EMPLOYEE" : mode.Trim().ToUpper();
 
             var (targetResolved, effectiveUserName, selectedPosition, targetError) =
-                ResolveMatrixByEmployeeTarget(normalizedMode, fkPosition, userName);
+                ResolveMatrixByEmployeeTarget(normalizedMode, fkPosition, userName, employeeNumber);
 
             if (!targetResolved)
             {
@@ -69,6 +72,7 @@ namespace RH_CM.Controllers
                 ViewBag.Positions = await GetPositionsAsync();
                 ViewBag.SelectedPositionId = null;
                 ViewBag.TargetUserName = null;
+                ViewBag.EmployeeNumber = employeeNumber;
                 return View(result);
             }
 
@@ -121,6 +125,7 @@ namespace RH_CM.Controllers
             ViewBag.Positions = await GetPositionsAsync();
             ViewBag.SelectedPositionId = selectedPosition;
             ViewBag.TargetUserName = effectiveUserName;
+            ViewBag.EmployeeNumber = employeeNumber;
 
             return View(result);
         }
@@ -181,7 +186,7 @@ namespace RH_CM.Controllers
         /// or the current user's name couldn't be determined).
         /// </summary>
         private (bool Resolved, string? EffectiveUserName, int? SelectedPosition, string? Error) ResolveMatrixByEmployeeTarget(
-            string normalizedMode, int? fkPosition, string? userName)
+            string normalizedMode, int? fkPosition, string? userName, string? employeeNumber = null)
         {
             if (normalizedMode == "POSITION")
             {
@@ -193,9 +198,41 @@ namespace RH_CM.Controllers
                 return (true, null, fkPosition.Value, null);
             }
 
-            var effectiveUserName = string.IsNullOrWhiteSpace(userName)
-                ? User?.Identity?.Name
-                : userName;
+            if (normalizedMode == "EMPLOYEE_LOOKUP")
+            {
+                // Admin-only: the "View Options" panel that exposes this mode is already
+                // hidden from non-admins in the view, but the mode can still be reached by
+                // crafting the URL directly, so it's re-checked here server-side.
+                if (!User.IsInRole("Administrador"))
+                {
+                    return (false, null, null, TrainifyMessages.OnlyAdministratorsCanLookUpAnotherEmployeesMatrix);
+                }
+
+                if (string.IsNullOrWhiteSpace(employeeNumber))
+                {
+                    return (false, null, null, TrainifyMessages.PleaseEnterAnEmployeeNumberToSearch);
+                }
+
+                var trimmedEmployeeNumber = employeeNumber.Trim();
+                var targetUser = _identityContext.AppUsuario
+                    .AsNoTracking()
+                    .FirstOrDefault(u => u.EmployeeNumber == trimmedEmployeeNumber);
+
+                if (targetUser == null || string.IsNullOrWhiteSpace(targetUser.UserName))
+                {
+                    return (false, null, null, string.Format(TrainifyMessages.NoUserFoundForThatEmployeeNumberFormat, trimmedEmployeeNumber));
+                }
+
+                return (true, targetUser.UserName, null, null);
+            }
+
+            // "userName" isn't set by any link/form in the app today (only EMPLOYEE_LOOKUP
+            // is, via the admin-only search above); an explicit override is only honored
+            // for admins, so a regular user can't view someone else's matrix by crafting
+            // the URL. Anyone else always gets their own matrix, override or not.
+            var effectiveUserName = (!string.IsNullOrWhiteSpace(userName) && User.IsInRole("Administrador"))
+                ? userName
+                : User?.Identity?.Name;
 
             if (string.IsNullOrWhiteSpace(effectiveUserName))
             {

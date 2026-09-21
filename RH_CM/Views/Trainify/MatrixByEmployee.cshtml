@@ -12,6 +12,7 @@
     string mode = (ViewBag.Mode as string) ?? "EMPLOYEE";
     int? selectedPositionId = ViewBag.SelectedPositionId as int?;
     var positions = (IEnumerable<SelectListItem>)(ViewBag.Positions ?? new List<SelectListItem>());
+    string? employeeNumber = ViewBag.EmployeeNumber as string;
 
     var levelMap = data
         .GroupBy(m => m.FK_RequiredCourseLevels)
@@ -92,7 +93,8 @@
         HelpBullets = new List<string>
         {
             "Shows every required course for an employee (or the configured course matrix for a position).",
-            "Switch between Employee and Position using the View Options panel.",
+            "Switch between Employee, Position and Employee Lookup using the View Options panel.",
+            "Employee Lookup (admin only) shows the matrix for any employee number you enter, not just your own.",
             "Each column is a course level; check the badge color to see its status or requirement.",
             "Position mode does not use the signed-in employee's course history."
         }
@@ -117,7 +119,7 @@
                             <div class="d-flex flex-column align-items-center text-center py-2">
                                 <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
 
-                                    @if (mode == "EMPLOYEE")
+                                    @if (mode == "EMPLOYEE" || mode == "EMPLOYEE_LOOKUP")
                                     {
                                         <div class="px-3 py-2 border rounded bg-white shadow-sm text-start">
                                             <div class="text-muted fs-6">Control #</div>
@@ -253,6 +255,7 @@
                                     <select class="form-control" name="mode" id="modeSelector">
                                         <option value="EMPLOYEE" selected="@(mode == "EMPLOYEE")">Employee</option>
                                         <option value="POSITION" selected="@(mode == "POSITION")">Position</option>
+                                        <option value="EMPLOYEE_LOOKUP" selected="@(mode == "EMPLOYEE_LOOKUP")">Employee Lookup (Admin)</option>
                                     </select>
                                 </div>
 
@@ -265,6 +268,13 @@
                                             <option value="@p.Value" selected="@(selectedPositionId?.ToString() == p.Value)">@p.Text</option>
                                         }
                                     </select>
+                                </div>
+
+                                <div class="mb-3" id="employeeLookupContainer" style="display:@(mode == "EMPLOYEE_LOOKUP" ? "block" : "none")">
+                                    <label class="form-label">Employee Number</label>
+                                    <input type="text" class="form-control" name="employeeNumber" id="employeeNumber"
+                                           value="@employeeNumber" placeholder="e.g. 12345" inputmode="numeric" />
+                                    <div class="form-text">Enter the employee's control/employee number to view their matrix.</div>
                                 </div>
 
                                 <div class="d-grid">
@@ -346,8 +356,8 @@
             $('#datatables-responsive').DataTable({
                 responsive: true,
                 order: [],
-                pageLength: 50,
-                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                pageLength: 20,
+                lengthMenu: [[10, 20, 25, 50, 100, -1], [10, 20, 25, 50, 100, "All"]],
                 stateSave: true,
                 dom: window.dtButtonsDom,
                 buttons: window.dtExportButtons()
@@ -361,11 +371,18 @@
             });
 
             $('#modeSelector').on('change', function () {
-                const isPosition = $(this).val() === 'POSITION';
+                const selected = $(this).val();
+                const isPosition = selected === 'POSITION';
+                const isEmployeeLookup = selected === 'EMPLOYEE_LOOKUP';
+
                 $('#positionContainer').toggle(isPosition);
+                $('#employeeLookupContainer').toggle(isEmployeeLookup);
 
                 if (!isPosition) {
                     $('#fkPosition').val(null).trigger('change');
+                }
+                if (!isEmployeeLookup) {
+                    $('#employeeNumber').val('');
                 }
             });
         });

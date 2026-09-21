@@ -167,7 +167,9 @@
 
             var table = $('#datatables-responsive').DataTable({
                 responsive: true,
-                order: [],
+                order: [],
+                pageLength: 20,
+                lengthMenu: [[10, 20, 25, 50, 100, -1], [10, 20, 25, 50, 100, "All"]],
                 stateSave: true,
                 dom: window.dtButtonsDom,
                 buttons: window.dtExportButtons(),

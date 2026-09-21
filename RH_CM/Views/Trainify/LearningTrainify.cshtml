@@ -220,7 +220,9 @@
         $(document).ready(function () {
             $('#datatables-learning').DataTable({
                 responsive: true,
-                order: [[3, 'asc'], [5, 'asc']],
+                order: [[3, 'asc'], [5, 'asc']],
+                pageLength: 20,
+                lengthMenu: [[10, 20, 25, 50, 100, -1], [10, 20, 25, 50, 100, "All"]],
                 columnDefs: [
                     { targets: [1, 2, 4], visible: false, searchable: false }
                 ],

@@ -89,12 +89,22 @@
                 $('#datatables-responsive').DataTable({
                     responsive: true,
                     order: [],
-                    pageLength: 50,
-                    lengthMenu: [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]]
+                    pageLength: 20,
+                    lengthMenu: [[10, 20, 25, 50, 100, -1], [10, 20, 25, 50, 100, "All"]]
                 });
             }
 
-            // Solo success y error
+            $('#ThematicArea').select2({
+                placeholder: "-- Choose Thematic Area --",
+                allowClear: true,
+                width: '100%'
+            });
+
+            $('#Course').select2({
+                placeholder: "-- Choose Course --",
+                allowClear: true,
+                width: '100%'
+            });
 });
     </script>
 }

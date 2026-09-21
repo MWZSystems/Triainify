@@ -122,15 +122,22 @@
                 $('#datatables-responsive').DataTable({
                     responsive: true,
                     order: [],
-                    pageLength: 50,
-                    lengthMenu: [[10, 25, 50, 100, -1],[10, 25, 50, 100, "All"]],
+                    pageLength: 20,
+                    lengthMenu: [[10, 20, 25, 50, 100, -1], [10, 20, 25, 50, 100, "All"]],
                     stateSave: true,
                     dom: window.dtButtonsDom,
                     buttons: window.dtExportButtons()
                 });
             }
 
-            // Solo success y error
+            $('#addRoleModal').on('shown.bs.modal', function () {
+                $('#RoleId').select2({
+                    placeholder: "-- Choose Role --",
+                    allowClear: true,
+                    width: '100%',
+                    dropdownParent: $('#addRoleModal')
+                });
+            });
 });
     </script>
 }

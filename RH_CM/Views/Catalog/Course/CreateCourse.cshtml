@@ -20,7 +20,7 @@
                         <!-- First Row: Divided into 4 columns -->
                         <div class="mb-2 col-md-3">
                             <label asp-for="ManagementSystem" class="form-label">Management System <span class="text-danger">*</span></label>
-                            <select asp-for="ManagementSystem" class="form-control">
+                            <select asp-for="ManagementSystem" class="form-control select2">
                                 <option disabled selected>--- SELECT OPTION ---</option>
                                 <option value="AMBIENTAL">AMBIENTAL</option>
                                 <option value="CALIDAD">CALIDAD</option>
@@ -77,6 +77,11 @@
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            $(".select2").select2({
+                theme: 'bootstrap4',
+                placeholder: 'Select an option',
+                allowClear: true
+            });
 });
     </script>
 }
